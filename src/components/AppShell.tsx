@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
           <Link to="/" className="flex items-center gap-2">
             <img src={logoAsset.url} alt="Indi Radio" className="size-9 rounded-sm object-contain" />
-            <span className="wordmark text-lg leading-none">{"\n"}</span>
+            <span className="wordmark text-lg leading-none">InDi RaDio</span>
           </Link>
           <div className="ml-auto">
             {session && profile ? (
