@@ -21,6 +21,7 @@ interface PostRow {
     role: "admin" | "artiste" | "animateur" | "auditeur";
     is_certified: boolean;
     is_team_indi: boolean;
+    badges: string[];
     level: number;
   } | null;
 }
@@ -48,7 +49,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, level)")
+        .select("id, author_id, content, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;

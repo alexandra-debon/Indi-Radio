@@ -125,6 +125,15 @@ function UserAdmin() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const updateBadges = useMutation({
+    mutationFn: async ({ id, badges }: { id: string; badges: string[] }) => {
+      const { error } = await supabase.from("profiles").update({ badges }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Badges mis à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); qc.invalidateQueries({ queryKey: ["profile"] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   return (
     <div className="space-y-3">
       <Input placeholder="Rechercher un pseudo…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -152,9 +161,44 @@ function UserAdmin() {
               </label>
               <span className="ml-auto text-xs text-muted-foreground">{p.points} pts · Niv. {p.level}</span>
             </div>
+            <BadgeEditor
+              badges={(p as any).badges ?? []}
+              onChange={(badges) => updateBadges.mutate({ id: p.id, badges })}
+            />
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function BadgeEditor({ badges, onChange }: { badges: string[]; onChange: (b: string[]) => void }) {
+  const [value, setValue] = useState("");
+  const add = () => {
+    const v = value.trim();
+    if (!v) return;
+    if (badges.includes(v)) { setValue(""); return; }
+    onChange([...badges, v]);
+    setValue("");
+  };
+  const remove = (b: string) => onChange(badges.filter((x) => x !== b));
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-t border-border pt-2">
+      <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Badges</span>
+      {badges.map((b) => (
+        <span key={b} className="inline-flex items-center gap-1 rounded-sm border border-primary/60 bg-primary/10 px-1.5 py-0.5 text-[10px] uppercase text-primary">
+          {b}
+          <button onClick={() => remove(b)} aria-label={`Retirer ${b}`} className="text-primary/70 hover:text-destructive">×</button>
+        </span>
+      ))}
+      <Input
+        placeholder="Nouveau badge…"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+        className="h-7 w-40 text-xs"
+      />
+      <Button size="sm" variant="outline" onClick={add} disabled={!value.trim()}>Ajouter</Button>
     </div>
   );
 }
@@ -166,7 +210,7 @@ function RequestsAdmin() {
     queryFn: async () => {
       const { data } = await supabase
         .from("requests")
-        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,is_team_indi,level)")
+        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       return (data ?? []) as any[];
     },

@@ -340,6 +340,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          badges: string[]
           created_at: string
           id: string
           is_certified: boolean
@@ -351,6 +352,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          badges?: string[]
           created_at?: string
           id: string
           is_certified?: boolean
@@ -362,6 +364,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          badges?: string[]
           created_at?: string
           id?: string
           is_certified?: boolean

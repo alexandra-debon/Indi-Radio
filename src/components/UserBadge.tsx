@@ -6,6 +6,7 @@ export interface BadgeProfile {
   role: "admin" | "artiste" | "animateur" | "auditeur";
   is_certified: boolean;
   is_team_indi?: boolean | null;
+  badges?: string[] | null;
   level?: number | null;
 }
 
@@ -43,6 +44,14 @@ export function UserBadge({ profile, className }: { profile: BadgeProfile | null
           Niv. {profile.level}
         </span>
       )}
+      {profile.badges?.map((b) => (
+        <span
+          key={b}
+          className="inline-flex items-center rounded-sm border border-primary/60 bg-primary/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-primary"
+        >
+          {b}
+        </span>
+      ))}
     </span>
   );
 }
