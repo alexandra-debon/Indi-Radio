@@ -1,10 +1,11 @@
-import { Crown, Mic, Palette, CheckCircle2 } from "lucide-react";
+import { Crown, Mic, Palette, CheckCircle2, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface BadgeProfile {
   pseudo: string;
   role: "admin" | "artiste" | "animateur" | "auditeur";
   is_certified: boolean;
+  is_team_indi?: boolean | null;
   level?: number | null;
 }
 
@@ -16,6 +17,11 @@ export function UserBadge({ profile, className }: { profile: BadgeProfile | null
       <span>{profile.pseudo}</span>
       {profile.is_certified && (
         <CheckCircle2 className="size-3.5 fill-primary text-primary-foreground" aria-label="Compte certifié" />
+      )}
+      {profile.is_team_indi && (
+        <span className="inline-flex items-center gap-1 rounded-sm bg-gradient-to-r from-primary to-destructive px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-primary-foreground shadow-sm">
+          <Radio className="size-3" /> Team Indi
+        </span>
       )}
       {profile.role === "admin" && (
         <span className="inline-flex items-center gap-1 rounded-sm bg-destructive px-1.5 py-0.5 text-[10px] uppercase text-destructive-foreground">
