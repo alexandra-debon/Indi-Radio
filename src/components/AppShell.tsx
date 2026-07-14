@@ -4,6 +4,7 @@ import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shi
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { cn } from "@/lib/utils";
+import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 
 const NAV = [
   { to: "/", label: "En direct", icon: Radio },
@@ -32,9 +33,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid size-9 place-items-center rounded-sm bg-primary text-primary-foreground">
-              <Radio className="size-5" />
-            </div>
+            <img src={logoAsset.url} alt="Indi Radio" className="size-9 rounded-sm object-contain" />
             <span className="wordmark text-lg leading-none">INDI RADIO</span>
           </Link>
           <div className="ml-auto">
@@ -79,7 +78,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <span className="wordmark text-lg">INDI RADIO</span>
+            <div className="flex items-center gap-2">
+              <img src={logoAsset.url} alt="" className="size-7 rounded-sm object-contain" />
+              <span className="wordmark text-lg">INDI RADIO</span>
+            </div>
             <button onClick={() => setOpen(false)} aria-label="Fermer" className="grid size-8 place-items-center rounded-md hover:bg-muted">
               <X className="size-4" />
             </button>
