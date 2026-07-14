@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as EmissionsRouteImport } from './routes/emissions'
@@ -22,6 +23,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PodcastsRoute = PodcastsRouteImport.update({
   id: '/podcasts',
   path: '/podcasts',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
 }
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
 }
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/sitemap.xml'
     | '/admin'
     | '/profile'
   fileRoutesByTo: FileRoutesByTo
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/sitemap.xml'
     | '/admin'
     | '/profile'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/profile'
   fileRoutesById: FileRoutesById
@@ -177,10 +189,18 @@ export interface RootRouteChildren {
   EmissionsRoute: typeof EmissionsRoute
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/podcasts': {
       id: '/podcasts'
       path: '/podcasts'
@@ -292,6 +312,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmissionsRoute: EmissionsRoute,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
