@@ -35,18 +35,44 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
     },
   });
 
+  const { data: comments } = useQuery({
+    queryKey: ["ep-comments", ep.id],
+    enabled: !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("episode_ratings")
+        .select("stars, comment, user_id, created_at")
+        .eq("episode_id", ep.id)
+        .not("comment", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      const rows = data ?? [];
+      const ids = Array.from(new Set(rows.map((r) => r.user_id)));
+      let pseudos: Record<string, string> = {};
+      if (ids.length) {
+        const { data: profs } = await supabase.from("profiles").select("id, pseudo").in("id", ids);
+        pseudos = Object.fromEntries((profs ?? []).map((p) => [p.id, p.pseudo]));
+      }
+      return rows.map((r) => ({ ...r, pseudo: pseudos[r.user_id] ?? "auditeur" }));
+    },
+  });
+
   const rate = useMutation({
-    mutationFn: async () => {
-      if (!session || !stars) return;
+    mutationFn: async (payload: { stars: number; comment?: string }) => {
+      if (!session || !payload.stars) return;
       const { error } = await supabase.from("episode_ratings").upsert({
         episode_id: ep.id,
         user_id: session.user.id,
-        stars,
-        comment: comment || null,
+        stars: payload.stars,
+        comment: payload.comment?.trim() ? payload.comment.trim() : null,
       }, { onConflict: "episode_id,user_id" });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Merci pour ta note !"); qc.invalidateQueries({ queryKey: ["ep-ratings", ep.id] }); },
+    onSuccess: () => {
+      toast.success("Merci pour ta note !");
+      qc.invalidateQueries({ queryKey: ["ep-ratings", ep.id] });
+      qc.invalidateQueries({ queryKey: ["ep-comments", ep.id] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -83,17 +109,48 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
       </div>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} onClick={() => requireAuth(() => setStars(n))} aria-label={`${n} étoiles`}>
+          <button
+            key={n}
+            onClick={() =>
+              requireAuth(() => {
+                setStars(n);
+                rate.mutate({ stars: n, comment });
+              })
+            }
+            aria-label={`${n} étoiles`}
+          >
             <Star className={`size-5 ${n <= stars ? "fill-primary text-primary" : "text-muted-foreground"}`} />
           </button>
         ))}
-        <span className="ml-2 text-xs text-muted-foreground">Ta note</span>
+        <span className="ml-2 text-xs text-muted-foreground">Clique pour noter</span>
       </div>
       {stars > 0 && (
         <div className="space-y-2">
-          <Textarea rows={2} placeholder="Un mot ? (optionnel)" value={comment} onChange={(e) => setComment(e.target.value)} />
-          <Button size="sm" onClick={() => requireAuth(() => rate.mutate())}>Envoyer ma note</Button>
+          <Textarea
+            rows={2}
+            placeholder="Un commentaire ? (optionnel, publié avec ton pseudo)"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <Button
+            size="sm"
+            disabled={rate.isPending || !comment.trim()}
+            onClick={() => requireAuth(() => rate.mutate({ stars, comment }))}
+          >
+            Publier mon commentaire
+          </Button>
         </div>
+      )}
+      {comments && comments.length > 0 && (
+        <ul className="space-y-2 border-t pt-2">
+          {comments.map((c, i) => (
+            <li key={i} className="text-xs">
+              <span className="font-semibold">{c.pseudo}</span>
+              <span className="text-muted-foreground"> · {"★".repeat(c.stars)}</span>
+              <p className="text-foreground/90">{c.comment}</p>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
