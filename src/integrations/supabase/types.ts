@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      artwork_lookups: {
+        Row: {
+          artist: string
+          attempts: Json | null
+          created_at: string
+          duration_ms: number
+          error: string | null
+          found: boolean
+          id: string
+          source: string | null
+          title: string
+        }
+        Insert: {
+          artist: string
+          attempts?: Json | null
+          created_at?: string
+          duration_ms: number
+          error?: string | null
+          found: boolean
+          id?: string
+          source?: string | null
+          title: string
+        }
+        Update: {
+          artist?: string
+          attempts?: Json | null
+          created_at?: string
+          duration_ms?: number
+          error?: string | null
+          found?: boolean
+          id?: string
+          source?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       episode_ratings: {
         Row: {
           comment: string | null
