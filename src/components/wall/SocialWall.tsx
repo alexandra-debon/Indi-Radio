@@ -6,11 +6,13 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { Pencil, Trash2, Check, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface PostRow {
   id: string;
+  author_id: string;
   content: string;
   created_at: string;
   author: {
@@ -18,6 +20,7 @@ interface PostRow {
     pseudo: string;
     role: "admin" | "artiste" | "animateur" | "auditeur";
     is_certified: boolean;
+    is_team_indi: boolean;
     level: number;
   } | null;
 }
@@ -34,16 +37,18 @@ function renderMentions(content: string) {
 }
 
 export function SocialWall() {
-  const { session, requireAuth } = useAuth();
+  const { session, requireAuth, isAdmin } = useAuth();
   const qc = useQueryClient();
   const [content, setContent] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
 
   const { data: posts = [] } = useQuery<PostRow[]>({
     queryKey: ["wall-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, content, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, level)")
+        .select("id, author_id, content, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, level)")
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
@@ -77,6 +82,32 @@ export function SocialWall() {
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const updatePost = useMutation({
+    mutationFn: async ({ id, content }: { id: string; content: string }) => {
+      const mentions = Array.from(content.matchAll(/@([A-Za-z0-9_]+)/g)).map((m) => m[1]);
+      const { error } = await supabase.from("posts").update({ content, mentions }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setEditingId(null);
+      toast.success("Message modifié");
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deletePost = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("posts").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Message supprimé");
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -115,17 +146,70 @@ export function SocialWall() {
             Le mur est vide — sois le premier à écrire !
           </li>
         )}
-        {posts.map((p) => (
-          <li key={p.id} className="card-brut p-3">
-            <div className="mb-1 flex items-center justify-between gap-2">
-              <UserBadge profile={p.author} className="text-xs" />
-              <span className="text-[10px] text-muted-foreground">
-                {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: fr })}
-              </span>
-            </div>
-            <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
-          </li>
-        ))}
+        {posts.map((p) => {
+          const isOwner = session?.user.id === p.author_id;
+          const canEdit = isOwner;
+          const canDelete = isOwner || isAdmin;
+          const isEditing = editingId === p.id;
+          return (
+            <li key={p.id} className="card-brut p-3">
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <UserBadge profile={p.author} className="text-xs" />
+                <span className="text-[10px] text-muted-foreground">
+                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: fr })}
+                </span>
+              </div>
+              {isEditing ? (
+                <div className="space-y-2">
+                  <Textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    rows={2}
+                    className="resize-none"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
+                      <X className="size-3.5" /> Annuler
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim() })}
+                      disabled={!editContent.trim() || updatePost.isPending}
+                    >
+                      <Check className="size-3.5" /> Enregistrer
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
+                  {(canEdit || canDelete) && (
+                    <div className="mt-2 flex justify-end gap-1">
+                      {canEdit && (
+                        <button
+                          onClick={() => { setEditingId(p.id); setEditContent(p.content); }}
+                          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                          aria-label="Modifier"
+                        >
+                          <Pencil className="size-3.5" />
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button
+                          onClick={() => { if (confirm("Supprimer ce message ?")) deletePost.mutate(p.id); }}
+                          className="rounded p-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
+                          aria-label="Supprimer"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
