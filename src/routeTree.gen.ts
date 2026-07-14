@@ -20,6 +20,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const PodcastsRoute = PodcastsRouteImport.update({
   id: '/podcasts',
@@ -75,6 +76,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRoutesByTo {
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRoutesById {
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRouteTypes {
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/admin'
     | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/admin'
     | '/profile'
   id:
     | '__root__'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/_authenticated/admin'
     | '/_authenticated/profile'
   fileRoutesById: FileRoutesById
 }
@@ -246,14 +258,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
 }
 
