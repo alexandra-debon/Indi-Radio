@@ -36,8 +36,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex min-w-0 items-center gap-2 overflow-hidden">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-10 sm:size-12 md:size-14 lg:size-16 shrink-0 rounded-sm object-contain" />
-            <img src={wordmarkAsset.url} alt="Indi Radio" className="hidden sm:block h-8 sm:h-9 md:h-10 lg:h-11 w-auto shrink object-contain" />
+            <img src={logoAsset.url} alt="Indi Radio" className="size-9 md:size-14 lg:size-16 shrink-0 rounded-sm object-contain" />
+            <img src={wordmarkAsset.url} alt="Indi Radio" className="hidden md:block h-10 lg:h-11 w-auto min-w-0 shrink object-contain" />
           </Link>
           <div className="flex items-center justify-end">
             {session && profile ? (
@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     to="/admin"
                     aria-label="Panneau admin"
-                    className="inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
+                    className="hidden md:inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
                   >
                     <Shield className="size-3.5" /> Admin
                   </Link>
