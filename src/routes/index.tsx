@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
 import { Play, Pause, Radio as RadioIcon, History, BarChart3 } from "lucide-react";
+import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
@@ -92,6 +93,9 @@ function LivePage() {
       {/* Social wall */}
       <SocialWall />
 
+      {/* Newsletter banner */}
+      <NewsletterBanner />
+
       {/* Recent history */}
       <section className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -126,6 +130,28 @@ function LivePage() {
         </ul>
       </section>
     </div>
+  );
+}
+
+function NewsletterBanner() {
+  return (
+    <Link
+      to="/newsletter"
+      className="card-brut flex items-center gap-3 p-3 transition hover:-translate-y-0.5 hover:bg-primary/10"
+    >
+      <div className="grid size-10 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
+        <Mail className="size-5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-bold">Inscris-toi à la newsletter</div>
+        <div className="text-[11px] text-muted-foreground">
+          Une note quand il y a du neuf : émissions, podcasts, sorties.
+        </div>
+      </div>
+      <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+        S'inscrire →
+      </span>
+    </Link>
   );
 }
 
