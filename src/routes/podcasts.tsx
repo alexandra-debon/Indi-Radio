@@ -120,12 +120,13 @@ function EpisodeRow({ ep }: { ep: { id: string; title: string; audio_url: string
     <div className="card-brut space-y-2 p-3">
       <div className="flex items-center gap-3">
         {ep.audio_url ? (
-          <button onClick={toggle} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+          <button onClick={toggle} aria-label={playing ? `Mettre en pause « ${ep.title} »` : `Lire l'épisode « ${ep.title} »`} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
             {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
           </button>
         ) : ep.external_url ? (
-          <a href={ep.external_url} target="_blank" rel="noreferrer" className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+          <a href={ep.external_url} target="_blank" rel="noreferrer" aria-label={`Écouter « ${ep.title} » sur le manager radio (nouvelle fenêtre)`} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
             <ExternalLink className="size-4" />
+            <span className="sr-only">Ouvrir dans le manager radio</span>
           </a>
         ) : null}
         <div className="min-w-0 flex-1">
