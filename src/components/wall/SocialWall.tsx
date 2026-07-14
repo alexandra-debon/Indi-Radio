@@ -21,6 +21,7 @@ interface PostRow {
     role: "admin" | "artiste" | "animateur" | "auditeur";
     is_certified: boolean;
     is_team_indi: boolean;
+    badges: string[];
     level: number;
   } | null;
 }
