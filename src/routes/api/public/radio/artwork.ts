@@ -10,6 +10,46 @@ const CORS_HEADERS = {
 const HIT_CACHE = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800";
 const MISS_CACHE = "public, max-age=60, s-maxage=300";
 
+type Attempt = { provider: string; ok: boolean; ms: number; error?: string };
+
+async function timed<T>(provider: string, attempts: Attempt[], fn: () => Promise<T | null>) {
+  const t0 = Date.now();
+  try {
+    const result = await fn();
+    attempts.push({ provider, ok: !!result, ms: Date.now() - t0 });
+    return result;
+  } catch (e) {
+    attempts.push({ provider, ok: false, ms: Date.now() - t0, error: String((e as Error)?.message ?? e).slice(0, 200) });
+    return null;
+  }
+}
+
+async function logLookup(row: {
+  artist: string; title: string; source: string | null; found: boolean;
+  duration_ms: number; attempts: Attempt[]; error?: string | null;
+}) {
+  try {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) return;
+    await fetch(`${url}/rest/v1/artwork_lookups`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(row),
+    });
+  } catch {
+    // best-effort logging
+  }
+  if (!row.found) {
+    console.warn("[artwork] MISS", { artist: row.artist, title: row.title, attempts: row.attempts });
+  }
+}
+
 async function fetchWithRetry(url: string, init: RequestInit, tries = 3): Promise<Response | null> {
   for (let i = 0; i < tries; i++) {
     try {
@@ -138,22 +178,23 @@ async function searchMusicBrainzArtwork(artist: string, title: string) {
   return null;
 }
 
-async function searchAllArtwork(artist: string, title: string) {
+async function searchAllArtwork(artist: string, title: string, attempts: Attempt[]) {
   const forced = forcedArtwork(artist, title);
-  if (forced) return forced;
+  if (forced) { attempts.push({ provider: "forced", ok: true, ms: 0 }); return { url: forced, source: "forced" }; }
 
   for (const artistVariant of artistVariants(artist)) {
     for (const titleVariant of titleVariants(title)) {
-      const artworkUrl =
-        (await searchArtwork(artistVariant, titleVariant)) ??
-        (await searchDeezerArtwork(artistVariant, titleVariant)) ??
-        (await searchDeezerArtwork(artistVariant, titleVariant, false)) ??
-        (await searchMusicBrainzArtwork(artistVariant, titleVariant));
-      if (artworkUrl) return artworkUrl;
+      const it = await timed("itunes", attempts, () => searchArtwork(artistVariant, titleVariant));
+      if (it) return { url: it, source: "itunes" };
+      const dz = await timed("deezer_exact", attempts, () => searchDeezerArtwork(artistVariant, titleVariant));
+      if (dz) return { url: dz, source: "deezer_exact" };
+      const dz2 = await timed("deezer_loose", attempts, () => searchDeezerArtwork(artistVariant, titleVariant, false));
+      if (dz2) return { url: dz2, source: "deezer_loose" };
+      const mb = await timed("musicbrainz", attempts, () => searchMusicBrainzArtwork(artistVariant, titleVariant));
+      if (mb) return { url: mb, source: "musicbrainz" };
     }
   }
-
-  return null;
+  return { url: null as string | null, source: null as string | null };
 }
 
 export const Route = createFileRoute("/api/public/radio/artwork")({
@@ -171,16 +212,37 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
           return Response.json({ url: null }, { headers: CORS_HEADERS });
         }
 
+        const t0 = Date.now();
+        const attempts: Attempt[] = [];
         try {
-          const artworkUrl =
-            forcedArtwork(originalArtist, originalTitle) ??
-            (await searchAllArtwork(artist, title));
+          const forcedOriginal = forcedArtwork(originalArtist, originalTitle);
+          const result = forcedOriginal
+            ? { url: forcedOriginal, source: "forced_original" }
+            : await searchAllArtwork(artist, title, attempts);
+
+          void logLookup({
+            artist: originalArtist || artist,
+            title: originalTitle || title,
+            source: result.source,
+            found: !!result.url,
+            duration_ms: Date.now() - t0,
+            attempts,
+          });
 
           return Response.json(
-            { url: artworkUrl },
-            { headers: { ...CORS_HEADERS, "Cache-Control": artworkUrl ? HIT_CACHE : MISS_CACHE } },
+            { url: result.url },
+            { headers: { ...CORS_HEADERS, "Cache-Control": result.url ? HIT_CACHE : MISS_CACHE } },
           );
-        } catch {
+        } catch (e) {
+          void logLookup({
+            artist: originalArtist || artist,
+            title: originalTitle || title,
+            source: null,
+            found: false,
+            duration_ms: Date.now() - t0,
+            attempts,
+            error: String((e as Error)?.message ?? e).slice(0, 300),
+          });
           return Response.json(
             { url: null },
             { headers: { ...CORS_HEADERS, "Cache-Control": MISS_CACHE } },
