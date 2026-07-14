@@ -17,7 +17,9 @@ import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 
 const PodcastsRoute = PodcastsRouteImport.update({
   id: '/podcasts',
@@ -59,10 +61,19 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -75,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,10 +98,12 @@ export interface FileRoutesByTo {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/actus': typeof ActusRoute
   '/auth': typeof AuthRoute
@@ -98,6 +112,7 @@ export interface FileRoutesById {
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +126,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,9 +138,11 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/profile'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/actus'
     | '/auth'
@@ -133,10 +151,12 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/newsletter'
     | '/podcasts'
+    | '/_authenticated/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ActusRoute: typeof ActusRoute
   AuthRoute: typeof AuthRoute
@@ -205,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -212,11 +239,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ActusRoute: ActusRoute,
   AuthRoute: AuthRoute,
