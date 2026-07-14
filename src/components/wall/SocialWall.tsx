@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "sonner";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -17,6 +17,8 @@ interface PostRow {
   author_id: string;
   content: string;
   created_at: string;
+  pinned_at: string | null;
+  pin_label: string | null;
   author: {
     id: string;
     pseudo: string;
@@ -66,6 +68,8 @@ export function SocialWall() {
   const [editContent, setEditContent] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
+  const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
+  const [pinLabelDraft, setPinLabelDraft] = useState("");
   const hash = useRouterState({ select: (s) => s.location.hash });
 
   // Auto-open the thread targeted by a notification hash like `post-<id>|c-<cid>`
@@ -81,7 +85,8 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
@@ -216,6 +221,26 @@ export function SocialWall() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const setPin = useMutation({
+    mutationFn: async ({ id, label }: { id: string; label: string | null }) => {
+      const { error } = await supabase
+        .from("posts")
+        .update({
+          pinned_at: label ? new Date().toISOString() : null,
+          pin_label: label,
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      toast.success(v.label ? "Message épinglé" : "Message désépinglé");
+      setPinDialogFor(null);
+      setPinLabelDraft("");
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   return (
     <section className="space-y-3">
       <div className="flex items-baseline justify-between">
@@ -244,7 +269,7 @@ export function SocialWall() {
         </div>
       </div>
 
-      <ul className="space-y-2">
+      <ul className="max-h-[28rem] space-y-2 overflow-y-auto rounded-lg border border-border bg-background/40 p-2 pr-3">
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             Le mur est vide — sois le premier à écrire !
@@ -255,8 +280,21 @@ export function SocialWall() {
           const canEdit = isOwner;
           const canDelete = isOwner || isAdmin;
           const isEditing = editingId === p.id;
+          const isPinned = !!p.pinned_at;
           return (
-            <li key={p.id} id={`post-${p.id}`} className="card-brut scroll-mt-24 p-3">
+            <li
+              key={p.id}
+              id={`post-${p.id}`}
+              className={`card-brut scroll-mt-24 p-3 ${isPinned ? "border-2 border-primary/70 bg-primary/5" : ""}`}
+            >
+              {isPinned && (
+                <div className="mb-2 flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                    <Pin className="size-3" />
+                    {p.pin_label || "Épinglé"}
+                  </span>
+                </div>
+              )}
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
                 <span className="text-[10px] text-muted-foreground">
@@ -287,8 +325,28 @@ export function SocialWall() {
               ) : (
                 <>
                   <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
-                  {(canEdit || canDelete) && (
+                  {(canEdit || canDelete || isAdmin) && (
                     <div className="mt-2 flex justify-end gap-1">
+                      {isAdmin && !isPinned && (
+                        <button
+                          onClick={() => { setPinDialogFor(p.id); setPinLabelDraft(""); }}
+                          className="rounded p-1 text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                          aria-label="Épingler"
+                          title="Épingler"
+                        >
+                          <Pin className="size-3.5" />
+                        </button>
+                      )}
+                      {isAdmin && isPinned && (
+                        <button
+                          onClick={() => setPin.mutate({ id: p.id, label: null })}
+                          className="rounded p-1 text-primary hover:bg-destructive hover:text-destructive-foreground"
+                          aria-label="Désépingler"
+                          title="Désépingler"
+                        >
+                          <PinOff className="size-3.5" />
+                        </button>
+                      )}
                       {canEdit && (
                         <button
                           onClick={() => { setEditingId(p.id); setEditContent(p.content); }}
@@ -307,6 +365,41 @@ export function SocialWall() {
                           <Trash2 className="size-3.5" />
                         </button>
                       )}
+                    </div>
+                  )}
+                  {pinDialogFor === p.id && (
+                    <div className="mt-2 rounded border border-primary/60 bg-primary/5 p-2 space-y-2">
+                      <div className="text-[11px] font-semibold text-primary">Libellé du badge</div>
+                      <div className="flex flex-wrap gap-1">
+                        {["Indi Adore !", "Une info Indi", "Une question pour vous", "À la une"].map((preset) => (
+                          <button
+                            key={preset}
+                            onClick={() => setPinLabelDraft(preset)}
+                            className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] hover:bg-muted"
+                          >
+                            {preset}
+                          </button>
+                        ))}
+                      </div>
+                      <input
+                        value={pinLabelDraft}
+                        onChange={(e) => setPinLabelDraft(e.target.value)}
+                        placeholder="Libellé personnalisé…"
+                        maxLength={40}
+                        className="w-full rounded border border-border bg-background px-2 py-1 text-xs"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="ghost" onClick={() => { setPinDialogFor(null); setPinLabelDraft(""); }}>
+                          <X className="size-3.5" /> Annuler
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => setPin.mutate({ id: p.id, label: (pinLabelDraft.trim() || "Épinglé") })}
+                          disabled={setPin.isPending}
+                        >
+                          <Pin className="size-3.5" /> Épingler
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </>
