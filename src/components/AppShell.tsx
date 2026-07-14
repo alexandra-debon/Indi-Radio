@@ -53,7 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </Link>
                 )}
                 <Link to="/profile" className="flex min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden lg:max-w-[10rem]">
-                  <UserBadge profile={profile} className="truncate text-xs" />
+                  <UserBadge profile={profile} compact className="text-xs" />
                 </Link>
               </div>
             ) : (
