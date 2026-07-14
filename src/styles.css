@@ -108,6 +108,15 @@
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0.02em; }
 }
 
+/* Safe areas iOS (encoche / Dynamic Island / home indicator) et Android (barre gestuelle).
+   Appliqué au header (top) et au mini-lecteur (bottom) via les utilities ci-dessous. */
+@utility safe-top {
+  padding-top: max(env(safe-area-inset-top), 0px);
+}
+@utility safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
 /* Titre de section — style étiquette découpée jaune sur noir */
 @utility section-title {
   font-family: var(--font-display);

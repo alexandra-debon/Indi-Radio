@@ -1,72 +1,80 @@
+# Plan — App mobile Indi Radio (iOS + Android)
 
-# Indi Radio — plan de build v1
+On enveloppe l'app web actuelle avec **Capacitor** : une seule base de code, deux binaires natifs publiables sur l'App Store et Google Play.
 
-App web (mobile-first) pour Indi Radio, la radio du hub InDi ArT CulTuRe. Identité noir / jaune franc, titres façon fanzine "découpé", corps lisible. Backend Lovable Cloud (Supabase) région Europe.
+## 1. Base Capacitor
 
-## Ce que je livre dans cette première itération
+- Ajout des dépendances `@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`, `@capacitor/android`.
+- Fichier `capacitor.config.ts` à la racine :
+  - `appId`: `com.indiartculture.radio`
+  - `appName`: `Indi Radio`
+  - `webDir`: `dist`
+  - `server.url` pointant vers `https://radio.indi-art-culture.com` en production (l'app native charge le site publié → mises à jour instantanées sans repasser par le store pour la partie web).
+  - Fallback local `webDir` pour le mode hors-ligne / dev.
+- Scripts `bun run cap:sync`, `cap:ios`, `cap:android` dans `package.json`.
+- README court expliquant comment builder localement (Xcode / Android Studio requis de ton côté pour signer et publier — Lovable ne peut pas soumettre aux stores à ta place).
 
-### 1. Design system (src/styles.css)
-- Tokens noir dominant, jaune signature, gris très foncé pour cartes, jaune → texte noir gras pour CTA.
-- Font display "cutout/fanzine" pour titres de section (via Google Fonts, chargée par `<link>` dans __root), font sans lisible pour le corps.
-- Variantes Button (`hero` jaune plein, `outline-yellow`), styles Badge pour rôles + certification.
+## 2. Lecture audio en arrière-plan + contrôles lockscreen
 
-### 2. Base de données (Lovable Cloud)
-Migration unique avec toutes les tables du prompt : profiles, point_events, track_history, track_likes, posts, podcasts, episodes, episode_ratings, shows, requests, newsletter_subscribers, news_posts, news_likes, news_comments. GRANTs public schema, RLS activée sur chaque table, policies exactement comme spécifiées (lecture publique large, écriture authentifiée, `role`/`is_certified` seulement admin, points/level jamais côté client). Fonction `calculate_level`, fonction `award_points` (security definer), tous les triggers de gamification (post, news_like, news_comment, request). Trigger `on_auth_user_created` qui insère la ligne `profiles` par défaut. Rôles stockés dans profiles.role (le spec demande ça explicitement) — je respecte le prompt utilisateur plutôt que le pattern user_roles séparé, en documentant la contrainte via policy `has_admin_role` en SECURITY DEFINER pour éviter la récursion RLS.
+Plugin `@capgo/capacitor-native-audio` **non** — il ne gère pas les streams Icecast + lockscreen correctement. On part sur :
+- Plugin `capacitor-music-controls-plugin` (ou `@capgo/native-audio` selon dispo) pour exposer titre / artiste / pochette dans le centre de contrôle iOS et la notification média Android.
+- Sur iOS : ajout de la capability `Background Modes → Audio, AirPlay, and Picture in Picture` dans `ios/App/App/Info.plist` (généré automatiquement, documenté dans le README pour Xcode).
+- Sur Android : service `MediaSessionCompat` via le plugin, notification persistante pendant la lecture.
+- Le `<RadioPlayerProvider>` existant détecte l'environnement natif (`Capacitor.isNativePlatform()`) et pousse les métadonnées du titre courant (déjà présentes via `track_history`) vers les contrôles natifs à chaque changement.
 
-### 3. Auth
-Email / mot de passe uniquement (spec). Écran /auth (login + signup avec pseudo). Hook `useAuth` global. Toute action de contribution qui échoue faute de session ouvre le dialog auth.
+## 3. Notifications push
 
-### 4. Lecteur radio persistant
-- URL flux dans `src/config/radio.ts` (variable centralisée) : `http://ecmanager6.pro-fhi.net:2180/stream`.
-- Composant `<RadioPlayerProvider>` monté dans `__root.tsx` au-dessus de `<Outlet />` → l'élément `<audio>` ne se démonte jamais lors des navigations, la lecture continue.
-- Mini-lecteur fixe en bas d'écran sur toutes les pages : pochette placeholder, titre/artiste du dernier `track_history`, play/pause, bouton like cœur avec compteur realtime.
-- Note : en web l'ATS iOS ne s'applique pas ; je documente dans le README que pour un futur wrapper natif il faudra ajouter `NSExceptionDomains` ciblé sur `ecmanager6.pro-fhi.net` (jamais `NSAllowsArbitraryLoads`).
+- Plugin `@capacitor/push-notifications` (APNs sur iOS, FCM sur Android).
+- Nouvelle table `device_tokens` (user_id, platform, token, updated_at) + RLS : l'utilisateur ne voit / modifie que ses propres tokens.
+- Server function `registerDeviceToken` protégée par `requireSupabaseAuth` qui upsert le token à chaque ouverture de l'app.
+- Server function `sendPushToUser` (service role, admin uniquement) qui appelle APNs / FCM depuis le backend.
+- Déclencheurs automatiques :
+  - Nouvelle actu Indi Rézo → push à tous les abonnés inscrits.
+  - Dédicace validée → push à l'auteur de la demande.
+  - Nouvelle émission qui commence → push aux abonnés de l'émission (optionnel v1.1).
+- Écran `/profile` : toggles par catégorie (actus / dédicaces / émissions) — table `notification_preferences` déjà présente, on la réutilise.
+- **Requiert de ton côté** : un compte Apple Developer ($99/an) pour créer la clé APNs, et un projet Firebase (gratuit) pour la clé FCM Android. Je te lister les valeurs exactes à me fournir comme secrets (`APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY`, `FCM_SERVER_KEY`) une fois qu'on y sera.
 
-### 5. Routes (TanStack Router, une route par surface partageable)
-- `/` — Live : lecteur + mur social realtime + historique récent
-- `/chart` — onglets "Cette semaine" / "All time"
-- `/actus` — fil Indi Rézo (list + détail inline avec likes/commentaires)
-- `/emissions` — 3 sous-onglets Émissions / Chroniques / Animateurs, carrousels
-- `/podcasts` — grille + détail épisodes + notation
-- `/dedicaces` — formulaire requests
-- `/about` — texte structure vs radio
-- `/newsletter` — formulaire inscription (ou intégré dans footer)
-- `/auth` — public
-- `/_authenticated/admin` — panneau admin (recherche profil, change role, toggle is_certified, création news_post, modération requests)
+## 4. Partage natif
 
-Chaque route publique : `head()` propre (title / description / og:title / og:description distincts).
+- Plugin `@capacitor/share`.
+- Bouton "Partager" ajouté sur : titre en cours (mini-lecteur), fiche actu, fiche podcast, fiche émission, page chronique.
+- Sur mobile natif → feuille de partage système (iMessage, WhatsApp, Instagram, etc.).
+- Sur web → fallback vers `navigator.share` puis, en dernier recours, copie du lien dans le presse-papier avec toast.
 
-### 6. Badges & gamification
-Composant `<UserBadge profile={...} />` réutilisé partout où un pseudo apparaît : badge rôle (Admin couronne rouge, Animateur micro jaune, Artiste étiquette, Auditeur → "Niv. X") + rond ✓ certification si `is_certified`. Sur `/profile` : points, niveau, barre de progression.
+## 5. Icône + splash screen personnalisés
 
-Présence live : timer côté client qui appelle une server function `awardPresencePoint` toutes les 5 min d'écoute active, avec plafond quotidien vérifié côté serveur (max ~10 points/jour) avant insert dans `point_events`.
+- Génération à partir du logo Indi Radio existant :
+  - Icône : 1024×1024 PNG, exportée aux 20+ tailles requises par iOS et Android via `@capacitor/assets`.
+  - Splash : fond noir avec le logo carré centré + le wordmark "Indi Radio" en dessous, jaune sur noir (identité de la radio). Généré en versions light / dark, portrait / paysage.
+- Un seul script `bun run cap:assets` régénère tout à partir de `resources/icon.png` et `resources/splash.png`.
 
-### 7. Mur social realtime
-Supabase realtime channel sur `posts` → nouveaux posts apparaissent instantanément. Rendu des mentions `@xxx` en jaune gras.
+## 6. Adaptations UI mobiles
 
-### 8. Admin
-Route sous `_authenticated`, mais aussi guard applicatif qui vérifie `profile.role === 'admin'` (les policies RLS bloquent de toute façon les mutations sensibles). Menu masque l'entrée admin sinon.
-
-### 9. Navigation
-Drawer slide-in gauche (icône hamburger), header fixe avec placeholder logo carré + wordmark "INDI RADIO" en étiquette jaune/noir. Le vrai logo sera intégré à une itération suivante.
+- Safe areas iOS (encoche + Dynamic Island) : ajout des variables `env(safe-area-inset-*)` au header et au mini-lecteur.
+- Désactivation du zoom pinch sur les pages non-média (viewport meta).
+- Empêcher le bounce/overscroll sur iOS avec `WKWebViewConfiguration` (config Capacitor).
+- Bouton "Installer" / bandeau PWA existant masqué en environnement natif.
 
 ## Détails techniques
 
-- Stack : TanStack Start + React + Tailwind v4 + shadcn (déjà en place).
-- Cloud : activation Lovable Cloud (Supabase) requise avant migration — je le fais en début d'exécution.
-- Server functions : lecture publique via client publishable (chart, historique, news, shows, podcasts, episodes) ; actions authentifiées via `requireSupabaseAuth` (like, post, comment, rating, request, presence). Admin via `requireSupabaseAuth` + check `has_role('admin')`.
-- Realtime uniquement sur `posts` (mur live) pour v1 — pas sur likes ni news pour limiter la charge.
-- Zéro couleur codée en dur dans les composants ; tout via tokens.
+- **Fichier `src/lib/native.ts`** : helper unique `isNative()`, `getPlatform()`, wrappers autour des plugins pour que le reste du code reste isomorphe.
+- **Server functions push** : `src/lib/push.functions.ts` (registration côté user) et `src/lib/push-admin.functions.ts` (envoi côté admin, protégé par `has_role('admin')`).
+- **Migration** : table `device_tokens` avec GRANT / RLS complets (INSERT + UPDATE + DELETE réservés à `auth.uid() = user_id`, service_role total pour l'envoi).
+- **Secrets à ajouter (dans un second temps)** : `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY`, `FCM_SERVER_KEY` — je te le demanderai au moment de câbler l'envoi réel des pushs.
+- **Ce que tu devras faire de ton côté (une seule fois)** :
+  1. Installer Xcode (Mac) et Android Studio.
+  2. Cloner le repo Lovable en local, lancer `bun install && bun run build && bun run cap:sync`.
+  3. Ouvrir `ios/App/App.xcworkspace` dans Xcode → signer avec ton compte Apple Developer → archive → soumettre à App Store Connect.
+  4. Ouvrir `android/` dans Android Studio → générer un bundle `.aab` signé → soumettre à Google Play Console.
+  5. Je te fournirai un README détaillé étape par étape.
 
-## Ce que je NE fais PAS dans cette itération (confirmé par le prompt)
-- Intégration du vrai logo (fichier à venir)
-- Config ATS iOS native (l'app est web ici)
-- Metadata "now playing" temps réel depuis Icecast (pas d'endpoint fiable mentionné — j'utilise le dernier `track_history` inséré ; un futur cron peut poller `/status-json.xsl` d'Icecast pour alimenter `track_history` automatiquement)
+## Découpage en itérations
 
-## Questions avant de lancer
+Je propose de livrer en **3 lots** pour que tu puisses tester au fur et à mesure :
 
-1. **Comment la table `track_history` se remplit-elle ?** Le lecteur audio est un flux Icecast qui ne pousse pas les métadonnées côté client. Options : (a) je scrappe `http://ecmanager6.pro-fhi.net:2180/status-json.xsl` via une server function déclenchée périodiquement côté client (toutes les 30 s tant qu'un auditeur écoute) et j'insère les nouveaux titres — simple, pas de cron ; (b) je te laisse alimenter `track_history` manuellement / via un cron externe pour v1 et j'affiche juste ce qui est en base. **Je pars sur (a) par défaut** sauf indication contraire.
+- **Lot 1 (ce prochain tour)** : Capacitor installé + configuré, icône + splash, safe areas, script de build, README. Tu pourras déjà générer un binaire iOS et Android qui charge le site radio.
+- **Lot 2** : Lecture audio arrière-plan + contrôles lockscreen + partage natif.
+- **Lot 3** : Notifications push (table, server functions, UI de préférences, câblage APNs/FCM une fois les secrets fournis).
 
-2. **Confirmation gamification "présence"** : plafond quotidien à 10 points/jour d'écoute (soit ~50 min actives), OK ?
-
-Réponds "ok" ou corrige, et j'exécute.
+Je démarre par le **Lot 1** dès que tu valides ce plan. Réponds "ok" ou dis-moi ce qu'il faut changer.
