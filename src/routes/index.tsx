@@ -12,6 +12,17 @@ import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Indi Radio — Live 24/7 des arts indépendants" },
+      { name: "description", content: "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne." },
+      { property: "og:title", content: "Indi Radio — Live 24/7 des arts indépendants" },
+      { property: "og:description", content: "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],
+  }),
   component: LivePage,
 });
 
@@ -44,7 +55,7 @@ function LivePage() {
               {heroArtwork ? (
                 <img
                   src={heroArtwork}
-                  alt={currentTrack ? `${currentTrack.title} — ${currentTrack.artist}` : "Pochette"}
+                  alt={currentTrack ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}` : "Pochette de l'album en cours"}
                   className="absolute inset-0 size-full object-cover"
                   loading="lazy"
                 />
