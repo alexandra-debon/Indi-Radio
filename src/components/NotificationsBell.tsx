@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Bell, Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Bell, Check, ChevronDown, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -20,6 +20,7 @@ export function NotificationsBell() {
   const { session } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const { data: notifs = [] } = useQuery<Notif[]>({
     queryKey: ["notifications", session?.user.id],
@@ -71,6 +72,29 @@ export function NotificationsBell() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
   });
 
+  const markMany = useMutation({
+    mutationFn: async (ids: string[]) => {
+      if (!ids.length) return;
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read_at: new Date().toISOString() })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
+  });
+
+  const groups = useMemo(() => {
+    const map = new Map<string, { key: string; url: string | null; items: Notif[] }>();
+    for (const n of notifs) {
+      const key = n.url ?? `single:${n.id}`;
+      const g = map.get(key) ?? { key, url: n.url, items: [] };
+      g.items.push(n);
+      map.set(key, g);
+    }
+    return Array.from(map.values());
+  }, [notifs]);
+
   if (!session) return null;
   const unread = notifs.filter((n) => !n.read_at).length;
 
@@ -104,29 +128,64 @@ export function NotificationsBell() {
               {notifs.length === 0 && (
                 <li className="px-3 py-6 text-center text-xs text-muted-foreground">Aucune notification pour l'instant.</li>
               )}
-              {notifs.map((n) => {
-                const body = (
-                  <div className={cn("flex flex-col gap-0.5 px-3 py-2 text-xs", !n.read_at && "bg-primary/5")}>
-                    <span className="font-semibold">{n.message}</span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: fr })}
-                    </span>
-                  </div>
-                );
+              {groups.map((g) => {
+                const latest = g.items[0];
+                const unreadCount = g.items.filter((n) => !n.read_at).length;
+                const isOpen = !!expanded[g.key];
+                const isThread = g.items.length > 1;
+                const openThread = () => {
+                  markMany.mutate(g.items.filter((n) => !n.read_at).map((n) => n.id));
+                  setOpen(false);
+                };
                 return (
-                  <li key={n.id} className="border-b border-border last:border-0">
-                    {n.url ? (
-                      <a
-                        href={n.url}
-                        onClick={() => { markOne.mutate(n.id); setOpen(false); }}
-                        className="block hover:bg-muted"
-                      >
-                        {body}
-                      </a>
-                    ) : (
-                      <button onClick={() => markOne.mutate(n.id)} className="w-full text-left hover:bg-muted">
-                        {body}
-                      </button>
+                  <li key={g.key} className="border-b border-border last:border-0">
+                    <div className={cn("flex items-start gap-1 px-3 py-2 text-xs", unreadCount > 0 && "bg-primary/5")}>
+                      {isThread && (
+                        <button
+                          onClick={() => setExpanded((e) => ({ ...e, [g.key]: !isOpen }))}
+                          className="mt-0.5 text-muted-foreground hover:text-foreground"
+                          aria-label={isOpen ? "Réduire" : "Développer"}
+                        >
+                          {isOpen ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
+                        </button>
+                      )}
+                      <div className="flex-1">
+                        {g.url ? (
+                          <a href={g.url} onClick={openThread} className="block hover:underline">
+                            <span className="font-semibold">{latest.message}</span>
+                          </a>
+                        ) : (
+                          <button onClick={() => markOne.mutate(latest.id)} className="w-full text-left">
+                            <span className="font-semibold">{latest.message}</span>
+                          </button>
+                        )}
+                        <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <span>{formatDistanceToNow(new Date(latest.created_at), { addSuffix: true, locale: fr })}</span>
+                          {isThread && (
+                            <span className="rounded bg-muted px-1.5 py-0.5 font-semibold">
+                              {g.items.length} msgs{unreadCount > 0 ? ` · ${unreadCount} nouv.` : ""}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {isThread && isOpen && (
+                      <ul className="border-t border-border/50 bg-muted/20">
+                        {g.items.slice(1).map((n) => (
+                          <li key={n.id} className={cn("px-3 py-1.5 pl-8 text-[11px]", !n.read_at && "bg-primary/5")}>
+                            {g.url ? (
+                              <a href={g.url} onClick={() => { markOne.mutate(n.id); setOpen(false); }} className="block hover:underline">
+                                <span>{n.message}</span>
+                                <span className="ml-1 text-[10px] text-muted-foreground">
+                                  · {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: fr })}
+                                </span>
+                              </a>
+                            ) : (
+                              <span>{n.message}</span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
                     )}
                   </li>
                 );
