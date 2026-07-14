@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bell, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -118,11 +119,16 @@ export function NotificationsBell() {
           <div className="absolute right-0 top-full z-50 mt-1 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-md border-2 border-border bg-background shadow-lg">
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
               <span className="text-xs font-bold uppercase tracking-widest">Notifications</span>
-              {unread > 0 && (
-                <button onClick={() => markAll.mutate()} className="inline-flex items-center gap-1 text-[10px] uppercase text-primary hover:underline">
-                  <Check className="size-3" /> Tout marquer lu
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {unread > 0 && (
+                  <button onClick={() => markAll.mutate()} className="inline-flex items-center gap-1 text-[10px] uppercase text-primary hover:underline">
+                    <Check className="size-3" /> Tout marquer lu
+                  </button>
+                )}
+                <Link to="/notifications" onClick={() => setOpen(false)} className="text-[10px] uppercase text-primary hover:underline">
+                  Ouvrir
+                </Link>
+              </div>
             </div>
             <ul className="max-h-96 overflow-auto">
               {notifs.length === 0 && (
