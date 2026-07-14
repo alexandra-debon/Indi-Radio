@@ -225,7 +225,7 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
   });
 
   return (
-    <li className="card-brut overflow-hidden">
+    <li id={`news-${post.id}`} className="card-brut scroll-mt-24 overflow-hidden">
       {!editing && post.image_url && <img src={post.image_url} alt="" className="h-48 w-full object-cover" />}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
