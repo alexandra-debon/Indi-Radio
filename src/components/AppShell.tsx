@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark.jpeg.asset.json";
@@ -40,6 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-end">
             {session && profile ? (
               <div className="flex items-center gap-2">
+                <NotificationsBell />
                 {isAdmin && (
                   <Link
                     to="/admin"
