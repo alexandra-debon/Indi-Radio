@@ -7,6 +7,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { parseNotifUrl } from "@/lib/notif-navigate";
 
 interface Notif {
   id: string;
@@ -156,15 +157,26 @@ export function NotificationsBell() {
                         </button>
                       )}
                       <div className="flex-1">
-                        {g.url ? (
-                          <a href={g.url} onClick={openThread} className="block hover:underline">
-                            <span className="font-semibold">{latest.message}</span>
-                          </a>
-                        ) : (
+                        {(() => {
+                          const target = parseNotifUrl(g.url);
+                          if (target) {
+                            return (
+                              <Link
+                                to={target.to}
+                                hash={target.hash}
+                                onClick={openThread}
+                                className="block hover:underline"
+                              >
+                                <span className="font-semibold">{latest.message}</span>
+                              </Link>
+                            );
+                          }
+                          return (
                           <button onClick={() => markOne.mutate(latest.id)} className="w-full text-left">
                             <span className="font-semibold">{latest.message}</span>
                           </button>
-                        )}
+                          );
+                        })()}
                         <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
                           <span>{formatDistanceToNow(new Date(latest.created_at), { addSuffix: true, locale: fr })}</span>
                           {isThread && (
@@ -179,16 +191,23 @@ export function NotificationsBell() {
                       <ul className="border-t border-border/50 bg-muted/20">
                         {g.items.slice(1).map((n) => (
                           <li key={n.id} className={cn("px-3 py-1.5 pl-8 text-[11px]", !n.read_at && "bg-primary/5")}>
-                            {g.url ? (
-                              <a href={g.url} onClick={() => { markOne.mutate(n.id); setOpen(false); }} className="block hover:underline">
-                                <span>{n.message}</span>
-                                <span className="ml-1 text-[10px] text-muted-foreground">
-                                  · {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: fr })}
-                                </span>
-                              </a>
-                            ) : (
-                              <span>{n.message}</span>
-                            )}
+                            {(() => {
+                              const t = parseNotifUrl(g.url);
+                              if (!t) return <span>{n.message}</span>;
+                              return (
+                                <Link
+                                  to={t.to}
+                                  hash={t.hash}
+                                  onClick={() => { markOne.mutate(n.id); setOpen(false); }}
+                                  className="block hover:underline"
+                                >
+                                  <span>{n.message}</span>
+                                  <span className="ml-1 text-[10px] text-muted-foreground">
+                                    · {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: fr })}
+                                  </span>
+                                </Link>
+                              );
+                            })()}
                           </li>
                         ))}
                       </ul>
