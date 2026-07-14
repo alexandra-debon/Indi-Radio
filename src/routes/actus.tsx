@@ -50,7 +50,7 @@ interface NewsPost {
   content: string;
   image_url: string | null;
   created_at: string;
-  author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; level: number } | null;
+  author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
 }
 
 function ActusPage() {
