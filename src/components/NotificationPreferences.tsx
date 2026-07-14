@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { AtSign, MessageCircle, CornerDownRight, Heart, Settings2 } from "lucide-react";
+import { AtSign, MessageCircle, CornerDownRight, Heart, Settings2, Bell } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Prefs = {
@@ -12,14 +13,13 @@ type Prefs = {
   likes: boolean;
 };
 
-const FIELDS: Array<{ key: keyof Omit<Prefs, "user_id">; label: string; hint: string; icon: typeof Bell }> = [
+const FIELDS: Array<{ key: keyof Omit<Prefs, "user_id">; label: string; hint: string; icon: LucideIcon }> = [
   { key: "mentions", label: "Tags (@toi)", hint: "Quand quelqu'un te tague dans un message", icon: AtSign },
   { key: "replies", label: "Réponses directes", hint: "Quand on répond à ton message ou commente ton actu", icon: MessageCircle },
   { key: "thread_replies", label: "Réponses dans un fil suivi", hint: "Quand quelqu'un répond dans un fil auquel tu as participé", icon: CornerDownRight },
   { key: "likes", label: "Likes", hint: "Quand on aime ton message ou ton actu", icon: Heart },
-] as any;
-// (Bell import fix)
-import { Bell } from "lucide-react";
+];
+void Bell;
 
 export function NotificationPreferences() {
   const { session } = useAuth();
