@@ -11,11 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3 } from "lucide-react";
 import { z } from "zod";
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -43,6 +43,7 @@ function AdminPage() {
     { key: "news" as const, label: "Publier une actu", icon: Newspaper, desc: "Poster sur Indi Rézo" },
     { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
+    { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
   ];
   return (
     <div className="space-y-4">
@@ -67,18 +68,20 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid grid-cols-5">
+        <TabsList className="grid grid-cols-3 sm:grid-cols-6">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
           <TabsTrigger value="podcasts">Podcasts</TabsTrigger>
           <TabsTrigger value="shows">Émissions</TabsTrigger>
+          <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
         <TabsContent value="requests" className="mt-4"><RequestsAdmin /></TabsContent>
         <TabsContent value="news" className="mt-4"><NewsPublisher /></TabsContent>
         <TabsContent value="podcasts" className="mt-4"><PodcastsAdmin /></TabsContent>
         <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
+        <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
       </Tabs>
     </div>
   );
