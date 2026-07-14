@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3 } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
