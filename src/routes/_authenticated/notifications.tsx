@@ -73,7 +73,20 @@ function NotificationsCenter() {
         .in("id", ids);
       if (error) throw error;
     },
-    onSuccess: invalidate,
+    onMutate: (ids) => {
+      const key = ["notifications", session?.user.id];
+      const prev = qc.getQueryData<Notif[]>(key);
+      if (prev) {
+        const now = new Date().toISOString();
+        const set = new Set(ids);
+        qc.setQueryData<Notif[]>(key, prev.map((n) => (set.has(n.id) && !n.read_at ? { ...n, read_at: now } : n)));
+      }
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) qc.setQueryData(["notifications", session?.user.id], ctx.prev);
+    },
+    onSettled: invalidate,
   });
 
   const markAll = useMutation({
