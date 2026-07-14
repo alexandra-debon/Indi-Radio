@@ -139,7 +139,7 @@ function ChroniqueDetailPage() {
             {streamingLinks.map((l) => (
               <li key={l.label}>
                 <a
-                  href={l.url}
+                  href={l.url ?? undefined}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-muted"
