@@ -277,6 +277,7 @@ function NewsPublisher() {
 function PodcastsAdmin() {
   const qc = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: "", description: "", cover_url: "", external_url: "" });
 
   const { data: podcasts = [] } = useQuery({
@@ -332,9 +333,11 @@ function PodcastsAdmin() {
                 <div className="truncate text-sm font-bold">{p.title}</div>
                 {p.description && <div className="line-clamp-1 text-xs text-muted-foreground">{p.description}</div>}
               </div>
+              <Button size="icon" variant="outline" onClick={() => setEditId(editId === p.id ? null : p.id)} aria-label="Modifier"><Pencil className="size-4" /></Button>
               <Button size="sm" variant="outline" onClick={() => setOpenId(openId === p.id ? null : p.id)}>{openId === p.id ? "Fermer" : "Épisodes"}</Button>
               <Button size="icon" variant="destructive" onClick={() => { if (confirm("Supprimer ce podcast et ses épisodes ?")) remove.mutate(p.id); }}><Trash2 className="size-4" /></Button>
             </div>
+            {editId === p.id && <PodcastEdit podcast={p as any} onDone={() => setEditId(null)} />}
             {openId === p.id && <EpisodesAdmin podcastId={p.id} />}
           </li>
         ))}
@@ -343,9 +346,45 @@ function PodcastsAdmin() {
   );
 }
 
+function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string; description: string | null; cover_url: string | null; external_url: string | null }; onDone: () => void }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({
+    title: podcast.title,
+    description: podcast.description ?? "",
+    cover_url: podcast.cover_url ?? "",
+    external_url: podcast.external_url ?? "",
+  });
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("podcasts").update({
+        title: f.title,
+        description: f.description || null,
+        cover_url: f.cover_url || null,
+        external_url: f.external_url || null,
+      }).eq("id", podcast.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Podcast mis à jour"); qc.invalidateQueries({ queryKey: ["admin-podcasts"] }); qc.invalidateQueries({ queryKey: ["podcasts"] }); onDone(); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+      <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
+      <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      <Input placeholder="Lien manager radio" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
+        <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
+      </div>
+    </div>
+  );
+}
+
 function EpisodesAdmin({ podcastId }: { podcastId: string }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ title: "", description: "", audio_url: "", external_url: "", duration_seconds: "", cover_url: "" });
+  const [editId, setEditId] = useState<string | null>(null);
 
   const { data: eps = [] } = useQuery({
     queryKey: ["admin-episodes", podcastId],
@@ -398,9 +437,13 @@ function EpisodesAdmin({ podcastId }: { podcastId: string }) {
       </div>
       <ul className="space-y-1">
         {eps.map((e) => (
-          <li key={e.id} className="flex items-center gap-2 rounded border border-border p-2 text-xs">
-            <div className="min-w-0 flex-1 truncate">{e.title}</div>
-            <Button size="icon" variant="ghost" onClick={() => { if (confirm("Supprimer ?")) remove.mutate(e.id); }}><Trash2 className="size-3" /></Button>
+          <li key={e.id} className="rounded border border-border p-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1 truncate">{e.title}</div>
+              <Button size="icon" variant="ghost" onClick={() => setEditId(editId === e.id ? null : e.id)} aria-label="Modifier"><Pencil className="size-3" /></Button>
+              <Button size="icon" variant="ghost" onClick={() => { if (confirm("Supprimer ?")) remove.mutate(e.id); }}><Trash2 className="size-3" /></Button>
+            </div>
+            {editId === e.id && <EpisodeEdit episode={e as any} invalidateKeys={[["admin-episodes", podcastId], ["episodes", podcastId]]} onDone={() => setEditId(null)} />}
           </li>
         ))}
       </ul>
@@ -408,9 +451,58 @@ function EpisodesAdmin({ podcastId }: { podcastId: string }) {
   );
 }
 
+function EpisodeEdit({ episode, invalidateKeys, onDone }: {
+  episode: { id: string; title: string; description: string | null; audio_url: string | null; external_url: string | null; duration_seconds: number | null; cover_url: string | null };
+  invalidateKeys: (readonly unknown[])[];
+  onDone: () => void;
+}) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({
+    title: episode.title,
+    description: episode.description ?? "",
+    audio_url: episode.audio_url ?? "",
+    external_url: episode.external_url ?? "",
+    duration_seconds: episode.duration_seconds != null ? String(episode.duration_seconds) : "",
+    cover_url: episode.cover_url ?? "",
+  });
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("episodes").update({
+        title: f.title,
+        description: f.description || null,
+        audio_url: f.audio_url || null,
+        external_url: f.external_url || null,
+        cover_url: f.cover_url || null,
+        duration_seconds: f.duration_seconds ? Number(f.duration_seconds) : null,
+      }).eq("id", episode.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Épisode mis à jour"); invalidateKeys.forEach((k) => qc.invalidateQueries({ queryKey: k })); onDone(); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <div className="mt-2 space-y-2 border-t border-border pt-2">
+      <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+      <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
+      <Input placeholder="URL audio" value={f.audio_url} onChange={(e) => setF({ ...f, audio_url: e.target.value })} />
+      <Input placeholder="Lien externe" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
+      <div className="flex gap-2">
+        <Input type="number" placeholder="Durée (sec)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
+        <Input placeholder="Pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      </div>
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
+        <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
+      </div>
+    </div>
+  );
+}
+
 function ShowsAdmin() {
   const qc = useQueryClient();
   const [form, setForm] = useState<{ type: "emission" | "chronique" | "animateur"; title: string; description: string; schedule: string; host: string; cover_url: string }>({ type: "emission", title: "", description: "", schedule: "", host: "", cover_url: "" });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const { data: shows = [] } = useQuery({
     queryKey: ["admin-shows"],
@@ -467,16 +559,141 @@ function ShowsAdmin() {
 
       <ul className="space-y-2">
         {shows.map((s) => (
-          <li key={s.id} className="card-brut flex items-center gap-3 p-3">
-            <div className="size-14 shrink-0 overflow-hidden rounded bg-muted">
-              {s.cover_url ? <img src={s.cover_url} alt={s.title} className="size-full object-cover" /> : <div className="grid size-full place-items-center"><Mic2 className="size-5 text-muted-foreground" /></div>}
+          <li key={s.id} className="card-brut p-3">
+            <div className="flex items-center gap-3">
+              <div className="size-14 shrink-0 overflow-hidden rounded bg-muted">
+                {s.cover_url ? <img src={s.cover_url} alt={s.title} className="size-full object-cover" /> : <div className="grid size-full place-items-center"><Mic2 className="size-5 text-muted-foreground" /></div>}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] uppercase tracking-widest text-primary">{s.type}</div>
+                <div className="truncate text-sm font-bold">{s.title}</div>
+                <div className="truncate text-xs text-muted-foreground">{[s.schedule, (s as any).host].filter(Boolean).join(" · ")}</div>
+              </div>
+              <Button size="icon" variant="outline" onClick={() => setEditId(editId === s.id ? null : s.id)} aria-label="Modifier"><Pencil className="size-4" /></Button>
+              <Button size="sm" variant="outline" onClick={() => setOpenId(openId === s.id ? null : s.id)}>{openId === s.id ? "Fermer" : "Replays"}</Button>
+              <Button size="icon" variant="destructive" onClick={() => { if (confirm("Supprimer ?")) remove.mutate(s.id); }}><Trash2 className="size-4" /></Button>
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[10px] uppercase tracking-widest text-primary">{s.type}</div>
-              <div className="truncate text-sm font-bold">{s.title}</div>
-              <div className="truncate text-xs text-muted-foreground">{[s.schedule, (s as any).host].filter(Boolean).join(" · ")}</div>
+            {editId === s.id && <ShowEdit show={s as any} onDone={() => setEditId(null)} />}
+            {openId === s.id && <ShowEpisodesAdmin showId={s.id} />}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "chronique" | "animateur"; title: string; description: string | null; schedule: string | null; host: string | null; cover_url: string | null }; onDone: () => void }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({
+    type: show.type,
+    title: show.title,
+    description: show.description ?? "",
+    schedule: show.schedule ?? "",
+    host: show.host ?? "",
+    cover_url: show.cover_url ?? "",
+  });
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("shows").update({
+        type: f.type,
+        title: f.title,
+        description: f.description || null,
+        schedule: f.schedule || null,
+        host: f.host || null,
+        cover_url: f.cover_url || null,
+      }).eq("id", show.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Émission mise à jour"); qc.invalidateQueries({ queryKey: ["admin-shows"] }); qc.invalidateQueries({ queryKey: ["shows"] }); onDone(); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <Select value={f.type} onValueChange={(v) => setF({ ...f, type: v as any })}>
+        <SelectTrigger><SelectValue /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="emission">Émission</SelectItem>
+          <SelectItem value="chronique">Chronique</SelectItem>
+          <SelectItem value="animateur">Animateur</SelectItem>
+        </SelectContent>
+      </Select>
+      <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+      <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
+      <Input placeholder="Horaire" value={f.schedule} onChange={(e) => setF({ ...f, schedule: e.target.value })} />
+      <Input placeholder="Animateur·rice·s" value={f.host} onChange={(e) => setF({ ...f, host: e.target.value })} />
+      <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
+        <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
+      </div>
+    </div>
+  );
+}
+
+function ShowEpisodesAdmin({ showId }: { showId: string }) {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({ title: "", description: "", audio_url: "", external_url: "", duration_seconds: "", cover_url: "" });
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const { data: eps = [] } = useQuery({
+    queryKey: ["admin-show-episodes", showId],
+    queryFn: async () => {
+      const { data } = await supabase.from("episodes").select("*").eq("show_id", showId).order("published_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async () => {
+      if (!form.title) throw new Error("Titre requis");
+      if (!form.audio_url && !form.external_url) throw new Error("URL audio ou lien externe requis");
+      const { error } = await supabase.from("episodes").insert({
+        show_id: showId,
+        podcast_id: null,
+        title: form.title,
+        description: form.description || null,
+        audio_url: form.audio_url || null,
+        external_url: form.external_url || null,
+        cover_url: form.cover_url || null,
+        duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : null,
+        published_at: new Date().toISOString(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Replay ajouté"); setForm({ title: "", description: "", audio_url: "", external_url: "", duration_seconds: "", cover_url: "" }); qc.invalidateQueries({ queryKey: ["admin-show-episodes", showId] }); qc.invalidateQueries({ queryKey: ["show-episodes", showId] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("episodes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-show-episodes", showId] }); qc.invalidateQueries({ queryKey: ["show-episodes", showId] }); },
+  });
+
+  return (
+    <div className="mt-3 space-y-3 border-t border-border pt-3">
+      <div className="space-y-2">
+        <Input placeholder="Titre du replay" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        <Textarea rows={2} placeholder="Résumé (optionnel)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        <Input placeholder="URL audio (mp3/aac direct)" value={form.audio_url} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} />
+        <Input placeholder="Lien externe manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
+        <div className="flex gap-2">
+          <Input type="number" placeholder="Durée (sec)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
+          <Input placeholder="Pochette (URL, optionnel)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+        </div>
+        <Button size="sm" onClick={() => create.mutate()}>Ajouter le replay</Button>
+      </div>
+      <ul className="space-y-1">
+        {eps.map((e) => (
+          <li key={e.id} className="rounded border border-border p-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1 truncate">{e.title}</div>
+              <Button size="icon" variant="ghost" onClick={() => setEditId(editId === e.id ? null : e.id)} aria-label="Modifier"><Pencil className="size-3" /></Button>
+              <Button size="icon" variant="ghost" onClick={() => { if (confirm("Supprimer ?")) remove.mutate(e.id); }}><Trash2 className="size-3" /></Button>
             </div>
-            <Button size="icon" variant="destructive" onClick={() => { if (confirm("Supprimer ?")) remove.mutate(s.id); }}><Trash2 className="size-4" /></Button>
+            {editId === e.id && <EpisodeEdit episode={e as any} invalidateKeys={[["admin-show-episodes", showId], ["show-episodes", showId]]} onDone={() => setEditId(null)} />}
           </li>
         ))}
       </ul>
