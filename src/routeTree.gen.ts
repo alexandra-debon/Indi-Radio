@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
@@ -16,6 +17,11 @@ import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PodcastsRoute = PodcastsRouteImport.update({
+  id: '/podcasts',
+  path: '/podcasts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsletterRoute = NewsletterRouteImport.update({
   id: '/newsletter',
   path: '/newsletter',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcasts': typeof PodcastsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcasts': typeof PodcastsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcasts': typeof PodcastsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,8 +90,16 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
+    | '/podcasts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/chart' | '/dedicaces' | '/emissions' | '/newsletter'
+  to:
+    | '/'
+    | '/about'
+    | '/chart'
+    | '/dedicaces'
+    | '/emissions'
+    | '/newsletter'
+    | '/podcasts'
   id:
     | '__root__'
     | '/'
@@ -91,6 +108,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
+    | '/podcasts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -100,10 +118,18 @@ export interface RootRouteChildren {
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRoute
   NewsletterRoute: typeof NewsletterRoute
+  PodcastsRoute: typeof PodcastsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/podcasts': {
+      id: '/podcasts'
+      path: '/podcasts'
+      fullPath: '/podcasts'
+      preLoaderRoute: typeof PodcastsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/newsletter': {
       id: '/newsletter'
       path: '/newsletter'
@@ -156,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRoute,
   NewsletterRoute: NewsletterRoute,
+  PodcastsRoute: PodcastsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
