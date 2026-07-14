@@ -9,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
+import { useArtwork } from "@/hooks/use-artwork";
 
 export const Route = createFileRoute("/")({
   component: LivePage,
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/")({
 
 function LivePage() {
   const { playing, toggle, currentTrack } = useRadio();
+  const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
 
   const { data: history = [] } = useQuery({
     queryKey: ["track-history-short"],
@@ -38,8 +40,17 @@ function LivePage() {
         <h1 className="section-title">Musique en cours</h1>
         <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
-            <div className="grid size-24 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-              <RadioIcon className="size-10" />
+            <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
+              {heroArtwork ? (
+                <img
+                  src={heroArtwork}
+                  alt={currentTrack ? `${currentTrack.title} — ${currentTrack.artist}` : "Pochette"}
+                  className="absolute inset-0 size-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <RadioIcon className="size-10" />
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-[11px] uppercase tracking-widest text-primary">On air</div>
@@ -78,19 +89,41 @@ function LivePage() {
             </li>
           )}
           {history.map((t) => (
-            <li key={t.id} className="card-brut flex items-center gap-3 p-2.5">
-              <History className="size-4 text-muted-foreground" />
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold">{t.title}</div>
-                <div className="truncate text-xs text-muted-foreground">{t.artist}</div>
-              </div>
-              <span className="text-[10px] text-muted-foreground">
-                {formatDistanceToNow(new Date(t.played_at), { addSuffix: true, locale: fr })}
-              </span>
-            </li>
+            <HistoryRow key={t.id} track={t} />
           ))}
         </ul>
       </section>
     </div>
+  );
+}
+
+function HistoryRow({
+  track,
+}: {
+  track: { id: string; title: string; artist: string; played_at: string };
+}) {
+  const { data: artwork } = useArtwork(track.artist, track.title);
+  return (
+    <li className="card-brut flex items-center gap-3 p-2.5">
+      <div className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded bg-muted text-muted-foreground">
+        {artwork ? (
+          <img
+            src={artwork}
+            alt={`${track.title} — ${track.artist}`}
+            className="absolute inset-0 size-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <History className="size-4" />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-semibold">{track.title}</div>
+        <div className="truncate text-xs text-muted-foreground">{track.artist}</div>
+      </div>
+      <span className="text-[10px] text-muted-foreground">
+        {formatDistanceToNow(new Date(track.played_at), { addSuffix: true, locale: fr })}
+      </span>
+    </li>
   );
 }
