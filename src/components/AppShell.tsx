@@ -6,7 +6,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
-import wordmarkAsset from "@/assets/indi-radio-wordmark.jpeg.asset.json";
+import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
 
 const NAV = [
   { to: "/", label: "En direct", icon: Radio },
@@ -36,8 +36,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex min-w-0 items-center gap-2 overflow-hidden">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-9 md:size-12 lg:size-14 shrink-0 rounded-sm object-contain" />
-            <img src={wordmarkAsset.url} alt="Indi Radio" className="hidden lg:block h-9 lg:h-10 w-auto min-w-0 shrink object-contain" />
+            <img src={logoAsset.url} alt="Indi Radio" className="size-9 sm:size-10 md:size-11 lg:size-12 shrink-0 rounded-sm object-contain" />
+            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-9 sm:h-10 md:h-11 lg:h-12 w-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] min-w-0 shrink object-contain" />
           </Link>
           <div className="flex items-center justify-end">
             {session && profile ? (
