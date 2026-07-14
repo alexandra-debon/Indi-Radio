@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "sonner";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -26,8 +27,10 @@ interface PostRow {
   } | null;
 }
 
+const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
+
 function renderMentions(content: string) {
-  const parts = content.split(/(@[A-Za-z0-9_]+)/g);
+  const parts = content.split(/(@[\p{L}\p{N}_.-]+)/gu);
   return parts.map((p, i) =>
     p.startsWith("@") ? (
       <span key={i} className="mention">{p}</span>
@@ -70,7 +73,7 @@ export function SocialWall() {
   const create = useMutation({
     mutationFn: async () => {
       if (!session || !content.trim()) return;
-      const mentions = Array.from(content.matchAll(/@([A-Za-z0-9_]+)/g)).map((m) => m[1]);
+      const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
       const { error } = await supabase.from("posts").insert({
         author_id: session.user.id,
         content: content.trim(),
@@ -89,7 +92,7 @@ export function SocialWall() {
 
   const updatePost = useMutation({
     mutationFn: async ({ id, content }: { id: string; content: string }) => {
-      const mentions = Array.from(content.matchAll(/@([A-Za-z0-9_]+)/g)).map((m) => m[1]);
+      const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
       const { error } = await supabase.from("posts").update({ content, mentions }).eq("id", id);
       if (error) throw error;
     },
@@ -120,7 +123,7 @@ export function SocialWall() {
       </div>
 
       <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
-        <Textarea
+        <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={session ? "Balance ton message…  utilise @pseudo pour mentionner" : "Connecte-toi pour poster"}
@@ -162,7 +165,7 @@ export function SocialWall() {
               </div>
               {isEditing ? (
                 <div className="space-y-2">
-                  <Textarea
+                  <MentionTextarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     rows={2}
