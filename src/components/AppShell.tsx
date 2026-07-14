@@ -25,19 +25,19 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-2.5">
+        <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5">
           <button
             onClick={() => setOpen(true)}
             aria-label="Menu"
-            className="grid size-9 place-items-center rounded-md border border-border hover:bg-muted"
+            className="grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
           >
             <Menu className="size-5" />
           </button>
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-12 rounded-sm object-contain" />
-            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-9 w-auto object-contain" />
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <img src={logoAsset.url} alt="Indi Radio" className="size-12 sm:size-12 md:size-14 lg:size-16 shrink-0 rounded-sm object-contain" />
+            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-8 sm:h-9 md:h-10 lg:h-11 w-auto shrink-0 object-contain" />
           </Link>
-          <div className="ml-auto">
+          <div className="flex items-center justify-end">
             {session && profile ? (
               <div className="flex items-center gap-2">
                 {isAdmin && (
