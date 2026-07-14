@@ -21,6 +21,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
@@ -84,6 +85,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotifTestRoute = AuthenticatedNotifTestRouteImport.update({
+  id: '/notif-test',
+  path: '/notif-test',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/notif-test': typeof AuthenticatedNotifTestRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/notif-test': typeof AuthenticatedNotifTestRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/sitemap.xml'
     | '/admin'
+    | '/notif-test'
     | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/sitemap.xml'
     | '/admin'
+    | '/notif-test'
     | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/_authenticated/notif-test'
     | '/_authenticated/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -304,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notif-test': {
+      id: '/_authenticated/notif-test'
+      path: '/notif-test'
+      fullPath: '/notif-test'
+      preLoaderRoute: typeof AuthenticatedNotifTestRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -330,11 +349,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
 }
 
