@@ -1,0 +1,18 @@
+{
+  "name": "Indi Radio — InDi ArT CulTuRe",
+  "short_name": "Indi Radio",
+  "description": "La radio d'InDi ArT CulTuRe : le live, le mur social, les podcasts et les actus des arts indépendants.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "lang": "fr",
+  "categories": ["music", "entertainment", "news"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
