@@ -10,14 +10,22 @@ export interface BadgeProfile {
   level?: number | null;
 }
 
-export function UserBadge({ profile, className }: { profile: BadgeProfile | null | undefined; className?: string }) {
+export function UserBadge({ profile, className, compact }: { profile: BadgeProfile | null | undefined; className?: string; compact?: boolean }) {
   if (!profile) return <span className={cn("text-muted-foreground", className)}>anonyme</span>;
 
+  if (compact) {
+    return (
+      <span className={cn("inline-flex min-w-0 max-w-full items-center gap-1.5 font-semibold", className)}>
+        <span className="min-w-0 truncate">{profile.pseudo}</span>
+      </span>
+    );
+  }
+
   return (
-    <span className={cn("inline-flex items-center gap-1.5 font-semibold", className)}>
-      <span>{profile.pseudo}</span>
+    <span className={cn("inline-flex flex-wrap items-center gap-1.5 font-semibold", className)}>
+      <span className="break-words">{profile.pseudo}</span>
       {profile.is_certified && (
-        <CheckCircle2 className="size-3.5 fill-primary text-primary-foreground" aria-label="Compte certifié" />
+        <CheckCircle2 className="size-3.5 shrink-0 fill-primary text-primary-foreground" aria-label="Compte certifié" />
       )}
       {profile.is_team_indi && (
         <span className="inline-flex items-center gap-1 rounded-sm bg-gradient-to-r from-primary to-destructive px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-primary-foreground shadow-sm">
