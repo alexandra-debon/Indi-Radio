@@ -116,6 +116,15 @@ function UserAdmin() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const toggleTeamIndi = useMutation({
+    mutationFn: async ({ id, is_team_indi }: { id: string; is_team_indi: boolean }) => {
+      const { error } = await supabase.from("profiles").update({ is_team_indi }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Badge Team Indi mis à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); qc.invalidateQueries({ queryKey: ["profile"] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   return (
     <div className="space-y-3">
       <Input placeholder="Rechercher un pseudo…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -137,6 +146,10 @@ function UserAdmin() {
                 <Switch checked={p.is_certified} onCheckedChange={(v) => toggleCert.mutate({ id: p.id, is_certified: v })} />
                 Certifié
               </label>
+              <label className="flex items-center gap-2 text-xs">
+                <Switch checked={!!p.is_team_indi} onCheckedChange={(v) => toggleTeamIndi.mutate({ id: p.id, is_team_indi: v })} />
+                Team Indi
+              </label>
               <span className="ml-auto text-xs text-muted-foreground">{p.points} pts · Niv. {p.level}</span>
             </div>
           </li>
@@ -153,7 +166,7 @@ function RequestsAdmin() {
     queryFn: async () => {
       const { data } = await supabase
         .from("requests")
-        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,level)")
+        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,is_team_indi,level)")
         .order("created_at", { ascending: false });
       return (data ?? []) as any[];
     },

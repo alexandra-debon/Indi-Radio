@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Newspaper } from "lucide-react";
+import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -26,11 +27,12 @@ export const Route = createFileRoute("/actus")({
 
 interface NewsPost {
   id: string;
+  author_id: string;
   title: string;
   content: string;
   image_url: string | null;
   created_at: string;
-  author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; level: number } | null;
+  author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; level: number } | null;
 }
 
 function ActusPage() {
@@ -42,7 +44,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,level)")
+        .select("id,author_id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -103,8 +105,17 @@ function ActusPage() {
 
 function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn: () => void; sessionUserId: string | null }) {
   const qc = useQueryClient();
+  const { isAdmin } = useAuth();
   const [commentOpen, setCommentOpen] = useState(false);
   const [comment, setComment] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "" });
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editCommentText, setEditCommentText] = useState("");
+
+  const isOwner = sessionUserId === post.author_id;
+  const canEditPost = isOwner;
+  const canDeletePost = isOwner || isAdmin;
 
   const { data: likeInfo } = useQuery({
     queryKey: ["news-likes", post.id, sessionUserId ?? "anon"],
@@ -125,7 +136,7 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,level)")
+        .select("id, author_id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
@@ -154,9 +165,49 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const updatePost = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("news_posts").update({
+        title: editForm.title,
+        content: editForm.content,
+        image_url: editForm.image_url || null,
+      }).eq("id", post.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deletePost = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("news_posts").delete().eq("id", post.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Actu supprimée"); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const updateComment = useMutation({
+    mutationFn: async ({ id, content }: { id: string; content: string }) => {
+      const { error } = await supabase.from("news_comments").update({ content }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { setEditingCommentId(null); qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deleteComment = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("news_comments").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   return (
     <li className="card-brut overflow-hidden">
-      {post.image_url && <img src={post.image_url} alt="" className="h-48 w-full object-cover" />}
+      {!editing && post.image_url && <img src={post.image_url} alt="" className="h-48 w-full object-cover" />}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
@@ -164,8 +215,22 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: fr })}
           </span>
         </div>
-        <h3 className="text-lg font-bold">{post.title}</h3>
-        <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+        {editing ? (
+          <div className="space-y-2">
+            <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
+            <Input value={editForm.image_url} onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })} placeholder="Image URL (optionnel)" />
+            <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
+            <div className="flex justify-end gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
+              <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-lg font-bold">{post.title}</h3>
+            <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+          </>
+        )}
         <div className="flex items-center gap-2 pt-1">
           <button
             onClick={() => (sessionUserId ? toggleLike.mutate() : onSignIn())}
@@ -176,21 +241,63 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
           <button onClick={() => setCommentOpen((v) => !v)} className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs hover:bg-muted">
             <MessageCircle className="size-3.5" /> commentaires
           </button>
+          {!editing && (canEditPost || canDeletePost) && (
+            <div className="ml-auto flex gap-1">
+              {canEditPost && (
+                <button onClick={() => setEditing(true)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Modifier">
+                  <Pencil className="size-3.5" />
+                </button>
+              )}
+              {canDeletePost && (
+                <button onClick={() => { if (confirm("Supprimer cette actu ?")) deletePost.mutate(); }} className="rounded p-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground" aria-label="Supprimer">
+                  <Trash2 className="size-3.5" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {commentOpen && (
           <div className="space-y-2 border-t border-border pt-3">
-            {comments.map((c: any) => (
-              <div key={c.id} className="rounded-md bg-muted/40 p-2">
-                <div className="mb-1 flex items-center justify-between gap-2">
-                  <UserBadge profile={c.author} className="text-[11px]" />
-                  <span className="text-[10px] text-muted-foreground">
-                    {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
-                  </span>
+            {comments.map((c: any) => {
+              const isCommentOwner = sessionUserId === c.author_id;
+              const canDelC = isCommentOwner || isAdmin;
+              const canEditC = isCommentOwner;
+              const isEditingC = editingCommentId === c.id;
+              return (
+                <div key={c.id} className="rounded-md bg-muted/40 p-2">
+                  <div className="mb-1 flex items-center justify-between gap-2">
+                    <UserBadge profile={c.author} className="text-[11px]" />
+                    <span className="text-[10px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
+                    </span>
+                  </div>
+                  {isEditingC ? (
+                    <div className="space-y-1">
+                      <Input value={editCommentText} onChange={(e) => setEditCommentText(e.target.value)} />
+                      <div className="flex justify-end gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => setEditingCommentId(null)}><X className="size-3" /></Button>
+                        <Button size="sm" onClick={() => updateComment.mutate({ id: c.id, content: editCommentText.trim() })} disabled={!editCommentText.trim()}><Check className="size-3" /></Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm">{c.content}</p>
+                      {(canEditC || canDelC) && (
+                        <div className="flex shrink-0 gap-1">
+                          {canEditC && (
+                            <button onClick={() => { setEditingCommentId(c.id); setEditCommentText(c.content); }} className="rounded p-1 text-muted-foreground hover:text-foreground" aria-label="Modifier"><Pencil className="size-3" /></button>
+                          )}
+                          {canDelC && (
+                            <button onClick={() => { if (confirm("Supprimer ce commentaire ?")) deleteComment.mutate(c.id); }} className="rounded p-1 text-muted-foreground hover:text-destructive" aria-label="Supprimer"><Trash2 className="size-3" /></button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm">{c.content}</p>
-              </div>
-            ))}
+              );
+            })}
             {sessionUserId ? (
               <div className="flex gap-2">
                 <Input placeholder="Ajouter un commentaire…" value={comment} onChange={(e) => setComment(e.target.value)} />

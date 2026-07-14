@@ -343,6 +343,7 @@ export type Database = {
           created_at: string
           id: string
           is_certified: boolean
+          is_team_indi: boolean
           level: number
           points: number
           pseudo: string
@@ -353,6 +354,7 @@ export type Database = {
           created_at?: string
           id: string
           is_certified?: boolean
+          is_team_indi?: boolean
           level?: number
           points?: number
           pseudo: string
@@ -363,6 +365,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_certified?: boolean
+          is_team_indi?: boolean
           level?: number
           points?: number
           pseudo?: string
