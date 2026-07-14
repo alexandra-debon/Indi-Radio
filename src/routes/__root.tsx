@@ -98,6 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Le live, le mur social, les podcasts et les actus des arts indépendants." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "c0A7GBSm4kA-HXUpLR9BPCC3qCdW7GZ-otAj-YtFVN8" },
     ],
     links: [
       {
