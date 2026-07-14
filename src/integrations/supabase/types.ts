@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      album_reviews: {
+        Row: {
+          apple_music_url: string | null
+          artist: string
+          author_id: string
+          bandcamp_url: string | null
+          content: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          label: string | null
+          published: boolean
+          rating: number | null
+          release_date: string | null
+          slug: string
+          soundcloud_url: string | null
+          spotify_url: string | null
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          apple_music_url?: string | null
+          artist: string
+          author_id: string
+          bandcamp_url?: string | null
+          content: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          label?: string | null
+          published?: boolean
+          rating?: number | null
+          release_date?: string | null
+          slug: string
+          soundcloud_url?: string | null
+          spotify_url?: string | null
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          apple_music_url?: string | null
+          artist?: string
+          author_id?: string
+          bandcamp_url?: string | null
+          content?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          label?: string | null
+          published?: boolean
+          rating?: number | null
+          release_date?: string | null
+          slug?: string
+          soundcloud_url?: string | null
+          spotify_url?: string | null
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
       artwork_lookups: {
         Row: {
           artist: string
