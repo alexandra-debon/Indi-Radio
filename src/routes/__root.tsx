@@ -11,6 +11,12 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "@/hooks/use-auth";
+import { RadioPlayerProvider } from "@/components/radio/RadioPlayerProvider";
+import { MiniPlayer } from "@/components/radio/MiniPlayer";
+import { AppShell } from "@/components/AppShell";
+import { AuthDialog } from "@/components/AuthDialog";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -77,14 +83,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Indi Radio — La radio d'InDi ArT CulTuRe" },
+      { name: "description", content: "Indi Radio, la radio d'InDi ArT CulTuRe : le live, le mur social, les podcasts, les émissions et les actus des arts indépendants." },
+      { name: "author", content: "InDi ArT CulTuRe" },
+      { name: "theme-color", content: "#0a0a0a" },
+      { property: "og:title", content: "Indi Radio — La radio d'InDi ArT CulTuRe" },
+      { property: "og:description", content: "Le live, le mur social, les podcasts et les actus des arts indépendants." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -92,6 +98,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Inter:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -119,8 +131,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AuthProvider>
+        <RadioPlayerProvider>
+          <AppShell>
+            <Outlet />
+          </AppShell>
+          <MiniPlayer />
+          <AuthDialog />
+          <Toaster />
+        </RadioPlayerProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
