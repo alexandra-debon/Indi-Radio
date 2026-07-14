@@ -210,7 +210,7 @@ function RequestsAdmin() {
     queryFn: async () => {
       const { data } = await supabase
         .from("requests")
-        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,is_team_indi,level)")
+        .select("id, track_requested, dedication_message, status, created_at, author:profiles!requests_author_id_fkey(pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       return (data ?? []) as any[];
     },

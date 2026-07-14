@@ -62,7 +62,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,level)")
+        .select("id,author_id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -155,7 +155,7 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, author_id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,level)")
+        .select("id, author_id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
