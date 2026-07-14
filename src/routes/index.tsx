@@ -50,7 +50,12 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <h1 className="section-title">Musique en cours</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="section-title">Musique en cours</h1>
+          <span className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
+            Radio 100% musique Indé
+          </span>
+        </div>
         <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
