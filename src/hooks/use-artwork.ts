@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { findArtwork } from "@/lib/artwork.functions";
 
 /**
- * Pochette d'un morceau via iTunes Search (proxifié côté serveur — pas de CORS).
+ * Pochette d'un morceau via iTunes Search (endpoint public — fonctionne sans connexion).
  */
 export function useArtwork(artist?: string | null, title?: string | null) {
   return useQuery({
@@ -12,7 +11,10 @@ export function useArtwork(artist?: string | null, title?: string | null) {
     gcTime: 24 * 60 * 60 * 1000,
     retry: 1,
     queryFn: async () => {
-      const { url } = await findArtwork({ data: { artist: artist!, title: title! } });
+      const params = new URLSearchParams({ artist: artist!, title: title! });
+      const res = await fetch(`/api/public/radio/artwork?${params.toString()}`);
+      if (!res.ok) return null;
+      const { url } = (await res.json()) as { url: string | null };
       return url;
     },
   });
