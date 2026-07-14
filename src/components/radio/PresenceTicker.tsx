@@ -18,7 +18,7 @@ export function PresenceTicker() {
   useEffect(() => {
     if (!session || !playing) return;
     const tick = async () => {
-      const { data } = await supabase.rpc("award_presence_point", { p_user_id: session.user.id });
+      const { data } = await supabase.rpc("award_presence_point");
       if (data) qc.invalidateQueries({ queryKey: ["profile"] });
     };
     const id = setInterval(tick, 5 * 60 * 1000);
