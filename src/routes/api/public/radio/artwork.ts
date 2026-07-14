@@ -5,8 +5,24 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept, Origin",
   "Access-Control-Max-Age": "86400",
-  "Cache-Control": "no-store, max-age=0",
 } as const;
+
+const HIT_CACHE = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800";
+const MISS_CACHE = "public, max-age=60, s-maxage=300";
+
+async function fetchWithRetry(url: string, init: RequestInit, tries = 3): Promise<Response | null> {
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.ok) return res;
+      if (res.status !== 429 && res.status < 500) return res;
+    } catch {
+      // network error — retry
+    }
+    await new Promise((r) => setTimeout(r, 150 * (i + 1)));
+  }
+  return null;
+}
 
 const FORCED_ARTWORK: Record<string, string> = {
   "daft punk|rollin scratchin":
@@ -65,35 +81,61 @@ function bestArtwork(raw?: string | null) {
 async function searchArtwork(artist: string, title: string) {
   const term = encodeURIComponent(`${artist} ${title}`.trim());
   if (!term) return null;
-
-  const res = await fetch(
-    `https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=5`,
+  const res = await fetchWithRetry(
+    `https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=10`,
     { headers: { "User-Agent": "IndiRadio/1.0" } },
   );
-  if (!res.ok) return null;
-
-  const json = (await res.json()) as {
+  if (!res || !res.ok) return null;
+  const json = (await res.json().catch(() => null)) as {
     results?: Array<{ artworkUrl100?: string; artistName?: string; trackName?: string }>;
-  };
-
-  return bestArtwork(json.results?.[0]?.artworkUrl100);
+  } | null;
+  const results = json?.results ?? [];
+  const wantArtist = keyPart(artist);
+  const wantTitle = keyPart(title);
+  const scored = results
+    .map((r) => {
+      const a = keyPart(r.artistName ?? "");
+      const t = keyPart(r.trackName ?? "");
+      let score = 0;
+      if (a === wantArtist) score += 4; else if (a.includes(wantArtist) || wantArtist.includes(a)) score += 2;
+      if (t === wantTitle) score += 4; else if (t.includes(wantTitle) || wantTitle.includes(t)) score += 2;
+      return { r, score };
+    })
+    .sort((a, b) => b.score - a.score);
+  return bestArtwork(scored[0]?.r?.artworkUrl100 ?? results[0]?.artworkUrl100);
 }
 
 async function searchDeezerArtwork(artist: string, title: string, exact = true) {
   const query = encodeURIComponent(exact ? `artist:"${artist}" track:"${title}"` : `${artist} ${title}`);
   if (!query) return null;
-
-  const res = await fetch(`https://api.deezer.com/search?q=${query}&limit=3`, {
+  const res = await fetchWithRetry(`https://api.deezer.com/search?q=${query}&limit=5`, {
     headers: { "User-Agent": "IndiRadio/1.0" },
   });
-  if (!res.ok) return null;
-
-  const json = (await res.json()) as {
+  if (!res || !res.ok) return null;
+  const json = (await res.json().catch(() => null)) as {
     data?: Array<{ album?: { cover_xl?: string; cover_big?: string; cover_medium?: string } }>;
-  };
-
-  const album = json.data?.[0]?.album;
+  } | null;
+  const album = json?.data?.[0]?.album;
   return album?.cover_xl ?? album?.cover_big ?? album?.cover_medium ?? null;
+}
+
+async function searchMusicBrainzArtwork(artist: string, title: string) {
+  const q = encodeURIComponent(`recording:"${title}" AND artist:"${artist}"`);
+  const res = await fetchWithRetry(
+    `https://musicbrainz.org/ws/2/recording/?query=${q}&fmt=json&limit=5`,
+    { headers: { "User-Agent": "IndiRadio/1.0 (contact@indi-art-culture.com)" } },
+  );
+  if (!res || !res.ok) return null;
+  const json = (await res.json().catch(() => null)) as {
+    recordings?: Array<{ releases?: Array<{ id: string }> }>;
+  } | null;
+  for (const rec of json?.recordings ?? []) {
+    for (const rel of rec.releases ?? []) {
+      const cover = await fetchWithRetry(`https://coverartarchive.org/release/${rel.id}/front-500`, {}, 1);
+      if (cover && cover.ok) return cover.url;
+    }
+  }
+  return null;
 }
 
 async function searchAllArtwork(artist: string, title: string) {
@@ -105,7 +147,8 @@ async function searchAllArtwork(artist: string, title: string) {
       const artworkUrl =
         (await searchArtwork(artistVariant, titleVariant)) ??
         (await searchDeezerArtwork(artistVariant, titleVariant)) ??
-        (await searchDeezerArtwork(artistVariant, titleVariant, false));
+        (await searchDeezerArtwork(artistVariant, titleVariant, false)) ??
+        (await searchMusicBrainzArtwork(artistVariant, titleVariant));
       if (artworkUrl) return artworkUrl;
     }
   }
@@ -133,9 +176,15 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
             forcedArtwork(originalArtist, originalTitle) ??
             (await searchAllArtwork(artist, title));
 
-          return Response.json({ url: artworkUrl }, { headers: CORS_HEADERS });
+          return Response.json(
+            { url: artworkUrl },
+            { headers: { ...CORS_HEADERS, "Cache-Control": artworkUrl ? HIT_CACHE : MISS_CACHE } },
+          );
         } catch {
-          return Response.json({ url: null }, { headers: CORS_HEADERS });
+          return Response.json(
+            { url: null },
+            { headers: { ...CORS_HEADERS, "Cache-Control": MISS_CACHE } },
+          );
         }
       },
     },
