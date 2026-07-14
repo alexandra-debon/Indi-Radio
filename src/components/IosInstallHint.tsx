@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Share, X, Plus } from "lucide-react";
+import { isNative } from "@/lib/native";
 
 const STORAGE_KEY = "ios-install-hint-dismissed";
 
@@ -8,6 +9,8 @@ export function IosInstallHint() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Inutile dans l'app native (Capacitor) : elle est déjà installée.
+    if (isNative()) return;
     const ua = window.navigator.userAgent;
     const isIOS = /iPhone|iPad|iPod/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
     const isStandalone =
