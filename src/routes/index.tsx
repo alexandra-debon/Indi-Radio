@@ -87,10 +87,24 @@ function LivePage() {
 
       {/* Recent history */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="section-title">Historique</h2>
-          <Link to="/chart" className="text-xs text-primary underline">
-            Chart des auditeurs →
+          <Link
+            to="/chart"
+            className="group flex items-center justify-between gap-3 rounded-lg border border-primary bg-primary/10 p-3 transition hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(255,215,0,0.18)] sm:min-w-[18rem]"
+          >
+            <div className="flex items-center gap-3">
+              <div className="grid size-10 place-items-center rounded-md bg-primary text-primary-foreground shadow-sm">
+                <BarChart3 className="size-5" />
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-bold text-primary">Chart des auditeurs</span>
+                <span className="text-[11px] text-muted-foreground">Top des titres aimés</span>
+              </div>
+            </div>
+            <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground transition group-hover:translate-x-0.5">
+              Voir →
+            </span>
           </Link>
         </div>
         <ul className="space-y-2">
