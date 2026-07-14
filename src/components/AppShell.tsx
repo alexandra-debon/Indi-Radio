@@ -34,8 +34,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex items-center gap-2">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-9 rounded-sm object-contain" />
-            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-7 w-auto object-contain" />
+            <img src={logoAsset.url} alt="Indi Radio" className="size-12 rounded-sm object-contain" />
+            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-9 w-auto object-contain" />
           </Link>
           <div className="ml-auto">
             {session && profile ? (
