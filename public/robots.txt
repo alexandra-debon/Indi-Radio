@@ -4,3 +4,5 @@ Allow: /
 Disallow: /auth
 Disallow: /admin
 Disallow: /profile
+
+Sitemap: https://radio.indi-art-culture.com/sitemap.xml
