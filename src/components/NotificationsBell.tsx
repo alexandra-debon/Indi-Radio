@@ -3,7 +3,6 @@ import { Bell, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -117,13 +116,13 @@ export function NotificationsBell() {
                 return (
                   <li key={n.id} className="border-b border-border last:border-0">
                     {n.url ? (
-                      <Link
-                        to={n.url as any}
+                      <a
+                        href={n.url}
                         onClick={() => { markOne.mutate(n.id); setOpen(false); }}
                         className="block hover:bg-muted"
                       >
                         {body}
-                      </Link>
+                      </a>
                     ) : (
                       <button onClick={() => markOne.mutate(n.id)} className="w-full text-left hover:bg-muted">
                         {body}
