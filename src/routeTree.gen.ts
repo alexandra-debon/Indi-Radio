@@ -14,6 +14,7 @@ import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
+import { Route as ChroniquesRouteImport } from './routes/chroniques'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActusRouteImport } from './routes/actus'
@@ -50,6 +51,11 @@ const EmissionsRoute = EmissionsRouteImport.update({
 const DedicacesRoute = DedicacesRouteImport.update({
   id: '/dedicaces',
   path: '/dedicaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChroniquesRoute = ChroniquesRouteImport.update({
+  id: '/chroniques',
+  path: '/chroniques',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChartRoute = ChartRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/actus': typeof ActusRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
+  '/chroniques': typeof ChroniquesRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/actus': typeof ActusRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
+  '/chroniques': typeof ChroniquesRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/actus': typeof ActusRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
+  '/chroniques': typeof ChroniquesRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/actus'
     | '/auth'
     | '/chart'
+    | '/chroniques'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/actus'
     | '/auth'
     | '/chart'
+    | '/chroniques'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/actus'
     | '/auth'
     | '/chart'
+    | '/chroniques'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   ActusRoute: typeof ActusRoute
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
+  ChroniquesRoute: typeof ChroniquesRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRoute
   NewsletterRoute: typeof NewsletterRoute
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/dedicaces'
       fullPath: '/dedicaces'
       preLoaderRoute: typeof DedicacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chroniques': {
+      id: '/chroniques'
+      path: '/chroniques'
+      fullPath: '/chroniques'
+      preLoaderRoute: typeof ChroniquesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chart': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActusRoute: ActusRoute,
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
+  ChroniquesRoute: ChroniquesRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRoute,
   NewsletterRoute: NewsletterRoute,
