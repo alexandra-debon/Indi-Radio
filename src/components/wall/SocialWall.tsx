@@ -94,7 +94,7 @@ export function SocialWall() {
           placeholder={session ? "Balance ton message…  utilise @pseudo pour mentionner" : "Connecte-toi pour poster"}
           onFocus={() => { if (!session) requireAuth(() => {}); }}
           rows={2}
-          className="resize-none border-0 bg-transparent focus-visible:ring-0"
+          className="resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-primary-foreground placeholder:opacity-100 focus-visible:ring-0"
           disabled={!session}
         />
         <div className="mt-2 flex justify-end">
