@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useState } from "react";
 import { Mic2 } from "lucide-react";
+import { EpisodeRow } from "@/components/EpisodeRow";
 
 export const Route = createFileRoute("/emissions")({
   head: () => ({
@@ -70,7 +71,33 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
           {selected.description && <p className="mt-2 text-sm">{selected.description}</p>}
         </div>
       )}
+
+      {selected && <ShowArchive showId={selected.id} />}
     </div>
+  );
+}
+
+function ShowArchive({ showId }: { showId: string }) {
+  const { data: episodes = [] } = useQuery({
+    queryKey: ["show-episodes", showId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("episodes")
+        .select("*")
+        .eq("show_id", showId)
+        .order("published_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  return (
+    <section className="space-y-2">
+      <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Anciennes émissions</h2>
+      {episodes.length === 0 && (
+        <div className="card-brut p-3 text-sm text-muted-foreground">Aucun replay pour l'instant.</div>
+      )}
+      {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
+    </section>
   );
 }
 

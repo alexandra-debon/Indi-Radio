@@ -100,8 +100,9 @@ export type Database = {
           duration_seconds: number | null
           external_url: string | null
           id: string
-          podcast_id: string
+          podcast_id: string | null
           published_at: string
+          show_id: string | null
           title: string
         }
         Insert: {
@@ -111,8 +112,9 @@ export type Database = {
           duration_seconds?: number | null
           external_url?: string | null
           id?: string
-          podcast_id: string
+          podcast_id?: string | null
           published_at?: string
+          show_id?: string | null
           title: string
         }
         Update: {
@@ -122,8 +124,9 @@ export type Database = {
           duration_seconds?: number | null
           external_url?: string | null
           id?: string
-          podcast_id?: string
+          podcast_id?: string | null
           published_at?: string
+          show_id?: string | null
           title?: string
         }
         Relationships: [
@@ -132,6 +135,13 @@ export type Database = {
             columns: ["podcast_id"]
             isOneToOne: false
             referencedRelation: "podcasts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "episodes_show_id_fkey"
+            columns: ["show_id"]
+            isOneToOne: false
+            referencedRelation: "shows"
             referencedColumns: ["id"]
           },
         ]
