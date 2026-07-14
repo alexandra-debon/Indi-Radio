@@ -16,10 +16,28 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/actus")({
   head: () => ({
     meta: [
-      { title: "Indi Rézo — Actus artistes | Indi Radio" },
-      { name: "description", content: "Le fil d'actualités Indi Rézo : les infos artistes publiées par la rédaction d'Indi Radio." },
-      { property: "og:title", content: "Indi Rézo — Actus artistes" },
-      { property: "og:description", content: "Fil d'actus des artistes indé sur Indi Radio." },
+      { title: "Indi Rézo — Actualités de la scène indépendante" },
+      { name: "description", content: "Indi Rézo, le fil d'actualités des artistes indépendants publié par la rédaction d'Indi Radio : sorties, concerts, portraits et actus du réseau indé." },
+      { property: "og:title", content: "Indi Rézo — Actualités de la scène indépendante" },
+      { property: "og:description", content: "Le fil d'actus des artistes indépendants sur Indi Radio." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/actus" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "@id": "https://radio.indi-art-culture.com/actus#blog",
+          name: "Indi Rézo",
+          description: "Fil d'actualités des artistes indépendants publié par la rédaction d'Indi Radio.",
+          url: "https://radio.indi-art-culture.com/actus",
+          inLanguage: "fr-FR",
+          publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+        }),
+      },
     ],
   }),
   component: ActusPage,
@@ -77,7 +95,7 @@ function ActusPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Indi Rézo</h1>
+      <h1 className="section-title">Indi Rézo — Actualités de la scène indépendante</h1>
       <p className="text-sm text-muted-foreground">Le fil des actus artistes, orchestré par la rédaction.</p>
 
       {canPublish && (
@@ -90,6 +108,7 @@ function ActusPage() {
         </div>
       )}
 
+      <h2 className="section-title text-base">Fil d'actualité</h2>
       <ul className="space-y-3">
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
