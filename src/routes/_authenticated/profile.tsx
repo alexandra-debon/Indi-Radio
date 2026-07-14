@@ -3,7 +3,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, AtSign } from "lucide-react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
+import { parseNotifUrl } from "@/lib/notif-navigate";
+import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Mon profil — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -13,7 +20,43 @@ export const Route = createFileRoute("/_authenticated/profile")({
 const LEVEL_THRESHOLDS = [0, 20, 60, 150, 300];
 
 function ProfilePage() {
-  const { profile, signOut, isAdmin } = useAuth();
+  const { profile, signOut, isAdmin, session } = useAuth();
+  const qc = useQueryClient();
+
+  const { data: mentions = [] } = useQuery({
+    queryKey: ["profile-mentions", session?.user.id],
+    enabled: !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("notifications")
+        .select("id, message, url, read_at, created_at")
+        .eq("type", "mention")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      return data ?? [];
+    },
+  });
+
+  useEffect(() => {
+    if (!session) return;
+    const channel = supabase
+      .channel(`profile-mentions-${session.user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `recipient_id=eq.${session.user.id}` },
+        () => qc.invalidateQueries({ queryKey: ["profile-mentions", session.user.id] }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [session, qc]);
+
+  const markRead = useMutation({
+    mutationFn: async (id: string) => {
+      await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["profile-mentions", session?.user.id] }),
+  });
+
   if (!profile) return <div className="p-4">Chargement…</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
@@ -44,6 +87,45 @@ function ProfilePage() {
           → Panneau admin
         </Link>
       )}
+
+      <section className="card-brut p-4">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+          <AtSign className="size-4" /> Mentions
+          {mentions.some((m) => !m.read_at) && (
+            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+              {mentions.filter((m) => !m.read_at).length}
+            </span>
+          )}
+        </h2>
+        {mentions.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Aucune mention pour l'instant.</p>
+        ) : (
+          <ul className="space-y-2">
+            {mentions.map((m) => {
+              const t = parseNotifUrl(m.url);
+              const content = (
+                <>
+                  <span className="font-semibold">{m.message}</span>
+                  <span className="ml-2 text-[10px] text-muted-foreground">
+                    {formatDistanceToNow(new Date(m.created_at), { addSuffix: true, locale: fr })}
+                  </span>
+                </>
+              );
+              return (
+                <li key={m.id} className={cn("rounded-md border border-border p-2 text-xs", !m.read_at && "border-primary/50 bg-primary/5")}>
+                  {t ? (
+                    <Link to={t.to} hash={t.hash} onClick={() => markRead.mutate(m.id)} className="block hover:underline">
+                      {content}
+                    </Link>
+                  ) : (
+                    <button onClick={() => markRead.mutate(m.id)} className="block w-full text-left">{content}</button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <Button variant="outline" className="w-full" onClick={signOut}>
         <LogOut className="size-4" /> Déconnexion
