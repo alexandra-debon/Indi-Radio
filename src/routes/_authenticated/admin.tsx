@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2 } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil } from "lucide-react";
 import { z } from "zod";
 
 const adminSearchSchema = z.object({
