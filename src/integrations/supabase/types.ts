@@ -468,6 +468,8 @@ export type Database = {
           created_at: string
           id: string
           mentions: string[] | null
+          pin_label: string | null
+          pinned_at: string | null
         }
         Insert: {
           author_id: string
@@ -475,6 +477,8 @@ export type Database = {
           created_at?: string
           id?: string
           mentions?: string[] | null
+          pin_label?: string | null
+          pinned_at?: string | null
         }
         Update: {
           author_id?: string
@@ -482,6 +486,8 @@ export type Database = {
           created_at?: string
           id?: string
           mentions?: string[] | null
+          pin_label?: string | null
+          pinned_at?: string | null
         }
         Relationships: [
           {
