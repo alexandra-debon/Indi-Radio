@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
+import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -93,6 +94,11 @@ const ApiPublicRadioStreamRoute = ApiPublicRadioStreamRouteImport.update({
   path: '/api/public/radio/stream',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
+  id: '/api/public/radio/artwork',
+  path: '/api/public/radio/artwork',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
 export interface FileRoutesByTo {
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
 export interface FileRoutesById {
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
 export interface FileRouteTypes {
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/profile'
+    | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/profile'
+    | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   id:
     | '__root__'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/profile'
+    | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesById: FileRoutesById
 }
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
 }
 
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRadioStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/radio/artwork': {
+      id: '/api/public/radio/artwork'
+      path: '/api/public/radio/artwork'
+      fullPath: '/api/public/radio/artwork'
+      preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -333,8 +353,19 @@ const rootRouteChildren: RootRouteChildren = {
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
