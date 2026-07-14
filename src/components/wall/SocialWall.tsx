@@ -245,7 +245,7 @@ export function SocialWall() {
           const canDelete = isOwner || isAdmin;
           const isEditing = editingId === p.id;
           return (
-            <li key={p.id} className="card-brut p-3">
+            <li key={p.id} id={`post-${p.id}`} className="card-brut scroll-mt-24 p-3">
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
                 <span className="text-[10px] text-muted-foreground">

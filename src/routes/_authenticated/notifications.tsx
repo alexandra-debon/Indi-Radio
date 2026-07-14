@@ -7,6 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseNotifUrl } from "@/lib/notif-navigate";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Notifications — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -189,17 +190,20 @@ function NotificationsCenter() {
               <div className="flex items-start gap-2 px-3 py-2.5">
                 <Icon className={cn("mt-0.5 size-4 shrink-0", unreadCount > 0 ? "text-primary" : "text-muted-foreground")} />
                 <div className="min-w-0 flex-1">
-                  {g.url ? (
-                    <Link
-                      to={g.url}
-                      onClick={() => markIds.mutate(g.items.filter((n) => !n.read_at).map((n) => n.id))}
-                      className="block text-sm font-semibold hover:underline"
-                    >
-                      {latest.message}
-                    </Link>
-                  ) : (
-                    <p className="text-sm font-semibold">{latest.message}</p>
-                  )}
+                  {(() => {
+                    const t = parseNotifUrl(g.url);
+                    if (!t) return <p className="text-sm font-semibold">{latest.message}</p>;
+                    return (
+                      <Link
+                        to={t.to}
+                        hash={t.hash}
+                        onClick={() => markIds.mutate(g.items.filter((n) => !n.read_at).map((n) => n.id))}
+                        className="block text-sm font-semibold hover:underline"
+                      >
+                        {latest.message}
+                      </Link>
+                    );
+                  })()}
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
                     <span>{formatDistanceToNow(new Date(latest.created_at), { addSuffix: true, locale: fr })}</span>
                     {isThread && (
@@ -244,17 +248,20 @@ function NotificationsCenter() {
                   {g.items.slice(1).map((n) => (
                     <li key={n.id} className={cn("flex items-start gap-2 px-3 py-2 pl-9 text-xs", !n.read_at && "bg-primary/5")}>
                       <div className="min-w-0 flex-1">
-                        {g.url ? (
-                          <Link
-                            to={g.url}
-                            onClick={() => markIds.mutate([n.id])}
-                            className="block hover:underline"
-                          >
-                            {n.message}
-                          </Link>
-                        ) : (
-                          <span>{n.message}</span>
-                        )}
+                        {(() => {
+                          const t = parseNotifUrl(g.url);
+                          if (!t) return <span>{n.message}</span>;
+                          return (
+                            <Link
+                              to={t.to}
+                              hash={t.hash}
+                              onClick={() => markIds.mutate([n.id])}
+                              className="block hover:underline"
+                            >
+                              {n.message}
+                            </Link>
+                          );
+                        })()}
                         <span className="ml-1 text-[10px] text-muted-foreground">
                           · {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: fr })}
                         </span>

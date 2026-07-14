@@ -12,6 +12,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { useHashHighlight } from "@/lib/notif-navigate";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -56,6 +57,7 @@ interface NewsPost {
 function ActusPage() {
   const { session, profile, isAdmin, isAnimateur, openAuth } = useAuth();
   const qc = useQueryClient();
+  useHashHighlight();
 
   const { data: posts = [] } = useQuery<NewsPost[]>({
     queryKey: ["news-posts"],
@@ -225,7 +227,7 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
   });
 
   return (
-    <li className="card-brut overflow-hidden">
+    <li id={`news-${post.id}`} className="card-brut scroll-mt-24 overflow-hidden">
       {!editing && post.image_url && <img src={post.image_url} alt="" className="h-48 w-full object-cover" />}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
