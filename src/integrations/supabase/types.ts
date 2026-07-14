@@ -319,6 +319,24 @@ export type Database = {
           },
         ]
       }
+      profile_contacts: {
+        Row: {
+          tel_auditeur: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          tel_auditeur?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          tel_auditeur?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -329,7 +347,6 @@ export type Database = {
           points: number
           pseudo: string
           role: Database["public"]["Enums"]["app_role"]
-          tel_auditeur: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -340,7 +357,6 @@ export type Database = {
           points?: number
           pseudo: string
           role?: Database["public"]["Enums"]["app_role"]
-          tel_auditeur?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -351,7 +367,6 @@ export type Database = {
           points?: number
           pseudo?: string
           role?: Database["public"]["Enums"]["app_role"]
-          tel_auditeur?: string | null
         }
         Relationships: []
       }
@@ -520,7 +535,7 @@ export type Database = {
         Args: { p_action: string; p_points: number; p_user_id: string }
         Returns: undefined
       }
-      award_presence_point: { Args: { p_user_id: string }; Returns: boolean }
+      award_presence_point: { Args: never; Returns: boolean }
       calculate_level: { Args: { pts: number }; Returns: number }
       has_role: {
         Args: {
