@@ -72,42 +72,6 @@ export function SocialWall() {
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
-  const SCROLL_KEY = "wall-scroll-pos";
-
-  // Restore saved scroll position when the list first has content.
-  useEffect(() => {
-    const el = listRef.current;
-    if (!el || posts.length === 0) return;
-    const saved = sessionStorage.getItem(SCROLL_KEY);
-    if (saved != null) {
-      const y = Number(saved);
-      if (!Number.isNaN(y)) {
-        // Wait for layout so scrollHeight is stable
-        requestAnimationFrame(() => { el.scrollTop = y; });
-      }
-    }
-    // Only restore once per mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posts.length > 0]);
-
-  // Persist scroll position as the user scrolls (throttled via rAF).
-  useEffect(() => {
-    const el = listRef.current;
-    if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
-      });
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
 
   // Auto-open the thread targeted by a notification hash like `post-<id>|c-<cid>`
   useEffect(() => {
