@@ -228,6 +228,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          message: string
+          read_at: string | null
+          recipient_id: string
+          type: string
+          url: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          read_at?: string | null
+          recipient_id: string
+          type: string
+          url?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          read_at?: string | null
+          recipient_id?: string
+          type?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       podcasts: {
         Row: {
           cover_url: string | null
