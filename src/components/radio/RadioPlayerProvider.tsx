@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { RADIO_CONFIG } from "@/config/radio";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { scrapeCurrentTrack } from "@/lib/track-scrape.functions";
 
 interface CurrentTrack {
   id: string;
@@ -22,6 +23,7 @@ const RadioContext = createContext<RadioContextValue | null>(null);
 export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const queryClient = useQueryClient();
 
   // Latest track from DB (updated externally or by admin)
   const { data: currentTrack = null, isLoading: loadingTrack } = useQuery<CurrentTrack | null>({
@@ -37,6 +39,25 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     },
     refetchInterval: 30_000,
   });
+
+  // Scrape Icecast metadata every 30s and upsert into track_history.
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const res = await scrapeCurrentTrack();
+        if (!cancelled && res?.changed) {
+          queryClient.invalidateQueries({ queryKey: ["current-track"] });
+          queryClient.invalidateQueries({ queryKey: ["track-history"] });
+        }
+      } catch {
+        /* ignore transient failures */
+      }
+    };
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [queryClient]);
 
   const toggle = useCallback(() => {
     const el = audioRef.current;
