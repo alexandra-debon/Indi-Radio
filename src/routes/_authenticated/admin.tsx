@@ -11,15 +11,23 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper } from "lucide-react";
+import { z } from "zod";
+
+const adminSearchSchema = z.object({
+  tab: z.enum(["users", "requests", "news"]).catch("users"),
+});
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Panneau admin — Indi Radio" }, { name: "robots", content: "noindex" }] }),
+  validateSearch: adminSearchSchema,
   component: AdminPage,
 });
 
 function AdminPage() {
   const { isAdmin } = useAuth();
+  const { tab } = Route.useSearch();
+  const navigate = Route.useNavigate();
   if (!isAdmin) {
     return (
       <div className="card-brut flex flex-col items-center gap-3 p-6 text-center">
@@ -29,10 +37,34 @@ function AdminPage() {
       </div>
     );
   }
+  const sections = [
+    { key: "users" as const, label: "Profils & rôles", icon: Users, desc: "Promouvoir, certifier, chercher" },
+    { key: "requests" as const, label: "Dédicaces", icon: Send, desc: "Modérer les demandes auditeurs" },
+    { key: "news" as const, label: "Publier une actu", icon: Newspaper, desc: "Poster sur Indi Rézo" },
+  ];
   return (
     <div className="space-y-4">
       <h1 className="section-title">Panneau admin</h1>
-      <Tabs defaultValue="users">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {sections.map((s) => {
+          const Icon = s.icon;
+          const active = tab === s.key;
+          return (
+            <button
+              key={s.key}
+              onClick={() => navigate({ search: { tab: s.key } })}
+              className={`card-brut flex items-start gap-3 p-3 text-left transition ${active ? "border-primary bg-primary/10" : "hover:bg-muted"}`}
+            >
+              <Icon className={`size-5 shrink-0 ${active ? "text-primary" : ""}`} />
+              <div>
+                <div className="text-sm font-bold">{s.label}</div>
+                <div className="text-xs text-muted-foreground">{s.desc}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as "users" | "requests" | "news" } })}>
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>

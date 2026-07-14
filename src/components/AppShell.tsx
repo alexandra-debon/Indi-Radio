@@ -39,9 +39,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <div className="ml-auto">
             {session && profile ? (
-              <Link to="/profile" className="flex items-center gap-2">
-                <UserBadge profile={profile} className="text-xs" />
-              </Link>
+              <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    aria-label="Panneau admin"
+                    className="inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
+                  >
+                    <Shield className="size-3.5" /> Admin
+                  </Link>
+                )}
+                <Link to="/profile" className="flex items-center gap-2">
+                  <UserBadge profile={profile} className="text-xs" />
+                </Link>
+              </div>
             ) : (
               <button onClick={openAuth} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
                 <LogIn className="size-3.5" /> Connexion
