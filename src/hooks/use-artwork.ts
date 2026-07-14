@@ -5,10 +5,11 @@ import { useQuery } from "@tanstack/react-query";
  */
 export function useArtwork(artist?: string | null, title?: string | null) {
   return useQuery({
-    queryKey: ["artwork", artist, title],
+    queryKey: ["artwork", "v2", artist, title],
     enabled: !!(artist && title),
-    staleTime: 60 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: "always",
     retry: 1,
     queryFn: async () => {
       const params = new URLSearchParams({ artist: artist!, title: title! });
