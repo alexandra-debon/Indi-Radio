@@ -18,10 +18,10 @@ import { useRouterState } from "@tanstack/react-router";
 export const Route = createFileRoute("/actus")({
   head: () => ({
     meta: [
-      { title: "Indi Rézo — Actualités de la scène indépendante" },
-      { name: "description", content: "Indi Rézo, le fil d'actualités des artistes indépendants publié par la rédaction d'Indi Radio : sorties, concerts, portraits et actus du réseau indé." },
-      { property: "og:title", content: "Indi Rézo — Actualités de la scène indépendante" },
-      { property: "og:description", content: "Le fil d'actus des artistes indépendants sur Indi Radio." },
+      { title: "Indi Rézo — Actualités de la scène indépendante et l'actu InDi RaDio" },
+      { name: "description", content: "Indi Rézo, le fil d'actualités des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction : sorties, concerts, portraits et actus du réseau indé." },
+      { property: "og:title", content: "Indi Rézo — Actualités de la scène indépendante et l'actu InDi RaDio" },
+      { property: "og:description", content: "Le fil d'actus des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
       { property: "og:type", content: "website" },
     ],
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/actus")({
           "@type": "Blog",
           "@id": "https://radio.indi-art-culture.com/actus#blog",
           name: "Indi Rézo",
-          description: "Fil d'actualités des artistes indépendants publié par la rédaction d'Indi Radio.",
+          description: "Fil d'actualités des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction d'Indi Radio.",
           url: "https://radio.indi-art-culture.com/actus",
           inLanguage: "fr-FR",
           publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
