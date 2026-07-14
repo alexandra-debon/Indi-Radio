@@ -58,24 +58,33 @@ export type Database = {
       }
       episodes: {
         Row: {
-          audio_url: string
+          audio_url: string | null
+          cover_url: string | null
+          description: string | null
           duration_seconds: number | null
+          external_url: string | null
           id: string
           podcast_id: string
           published_at: string
           title: string
         }
         Insert: {
-          audio_url: string
+          audio_url?: string | null
+          cover_url?: string | null
+          description?: string | null
           duration_seconds?: number | null
+          external_url?: string | null
           id?: string
           podcast_id: string
           published_at?: string
           title: string
         }
         Update: {
-          audio_url?: string
+          audio_url?: string | null
+          cover_url?: string | null
+          description?: string | null
           duration_seconds?: number | null
+          external_url?: string | null
           id?: string
           podcast_id?: string
           published_at?: string
@@ -224,6 +233,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          external_url: string | null
           id: string
           title: string
         }
@@ -231,6 +241,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          external_url?: string | null
           id?: string
           title: string
         }
@@ -238,6 +249,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          external_url?: string | null
           id?: string
           title?: string
         }
@@ -383,6 +395,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          host: string | null
           id: string
           schedule: string | null
           title: string
@@ -392,6 +405,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          host?: string | null
           id?: string
           schedule?: string | null
           title: string
@@ -401,6 +415,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          host?: string | null
           id?: string
           schedule?: string | null
           title?: string
