@@ -14,6 +14,7 @@ import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
 import { Route as ChartRouteImport } from './routes/chart'
+import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -42,6 +43,11 @@ const ChartRoute = ChartRouteImport.update({
   path: '/chart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActusRoute = ActusRouteImport.update({
+  id: '/actus',
+  path: '/actus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -56,6 +62,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/actus': typeof ActusRoute
   '/chart': typeof ChartRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/actus': typeof ActusRoute
   '/chart': typeof ChartRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/actus': typeof ActusRoute
   '/chart': typeof ChartRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/actus'
     | '/chart'
     | '/dedicaces'
     | '/emissions'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/actus'
     | '/chart'
     | '/dedicaces'
     | '/emissions'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/actus'
     | '/chart'
     | '/dedicaces'
     | '/emissions'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ActusRoute: typeof ActusRoute
   ChartRoute: typeof ChartRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/actus': {
+      id: '/actus'
+      path: '/actus'
+      fullPath: '/actus'
+      preLoaderRoute: typeof ActusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ActusRoute: ActusRoute,
   ChartRoute: ChartRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRoute,
