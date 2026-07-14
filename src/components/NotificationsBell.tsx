@@ -63,6 +63,17 @@ export function NotificationsBell() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
   });
 
+  const optimisticMark = (ids: string[]) => {
+    const key = ["notifications", session?.user.id];
+    const prev = qc.getQueryData<Notif[]>(key);
+    if (prev) {
+      const now = new Date().toISOString();
+      const set = new Set(ids);
+      qc.setQueryData<Notif[]>(key, prev.map((n) => (set.has(n.id) && !n.read_at ? { ...n, read_at: now } : n)));
+    }
+    return prev;
+  };
+
   const markOne = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -71,7 +82,11 @@ export function NotificationsBell() {
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
+    onMutate: (id) => ({ prev: optimisticMark([id]) }),
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) qc.setQueryData(["notifications", session?.user.id], ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
   });
 
   const markMany = useMutation({
@@ -83,7 +98,11 @@ export function NotificationsBell() {
         .in("id", ids);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
+    onMutate: (ids) => ({ prev: optimisticMark(ids) }),
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) qc.setQueryData(["notifications", session?.user.id], ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["notifications", session?.user.id] }),
   });
 
   const groups = useMemo(() => {
