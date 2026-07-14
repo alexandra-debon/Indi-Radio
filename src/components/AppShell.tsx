@@ -36,8 +36,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex min-w-0 items-center gap-2 overflow-hidden">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-9 md:size-12 lg:size-14 shrink-0 rounded-sm object-contain" />
-            <img src={wordmarkAsset.url} alt="Indi Radio" className="hidden lg:block h-9 lg:h-10 w-auto min-w-0 shrink object-contain" />
+            <img src={logoAsset.url} alt="Indi Radio" className="size-8 sm:size-9 md:size-10 lg:size-12 shrink-0 rounded-sm object-contain" />
+            <img src={wordmarkAsset.url} alt="Indi Radio" className="h-8 sm:h-9 md:h-10 lg:h-11 w-auto max-w-[140px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[260px] min-w-0 shrink object-contain" />
           </Link>
           <div className="flex items-center justify-end">
             {session && profile ? (
