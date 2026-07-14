@@ -99,6 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "google-site-verification", content: "c0A7GBSm4kA-HXUpLR9BPCC3qCdW7GZ-otAj-YtFVN8" },
+      { property: "og:site_name", content: "Indi Radio" },
     ],
     links: [
       {
@@ -114,6 +115,39 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Inter:wght@400;500;600;700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://radio.indi-art-culture.com/#org",
+              name: "InDi ArT CulTuRe",
+              url: "https://radio.indi-art-culture.com/",
+              logo: "https://radio.indi-art-culture.com/icons/apple-touch-icon.png",
+              sameAs: [],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://radio.indi-art-culture.com/#website",
+              url: "https://radio.indi-art-culture.com/",
+              name: "Indi Radio",
+              publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+              inLanguage: "fr-FR",
+            },
+            {
+              "@type": "RadioStation",
+              "@id": "https://radio.indi-art-culture.com/#radio",
+              name: "Indi Radio",
+              url: "https://radio.indi-art-culture.com/",
+              parentOrganization: { "@id": "https://radio.indi-art-culture.com/#org" },
+            },
+          ],
+        }),
       },
     ],
   }),
