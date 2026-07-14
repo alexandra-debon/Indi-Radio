@@ -5,7 +5,31 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept, Origin",
   "Access-Control-Max-Age": "86400",
+  "Cache-Control": "no-store, max-age=0",
 } as const;
+
+const FORCED_ARTWORK: Record<string, string> = {
+  "daft punk|rollin scratchin":
+    "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/34/8d/c7/348dc71c-d75e-9baf-671a-994e9e74b018/dj.pimdxdmf.jpg/512x512bb.jpg",
+  "will sellenraad eric mcpherson rene hart|alter ego":
+    "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/fa/aa/d6/faaad670-7149-c44c-cba2-af3bf47a46fa/605491104215.jpg/512x512bb.jpg",
+};
+
+function keyPart(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’'`]/g, "")
+    .replace(/&/g, " ")
+    .replace(/[^a-z0-9]+/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function forcedArtwork(artist: string, title: string) {
+  return FORCED_ARTWORK[`${keyPart(artist)}|${keyPart(title)}`] ?? null;
+}
 
 function clean(value: string | null) {
   return (value ?? "")
@@ -14,6 +38,28 @@ function clean(value: string | null) {
     .replace(/\b(remaster(?:ed)?|radio edit|edit|single version|explicit|feat\.?|featuring)\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function unique(values: string[]) {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
+
+function artistVariants(artist: string) {
+  const firstArtist = artist.split(/,|&|\band\b|\+|\bavec\b/iu)[0] ?? artist;
+  return unique([artist, firstArtist]);
+}
+
+function titleVariants(title: string) {
+  return unique([
+    title,
+    title.replace(/\s[-–—].*$/, ""),
+    title.replace(/[’`]/g, "'"),
+    clean(title),
+  ]);
+}
+
+function bestArtwork(raw?: string | null) {
+  return raw ? raw.replace("100x100bb", "512x512bb").replace("100x100", "512x512") : null;
 }
 
 async function searchArtwork(artist: string, title: string) {
@@ -30,12 +76,11 @@ async function searchArtwork(artist: string, title: string) {
     results?: Array<{ artworkUrl100?: string; artistName?: string; trackName?: string }>;
   };
 
-  const raw = json.results?.[0]?.artworkUrl100 ?? null;
-  return raw ? raw.replace("100x100bb", "512x512bb").replace("100x100", "512x512") : null;
+  return bestArtwork(json.results?.[0]?.artworkUrl100);
 }
 
-async function searchDeezerArtwork(artist: string, title: string) {
-  const query = encodeURIComponent(`artist:"${artist}" track:"${title}"`);
+async function searchDeezerArtwork(artist: string, title: string, exact = true) {
+  const query = encodeURIComponent(exact ? `artist:"${artist}" track:"${title}"` : `${artist} ${title}`);
   if (!query) return null;
 
   const res = await fetch(`https://api.deezer.com/search?q=${query}&limit=3`, {
@@ -51,14 +96,33 @@ async function searchDeezerArtwork(artist: string, title: string) {
   return album?.cover_xl ?? album?.cover_big ?? album?.cover_medium ?? null;
 }
 
+async function searchAllArtwork(artist: string, title: string) {
+  const forced = forcedArtwork(artist, title);
+  if (forced) return forced;
+
+  for (const artistVariant of artistVariants(artist)) {
+    for (const titleVariant of titleVariants(title)) {
+      const artworkUrl =
+        (await searchArtwork(artistVariant, titleVariant)) ??
+        (await searchDeezerArtwork(artistVariant, titleVariant)) ??
+        (await searchDeezerArtwork(artistVariant, titleVariant, false));
+      if (artworkUrl) return artworkUrl;
+    }
+  }
+
+  return null;
+}
+
 export const Route = createFileRoute("/api/public/radio/artwork")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
       GET: async ({ request }) => {
         const url = new URL(request.url);
-        const artist = clean(url.searchParams.get("artist"));
-        const title = clean(url.searchParams.get("title"));
+        const originalArtist = url.searchParams.get("artist") ?? "";
+        const originalTitle = url.searchParams.get("title") ?? "";
+        const artist = clean(originalArtist);
+        const title = clean(originalTitle);
 
         if (!artist || !title) {
           return Response.json({ url: null }, { headers: CORS_HEADERS });
@@ -66,10 +130,8 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
 
         try {
           const artworkUrl =
-            (await searchArtwork(artist, title)) ??
-            (await searchArtwork(artist, title.replace(/\s[-–—].*$/, ""))) ??
-            (await searchDeezerArtwork(artist, title)) ??
-            (await searchDeezerArtwork(artist, title.replace(/\s[-–—].*$/, "")));
+            forcedArtwork(originalArtist, originalTitle) ??
+            (await searchAllArtwork(artist, title));
 
           return Response.json({ url: artworkUrl }, { headers: CORS_HEADERS });
         } catch {
