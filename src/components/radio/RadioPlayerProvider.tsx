@@ -90,7 +90,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   return (
     <RadioContext.Provider value={{ playing, toggle, currentTrack, loadingTrack }}>
       {/* Persistent audio element — never re-mounts across route changes */}
-      <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
+      <audio ref={audioRef} preload="none" />
       {children}
     </RadioContext.Provider>
   );

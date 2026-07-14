@@ -1,9 +1,11 @@
 import { Play, Pause, Radio } from "lucide-react";
 import { useRadio } from "./RadioPlayerProvider";
 import { LikeButton } from "./LikeButton";
+import { useArtwork } from "@/hooks/use-artwork";
 
 export function MiniPlayer() {
   const { playing, toggle, currentTrack } = useRadio();
+  const { data: artwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -15,8 +17,17 @@ export function MiniPlayer() {
         >
           {playing ? <Pause className="size-5" /> : <Play className="size-5 translate-x-[1px]" />}
         </button>
-        <div className="grid size-12 shrink-0 place-items-center rounded-sm bg-muted">
-          <Radio className="size-5 text-primary" />
+        <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-sm bg-muted">
+          {artwork ? (
+            <img
+              src={artwork}
+              alt={currentTrack ? `${currentTrack.artist} — ${currentTrack.title}` : ""}
+              className="size-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <Radio className="size-5 text-primary" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">

@@ -9,7 +9,9 @@
  */
 
 export const RADIO_CONFIG = {
-  streamUrl: "http://ecmanager6.pro-fhi.net:2180/stream",
+  // Servi via un proxy same-origin pour éviter le mixed-content HTTPS→HTTP.
+  streamUrl: "/api/public/radio/stream",
+  streamUrlDirect: "http://ecmanager6.pro-fhi.net:2180/stream",
   statusPageUrl: "http://ecmanager6.pro-fhi.net:2180/",
   // Endpoint Icecast metadata (best-effort ; peut ne pas répondre en HTTPS)
   statusJsonUrl: "http://ecmanager6.pro-fhi.net:2180/status-json.xsl",
