@@ -11,11 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2 } from "lucide-react";
 import { z } from "zod";
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -41,11 +41,13 @@ function AdminPage() {
     { key: "users" as const, label: "Profils & rôles", icon: Users, desc: "Promouvoir, certifier, chercher" },
     { key: "requests" as const, label: "Dédicaces", icon: Send, desc: "Modérer les demandes auditeurs" },
     { key: "news" as const, label: "Publier une actu", icon: Newspaper, desc: "Poster sur Indi Rézo" },
+    { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
+    { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
   ];
   return (
     <div className="space-y-4">
       <h1 className="section-title">Panneau admin</h1>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {sections.map((s) => {
           const Icon = s.icon;
           const active = tab === s.key;
@@ -64,15 +66,19 @@ function AdminPage() {
           );
         })}
       </div>
-      <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as "users" | "requests" | "news" } })}>
-        <TabsList className="grid grid-cols-3">
+      <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
+        <TabsList className="grid grid-cols-5">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
+          <TabsTrigger value="podcasts">Podcasts</TabsTrigger>
+          <TabsTrigger value="shows">Émissions</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
         <TabsContent value="requests" className="mt-4"><RequestsAdmin /></TabsContent>
         <TabsContent value="news" className="mt-4"><NewsPublisher /></TabsContent>
+        <TabsContent value="podcasts" className="mt-4"><PodcastsAdmin /></TabsContent>
+        <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
       </Tabs>
     </div>
   );
