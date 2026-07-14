@@ -105,7 +105,7 @@ function ActusPage() {
   return (
     <div className="space-y-4">
       <h1 className="section-title">Indi Rézo — Actualités de la scène indépendante</h1>
-      <p className="text-sm text-muted-foreground">Le fil des actus artistes, orchestré par la rédaction. Et l'actu InDi RaDio</p>
+      <p className="text-sm text-muted-foreground">Le fil des actus artistes, orchestré par la rédaction. Et l'actu InDi RaDio...</p>
 
       {canPublish && (
         <div className="card-brut space-y-2 p-3">
