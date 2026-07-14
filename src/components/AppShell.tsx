@@ -6,7 +6,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
-import wordmarkAsset from "@/assets/indi-radio-wordmark.jpeg.asset.json";
+import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
 
 const NAV = [
   { to: "/", label: "En direct", icon: Radio },
