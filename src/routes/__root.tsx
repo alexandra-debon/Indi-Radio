@@ -18,6 +18,7 @@ import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AppShell } from "@/components/AppShell";
 import { AuthDialog } from "@/components/AuthDialog";
 import { Toaster } from "@/components/ui/sonner";
+import { IosInstallHint } from "@/components/IosInstallHint";
 
 function NotFoundComponent() {
   return (
@@ -145,6 +146,7 @@ function RootComponent() {
           </AppShell>
           <MiniPlayer />
           <AuthDialog />
+          <IosInstallHint />
           <Toaster />
         </RadioPlayerProvider>
       </AuthProvider>
