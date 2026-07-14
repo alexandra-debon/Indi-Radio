@@ -6,12 +6,29 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "sonner";
-import { Pencil, Trash2, Check, X } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface PostRow {
   id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  author: {
+    id: string;
+    pseudo: string;
+    role: "admin" | "artiste" | "animateur" | "auditeur";
+    is_certified: boolean;
+    is_team_indi: boolean;
+    badges: string[];
+    level: number;
+  } | null;
+}
+
+interface CommentRow {
+  id: string;
+  post_id: string;
   author_id: string;
   content: string;
   created_at: string;
@@ -45,6 +62,8 @@ export function SocialWall() {
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [openThread, setOpenThread] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
 
   const { data: posts = [] } = useQuery<PostRow[]>({
     queryKey: ["wall-posts"],
@@ -65,9 +84,80 @@ export function SocialWall() {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => {
         qc.invalidateQueries({ queryKey: ["wall-posts"] });
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "post_likes" }, () => {
+        qc.invalidateQueries({ queryKey: ["wall-likes"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "post_comments" }, () => {
+        qc.invalidateQueries({ queryKey: ["wall-comments"] });
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [qc]);
+
+  const { data: likes = [] } = useQuery<{ post_id: string; user_id: string }[]>({
+    queryKey: ["wall-likes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("post_likes").select("post_id, user_id");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: comments = [] } = useQuery<CommentRow[]>({
+    queryKey: ["wall-comments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("post_comments")
+        .select("id, post_id, author_id, content, created_at, author:profiles!post_comments_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as unknown as CommentRow[];
+    },
+  });
+
+  const toggleLike = useMutation({
+    mutationFn: async (postId: string) => {
+      if (!session) return;
+      const uid = session.user.id;
+      const already = likes.some((l) => l.post_id === postId && l.user_id === uid);
+      if (already) {
+        const { error } = await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", uid);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("post_likes").insert({ post_id: postId, user_id: uid });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["wall-likes"] }),
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const addComment = useMutation({
+    mutationFn: async ({ postId, text }: { postId: string; text: string }) => {
+      if (!session || !text.trim()) return;
+      const { error } = await supabase.from("post_comments").insert({
+        post_id: postId,
+        author_id: session.user.id,
+        content: text.trim(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
+      qc.invalidateQueries({ queryKey: ["wall-comments"] });
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deleteComment = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("post_comments").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["wall-comments"] }),
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const create = useMutation({
     mutationFn: async () => {
@@ -210,6 +300,81 @@ export function SocialWall() {
                   )}
                 </>
               )}
+              {!isEditing && (() => {
+                const postLikes = likes.filter((l) => l.post_id === p.id);
+                const liked = !!session && postLikes.some((l) => l.user_id === session.user.id);
+                const postComments = comments.filter((c) => c.post_id === p.id);
+                const isOpen = openThread === p.id;
+                return (
+                  <div className="mt-2 border-t border-border pt-2">
+                    <div className="flex items-center gap-3 text-xs">
+                      <button
+                        onClick={() => requireAuth(() => toggleLike.mutate(p.id))}
+                        className={`inline-flex items-center gap-1 rounded px-2 py-1 hover:bg-muted ${liked ? "text-primary" : "text-muted-foreground"}`}
+                        aria-label="J'aime"
+                      >
+                        <Heart className={`size-3.5 ${liked ? "fill-current" : ""}`} />
+                        <span>{postLikes.length}</span>
+                      </button>
+                      <button
+                        onClick={() => setOpenThread(isOpen ? null : p.id)}
+                        className="inline-flex items-center gap-1 rounded px-2 py-1 text-muted-foreground hover:bg-muted"
+                        aria-label="Répondre"
+                      >
+                        <MessageCircle className="size-3.5" />
+                        <span>{postComments.length}</span>
+                      </button>
+                    </div>
+                    {isOpen && (
+                      <div className="mt-2 space-y-2">
+                        {postComments.map((c) => {
+                          const canDelC = session?.user.id === c.author_id || isAdmin;
+                          return (
+                            <div key={c.id} className="rounded border border-border bg-muted/30 p-2">
+                              <div className="mb-1 flex items-center justify-between gap-2">
+                                <UserBadge profile={c.author} className="text-[11px]" />
+                                <span className="text-[10px] text-muted-foreground">
+                                  {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
+                                </span>
+                              </div>
+                              <p className="whitespace-pre-wrap text-xs">{renderMentions(c.content)}</p>
+                              {canDelC && (
+                                <div className="mt-1 flex justify-end">
+                                  <button
+                                    onClick={() => { if (confirm("Supprimer cette réponse ?")) deleteComment.mutate(c.id); }}
+                                    className="rounded p-0.5 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
+                                    aria-label="Supprimer"
+                                  >
+                                    <Trash2 className="size-3" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className="flex gap-2">
+                          <MentionTextarea
+                            value={replyDraft[p.id] ?? ""}
+                            onChange={(e) => setReplyDraft((r) => ({ ...r, [p.id]: e.target.value }))}
+                            placeholder={session ? "Écris une réponse…" : "Connecte-toi pour répondre"}
+                            onFocus={() => { if (!session) requireAuth(() => {}); }}
+                            rows={1}
+                            className="min-h-[38px] resize-none text-xs"
+                            disabled={!session}
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "" }))}
+                            disabled={!(replyDraft[p.id] ?? "").trim() || addComment.isPending}
+                          >
+                            Envoyer
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </li>
           );
         })}
