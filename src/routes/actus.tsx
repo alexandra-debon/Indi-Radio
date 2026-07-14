@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Newspaper } from "lucide-react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
-import { useHashHighlight } from "@/lib/notif-navigate";
+import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
+import { useRouterState } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -58,6 +59,12 @@ function ActusPage() {
   const { session, profile, isAdmin, isAnimateur, openAuth } = useAuth();
   const qc = useQueryClient();
   useHashHighlight();
+  const hash = useRouterState({ select: (s) => s.location.hash });
+  const focusedNewsId = (() => {
+    const { primary } = parseHashTargets(hash);
+    if (!primary || !primary.startsWith("news-")) return null;
+    return primary.slice("news-".length) || null;
+  })();
 
   const { data: posts = [] } = useQuery<NewsPost[]>({
     queryKey: ["news-posts"],
@@ -118,16 +125,27 @@ function ActusPage() {
             Aucune actu pour l'instant.
           </li>
         )}
-        {posts.map((p) => <NewsCard key={p.id} post={p} onSignIn={openAuth} sessionUserId={session?.user.id ?? null} />)}
+        {posts.map((p) => (
+          <NewsCard
+            key={p.id}
+            post={p}
+            onSignIn={openAuth}
+            sessionUserId={session?.user.id ?? null}
+            autoOpenComments={focusedNewsId === p.id}
+          />
+        ))}
       </ul>
     </div>
   );
 }
 
-function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn: () => void; sessionUserId: string | null }) {
+function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: { post: NewsPost; onSignIn: () => void; sessionUserId: string | null; autoOpenComments?: boolean }) {
   const qc = useQueryClient();
   const { isAdmin } = useAuth();
   const [commentOpen, setCommentOpen] = useState(false);
+  useEffect(() => {
+    if (autoOpenComments) setCommentOpen(true);
+  }, [autoOpenComments]);
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "" });
@@ -286,7 +304,11 @@ function NewsCard({ post, onSignIn, sessionUserId }: { post: NewsPost; onSignIn:
               const canEditC = isCommentOwner;
               const isEditingC = editingCommentId === c.id;
               return (
-                <div key={c.id} className="rounded-md bg-muted/40 p-2">
+                <div
+                  key={c.id}
+                  id={`comment-${c.id}`}
+                  className="scroll-mt-24 rounded-md bg-muted/40 p-2 transition"
+                >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <UserBadge profile={c.author} className="text-[11px]" />
                     <span className="text-[10px] text-muted-foreground">
