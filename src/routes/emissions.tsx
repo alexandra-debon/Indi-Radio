@@ -66,6 +66,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
           <div className="text-[10px] uppercase tracking-widest text-primary">{label}</div>
           <h3 className="mt-1 text-lg font-bold">{selected.title}</h3>
           {selected.schedule && <div className="text-sm text-muted-foreground">{selected.schedule}</div>}
+          {(selected as any).host && <div className="text-sm text-muted-foreground">Avec {(selected as any).host}</div>}
           {selected.description && <p className="mt-2 text-sm">{selected.description}</p>}
         </div>
       )}

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import { Headphones, Play, Pause, Star } from "lucide-react";
+import { Headphones, Play, Pause, Star, ExternalLink } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -77,9 +77,9 @@ function PodcastEpisodes({ podcastId }: { podcastId: string }) {
   );
 }
 
-function EpisodeRow({ ep }: { ep: { id: string; title: string; audio_url: string; duration_seconds: number | null } }) {
+function EpisodeRow({ ep }: { ep: { id: string; title: string; audio_url: string | null; duration_seconds: number | null; external_url?: string | null; description?: string | null } }) {
   const [playing, setPlaying] = useState(false);
-  const [audio] = useState(() => (typeof Audio !== "undefined" ? new Audio(ep.audio_url) : null));
+  const [audio] = useState(() => (typeof Audio !== "undefined" && ep.audio_url ? new Audio(ep.audio_url) : null));
   const { session, requireAuth } = useAuth();
   const qc = useQueryClient();
   const [stars, setStars] = useState(0);
@@ -119,16 +119,26 @@ function EpisodeRow({ ep }: { ep: { id: string; title: string; audio_url: string
   return (
     <div className="card-brut space-y-2 p-3">
       <div className="flex items-center gap-3">
-        <button onClick={toggle} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
-          {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-        </button>
+        {ep.audio_url ? (
+          <button onClick={toggle} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+            {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+          </button>
+        ) : ep.external_url ? (
+          <a href={ep.external_url} target="_blank" rel="noreferrer" className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+            <ExternalLink className="size-4" />
+          </a>
+        ) : null}
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{ep.title}</div>
+          {ep.description && <div className="line-clamp-2 text-xs text-muted-foreground">{ep.description}</div>}
           <div className="text-xs text-muted-foreground">
             {ep.duration_seconds ? `${Math.round(ep.duration_seconds / 60)} min` : ""}
             {agg && agg.count > 0 && ` · ★ ${agg.avg.toFixed(1)} (${agg.count})`}
           </div>
         </div>
+        {ep.audio_url && ep.external_url && (
+          <a href={ep.external_url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">Manager</a>
+        )}
       </div>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
