@@ -8,6 +8,7 @@ import { fr } from "date-fns/locale";
 import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseNotifUrl } from "@/lib/notif-navigate";
+import { NotificationPreferences } from "@/components/NotificationPreferences";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Notifications — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -172,6 +173,9 @@ function NotificationsCenter() {
       </header>
 
       {isLoading && <p className="text-sm text-muted-foreground">Chargement…</p>}
+
+      <NotificationPreferences />
+
       {!isLoading && groups.length === 0 && (
         <div className="rounded-md border-2 border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           {filter === "unread" ? "Aucune notification non lue." : "Aucune notification pour l'instant."}
