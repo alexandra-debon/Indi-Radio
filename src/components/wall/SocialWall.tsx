@@ -87,7 +87,7 @@ export function SocialWall() {
         <h2 className="section-title">En direct avec les auditeurs</h2>
       </div>
 
-      <div className="card-brut p-3">
+      <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -102,6 +102,7 @@ export function SocialWall() {
             size="sm"
             onClick={() => requireAuth(() => create.mutate())}
             disabled={!content.trim() || create.isPending}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
             Publier
           </Button>
