@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useRouterState } from "@tanstack/react-router";
+import { parseHashTargets } from "@/lib/notif-navigate";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
@@ -64,6 +66,15 @@ export function SocialWall() {
   const [editContent, setEditContent] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
+  const hash = useRouterState({ select: (s) => s.location.hash });
+
+  // Auto-open the thread targeted by a notification hash like `post-<id>|c-<cid>`
+  useEffect(() => {
+    const { primary } = parseHashTargets(hash);
+    if (!primary || !primary.startsWith("post-")) return;
+    const postId = primary.slice("post-".length);
+    if (postId) setOpenThread(postId);
+  }, [hash]);
 
   const { data: posts = [] } = useQuery<PostRow[]>({
     queryKey: ["wall-posts"],
@@ -330,7 +341,11 @@ export function SocialWall() {
                         {postComments.map((c) => {
                           const canDelC = session?.user.id === c.author_id || isAdmin;
                           return (
-                            <div key={c.id} className="rounded border border-border bg-muted/30 p-2">
+                            <div
+                              key={c.id}
+                              id={`comment-${c.id}`}
+                              className="scroll-mt-24 rounded border border-border bg-muted/30 p-2 transition"
+                            >
                               <div className="mb-1 flex items-center justify-between gap-2">
                                 <UserBadge profile={c.author} className="text-[11px]" />
                                 <span className="text-[10px] text-muted-foreground">
