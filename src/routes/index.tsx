@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
+import { useHashHighlight } from "@/lib/notif-navigate";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/")({
 function LivePage() {
   const { playing, toggle, currentTrack } = useRadio();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
+  useHashHighlight();
 
   const { data: history = [] } = useQuery({
     queryKey: ["track-history-short"],
