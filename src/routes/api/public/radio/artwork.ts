@@ -34,6 +34,23 @@ async function searchArtwork(artist: string, title: string) {
   return raw ? raw.replace("100x100bb", "512x512bb").replace("100x100", "512x512") : null;
 }
 
+async function searchDeezerArtwork(artist: string, title: string) {
+  const query = encodeURIComponent(`artist:"${artist}" track:"${title}"`);
+  if (!query) return null;
+
+  const res = await fetch(`https://api.deezer.com/search?q=${query}&limit=3`, {
+    headers: { "User-Agent": "IndiRadio/1.0" },
+  });
+  if (!res.ok) return null;
+
+  const json = (await res.json()) as {
+    data?: Array<{ album?: { cover_xl?: string; cover_big?: string; cover_medium?: string } }>;
+  };
+
+  const album = json.data?.[0]?.album;
+  return album?.cover_xl ?? album?.cover_big ?? album?.cover_medium ?? null;
+}
+
 export const Route = createFileRoute("/api/public/radio/artwork")({
   server: {
     handlers: {
@@ -50,7 +67,9 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
         try {
           const artworkUrl =
             (await searchArtwork(artist, title)) ??
-            (await searchArtwork(artist, title.replace(/\s[-–—].*$/, "")));
+            (await searchArtwork(artist, title.replace(/\s[-–—].*$/, ""))) ??
+            (await searchDeezerArtwork(artist, title)) ??
+            (await searchDeezerArtwork(artist, title.replace(/\s[-–—].*$/, "")));
 
           return Response.json({ url: artworkUrl }, { headers: CORS_HEADERS });
         } catch {
