@@ -703,3 +703,237 @@ function ShowEpisodesAdmin({ showId }: { showId: string }) {
     </div>
   );
 }
+
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 80);
+}
+
+type ReviewRow = {
+  id: string;
+  slug: string;
+  title: string;
+  artist: string;
+  label: string | null;
+  cover_url: string | null;
+  release_date: string | null;
+  rating: number | null;
+  excerpt: string | null;
+  content: string;
+  spotify_url: string | null;
+  bandcamp_url: string | null;
+  youtube_url: string | null;
+  soundcloud_url: string | null;
+  apple_music_url: string | null;
+  published: boolean;
+};
+
+const EMPTY_REVIEW = {
+  slug: "", title: "", artist: "", label: "", cover_url: "", release_date: "",
+  rating: "", excerpt: "", content: "",
+  spotify_url: "", bandcamp_url: "", youtube_url: "", soundcloud_url: "", apple_music_url: "",
+  published: true,
+};
+
+function ChroniquesAdmin() {
+  const qc = useQueryClient();
+  const { session } = useAuth();
+  const [form, setForm] = useState(EMPTY_REVIEW);
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const { data: reviews = [] } = useQuery({
+    queryKey: ["admin-album-reviews"],
+    queryFn: async () => {
+      const { data } = await supabase.from("album_reviews").select("*").order("created_at", { ascending: false });
+      return (data ?? []) as ReviewRow[];
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async () => {
+      if (!session) throw new Error("Non authentifié");
+      if (!form.title || !form.artist || !form.content) throw new Error("Titre, artiste et chronique requis");
+      const slug = (form.slug || slugify(`${form.artist}-${form.title}`)) || slugify(form.title);
+      const { error } = await supabase.from("album_reviews").insert({
+        slug,
+        title: form.title,
+        artist: form.artist,
+        label: form.label || null,
+        cover_url: form.cover_url || null,
+        release_date: form.release_date || null,
+        rating: form.rating ? Number(form.rating) : null,
+        excerpt: form.excerpt || null,
+        content: form.content,
+        spotify_url: form.spotify_url || null,
+        bandcamp_url: form.bandcamp_url || null,
+        youtube_url: form.youtube_url || null,
+        soundcloud_url: form.soundcloud_url || null,
+        apple_music_url: form.apple_music_url || null,
+        published: form.published,
+        author_id: session.user.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Chronique publiée");
+      setForm(EMPTY_REVIEW);
+      qc.invalidateQueries({ queryKey: ["admin-album-reviews"] });
+      qc.invalidateQueries({ queryKey: ["album-reviews"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("album_reviews").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Supprimée");
+      qc.invalidateQueries({ queryKey: ["admin-album-reviews"] });
+      qc.invalidateQueries({ queryKey: ["album-reviews"] });
+    },
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="card-brut space-y-2 p-3">
+        <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Nouvelle chronique</h3>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <Input placeholder="Titre de l'album *" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <Input placeholder="Artiste *" value={form.artist} onChange={(e) => setForm({ ...form, artist: e.target.value })} />
+          <Input placeholder="Label (optionnel)" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
+          <Input type="date" placeholder="Date de sortie" value={form.release_date} onChange={(e) => setForm({ ...form, release_date: e.target.value })} />
+          <Input placeholder="Slug URL (auto si vide)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+          <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
+          <Input className="sm:col-span-2" placeholder="URL pochette (carrée)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+        </div>
+        <Textarea rows={2} placeholder="Extrait / résumé court" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
+        <Textarea rows={6} placeholder="Chronique complète *" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <Input placeholder="Spotify URL" value={form.spotify_url} onChange={(e) => setForm({ ...form, spotify_url: e.target.value })} />
+          <Input placeholder="Bandcamp URL" value={form.bandcamp_url} onChange={(e) => setForm({ ...form, bandcamp_url: e.target.value })} />
+          <Input placeholder="YouTube URL" value={form.youtube_url} onChange={(e) => setForm({ ...form, youtube_url: e.target.value })} />
+          <Input placeholder="SoundCloud URL" value={form.soundcloud_url} onChange={(e) => setForm({ ...form, soundcloud_url: e.target.value })} />
+          <Input placeholder="Apple Music URL" value={form.apple_music_url} onChange={(e) => setForm({ ...form, apple_music_url: e.target.value })} />
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-xs">
+            <Switch checked={form.published} onCheckedChange={(v) => setForm({ ...form, published: v })} />
+            Publier immédiatement
+          </label>
+          <Button size="sm" onClick={() => create.mutate()} disabled={!form.title || !form.artist || !form.content || create.isPending}>
+            {create.isPending ? "Publication…" : "Publier la chronique"}
+          </Button>
+        </div>
+      </div>
+
+      <ul className="space-y-2">
+        {reviews.map((r) => (
+          <li key={r.id} className="card-brut p-3">
+            <div className="flex items-center gap-3">
+              <div className="size-14 shrink-0 overflow-hidden rounded bg-muted">
+                {r.cover_url ? <img src={r.cover_url} alt={r.title} className="size-full object-cover" /> : <div className="grid size-full place-items-center"><Disc3 className="size-5 text-muted-foreground" /></div>}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-bold">{r.title} <span className="font-normal text-muted-foreground">— {r.artist}</span></div>
+                <div className="truncate text-xs text-muted-foreground">
+                  /{r.slug} · {r.published ? "publiée" : "brouillon"}
+                  {r.rating != null ? ` · ${Number(r.rating).toFixed(1)}/5` : ""}
+                </div>
+              </div>
+              <Button size="icon" variant="outline" onClick={() => setEditId(editId === r.id ? null : r.id)} aria-label="Modifier"><Pencil className="size-4" /></Button>
+              <Button size="icon" variant="destructive" onClick={() => { if (confirm("Supprimer cette chronique ?")) remove.mutate(r.id); }} aria-label="Supprimer"><Trash2 className="size-4" /></Button>
+            </div>
+            {editId === r.id && <ChroniqueEdit review={r} onDone={() => setEditId(null)} />}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => void }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({
+    slug: review.slug,
+    title: review.title,
+    artist: review.artist,
+    label: review.label ?? "",
+    cover_url: review.cover_url ?? "",
+    release_date: review.release_date ?? "",
+    rating: review.rating != null ? String(review.rating) : "",
+    excerpt: review.excerpt ?? "",
+    content: review.content,
+    spotify_url: review.spotify_url ?? "",
+    bandcamp_url: review.bandcamp_url ?? "",
+    youtube_url: review.youtube_url ?? "",
+    soundcloud_url: review.soundcloud_url ?? "",
+    apple_music_url: review.apple_music_url ?? "",
+    published: review.published,
+  });
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("album_reviews").update({
+        slug: f.slug || slugify(f.title),
+        title: f.title,
+        artist: f.artist,
+        label: f.label || null,
+        cover_url: f.cover_url || null,
+        release_date: f.release_date || null,
+        rating: f.rating ? Number(f.rating) : null,
+        excerpt: f.excerpt || null,
+        content: f.content,
+        spotify_url: f.spotify_url || null,
+        bandcamp_url: f.bandcamp_url || null,
+        youtube_url: f.youtube_url || null,
+        soundcloud_url: f.soundcloud_url || null,
+        apple_music_url: f.apple_music_url || null,
+        published: f.published,
+      }).eq("id", review.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Chronique mise à jour");
+      qc.invalidateQueries({ queryKey: ["admin-album-reviews"] });
+      qc.invalidateQueries({ queryKey: ["album-reviews"] });
+      onDone();
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+        <Input placeholder="Artiste" value={f.artist} onChange={(e) => setF({ ...f, artist: e.target.value })} />
+        <Input placeholder="Label" value={f.label} onChange={(e) => setF({ ...f, label: e.target.value })} />
+        <Input type="date" placeholder="Sortie" value={f.release_date} onChange={(e) => setF({ ...f, release_date: e.target.value })} />
+        <Input placeholder="Slug" value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} />
+        <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={f.rating} onChange={(e) => setF({ ...f, rating: e.target.value })} />
+        <Input className="sm:col-span-2" placeholder="Pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      </div>
+      <Textarea rows={2} placeholder="Extrait" value={f.excerpt} onChange={(e) => setF({ ...f, excerpt: e.target.value })} />
+      <Textarea rows={6} placeholder="Chronique" value={f.content} onChange={(e) => setF({ ...f, content: e.target.value })} />
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <Input placeholder="Spotify" value={f.spotify_url} onChange={(e) => setF({ ...f, spotify_url: e.target.value })} />
+        <Input placeholder="Bandcamp" value={f.bandcamp_url} onChange={(e) => setF({ ...f, bandcamp_url: e.target.value })} />
+        <Input placeholder="YouTube" value={f.youtube_url} onChange={(e) => setF({ ...f, youtube_url: e.target.value })} />
+        <Input placeholder="SoundCloud" value={f.soundcloud_url} onChange={(e) => setF({ ...f, soundcloud_url: e.target.value })} />
+        <Input placeholder="Apple Music" value={f.apple_music_url} onChange={(e) => setF({ ...f, apple_music_url: e.target.value })} />
+      </div>
+      <div className="flex items-center gap-3">
+        <label className="flex items-center gap-2 text-xs">
+          <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
+          Publiée
+        </label>
+        <Button size="sm" onClick={() => save.mutate()} disabled={!f.title || !f.artist || !f.content}>Enregistrer</Button>
+        <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
+      </div>
+    </div>
+  );
+}
