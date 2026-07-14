@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRouterState } from "@tanstack/react-router";
@@ -71,6 +71,7 @@ export function SocialWall() {
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const hash = useRouterState({ select: (s) => s.location.hash });
+  const listRef = useRef<HTMLUListElement | null>(null);
 
   // Auto-open the thread targeted by a notification hash like `post-<id>|c-<cid>`
   useEffect(() => {
@@ -241,6 +242,40 @@ export function SocialWall() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const SCROLL_KEY = "wall-scroll-pos";
+  const hasPosts = posts.length > 0;
+
+  // Restore saved scroll position once the list has content.
+  useEffect(() => {
+    if (!hasPosts) return;
+    const el = listRef.current;
+    if (!el) return;
+    const saved = sessionStorage.getItem(SCROLL_KEY);
+    if (saved == null) return;
+    const y = Number(saved);
+    if (Number.isNaN(y)) return;
+    requestAnimationFrame(() => { el.scrollTop = y; });
+  }, [hasPosts]);
+
+  // Persist scroll position as the user scrolls (throttled via rAF).
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
+      });
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className="space-y-3">
       <div className="flex items-baseline justify-between">
@@ -269,7 +304,10 @@ export function SocialWall() {
         </div>
       </div>
 
-      <ul className="max-h-[28rem] space-y-2 overflow-y-auto rounded-lg border border-border bg-background/40 p-2 pr-3">
+      <ul
+        ref={listRef}
+        className="max-h-[28rem] space-y-2 overflow-y-auto rounded-lg border border-border bg-background/40 p-2 pr-3"
+      >
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             Le mur est vide — sois le premier à écrire !
