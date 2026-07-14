@@ -242,6 +242,40 @@ export function SocialWall() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const SCROLL_KEY = "wall-scroll-pos";
+  const hasPosts = posts.length > 0;
+
+  // Restore saved scroll position once the list has content.
+  useEffect(() => {
+    if (!hasPosts) return;
+    const el = listRef.current;
+    if (!el) return;
+    const saved = sessionStorage.getItem(SCROLL_KEY);
+    if (saved == null) return;
+    const y = Number(saved);
+    if (Number.isNaN(y)) return;
+    requestAnimationFrame(() => { el.scrollTop = y; });
+  }, [hasPosts]);
+
+  // Persist scroll position as the user scrolls (throttled via rAF).
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
+      });
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className="space-y-3">
       <div className="flex items-baseline justify-between">
