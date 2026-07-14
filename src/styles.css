@@ -139,6 +139,7 @@
 
 /* Mention @xxx dans les posts */
 @utility mention {
-  color: var(--color-radio-yellow);
-  font-weight: 700;
+  color: var(--color-foreground);
+  font-weight: 800;
+  text-shadow: 0 0 10px oklch(0.87 0.18 90 / 0.55);
 }
