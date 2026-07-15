@@ -103,3 +103,11 @@ export function scanText(text: string): { media: MediaEmbed[]; other: string[] }
   }
   return { media, other };
 }
+
+// Remove URLs that resolve to an embeddable media (YouTube/Vimeo) from a text,
+// so the raw link doesn't appear next to the inline player.
+export function stripMediaUrls(text: string): string {
+  if (!text) return "";
+  const cleaned = text.replace(URL_RE, (url) => (parseMediaUrl(url) ? "" : url));
+  return cleaned.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
