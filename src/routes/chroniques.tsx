@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogChroniques from "@/assets/og-chroniques.jpg";
+
+const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
 export const Route = createFileRoute("/chroniques")({
   head: () => ({
@@ -13,6 +16,11 @@ export const Route = createFileRoute("/chroniques")({
       { property: "og:description", content: "Découverte musicale : chroniques d'albums de la scène indé française par la rédaction d'Indi Radio." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://radio.indi-art-culture.com/chroniques" },
+      { property: "og:image", content: OG_CHRONIQUES },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_CHRONIQUES },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chroniques" }],
   }),

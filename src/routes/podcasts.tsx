@@ -5,6 +5,9 @@ import { useState } from "react";
 import { Headphones } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogPodcasts from "@/assets/og-podcasts.jpg";
+
+const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 
 export const Route = createFileRoute("/podcasts")({
   head: () => ({
@@ -13,7 +16,15 @@ export const Route = createFileRoute("/podcasts")({
       { name: "description", content: "Écoute et note les podcasts d'Indi Radio." },
       { property: "og:title", content: "Podcasts — Indi Radio" },
       { property: "og:description", content: "La bibliothèque de podcasts d'Indi Radio." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/podcasts" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_PODCASTS },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_PODCASTS },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/podcasts" }],
   }),
   component: PodcastsPage,
 });

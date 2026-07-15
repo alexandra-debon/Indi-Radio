@@ -7,6 +7,9 @@ import { useState } from "react";
 import { Mic2 } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogEmissions from "@/assets/og-emissions.jpg";
+
+const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 
 export const Route = createFileRoute("/emissions")({
   head: () => ({
@@ -15,7 +18,15 @@ export const Route = createFileRoute("/emissions")({
       { name: "description", content: "Les émissions, chroniques et animateurs d'Indi Radio." },
       { property: "og:title", content: "Émissions & Animateurs — Indi Radio" },
       { property: "og:description", content: "Découvre les voix et les programmes d'Indi Radio." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/emissions" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_EMISSIONS },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_EMISSIONS },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/emissions" }],
   }),
   component: EmissionsPage,
 });

@@ -17,6 +17,9 @@ import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogActus from "@/assets/og-actus.jpg";
+
+const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -27,6 +30,11 @@ export const Route = createFileRoute("/actus")({
       { property: "og:description", content: "Le fil d'actus des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_ACTUS },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_ACTUS },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/actus" }],
     scripts: [
