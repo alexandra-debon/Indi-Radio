@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 interface PostRow {
   id: string;
