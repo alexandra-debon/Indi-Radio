@@ -11,8 +11,10 @@ import { fr } from "date-fns/locale";
 import { ClipEntryEditor, type ClipEntryDraft } from "@/components/clips/ClipEntryEditor";
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogClips from "@/assets/og-clips.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
+const OG_CLIPS = `${BASE_URL}${ogClips}`;
 
 export const Route = createFileRoute("/clips")({
   head: () => ({
@@ -23,6 +25,11 @@ export const Route = createFileRoute("/clips")({
       { property: "og:description", content: "Clips actu et playlists vidéo sélectionnés par la rédaction d'Indi Radio." },
       { property: "og:url", content: `${BASE_URL}/clips` },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_CLIPS },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_CLIPS },
     ],
     links: [{ rel: "canonical", href: `${BASE_URL}/clips` }],
   }),
