@@ -327,7 +327,10 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                     </div>
                   ) : (
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm">{c.content}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm">{c.content}</p>
+                        <UrlEmbeds text={c.content} compact />
+                      </div>
                       {(canEditC || canDelC) && (
                         <div className="flex shrink-0 gap-1">
                           {canEditC && (
