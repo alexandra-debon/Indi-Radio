@@ -23,6 +23,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
+import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -101,6 +102,11 @@ const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
   path: '/episodes/$episodeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
+  id: '/$showId',
+  path: '/$showId',
+  getParentRoute: () => EmissionsRoute,
+} as any)
 const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -152,7 +158,7 @@ export interface FileRoutesByFullPath {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -175,7 +182,7 @@ export interface FileRoutesByTo {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -200,7 +208,7 @@ export interface FileRoutesById {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -297,7 +309,7 @@ export interface RootRouteChildren {
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
   ClipsRoute: typeof ClipsRoute
   DedicacesRoute: typeof DedicacesRoute
-  EmissionsRoute: typeof EmissionsRoute
+  EmissionsRoute: typeof EmissionsRouteWithChildren
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -406,6 +418,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/emissions/$showId': {
+      id: '/emissions/$showId'
+      path: '/$showId'
+      fullPath: '/emissions/$showId'
+      preLoaderRoute: typeof EmissionsShowIdRouteImport
+      parentRoute: typeof EmissionsRoute
+    }
     '/chroniques/$slug': {
       id: '/chroniques/$slug'
       path: '/$slug'
@@ -504,6 +523,18 @@ const ChroniquesRouteWithChildren = ChroniquesRoute._addFileChildren(
   ChroniquesRouteChildren,
 )
 
+interface EmissionsRouteChildren {
+  EmissionsShowIdRoute: typeof EmissionsShowIdRoute
+}
+
+const EmissionsRouteChildren: EmissionsRouteChildren = {
+  EmissionsShowIdRoute: EmissionsShowIdRoute,
+}
+
+const EmissionsRouteWithChildren = EmissionsRoute._addFileChildren(
+  EmissionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -514,7 +545,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChroniquesRoute: ChroniquesRouteWithChildren,
   ClipsRoute: ClipsRoute,
   DedicacesRoute: DedicacesRoute,
-  EmissionsRoute: EmissionsRoute,
+  EmissionsRoute: EmissionsRouteWithChildren,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
