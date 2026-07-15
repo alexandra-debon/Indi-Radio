@@ -12,6 +12,8 @@ import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "luc
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { Input } from "@/components/ui/input";
+import { isValidVideoUrl } from "@/lib/media-embed";
 
 interface PostRow {
   id: string;
@@ -65,6 +67,7 @@ export function SocialWall() {
   const { session, requireAuth, isAdmin } = useAuth();
   const qc = useQueryClient();
   const [content, setContent] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
@@ -179,17 +182,27 @@ export function SocialWall() {
 
   const create = useMutation({
     mutationFn: async () => {
-      if (!session || !content.trim()) return;
-      const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
+      if (!session) return;
+      const trimmedVideo = videoUrl.trim();
+      const trimmedContent = content.trim();
+      if (!trimmedContent && !trimmedVideo) return;
+      if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
+        throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
+      }
+      const finalContent = trimmedVideo
+        ? (trimmedContent ? `${trimmedContent}\n${trimmedVideo}` : trimmedVideo)
+        : trimmedContent;
+      const mentions = Array.from(finalContent.matchAll(MENTION_RE)).map((m) => m[1]);
       const { error } = await supabase.from("posts").insert({
         author_id: session.user.id,
-        content: content.trim(),
+        content: finalContent,
         mentions,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       setContent("");
+      setVideoUrl("");
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
@@ -293,11 +306,20 @@ export function SocialWall() {
           className="resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
           disabled={!session}
         />
+        <Input
+          type="url"
+          inputMode="url"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="Lien vidéo YouTube ou Vimeo (optionnel)"
+          disabled={!session}
+          className="mt-2 h-8 text-xs"
+        />
         <div className="mt-2 flex justify-end">
           <Button
             size="sm"
             onClick={() => requireAuth(() => create.mutate())}
-            disabled={!content.trim() || create.isPending}
+            disabled={(!content.trim() && !videoUrl.trim()) || create.isPending}
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
             Publier
