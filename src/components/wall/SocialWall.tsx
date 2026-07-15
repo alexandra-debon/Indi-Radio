@@ -13,7 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { Input } from "@/components/ui/input";
-import { isValidVideoUrl } from "@/lib/media-embed";
+import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 
 interface PostRow {
   id: string;
@@ -385,7 +385,9 @@ export function SocialWall() {
                 </div>
               ) : (
                 <>
-                  <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
+                  {stripMediaUrls(p.content) && (
+                    <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
+                  )}
                   <UrlEmbeds text={p.content} />
                   {(canEdit || canDelete || isAdmin) && (
                     <div className="mt-2 flex justify-end gap-1">
@@ -507,7 +509,9 @@ export function SocialWall() {
                                   {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
                                 </span>
                               </div>
-                              <p className="whitespace-pre-wrap text-xs">{renderMentions(c.content)}</p>
+                              {stripMediaUrls(c.content) && (
+                                <p className="whitespace-pre-wrap text-xs">{renderMentions(stripMediaUrls(c.content))}</p>
+                              )}
                               <UrlEmbeds text={c.content} compact />
                               {canDelC && (
                                 <div className="mt-1 flex justify-end">

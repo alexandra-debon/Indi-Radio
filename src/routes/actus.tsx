@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
-import { isValidVideoUrl } from "@/lib/media-embed";
+import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -278,7 +278,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         ) : (
           <>
             <h3 className="text-lg font-bold">{post.title}</h3>
-            <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+            {stripMediaUrls(post.content) && (
+              <p className="whitespace-pre-wrap text-sm">{stripMediaUrls(post.content)}</p>
+            )}
             <UrlEmbeds text={post.content} />
           </>
         )}
@@ -338,7 +340,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                   ) : (
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm">{c.content}</p>
+                        {stripMediaUrls(c.content) && (
+                          <p className="text-sm">{stripMediaUrls(c.content)}</p>
+                        )}
                         <UrlEmbeds text={c.content} compact />
                       </div>
                       {(canEditC || canDelC) && (
