@@ -12,6 +12,10 @@ import { fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
 import { useHashHighlight } from "@/lib/notif-navigate";
+import ogHome from "@/assets/og-home.jpg";
+
+const BASE_URL = "https://radio.indi-art-culture.com";
+const OG_HOME = `${BASE_URL}${ogHome}`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +26,11 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_HOME },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_HOME },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],
   }),
