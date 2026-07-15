@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -50,6 +50,12 @@ export function ShareButton({
   variant?: "icon" | "chip";
 }) {
   const [open, setOpen] = useState(false);
+  const [nativeShare, setNativeShare] = useState(false);
+  useEffect(() => {
+    setNativeShare(
+      isNative() || (typeof navigator !== "undefined" && "share" in navigator),
+    );
+  }, []);
   const url = resolveUrl(target.url);
   const title = target.title ?? (typeof document !== "undefined" ? document.title : "Indi Radio");
   const text = target.text ?? title;
@@ -63,29 +69,12 @@ export function ShareButton({
     }
   }
 
-  async function handleTrigger(e: React.MouseEvent) {
-    // Native sheet (Capacitor iOS/Android)
-    if (isNative()) {
-      e.preventDefault();
-      try {
-        await shareNative({ title, text, url });
-      } catch {
-        /* user cancelled */
-      }
-      return;
+  async function triggerNative() {
+    try {
+      await shareNative({ title, text, url });
+    } catch {
+      /* user cancelled */
     }
-    // Web Share API (mobile Safari/Chrome, PWA)
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      e.preventDefault();
-      try {
-        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title, text, url });
-      } catch {
-        /* user cancelled */
-      }
-      return;
-    }
-    // Sinon : ouvrir le menu desktop
-    setOpen(true);
   }
 
   const links = buildShareLinks({ url, title, text });
@@ -95,12 +84,26 @@ export function ShareButton({
       ? "inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs hover:bg-muted"
       : "inline-flex items-center gap-1 rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground";
 
+  if (nativeShare) {
+    return (
+      <button
+        type="button"
+        onClick={triggerNative}
+        aria-label={label}
+        title={label}
+        className={`${triggerClass} ${className}`}
+      >
+        <Share2 className="size-3.5" />
+        {variant === "chip" && <span>Partager</span>}
+      </button>
+    );
+  }
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          onClick={handleTrigger}
           aria-label={label}
           title={label}
           className={`${triggerClass} ${className}`}
