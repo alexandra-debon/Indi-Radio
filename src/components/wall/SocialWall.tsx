@@ -364,6 +364,7 @@ export function SocialWall() {
               ) : (
                 <>
                   <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
+                  <UrlEmbeds text={p.content} />
                   {(canEdit || canDelete || isAdmin) && (
                     <div className="mt-2 flex justify-end gap-1">
                       {isAdmin && !isPinned && (
