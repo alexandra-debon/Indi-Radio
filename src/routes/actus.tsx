@@ -269,6 +269,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           <>
             <h3 className="text-lg font-bold">{post.title}</h3>
             <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+            <UrlEmbeds text={post.content} />
           </>
         )}
         <div className="flex items-center gap-2 pt-1">
