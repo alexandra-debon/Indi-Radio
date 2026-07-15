@@ -12,6 +12,8 @@ import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "luc
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { Input } from "@/components/ui/input";
+import { isValidVideoUrl } from "@/lib/media-embed";
 
 interface PostRow {
   id: string;
@@ -65,6 +67,7 @@ export function SocialWall() {
   const { session, requireAuth, isAdmin } = useAuth();
   const qc = useQueryClient();
   const [content, setContent] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
@@ -180,16 +183,24 @@ export function SocialWall() {
   const create = useMutation({
     mutationFn: async () => {
       if (!session || !content.trim()) return;
-      const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
+      const trimmedVideo = videoUrl.trim();
+      if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
+        throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
+      }
+      const finalContent = trimmedVideo
+        ? `${content.trim()}\n${trimmedVideo}`
+        : content.trim();
+      const mentions = Array.from(finalContent.matchAll(MENTION_RE)).map((m) => m[1]);
       const { error } = await supabase.from("posts").insert({
         author_id: session.user.id,
-        content: content.trim(),
+        content: finalContent,
         mentions,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       setContent("");
+      setVideoUrl("");
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
