@@ -23,6 +23,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
+import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
@@ -99,6 +100,11 @@ const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ChroniquesRoute,
 } as any)
+const ActusPostIdRoute = ActusPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => ActusRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -134,7 +140,7 @@ const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -155,7 +162,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -178,7 +186,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/notif-test'
     | '/notifications'
     | '/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/notif-test'
     | '/notifications'
     | '/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -267,7 +279,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  ActusRoute: typeof ActusRoute
+  ActusRoute: typeof ActusRouteWithChildren
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
@@ -381,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChroniquesSlugRouteImport
       parentRoute: typeof ChroniquesRoute
     }
+    '/actus/$postId': {
+      id: '/actus/$postId'
+      path: '/$postId'
+      fullPath: '/actus/$postId'
+      preLoaderRoute: typeof ActusPostIdRouteImport
+      parentRoute: typeof ActusRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -443,6 +462,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ActusRouteChildren {
+  ActusPostIdRoute: typeof ActusPostIdRoute
+}
+
+const ActusRouteChildren: ActusRouteChildren = {
+  ActusPostIdRoute: ActusPostIdRoute,
+}
+
+const ActusRouteWithChildren = ActusRoute._addFileChildren(ActusRouteChildren)
+
 interface ChroniquesRouteChildren {
   ChroniquesSlugRoute: typeof ChroniquesSlugRoute
 }
@@ -459,7 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  ActusRoute: ActusRoute,
+  ActusRoute: ActusRouteWithChildren,
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
   ChroniquesRoute: ChroniquesRouteWithChildren,
@@ -475,13 +504,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
