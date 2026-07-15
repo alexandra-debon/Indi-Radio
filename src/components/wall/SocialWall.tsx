@@ -304,11 +304,20 @@ export function SocialWall() {
           className="resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
           disabled={!session}
         />
+        <Input
+          type="url"
+          inputMode="url"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="Lien vidéo YouTube ou Vimeo (optionnel)"
+          disabled={!session}
+          className="mt-2 h-8 text-xs"
+        />
         <div className="mt-2 flex justify-end">
           <Button
             size="sm"
             onClick={() => requireAuth(() => create.mutate())}
-            disabled={!content.trim() || create.isPending}
+            disabled={(!content.trim() && !videoUrl.trim()) || create.isPending}
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
             Publier
