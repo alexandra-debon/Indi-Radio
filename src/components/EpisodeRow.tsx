@@ -109,6 +109,7 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
         )}
         <ShareButton
           target={{
+            url: `/episodes/${ep.id}`,
             title: `${ep.title} — Indi Radio`,
             text: ep.description ?? ep.title,
           }}

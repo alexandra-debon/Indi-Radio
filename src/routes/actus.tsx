@@ -305,7 +305,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           </button>
           <ShareButton
             target={{
-              url: `/actus#news-${post.id}`,
+              url: `/actus/${post.id}`,
               title: `${post.title} — Indi Rézo`,
               text: stripMediaUrls(post.content).slice(0, 200) || post.title,
             }}

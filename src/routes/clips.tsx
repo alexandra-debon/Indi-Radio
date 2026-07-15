@@ -191,7 +191,7 @@ function ClipCard({ entry }: { entry: ClipRow }) {
           </span>
           <ShareButton
             target={{
-              url: `/clips#clip-${entry.id}`,
+              url: `/clips/${entry.id}`,
               title: `${entry.title} — Clip Addict · Indi Radio`,
               text: entry.body?.slice(0, 200) || entry.title,
             }}

@@ -22,7 +22,11 @@ import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
+import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
+import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
+import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
@@ -94,10 +98,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
+  id: '/episodes/$episodeId',
+  path: '/episodes/$episodeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
+  id: '/$showId',
+  path: '/$showId',
+  getParentRoute: () => EmissionsRoute,
+} as any)
+const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
+  id: '/$clipId',
+  path: '/$clipId',
+  getParentRoute: () => ClipsRoute,
+} as any)
 const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => ChroniquesRoute,
+} as any)
+const ActusPostIdRoute = ActusPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => ActusRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
@@ -134,13 +158,13 @@ const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRoute
+  '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -148,20 +172,24 @@ export interface FileRoutesByFullPath {
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRoute
+  '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -169,7 +197,11 @@ export interface FileRoutesByTo {
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -178,13 +210,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRoute
+  '/actus': typeof ActusRouteWithChildren
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRoute
+  '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRoute
+  '/emissions': typeof EmissionsRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -192,7 +224,11 @@ export interface FileRoutesById {
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/emissions/$showId': typeof EmissionsShowIdRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -215,7 +251,11 @@ export interface FileRouteTypes {
     | '/notif-test'
     | '/notifications'
     | '/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/clips/$clipId'
+    | '/emissions/$showId'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesByTo: FileRoutesByTo
@@ -236,7 +276,11 @@ export interface FileRouteTypes {
     | '/notif-test'
     | '/notifications'
     | '/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/clips/$clipId'
+    | '/emissions/$showId'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   id:
@@ -258,7 +302,11 @@ export interface FileRouteTypes {
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
+    | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/clips/$clipId'
+    | '/emissions/$showId'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesById: FileRoutesById
@@ -267,16 +315,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  ActusRoute: typeof ActusRoute
+  ActusRoute: typeof ActusRouteWithChildren
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
-  ClipsRoute: typeof ClipsRoute
+  ClipsRoute: typeof ClipsRouteWithChildren
   DedicacesRoute: typeof DedicacesRoute
-  EmissionsRoute: typeof EmissionsRoute
+  EmissionsRoute: typeof EmissionsRouteWithChildren
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
 }
@@ -374,12 +423,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/episodes/$episodeId': {
+      id: '/episodes/$episodeId'
+      path: '/episodes/$episodeId'
+      fullPath: '/episodes/$episodeId'
+      preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emissions/$showId': {
+      id: '/emissions/$showId'
+      path: '/$showId'
+      fullPath: '/emissions/$showId'
+      preLoaderRoute: typeof EmissionsShowIdRouteImport
+      parentRoute: typeof EmissionsRoute
+    }
+    '/clips/$clipId': {
+      id: '/clips/$clipId'
+      path: '/$clipId'
+      fullPath: '/clips/$clipId'
+      preLoaderRoute: typeof ClipsClipIdRouteImport
+      parentRoute: typeof ClipsRoute
+    }
     '/chroniques/$slug': {
       id: '/chroniques/$slug'
       path: '/$slug'
       fullPath: '/chroniques/$slug'
       preLoaderRoute: typeof ChroniquesSlugRouteImport
       parentRoute: typeof ChroniquesRoute
+    }
+    '/actus/$postId': {
+      id: '/actus/$postId'
+      path: '/$postId'
+      fullPath: '/actus/$postId'
+      preLoaderRoute: typeof ActusPostIdRouteImport
+      parentRoute: typeof ActusRoute
     }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
@@ -443,6 +520,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ActusRouteChildren {
+  ActusPostIdRoute: typeof ActusPostIdRoute
+}
+
+const ActusRouteChildren: ActusRouteChildren = {
+  ActusPostIdRoute: ActusPostIdRoute,
+}
+
+const ActusRouteWithChildren = ActusRoute._addFileChildren(ActusRouteChildren)
+
 interface ChroniquesRouteChildren {
   ChroniquesSlugRoute: typeof ChroniquesSlugRoute
 }
@@ -455,20 +542,43 @@ const ChroniquesRouteWithChildren = ChroniquesRoute._addFileChildren(
   ChroniquesRouteChildren,
 )
 
+interface ClipsRouteChildren {
+  ClipsClipIdRoute: typeof ClipsClipIdRoute
+}
+
+const ClipsRouteChildren: ClipsRouteChildren = {
+  ClipsClipIdRoute: ClipsClipIdRoute,
+}
+
+const ClipsRouteWithChildren = ClipsRoute._addFileChildren(ClipsRouteChildren)
+
+interface EmissionsRouteChildren {
+  EmissionsShowIdRoute: typeof EmissionsShowIdRoute
+}
+
+const EmissionsRouteChildren: EmissionsRouteChildren = {
+  EmissionsShowIdRoute: EmissionsShowIdRoute,
+}
+
+const EmissionsRouteWithChildren = EmissionsRoute._addFileChildren(
+  EmissionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  ActusRoute: ActusRoute,
+  ActusRoute: ActusRouteWithChildren,
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
   ChroniquesRoute: ChroniquesRouteWithChildren,
-  ClipsRoute: ClipsRoute,
+  ClipsRoute: ClipsRouteWithChildren,
   DedicacesRoute: DedicacesRoute,
-  EmissionsRoute: EmissionsRoute,
+  EmissionsRoute: EmissionsRouteWithChildren,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
 }
