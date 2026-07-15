@@ -119,7 +119,7 @@ function ClipsSection({
   return (
     <section className="space-y-3">
       <div className="flex items-baseline justify-between">
-        <div>
+        <div className="space-y-1">
           <h2 className="section-title text-lg flex items-center gap-2">{icon} {title}</h2>
           <p className="text-xs text-muted-foreground">{subtitle}</p>
         </div>
