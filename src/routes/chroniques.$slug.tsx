@@ -4,8 +4,10 @@ import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
+import ogChroniques from "@/assets/og-chroniques.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
+const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
 
 export const Route = createFileRoute("/chroniques/$slug")({
   loader: async ({ params }) => {
@@ -40,10 +42,16 @@ export const Route = createFileRoute("/chroniques/$slug")({
       { property: "og:description", content: description },
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
     ];
     if (loaderData.cover_url) {
       meta.push({ property: "og:image", content: loaderData.cover_url });
       meta.push({ name: "twitter:image", content: loaderData.cover_url });
+    } else {
+      meta.push({ property: "og:image", content: OG_FALLBACK });
+      meta.push({ name: "twitter:image", content: OG_FALLBACK });
     }
     return {
       meta,
