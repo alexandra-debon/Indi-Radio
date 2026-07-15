@@ -14,6 +14,7 @@ import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
+import { Route as ClipsRouteImport } from './routes/clips'
 import { Route as ChroniquesRouteImport } from './routes/chroniques'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -52,6 +53,11 @@ const EmissionsRoute = EmissionsRouteImport.update({
 const DedicacesRoute = DedicacesRouteImport.update({
   id: '/dedicaces',
   path: '/dedicaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsRoute = ClipsRouteImport.update({
+  id: '/clips',
+  path: '/clips',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChroniquesRoute = ChroniquesRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
+  '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
+  '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
+  '/clips': typeof ClipsRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRoute
   '/newsletter': typeof NewsletterRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chart'
     | '/chroniques'
+    | '/clips'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chart'
     | '/chroniques'
+    | '/clips'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chart'
     | '/chroniques'
+    | '/clips'
     | '/dedicaces'
     | '/emissions'
     | '/newsletter'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
+  ClipsRoute: typeof ClipsRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRoute
   NewsletterRoute: typeof NewsletterRoute
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/dedicaces'
       fullPath: '/dedicaces'
       preLoaderRoute: typeof DedicacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips': {
+      id: '/clips'
+      path: '/clips'
+      fullPath: '/clips'
+      preLoaderRoute: typeof ClipsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chroniques': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
   ChroniquesRoute: ChroniquesRouteWithChildren,
+  ClipsRoute: ClipsRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRoute,
   NewsletterRoute: NewsletterRoute,
