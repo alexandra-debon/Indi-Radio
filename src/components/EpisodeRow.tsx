@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ShareButton } from "@/components/share/ShareButton";
 
 export type EpisodeLike = {
   id: string;
@@ -106,6 +107,12 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
         {ep.audio_url && ep.external_url && (
           <a href={ep.external_url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">Manager</a>
         )}
+        <ShareButton
+          target={{
+            title: `${ep.title} — Indi Radio`,
+            text: ep.description ?? ep.title,
+          }}
+        />
       </div>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
