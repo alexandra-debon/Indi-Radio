@@ -509,7 +509,9 @@ export function SocialWall() {
                                   {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
                                 </span>
                               </div>
-                              <p className="whitespace-pre-wrap text-xs">{renderMentions(c.content)}</p>
+                              {stripMediaUrls(c.content) && (
+                                <p className="whitespace-pre-wrap text-xs">{renderMentions(stripMediaUrls(c.content))}</p>
+                              )}
                               <UrlEmbeds text={c.content} compact />
                               {canDelC && (
                                 <div className="mt-1 flex justify-end">
