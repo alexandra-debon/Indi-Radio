@@ -116,6 +116,48 @@ export type Database = {
         }
         Relationships: []
       }
+      clip_entries: {
+        Row: {
+          author_id: string | null
+          body: string | null
+          created_at: string
+          id: string
+          pinned_at: string | null
+          playlist_url: string | null
+          section: Database["public"]["Enums"]["clip_section"]
+          title: string
+          updated_at: string
+          video_url: string | null
+          video_urls: string[] | null
+        }
+        Insert: {
+          author_id?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          pinned_at?: string | null
+          playlist_url?: string | null
+          section: Database["public"]["Enums"]["clip_section"]
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          video_urls?: string[] | null
+        }
+        Update: {
+          author_id?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          pinned_at?: string | null
+          playlist_url?: string | null
+          section?: Database["public"]["Enums"]["clip_section"]
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          video_urls?: string[] | null
+        }
+        Relationships: []
+      }
       episode_ratings: {
         Row: {
           comment: string | null
@@ -813,6 +855,7 @@ export type Database = {
     }
     Enums: {
       app_role: "auditeur" | "artiste" | "animateur" | "admin"
+      clip_section: "clips_actu" | "playlists_clips"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -941,6 +984,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["auditeur", "artiste", "animateur", "admin"],
+      clip_section: ["clips_actu", "playlists_clips"],
     },
   },
 } as const
