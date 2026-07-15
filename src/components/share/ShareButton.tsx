@@ -92,7 +92,7 @@ export function ShareButton({
     return (
       <button
         type="button"
-        onClick={triggerNative}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerNative(); }}
         aria-label={label}
         title={label}
         className={`${triggerClass} ${className}`}
@@ -110,6 +110,7 @@ export function ShareButton({
           type="button"
           aria-label={label}
           title={label}
+          onClick={(e) => { e.stopPropagation(); }}
           className={`${triggerClass} ${className}`}
         >
           <Share2 className="size-3.5" />
