@@ -486,6 +486,7 @@ export function SocialWall() {
                                 </span>
                               </div>
                               <p className="whitespace-pre-wrap text-xs">{renderMentions(c.content)}</p>
+                              <UrlEmbeds text={c.content} compact />
                               {canDelC && (
                                 <div className="mt-1 flex justify-end">
                                   <button
