@@ -16,6 +16,7 @@ import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
+import { ShareButton } from "@/components/share/ShareButton";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -294,6 +295,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           <button onClick={() => setCommentOpen((v) => !v)} className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs hover:bg-muted">
             <MessageCircle className="size-3.5" /> commentaires
           </button>
+          <ShareButton
+            target={{
+              url: `/actus#news-${post.id}`,
+              title: `${post.title} — Indi Rézo`,
+              text: stripMediaUrls(post.content).slice(0, 200) || post.title,
+            }}
+          />
           {!editing && (canEditPost || canDeletePost) && (
             <div className="ml-auto flex gap-1">
               {canEditPost && (

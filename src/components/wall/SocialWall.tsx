@@ -12,6 +12,7 @@ import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "luc
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { ShareButton } from "@/components/share/ShareButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 
@@ -492,6 +493,14 @@ export function SocialWall() {
                         <MessageCircle className="size-3.5" />
                         <span>{postComments.length}</span>
                       </button>
+                      <ShareButton
+                        target={{
+                          url: `/#post-${p.id}`,
+                          title: `${p.author?.pseudo ?? "Un auditeur"} sur Indi Radio`,
+                          text: stripMediaUrls(p.content).slice(0, 200),
+                        }}
+                        className="ml-auto"
+                      />
                     </div>
                     {isOpen && (
                       <div className="mt-2 space-y-2">

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star } from "lucide-react";
+import { ShareButton } from "@/components/share/ShareButton";
 
 export const Route = createFileRoute("/chroniques")({
   head: () => ({
@@ -50,7 +51,17 @@ function ChroniquesPage() {
 
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {reviews.map((r) => (
-          <li key={r.id}>
+          <li key={r.id} className="relative">
+            <div className="absolute right-2 top-2 z-10">
+              <ShareButton
+                target={{
+                  url: `/chroniques/${r.slug}`,
+                  title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
+                  text: r.excerpt ?? `Chronique de ${r.title} par ${r.artist}`,
+                }}
+                className="bg-background/80 backdrop-blur"
+              />
+            </div>
             <Link
               to="/chroniques/$slug"
               params={{ slug: r.slug }}

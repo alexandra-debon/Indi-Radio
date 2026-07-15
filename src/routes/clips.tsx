@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ClipEntryEditor, type ClipEntryDraft } from "@/components/clips/ClipEntryEditor";
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { ShareButton } from "@/components/share/ShareButton";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
@@ -174,12 +175,21 @@ function ClipCard({ entry }: { entry: ClipRow }) {
   if (entry.video_urls) videos.push(...entry.video_urls);
 
   return (
-    <li className="card-brut space-y-3 p-3">
+    <li id={`clip-${entry.id}`} className="card-brut scroll-mt-24 space-y-3 p-3">
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-lg font-bold leading-tight">{entry.title}</h3>
-        <span className="shrink-0 text-[10px] text-muted-foreground">
-          {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
-        </span>
+        <div className="flex shrink-0 items-center gap-1">
+          <span className="text-[10px] text-muted-foreground">
+            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+          </span>
+          <ShareButton
+            target={{
+              url: `/clips#clip-${entry.id}`,
+              title: `${entry.title} — Clip Addict · Indi Radio`,
+              text: entry.body?.slice(0, 200) || entry.title,
+            }}
+          />
+        </div>
       </div>
 
       {entry.body && (

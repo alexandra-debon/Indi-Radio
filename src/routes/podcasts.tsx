@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Headphones } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
+import { ShareButton } from "@/components/share/ShareButton";
 
 export const Route = createFileRoute("/podcasts")({
   head: () => ({
@@ -35,7 +36,18 @@ function PodcastsPage() {
       )}
       <div className="grid grid-cols-2 gap-3">
         {podcasts.map((p) => (
-          <button key={p.id} onClick={() => setOpenId(openId === p.id ? null : p.id)} className="card-brut overflow-hidden text-left">
+          <div key={p.id} className="card-brut relative overflow-hidden">
+            <div className="absolute right-1.5 top-1.5 z-10">
+              <ShareButton
+                target={{
+                  url: `/podcasts#podcast-${p.id}`,
+                  title: `${p.title} — Podcasts Indi Radio`,
+                  text: p.description ?? p.title,
+                }}
+                className="bg-background/80 backdrop-blur"
+              />
+            </div>
+            <button onClick={() => setOpenId(openId === p.id ? null : p.id)} id={`podcast-${p.id}`} className="block w-full scroll-mt-24 text-left">
             <div className="aspect-square bg-muted">
               {p.cover_url ? (
                 <img src={p.cover_url} alt={p.title} className="size-full object-cover" />
@@ -47,7 +59,8 @@ function PodcastsPage() {
               <div className="truncate text-sm font-semibold">{p.title}</div>
               {p.description && <div className="line-clamp-2 text-xs text-muted-foreground">{p.description}</div>}
             </div>
-          </button>
+            </button>
+          </div>
         ))}
       </div>
 
