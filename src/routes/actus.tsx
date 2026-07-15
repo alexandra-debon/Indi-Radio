@@ -14,6 +14,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
