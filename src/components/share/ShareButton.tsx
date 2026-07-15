@@ -52,9 +52,11 @@ export function ShareButton({
   const [open, setOpen] = useState(false);
   const [nativeShare, setNativeShare] = useState(false);
   useEffect(() => {
-    setNativeShare(
-      isNative() || (typeof navigator !== "undefined" && "share" in navigator),
-    );
+    // Only use the native sheet inside a real native wrapper (Capacitor).
+    // In browsers (including mobile Safari inside an iframe/preview),
+    // navigator.share often throws NotAllowedError silently — so we
+    // always show our own menu on the web to guarantee a working UI.
+    setNativeShare(isNative());
   }, []);
   const url = resolveUrl(target.url);
   const title = target.title ?? (typeof document !== "undefined" ? document.title : "Indi Radio");
@@ -73,7 +75,9 @@ export function ShareButton({
     try {
       await shareNative({ title, text, url });
     } catch {
-      /* user cancelled */
+      // Native share refused (permissions, iframe, etc.) → open the menu.
+      setNativeShare(false);
+      setOpen(true);
     }
   }
 
