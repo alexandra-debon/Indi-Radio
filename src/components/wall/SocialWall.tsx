@@ -182,14 +182,16 @@ export function SocialWall() {
 
   const create = useMutation({
     mutationFn: async () => {
-      if (!session || !content.trim()) return;
+      if (!session) return;
       const trimmedVideo = videoUrl.trim();
+      const trimmedContent = content.trim();
+      if (!trimmedContent && !trimmedVideo) return;
       if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
         throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
       }
       const finalContent = trimmedVideo
-        ? `${content.trim()}\n${trimmedVideo}`
-        : content.trim();
+        ? (trimmedContent ? `${trimmedContent}\n${trimmedVideo}` : trimmedVideo)
+        : trimmedContent;
       const mentions = Array.from(finalContent.matchAll(MENTION_RE)).map((m) => m[1]);
       const { error } = await supabase.from("posts").insert({
         author_id: session.user.id,
