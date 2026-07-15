@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-rout
 import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { stripMediaUrls } from "@/lib/media-embed";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
