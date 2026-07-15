@@ -14,6 +14,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -268,6 +269,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           <>
             <h3 className="text-lg font-bold">{post.title}</h3>
             <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+            <UrlEmbeds text={post.content} />
           </>
         )}
         <div className="flex items-center gap-2 pt-1">
@@ -325,7 +327,10 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                     </div>
                   ) : (
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm">{c.content}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm">{c.content}</p>
+                        <UrlEmbeds text={c.content} compact />
+                      </div>
                       {(canEditC || canDelC) && (
                         <div className="flex shrink-0 gap-1">
                           {canEditC && (

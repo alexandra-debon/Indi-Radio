@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 interface PostRow {
   id: string;
@@ -363,6 +364,7 @@ export function SocialWall() {
               ) : (
                 <>
                   <p className="whitespace-pre-wrap text-sm">{renderMentions(p.content)}</p>
+                  <UrlEmbeds text={p.content} />
                   {(canEdit || canDelete || isAdmin) && (
                     <div className="mt-2 flex justify-end gap-1">
                       {isAdmin && !isPinned && (
@@ -484,6 +486,7 @@ export function SocialWall() {
                                 </span>
                               </div>
                               <p className="whitespace-pre-wrap text-xs">{renderMentions(c.content)}</p>
+                              <UrlEmbeds text={c.content} compact />
                               {canDelC && (
                                 <div className="mt-1 flex justify-end">
                                   <button

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
@@ -130,6 +131,7 @@ function ChroniqueDetailPage() {
       <section className="card-brut space-y-3 p-4">
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">La chronique</h2>
         <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{r.content}</div>
+        <UrlEmbeds text={r.content} />
       </section>
 
       {streamingLinks.length > 0 && (
