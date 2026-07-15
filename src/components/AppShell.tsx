@@ -4,6 +4,7 @@ import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shi
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { ShareButton } from "@/components/share/ShareButton";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
@@ -41,6 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <img src={wordmarkAsset.url} alt="Indi Radio" className="h-9 sm:h-10 md:h-11 lg:h-12 w-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] min-w-0 shrink object-contain" />
           </Link>
           <div className="flex items-center justify-end">
+            <ShareButton target={{}} label="Partager cette page" className="mr-1" />
             {session && profile ? (
               <div className="flex items-center gap-2">
                 <NotificationsBell />
