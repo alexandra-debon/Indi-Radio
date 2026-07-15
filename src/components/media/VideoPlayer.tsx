@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Maximize2, X } from "lucide-react";
+import { Maximize2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { MediaEmbed } from "@/lib/media-embed";
 
@@ -37,18 +37,9 @@ export function VideoPlayer({ embed }: { embed: MediaEmbed }) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-none w-[96vw] h-[92vh] p-0 border-0 bg-black overflow-hidden sm:rounded-lg"
-          showCloseButton={false}
+          className="max-w-none w-[96vw] h-[92vh] p-0 border-0 bg-black overflow-hidden sm:rounded-lg [&>button]:text-white [&>button]:bg-black/70 [&>button]:rounded-full [&>button]:p-2 [&>button]:opacity-100 [&>button]:top-3 [&>button]:right-3"
         >
           <DialogTitle className="sr-only">{label}</DialogTitle>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="absolute right-3 top-3 z-20 grid size-9 place-items-center rounded-full bg-black/70 text-white hover:bg-black"
-            aria-label="Fermer"
-          >
-            <X className="size-5" />
-          </button>
           <iframe
             src={embed.embedUrl + (embed.embedUrl.includes("?") ? "&" : "?") + "autoplay=1"}
             title={label}
