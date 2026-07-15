@@ -22,6 +22,7 @@ import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -95,6 +96,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
+  id: '/episodes/$episodeId',
+  path: '/episodes/$episodeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesByTo: FileRoutesByTo
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   id:
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
+    | '/episodes/$episodeId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesById: FileRoutesById
@@ -289,6 +301,7 @@ export interface RootRouteChildren {
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
 }
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/episodes/$episodeId': {
+      id: '/episodes/$episodeId'
+      path: '/episodes/$episodeId'
+      fullPath: '/episodes/$episodeId'
+      preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chroniques/$slug': {
@@ -498,6 +518,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
 }
