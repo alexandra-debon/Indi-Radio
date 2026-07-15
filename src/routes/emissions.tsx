@@ -6,6 +6,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useState } from "react";
 import { Mic2 } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
+import { ShareButton } from "@/components/share/ShareButton";
 
 export const Route = createFileRoute("/emissions")({
   head: () => ({
@@ -64,7 +65,16 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
 
       {selected && (
         <div className="card-brut p-4">
-          <div className="text-[10px] uppercase tracking-widest text-primary">{label}</div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-[10px] uppercase tracking-widest text-primary">{label}</div>
+            <ShareButton
+              target={{
+                title: `${selected.title} — ${label} · Indi Radio`,
+                text: selected.description ?? selected.title,
+              }}
+              variant="chip"
+            />
+          </div>
           <h3 className="mt-1 text-lg font-bold">{selected.title}</h3>
           {selected.schedule && <div className="text-sm text-muted-foreground">{selected.schedule}</div>}
           {(selected as any).host && <div className="text-sm text-muted-foreground">Avec {(selected as any).host}</div>}
