@@ -80,6 +80,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
             <div className="text-[10px] uppercase tracking-widest text-primary">{label}</div>
             <ShareButton
               target={{
+                url: `/emissions/${selected.id}`,
                 title: `${selected.title} — ${label} · Indi Radio`,
                 text: selected.description ?? selected.title,
               }}
