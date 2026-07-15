@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { isValidVideoUrl } from "@/lib/media-embed";
 
 export const Route = createFileRoute("/actus")({
   head: () => ({
@@ -83,21 +84,29 @@ function ActusPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   const create = useMutation({
     mutationFn: async () => {
       if (!session) return;
+      const trimmedVideo = videoUrl.trim();
+      if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
+        throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
+      }
+      const finalContent = trimmedVideo
+        ? (content.trim() ? `${content.trim()}\n${trimmedVideo}` : trimmedVideo)
+        : content;
       const { error } = await supabase.from("news_posts").insert({
         author_id: session.user.id,
         title,
-        content,
+        content: finalContent,
         image_url: imageUrl || null,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Publié !");
-      setTitle(""); setContent(""); setImageUrl("");
+      setTitle(""); setContent(""); setImageUrl(""); setVideoUrl("");
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -113,6 +122,7 @@ function ActusPage() {
           <div className="text-[10px] uppercase tracking-widest text-primary">Nouveau post — {profile?.role}</div>
           <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
           <Input placeholder="Image URL (optionnel)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+          <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
           <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
           <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>Publier</Button>
         </div>
