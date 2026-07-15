@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { ShareButton } from "@/components/share/ShareButton";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
@@ -112,7 +113,16 @@ function ChroniqueDetailPage() {
           )}
         </div>
         <div className="min-w-0 flex-1 space-y-2">
-          <div className="text-[10px] uppercase tracking-widest text-primary">Chronique d'album</div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-[10px] uppercase tracking-widest text-primary">Chronique d'album</div>
+            <ShareButton
+              target={{
+                title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
+                text: r.excerpt ?? `Chronique de ${r.title} par ${r.artist}`,
+              }}
+              variant="chip"
+            />
+          </div>
           <h1 className="section-title text-xl leading-tight">{r.title}</h1>
           <div className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{r.artist}</span>
