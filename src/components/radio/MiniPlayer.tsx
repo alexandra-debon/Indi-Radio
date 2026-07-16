@@ -2,6 +2,7 @@ import { Play, Pause, Radio } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRadio } from "./RadioPlayerProvider";
 import { LikeButton } from "./LikeButton";
+import { AudioWave } from "./AudioWave";
 import { useArtwork } from "@/hooks/use-artwork";
 
 export function MiniPlayer() {
@@ -46,6 +47,7 @@ export function MiniPlayer() {
           <div className="truncate text-xs text-muted-foreground">
             {currentTrack?.artist ?? "Indi Radio · live"}
           </div>
+          {playing && <AudioWave className="mt-1.5" bars={28} />}
         </div>
         {currentTrack && <LikeButton trackId={currentTrack.id} />}
       </div>
