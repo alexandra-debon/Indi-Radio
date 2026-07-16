@@ -421,7 +421,7 @@ function PodcastsAdmin() {
   const qc = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: "", description: "", cover_url: "", external_url: "" });
+  const [form, setForm] = useState({ title: "", description: "", cover_url: "", external_url: "", duration_seconds: "" });
 
   const { data: podcasts = [] } = useQuery({
     queryKey: ["admin-podcasts"],
@@ -439,10 +439,11 @@ function PodcastsAdmin() {
         description: form.description || null,
         cover_url: form.cover_url || null,
         external_url: form.external_url || null,
+        duration_seconds: parseDuration(form.duration_seconds),
       });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Podcast créé"); setForm({ title: "", description: "", cover_url: "", external_url: "" }); qc.invalidateQueries({ queryKey: ["admin-podcasts"] }); qc.invalidateQueries({ queryKey: ["podcasts"] }); },
+    onSuccess: () => { toast.success("Podcast créé"); setForm({ title: "", description: "", cover_url: "", external_url: "", duration_seconds: "" }); qc.invalidateQueries({ queryKey: ["admin-podcasts"] }); qc.invalidateQueries({ queryKey: ["podcasts"] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -462,6 +463,7 @@ function PodcastsAdmin() {
         <Textarea rows={2} placeholder="Description (ex : Histoire d'une légende de la musique indé)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <Input placeholder="URL pochette carrée (https://…)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
         <Input placeholder="Lien manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
+        <Input placeholder="Durée totale (mm:ss, optionnel)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
         <Button onClick={() => create.mutate()} disabled={!form.title}>Créer</Button>
       </div>
 
@@ -489,13 +491,14 @@ function PodcastsAdmin() {
   );
 }
 
-function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string; description: string | null; cover_url: string | null; external_url: string | null }; onDone: () => void }) {
+function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string; description: string | null; cover_url: string | null; external_url: string | null; duration_seconds: number | null }; onDone: () => void }) {
   const qc = useQueryClient();
   const [f, setF] = useState({
     title: podcast.title,
     description: podcast.description ?? "",
     cover_url: podcast.cover_url ?? "",
     external_url: podcast.external_url ?? "",
+    duration_seconds: formatDuration(podcast.duration_seconds),
   });
   const save = useMutation({
     mutationFn: async () => {
@@ -504,6 +507,7 @@ function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string
         description: f.description || null,
         cover_url: f.cover_url || null,
         external_url: f.external_url || null,
+        duration_seconds: parseDuration(f.duration_seconds),
       }).eq("id", podcast.id);
       if (error) throw error;
     },
@@ -516,6 +520,7 @@ function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string
       <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
       <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
       <Input placeholder="Lien manager radio" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
+      <Input placeholder="Durée totale (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
       <div className="flex gap-2">
         <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
         <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
