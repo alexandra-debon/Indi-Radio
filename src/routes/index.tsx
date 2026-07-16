@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History, BarChart3 } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2 } from "lucide-react";
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { Link } from "@tanstack/react-router";
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
 });
 
 function LivePage() {
-  const { playing, toggle, currentTrack } = useRadio();
+  const { playing, loading, toggle, currentTrack } = useRadio();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
@@ -92,20 +92,39 @@ function LivePage() {
               <div className="truncate text-sm text-muted-foreground">{currentTrack?.artist ?? "Le flux tourne 24/7"}</div>
               <div className="mt-3 flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={toggle}
-                  aria-label={playing ? "Mettre en pause Indi Radio" : "Écouter Indi Radio"}
-                  className="group grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-[3px_3px_0_0_oklch(0_0_0)] transition hover:-translate-y-0.5 active:translate-y-0"
+                  aria-label={
+                    loading
+                      ? "Chargement du flux Indi Radio"
+                      : playing
+                      ? "Mettre en pause Indi Radio"
+                      : "Écouter Indi Radio"
+                  }
+                  aria-pressed={playing}
+                  aria-busy={loading}
+                  data-state={loading ? "loading" : playing ? "playing" : "paused"}
+                  className="group grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-[3px_3px_0_0_oklch(0_0_0)] outline-none transition hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=playing]:ring-2 data-[state=playing]:ring-primary/60 data-[state=loading]:opacity-90"
                 >
-                  {playing ? (
-                    <Pause className="size-5" fill="currentColor" />
+                  {loading ? (
+                    <Loader2 className="size-5 animate-spin" aria-hidden />
+                  ) : playing ? (
+                    <Pause className="size-5" fill="currentColor" aria-hidden />
                   ) : (
-                    <Play className="size-5 translate-x-[1px]" fill="currentColor" />
+                    <Play className="size-5 translate-x-[1px]" fill="currentColor" aria-hidden />
                   )}
                 </button>
-                <span className="text-sm font-bold uppercase tracking-wide">
-                  {playing ? "En direct" : "Écouter Indi Radio"}
+                <span
+                  className="text-sm font-bold uppercase tracking-wide"
+                  aria-live="polite"
+                >
+                  {loading
+                    ? "Connexion…"
+                    : playing
+                    ? "En direct"
+                    : "Écouter Indi Radio"}
                 </span>
-                {playing && <RadioWave />}
+                {playing && !loading && <RadioWave />}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
             </div>
