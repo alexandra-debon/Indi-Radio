@@ -60,11 +60,17 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <h1 className="section-title">Musique en cours</h1>
-          <span className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
-            Radio 100% musique Indé
-          </span>
+          <div className="flex shrink-0 flex-col items-center gap-1">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
+              <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
+              Radio 100% musique Indé
+            </span>
+            <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+              sans pub ni info
+            </span>
+          </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
