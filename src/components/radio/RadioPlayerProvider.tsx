@@ -17,6 +17,10 @@ interface RadioContextValue {
   toggle: () => void;
   currentTrack: CurrentTrack | null;
   loadingTrack: boolean;
+  volume: number;
+  muted: boolean;
+  setVolume: (v: number) => void;
+  toggleMute: () => void;
   /**
    * Subscribe to the live audio level (0..1). Callback fires on each
    * animation frame while the stream is playing. Returns an unsubscribe fn.
@@ -30,6 +34,16 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [volume, setVolumeState] = useState<number>(() => {
+    if (typeof window === "undefined") return 0.8;
+    const raw = window.localStorage.getItem("indi-radio:volume");
+    const parsed = raw ? Number(raw) : NaN;
+    return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? parsed : 0.8;
+  });
+  const [muted, setMuted] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("indi-radio:muted") === "1";
+  });
   const queryClient = useQueryClient();
 
   // Web Audio graph for the analyser (built lazily on first play)
@@ -97,6 +111,29 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       listenersRef.current.delete(cb);
     };
   }, []);
+
+  // Push volume/mute into the <audio> element and persist across sessions
+  useEffect(() => {
+    const el = audioRef.current;
+    if (el) {
+      el.volume = volume;
+      el.muted = muted;
+    }
+    try {
+      window.localStorage.setItem("indi-radio:volume", String(volume));
+      window.localStorage.setItem("indi-radio:muted", muted ? "1" : "0");
+    } catch {
+      /* storage may be unavailable */
+    }
+  }, [volume, muted]);
+
+  const setVolume = useCallback((v: number) => {
+    const clamped = Math.min(1, Math.max(0, v));
+    setVolumeState(clamped);
+    if (clamped > 0) setMuted(false);
+  }, []);
+
+  const toggleMute = useCallback(() => setMuted((m) => !m), []);
 
   // Latest track from DB (updated externally or by admin)
   const { data: currentTrack = null, isLoading: loadingTrack } = useQuery<CurrentTrack | null>({
@@ -186,7 +223,18 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
 
   return (
     <RadioContext.Provider
-      value={{ playing, loading, toggle, currentTrack, loadingTrack, subscribeLevel }}
+      value={{
+        playing,
+        loading,
+        toggle,
+        currentTrack,
+        loadingTrack,
+        volume,
+        muted,
+        setVolume,
+        toggleMute,
+        subscribeLevel,
+      }}
     >
       {/* Persistent audio element — never re-mounts across route changes */}
       {/* crossOrigin is required so MediaElementAudioSourceNode can read samples */}
