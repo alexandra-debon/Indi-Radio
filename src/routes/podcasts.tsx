@@ -69,6 +69,11 @@ function PodcastsPage() {
             <div className="p-2">
               <div className="truncate text-sm font-semibold">{p.title}</div>
               {p.description && <div className="line-clamp-2 text-xs text-muted-foreground">{p.description}</div>}
+              {p.duration_seconds ? (
+                <div className="mt-0.5 text-[10px] font-medium uppercase tracking-widest text-primary">
+                  {Math.round(p.duration_seconds / 60)} min
+                </div>
+              ) : null}
             </div>
             </button>
           </div>

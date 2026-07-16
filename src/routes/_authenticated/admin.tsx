@@ -421,7 +421,7 @@ function PodcastsAdmin() {
   const qc = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: "", description: "", cover_url: "", external_url: "" });
+  const [form, setForm] = useState({ title: "", description: "", cover_url: "", external_url: "", duration_seconds: "" });
 
   const { data: podcasts = [] } = useQuery({
     queryKey: ["admin-podcasts"],
@@ -439,10 +439,11 @@ function PodcastsAdmin() {
         description: form.description || null,
         cover_url: form.cover_url || null,
         external_url: form.external_url || null,
+        duration_seconds: parseDuration(form.duration_seconds),
       });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Podcast créé"); setForm({ title: "", description: "", cover_url: "", external_url: "" }); qc.invalidateQueries({ queryKey: ["admin-podcasts"] }); qc.invalidateQueries({ queryKey: ["podcasts"] }); },
+    onSuccess: () => { toast.success("Podcast créé"); setForm({ title: "", description: "", cover_url: "", external_url: "", duration_seconds: "" }); qc.invalidateQueries({ queryKey: ["admin-podcasts"] }); qc.invalidateQueries({ queryKey: ["podcasts"] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -462,6 +463,7 @@ function PodcastsAdmin() {
         <Textarea rows={2} placeholder="Description (ex : Histoire d'une légende de la musique indé)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <Input placeholder="URL pochette carrée (https://…)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
         <Input placeholder="Lien manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
+        <Input placeholder="Durée totale (mm:ss, optionnel)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
         <Button onClick={() => create.mutate()} disabled={!form.title}>Créer</Button>
       </div>
 
@@ -489,13 +491,14 @@ function PodcastsAdmin() {
   );
 }
 
-function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string; description: string | null; cover_url: string | null; external_url: string | null }; onDone: () => void }) {
+function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string; description: string | null; cover_url: string | null; external_url: string | null; duration_seconds: number | null }; onDone: () => void }) {
   const qc = useQueryClient();
   const [f, setF] = useState({
     title: podcast.title,
     description: podcast.description ?? "",
     cover_url: podcast.cover_url ?? "",
     external_url: podcast.external_url ?? "",
+    duration_seconds: formatDuration(podcast.duration_seconds),
   });
   const save = useMutation({
     mutationFn: async () => {
@@ -504,6 +507,7 @@ function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string
         description: f.description || null,
         cover_url: f.cover_url || null,
         external_url: f.external_url || null,
+        duration_seconds: parseDuration(f.duration_seconds),
       }).eq("id", podcast.id);
       if (error) throw error;
     },
@@ -516,6 +520,7 @@ function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string
       <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
       <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
       <Input placeholder="Lien manager radio" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
+      <Input placeholder="Durée totale (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
       <div className="flex gap-2">
         <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
         <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>
@@ -643,7 +648,7 @@ function EpisodeEdit({ episode, invalidateKeys, onDone }: {
 
 function ShowsAdmin() {
   const qc = useQueryClient();
-  const [form, setForm] = useState<{ type: "emission" | "chronique" | "animateur"; title: string; description: string; schedule: string; host: string; cover_url: string }>({ type: "emission", title: "", description: "", schedule: "", host: "", cover_url: "" });
+  const [form, setForm] = useState<{ type: "emission" | "chronique" | "animateur"; title: string; description: string; schedule: string; host: string; cover_url: string; duration_seconds: string }>({ type: "emission", title: "", description: "", schedule: "", host: "", cover_url: "", duration_seconds: "" });
   const [editId, setEditId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -665,10 +670,11 @@ function ShowsAdmin() {
         schedule: form.schedule || null,
         host: form.host || null,
         cover_url: form.cover_url || null,
+        duration_seconds: parseDuration(form.duration_seconds),
       });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Ajouté"); setForm({ type: form.type, title: "", description: "", schedule: "", host: "", cover_url: "" }); qc.invalidateQueries({ queryKey: ["admin-shows"] }); qc.invalidateQueries({ queryKey: ["shows"] }); },
+    onSuccess: () => { toast.success("Ajouté"); setForm({ type: form.type, title: "", description: "", schedule: "", host: "", cover_url: "", duration_seconds: "" }); qc.invalidateQueries({ queryKey: ["admin-shows"] }); qc.invalidateQueries({ queryKey: ["shows"] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -697,6 +703,7 @@ function ShowsAdmin() {
         <Input placeholder="Horaire (ex : Tous les matins 6h-9h)" value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} />
         <Input placeholder="Animateur·rice·s (ex : Melody, Alex, Patrick)" value={form.host} onChange={(e) => setForm({ ...form, host: e.target.value })} />
         <Input placeholder="URL pochette carrée" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+        <Input placeholder="Durée (mm:ss, optionnel)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
         <Button onClick={() => create.mutate()} disabled={!form.title}>Ajouter</Button>
       </div>
 
@@ -725,7 +732,7 @@ function ShowsAdmin() {
   );
 }
 
-function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "chronique" | "animateur"; title: string; description: string | null; schedule: string | null; host: string | null; cover_url: string | null }; onDone: () => void }) {
+function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "chronique" | "animateur"; title: string; description: string | null; schedule: string | null; host: string | null; cover_url: string | null; duration_seconds: number | null }; onDone: () => void }) {
   const qc = useQueryClient();
   const [f, setF] = useState({
     type: show.type,
@@ -734,6 +741,7 @@ function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "ch
     schedule: show.schedule ?? "",
     host: show.host ?? "",
     cover_url: show.cover_url ?? "",
+    duration_seconds: formatDuration(show.duration_seconds),
   });
   const save = useMutation({
     mutationFn: async () => {
@@ -744,6 +752,7 @@ function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "ch
         schedule: f.schedule || null,
         host: f.host || null,
         cover_url: f.cover_url || null,
+        duration_seconds: parseDuration(f.duration_seconds),
       }).eq("id", show.id);
       if (error) throw error;
     },
@@ -765,6 +774,7 @@ function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "ch
       <Input placeholder="Horaire" value={f.schedule} onChange={(e) => setF({ ...f, schedule: e.target.value })} />
       <Input placeholder="Animateur·rice·s" value={f.host} onChange={(e) => setF({ ...f, host: e.target.value })} />
       <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      <Input placeholder="Durée (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
       <div className="flex gap-2">
         <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
         <Button size="sm" variant="outline" onClick={onDone}>Annuler</Button>

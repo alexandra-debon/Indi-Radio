@@ -486,6 +486,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          duration_seconds: number | null
           external_url: string | null
           id: string
           title: string
@@ -494,6 +495,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           external_url?: string | null
           id?: string
           title: string
@@ -502,6 +504,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           external_url?: string | null
           id?: string
           title?: string
@@ -750,6 +753,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          duration_seconds: number | null
           host: string | null
           id: string
           schedule: string | null
@@ -760,6 +764,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           host?: string | null
           id?: string
           schedule?: string | null
@@ -770,6 +775,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           host?: string | null
           id?: string
           schedule?: string | null
