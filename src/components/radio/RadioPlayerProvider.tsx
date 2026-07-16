@@ -141,7 +141,20 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
 
   const startLevelLoop = useCallback(() => {
     if (rafRef.current != null) return;
+    // Cap the visual refresh at ~30fps: the wave doesn't need 120Hz on
+    // ProMotion devices, and skipping every other frame roughly halves
+    // the analyser + listener CPU cost.
+    const MIN_FRAME_MS = 1000 / 30;
+    let lastFrame = 0;
+    let lastPushed = -1;
     const tick = () => {
+      rafRef.current = requestAnimationFrame(tick);
+      // Pause work entirely while the tab is hidden — the browser already
+      // throttles rAF to ~1Hz but the callbacks still touch the DOM.
+      if (typeof document !== "undefined" && document.hidden) return;
+      const now = performance.now();
+      if (now - lastFrame < MIN_FRAME_MS) return;
+      lastFrame = now;
       const analyser = analyserRef.current;
       const data = dataRef.current;
       const el = audioRef.current;
@@ -171,8 +184,12 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
           Math.abs(Math.sin(fallbackPhaseRef.current * 0.43)) * 0.05;
         level = Math.max(lastLiveLevelRef.current * 0.6, pulse);
       }
-      listenersRef.current.forEach((cb) => cb(Math.min(1, level)));
-      rafRef.current = requestAnimationFrame(tick);
+      const clamped = Math.min(1, level);
+      // Skip broadcasting when the value hasn't meaningfully changed —
+      // avoids waking up every subscriber (and their DOM writes) for noise.
+      if (Math.abs(clamped - lastPushed) < 0.003) return;
+      lastPushed = clamped;
+      listenersRef.current.forEach((cb) => cb(clamped));
     };
     rafRef.current = requestAnimationFrame(tick);
   }, []);
