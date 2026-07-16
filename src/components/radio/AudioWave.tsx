@@ -24,14 +24,19 @@ export function AudioWave({ bars = 24, className }: AudioWaveProps) {
 
   useEffect(() => {
     const smoothed = new Array(bars).fill(0);
+    const lastApplied = new Array(bars).fill(-1);
     return subscribeLevel((level) => {
       const boosted = Math.min(1, level * 3.2);
       for (let i = 0; i < bars; i++) {
         const target = Math.min(1, boosted * weights.current[i]);
         smoothed[i] = smoothed[i] * 0.55 + target * 0.45;
-        const h = 12 + smoothed[i] * 88; // 12% .. 100%
+        // scaleY (0.12..1.0) is compositor-only — no layout, no paint.
+        const s = 0.12 + smoothed[i] * 0.88;
+        // Skip DOM writes when the change is below a visible threshold.
+        if (Math.abs(s - lastApplied[i]) < 0.01) continue;
+        lastApplied[i] = s;
         const el = barsRef.current[i];
-        if (el) el.style.height = `${h}%`;
+        if (el) el.style.transform = `scaleY(${s})`;
       }
     });
   }, [subscribeLevel, bars]);
@@ -47,8 +52,8 @@ export function AudioWave({ bars = 24, className }: AudioWaveProps) {
           ref={(el) => {
             barsRef.current[i] = el;
           }}
-          className="block flex-1 rounded-sm bg-primary/80 transition-[height] duration-75 ease-out"
-          style={{ height: "12%" }}
+          className="block h-full flex-1 rounded-sm bg-primary/80 will-change-transform"
+          style={{ transform: "scaleY(0.12)", transformOrigin: "center" }}
         />
       ))}
     </span>
