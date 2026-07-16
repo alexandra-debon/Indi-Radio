@@ -199,10 +199,21 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => {
+      setPlaying(true);
+      // Belt-and-suspenders: also ensure the analyser + level loop are up
+      // (covers cases where play() didn't resolve through our toggle path,
+      // e.g. resume from media-session controls).
+      ensureAnalyser();
+      audioCtxRef.current?.resume().catch(() => {});
+      startLevelLoop();
+    };
     const onPause = () => setPlaying(false);
     const onWaiting = () => setLoading(true);
-    const onPlaying = () => setLoading(false);
+    const onPlaying = () => {
+      setLoading(false);
+      startLevelLoop();
+    };
     const onCanPlay = () => setLoading(false);
     const onError = () => setLoading(false);
     el.addEventListener("play", onPlay);
@@ -219,7 +230,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       el.removeEventListener("canplay", onCanPlay);
       el.removeEventListener("error", onError);
     };
-  }, []);
+  }, [ensureAnalyser, startLevelLoop]);
 
   return (
     <RadioContext.Provider
