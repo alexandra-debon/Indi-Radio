@@ -7,6 +7,7 @@ import { useRadio } from "@/components/radio/RadioPlayerProvider";
 import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2 } from "lucide-react";
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
+import { VolumeControl } from "@/components/radio/VolumeControl";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -127,6 +128,9 @@ function LivePage() {
                 </span>
                 {playing && !loading && <RadioWave />}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
+              </div>
+              <div className="mt-2">
+                <VolumeControl />
               </div>
             </div>
           </div>
