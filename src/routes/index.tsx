@@ -210,6 +210,7 @@ function RadioWave() {
 
   useEffect(() => {
     const smoothed = new Array(weights.length).fill(0);
+    const lastApplied = new Array(weights.length).fill(-1);
     return subscribeLevel((level) => {
       // Boost quiet passages (audio RMS is usually 0.05..0.3) but clamp to 1
       const boosted = Math.min(1, level * 3.2);
@@ -217,9 +218,11 @@ function RadioWave() {
         const target = Math.min(1, boosted * weights[i]);
         // Ease toward target for a springy feel
         smoothed[i] = smoothed[i] * 0.55 + target * 0.45;
-        const h = 20 + smoothed[i] * 80; // 20% .. 100%
+        const s = 0.2 + smoothed[i] * 0.8;
+        if (Math.abs(s - lastApplied[i]) < 0.01) continue;
+        lastApplied[i] = s;
         const el = barsRef.current[i];
-        if (el) el.style.height = `${h}%`;
+        if (el) el.style.transform = `scaleY(${s})`;
       }
     });
   }, [subscribeLevel]);
@@ -232,8 +235,8 @@ function RadioWave() {
           ref={(el) => {
             barsRef.current[i] = el;
           }}
-          className="block w-0.5 rounded-sm bg-primary transition-[height] duration-75 ease-out"
-          style={{ height: "20%" }}
+          className="block h-full w-0.5 rounded-sm bg-primary will-change-transform"
+          style={{ transform: "scaleY(0.2)", transformOrigin: "center" }}
         />
       ))}
     </span>
