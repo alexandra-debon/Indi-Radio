@@ -8,7 +8,8 @@ const CORS_HEADERS = {
 } as const;
 
 const HIT_CACHE = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800";
-const MISS_CACHE = "public, max-age=60, s-maxage=300";
+// Keep MISS short so a transient provider failure doesn't stick — client retries hit fresh data.
+const MISS_CACHE = "public, max-age=15, s-maxage=30, stale-while-revalidate=60";
 
 type Attempt = { provider: string; ok: boolean; ms: number; error?: string };
 
@@ -102,15 +103,20 @@ function unique(values: string[]) {
 
 function artistVariants(artist: string) {
   const firstArtist = artist.split(/,|&|\band\b|\+|\bavec\b/iu)[0] ?? artist;
-  return unique([artist, firstArtist]);
+  const noThe = artist.replace(/^the\s+/i, "");
+  const ascii = artist.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return unique([artist, firstArtist, noThe, ascii]);
 }
 
 function titleVariants(title: string) {
+  const ascii = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   return unique([
     title,
     title.replace(/\s[-–—].*$/, ""),
     title.replace(/[’`]/g, "'"),
+    title.replace(/\s*\/\s*.*$/, ""),
     clean(title),
+    ascii,
   ]);
 }
 
