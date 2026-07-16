@@ -11,11 +11,12 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3 } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen } from "lucide-react";
 import { z } from "zod";
+import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -44,6 +45,7 @@ function AdminPage() {
     { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
+    { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
   ];
   return (
     <div className="space-y-4">
@@ -68,13 +70,14 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid grid-cols-3 sm:grid-cols-6">
+        <TabsList className="grid grid-cols-3 sm:grid-cols-7">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
           <TabsTrigger value="podcasts">Podcasts</TabsTrigger>
           <TabsTrigger value="shows">Émissions</TabsTrigger>
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
+          <TabsTrigger value="magazines">Magazines</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
         <TabsContent value="requests" className="mt-4"><RequestsAdmin /></TabsContent>
@@ -82,7 +85,118 @@ function AdminPage() {
         <TabsContent value="podcasts" className="mt-4"><PodcastsAdmin /></TabsContent>
         <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
+        <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function MagazinesAdmin() {
+  const qc = useQueryClient();
+  const [creating, setCreating] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const { data: entries = [] } = useQuery({
+    queryKey: ["admin-magazine-entries"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("magazine_entries")
+        .select("*")
+        .order("pinned_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("magazine_entries").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Article supprimé");
+      qc.invalidateQueries({ queryKey: ["admin-magazine-entries"] });
+      qc.invalidateQueries({ queryKey: ["magazine-entries"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Magazine Indi Art Culture</h3>
+        {!creating && (
+          <Button size="sm" onClick={() => setCreating(true)}>Nouvel article</Button>
+        )}
+      </div>
+
+      {creating && (
+        <MagazineEntryEditor
+          onDone={() => {
+            setCreating(false);
+            qc.invalidateQueries({ queryKey: ["admin-magazine-entries"] });
+          }}
+        />
+      )}
+
+      {entries.length === 0 && !creating && (
+        <div className="card-brut p-4 text-center text-sm text-muted-foreground">
+          Aucun article pour l'instant.
+        </div>
+      )}
+
+      <ul className="space-y-2">
+        {entries.map((e) => {
+          if (editingId === e.id) {
+            const draft: MagazineEntryDraft = {
+              id: e.id,
+              title: e.title,
+              body: e.body,
+              magazine_url: e.magazine_url,
+              cover_url: e.cover_url,
+            };
+            return (
+              <li key={e.id}>
+                <MagazineEntryEditor
+                  initial={draft}
+                  onDone={() => {
+                    setEditingId(null);
+                    qc.invalidateQueries({ queryKey: ["admin-magazine-entries"] });
+                  }}
+                />
+              </li>
+            );
+          }
+          return (
+            <li key={e.id} className="card-brut flex items-start gap-3 p-3">
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-bold">{e.title}</div>
+                <a
+                  href={e.magazine_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="line-clamp-1 text-xs text-muted-foreground underline"
+                >
+                  {e.magazine_url}
+                </a>
+                {e.body && <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{e.body}</p>}
+              </div>
+              <Button size="icon" variant="outline" onClick={() => setEditingId(e.id)} aria-label="Modifier">
+                <Pencil className="size-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="destructive"
+                onClick={() => { if (confirm("Supprimer cet article ?")) remove.mutate(e.id); }}
+                aria-label="Supprimer"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
