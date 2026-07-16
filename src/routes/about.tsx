@@ -23,9 +23,13 @@ function AboutPage() {
         <h1 className="section-title">À propos d'InDi ArT CulTuRe — Hub des arts indépendants</h1>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
           <p>
-            <strong>InDi ArT CulTuRe</strong> est un magazine interactif et un hub communautaire dédié aux
-            arts indépendants. Un espace où artistes, chroniqueurs, auditeurs et passeurs de culture se
-            croisent, s'écoutent, et font vivre la scène indé.
+            <strong>InDi ArT CulTuRe</strong> est composé d’une radio internationale 100% musique indé et émissions originales sans pub ni infos, d’un magazine interactif innovant et un hub communautaire dédié aux arts indépendants. Un espace où artistes, chroniqueurs, auditeurs et passeurs de culture se croisent, s'écoutent, et font vivre la scène indé déjà présent gratuitement sur l’application radio.
+          </p>
+          <p>
+            Issue de la société à mission fondée par Alexandra Debon (Melody Alex. Patrick) « Whisper and Map », le droit d’auteur et la promotion de la culture indépendante ainsi qu’une rémunération plus juste des artistes sont parmi les fondements des statuts de cette dernière.
+          </p>
+          <p>
+            Plus d’infos : <a href="https://www.indi-art-culture.com" target="_blank" rel="noopener noreferrer" className="font-semibold underline">www.indi-art-culture.com</a>
           </p>
         </div>
       </section>
