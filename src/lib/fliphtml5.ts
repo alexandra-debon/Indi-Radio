@@ -25,3 +25,21 @@ export function normalizeFlipHtml5Url(url: string): string {
     return url;
   }
 }
+
+/**
+ * FlipHTML5 publishes each flipbook's cover thumbnail at a deterministic URL:
+ *   https://online.fliphtml5.com/<userId>/<bookId>/files/shot.jpg
+ * We use it as the default og:image for shared magazine articles so link
+ * previews show the magazine cover automatically, without any manual upload.
+ */
+export function flipHtml5ThumbnailUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split("/").filter(Boolean);
+    if (parts.length < 2) return null;
+    const [userId, bookId] = parts;
+    return `${u.origin}/${userId}/${bookId}/files/shot.jpg`;
+  } catch {
+    return null;
+  }
+}
