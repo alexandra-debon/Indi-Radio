@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as MagazinesRouteImport } from './routes/magazines'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
 import { Route as ClipsRouteImport } from './routes/clips'
@@ -53,6 +54,11 @@ const PodcastsRoute = PodcastsRouteImport.update({
 const NewsletterRoute = NewsletterRouteImport.update({
   id: '/newsletter',
   path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MagazinesRoute = MagazinesRouteImport.update({
+  id: '/magazines',
+  path: '/magazines',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmissionsRoute = EmissionsRouteImport.update({
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
+  '/magazines': typeof MagazinesRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
+  '/magazines': typeof MagazinesRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
+  '/magazines': typeof MagazinesRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/dedicaces'
     | '/emissions'
+    | '/magazines'
     | '/newsletter'
     | '/podcasts'
     | '/reset-password'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/dedicaces'
     | '/emissions'
+    | '/magazines'
     | '/newsletter'
     | '/podcasts'
     | '/reset-password'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/dedicaces'
     | '/emissions'
+    | '/magazines'
     | '/newsletter'
     | '/podcasts'
     | '/reset-password'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   ClipsRoute: typeof ClipsRouteWithChildren
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
+  MagazinesRoute: typeof MagazinesRoute
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -371,6 +384,13 @@ declare module '@tanstack/react-router' {
       path: '/newsletter'
       fullPath: '/newsletter'
       preLoaderRoute: typeof NewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/magazines': {
+      id: '/magazines'
+      path: '/magazines'
+      fullPath: '/magazines'
+      preLoaderRoute: typeof MagazinesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/emissions': {
@@ -595,6 +615,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsRoute: ClipsRouteWithChildren,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
+  MagazinesRoute: MagazinesRoute,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   ResetPasswordRoute: ResetPasswordRoute,

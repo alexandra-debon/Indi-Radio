@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -17,6 +17,7 @@ const NAV = [
   { to: "/podcasts", label: "Podcasts", icon: Headphones },
   { to: "/chroniques", label: "Chroniques d'albums", icon: Disc3 },
   { to: "/clips", label: "Clip Addict", icon: Film },
+  { to: "/magazines", label: "Magazine Indi Art Culture", icon: BookOpen },
   { to: "/dedicaces", label: "Dédicaces", icon: Send },
   { to: "/about", label: "À propos", icon: Info },
 ] as const;
