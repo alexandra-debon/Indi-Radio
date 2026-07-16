@@ -90,6 +90,55 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // iOS Safari specifics:
+  // 1. AudioContext is created in the "suspended" state and can only be
+  //    resumed synchronously from within a user-gesture handler (touch/click).
+  // 2. `createMediaElementSource` MUST be called *before* the first play()
+  //    on that element, and only once per element — otherwise iOS silently
+  //    routes the audio directly to the speaker and the analyser stays flat.
+  // 3. Even after resume(), iOS sometimes leaves the context in "interrupted"
+  //    state after backgrounding; we re-resume on every subsequent play.
+  const isIOS = useCallback(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent;
+    return /iPad|iPhone|iPod/.test(ua) ||
+      // iPadOS 13+ reports as Mac; detect touch to disambiguate
+      (ua.includes("Macintosh") && "ontouchend" in document);
+  }, []);
+
+  // Must be invoked *synchronously* inside the user-gesture handler on iOS.
+  const primeAudioForIOS = useCallback(() => {
+    ensureAnalyser();
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+    if (ctx.state !== "running") {
+      // Fire-and-forget: the resume() promise must be created inside the
+      // gesture; awaiting it later is fine.
+      ctx.resume().catch(() => {});
+    }
+    // Unlock the underlying HTMLAudioElement by playing a muted no-op tick.
+    // Some iOS versions refuse to output through Web Audio until the media
+    // element itself has been "played" at least once in a gesture.
+    const el = audioRef.current;
+    if (el && isIOS()) {
+      try {
+        const wasMuted = el.muted;
+        el.muted = true;
+        const p = el.play();
+        if (p && typeof p.then === "function") {
+          p.then(() => {
+            el.pause();
+            el.muted = wasMuted;
+          }).catch(() => {
+            el.muted = wasMuted;
+          });
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [ensureAnalyser, isIOS]);
+
   const startLevelLoop = useCallback(() => {
     if (rafRef.current != null) return;
     const tick = () => {
@@ -204,16 +253,21 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el) return;
     if (el.paused) {
+      // iOS Safari: prime the AudioContext + media element synchronously
+      // inside this gesture BEFORE assigning src / calling load(). If we
+      // wait until after load(), the gesture is considered consumed and
+      // resume() stays pending forever → analyser reads all zeros.
+      primeAudioForIOS();
       // Force re-load to reset the stream buffer
       el.src = RADIO_CONFIG.streamUrl;
       el.load();
       setLoading(true);
-      ensureAnalyser();
-      // Some browsers create AudioContext suspended until a user gesture
-      audioCtxRef.current?.resume().catch(() => {});
       el.play()
         .then(() => {
           setPlaying(true);
+          // Belt-and-suspenders re-resume: iOS sometimes drops the context
+          // back to "interrupted" between the gesture and play() resolving.
+          audioCtxRef.current?.resume().catch(() => {});
           startLevelLoop();
         })
         .catch(() => setPlaying(false))
@@ -225,7 +279,20 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       stopLevelLoop();
     }
-  }, [ensureAnalyser, startLevelLoop, stopLevelLoop]);
+  }, [primeAudioForIOS, startLevelLoop, stopLevelLoop]);
+
+  // iOS: when the tab goes to the background, the AudioContext transitions
+  // to "interrupted". Resume it as soon as the user comes back so the wave
+  // doesn't stay frozen after unlocking the phone.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        audioCtxRef.current?.resume().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
 
   useEffect(() => {
     const el = audioRef.current;
