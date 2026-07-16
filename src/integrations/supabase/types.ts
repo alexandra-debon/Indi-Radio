@@ -254,6 +254,42 @@ export type Database = {
           },
         ]
       }
+      magazine_entries: {
+        Row: {
+          author_id: string | null
+          body: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          magazine_url: string
+          pinned_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          body?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          magazine_url: string
+          pinned_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          magazine_url?: string
+          pinned_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       news_comments: {
         Row: {
           author_id: string
