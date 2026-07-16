@@ -126,7 +126,7 @@ function LivePage() {
                     ? "En direct"
                     : "Écouter Indi Radio"}
                 </span>
-                {playing && !loading && <RadioWave />}
+                {playing && <RadioWave />}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
               <div className="mt-2">

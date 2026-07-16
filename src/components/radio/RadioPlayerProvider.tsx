@@ -34,16 +34,24 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [volume, setVolumeState] = useState<number>(() => {
-    if (typeof window === "undefined") return 0.8;
-    const raw = window.localStorage.getItem("indi-radio:volume");
-    const parsed = raw ? Number(raw) : NaN;
-    return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? parsed : 0.8;
-  });
-  const [muted, setMuted] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("indi-radio:muted") === "1";
-  });
+  // SSR-safe defaults; persisted values are loaded post-mount to avoid
+  // hydration mismatches on the volume slider label / fill.
+  const [volume, setVolumeState] = useState<number>(0.8);
+  const [muted, setMuted] = useState<boolean>(false);
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("indi-radio:volume");
+      const parsed = raw ? Number(raw) : NaN;
+      if (Number.isFinite(parsed) && parsed >= 0 && parsed <= 1) {
+        setVolumeState(parsed);
+      }
+      if (window.localStorage.getItem("indi-radio:muted") === "1") {
+        setMuted(true);
+      }
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
   const queryClient = useQueryClient();
 
   // Web Audio graph for the analyser (built lazily on first play)
@@ -199,10 +207,21 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => {
+      setPlaying(true);
+      // Belt-and-suspenders: also ensure the analyser + level loop are up
+      // (covers cases where play() didn't resolve through our toggle path,
+      // e.g. resume from media-session controls).
+      ensureAnalyser();
+      audioCtxRef.current?.resume().catch(() => {});
+      startLevelLoop();
+    };
     const onPause = () => setPlaying(false);
     const onWaiting = () => setLoading(true);
-    const onPlaying = () => setLoading(false);
+    const onPlaying = () => {
+      setLoading(false);
+      startLevelLoop();
+    };
     const onCanPlay = () => setLoading(false);
     const onError = () => setLoading(false);
     el.addEventListener("play", onPlay);
@@ -219,7 +238,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       el.removeEventListener("canplay", onCanPlay);
       el.removeEventListener("error", onError);
     };
-  }, []);
+  }, [ensureAnalyser, startLevelLoop]);
 
   return (
     <RadioContext.Provider
