@@ -605,7 +605,7 @@ function EpisodeEdit({ episode, invalidateKeys, onDone }: {
     description: episode.description ?? "",
     audio_url: episode.audio_url ?? "",
     external_url: episode.external_url ?? "",
-    duration_seconds: episode.duration_seconds != null ? String(episode.duration_seconds) : "",
+    duration_seconds: formatDuration(episode.duration_seconds),
     cover_url: episode.cover_url ?? "",
   });
   const save = useMutation({
