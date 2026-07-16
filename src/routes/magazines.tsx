@@ -145,7 +145,7 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
           </span>
           <ShareButton
             target={{
-              url: `/magazines#mag-${entry.id}`,
+              url: `/magazines/${entry.id}`,
               title: `${entry.title} — Magazine Indi Art Culture`,
               text: entry.body?.slice(0, 200) || entry.title,
             }}
