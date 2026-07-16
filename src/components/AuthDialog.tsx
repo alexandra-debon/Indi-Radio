@@ -11,6 +11,8 @@ import { toast } from "sonner";
 export function AuthDialog() {
   const { authOpen, closeAuth } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState<"tabs" | "forgot">("tabs");
+  const [forgotEmail, setForgotEmail] = useState("");
 
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
@@ -58,15 +60,50 @@ export function AuthDialog() {
     }
   }
 
+  async function handleForgot(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Email de réinitialisation envoyé, vérifie ta boîte !");
+      setView("tabs");
+    }
+  }
+
   return (
-    <Dialog open={authOpen} onOpenChange={(o) => (o ? null : closeAuth())}>
+    <Dialog open={authOpen} onOpenChange={(o) => { if (!o) { closeAuth(); setView("tabs"); } }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="wordmark text-2xl">INDI RADIO</DialogTitle>
           <DialogDescription>
-            Connecte-toi pour poster sur le mur, liker, dédicacer et gagner des points.
+            {view === "forgot"
+              ? "Entre ton email pour recevoir un lien de réinitialisation."
+              : "Connecte-toi pour poster sur le mur, liker, dédicacer et gagner des points."}
           </DialogDescription>
         </DialogHeader>
+        {view === "forgot" ? (
+          <form className="space-y-3" onSubmit={handleForgot}>
+            <div>
+              <Label htmlFor="fp-email">Email</Label>
+              <Input id="fp-email" type="email" required value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "…" : "Envoyer le lien"}
+            </Button>
+            <button
+              type="button"
+              className="w-full text-sm text-muted-foreground underline"
+              onClick={() => setView("tabs")}
+            >
+              Retour à la connexion
+            </button>
+          </form>
+        ) : (
         <Tabs defaultValue="signin">
           <TabsList className="grid grid-cols-2">
             <TabsTrigger value="signin">Connexion</TabsTrigger>
@@ -85,6 +122,13 @@ export function AuthDialog() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "…" : "Se connecter"}
               </Button>
+              <button
+                type="button"
+                className="w-full text-sm text-muted-foreground underline"
+                onClick={() => { setForgotEmail(signInEmail); setView("forgot"); }}
+              >
+                Mot de passe oublié ?
+              </button>
             </form>
           </TabsContent>
           <TabsContent value="signup">
@@ -107,6 +151,7 @@ export function AuthDialog() {
             </form>
           </TabsContent>
         </Tabs>
+        )}
       </DialogContent>
     </Dialog>
   );
