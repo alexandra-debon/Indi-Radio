@@ -60,6 +60,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const dataRef = useRef<Uint8Array | null>(null);
   const rafRef = useRef<number | null>(null);
+  const fallbackPhaseRef = useRef(0);
+  const lastAudioTimeRef = useRef(0);
+  const lastLiveLevelRef = useRef(0);
   const listenersRef = useRef<Set<(l: number) => void>>(new Set());
 
   const ensureAnalyser = useCallback(() => {
@@ -92,14 +95,35 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     const tick = () => {
       const analyser = analyserRef.current;
       const data = dataRef.current;
+      const el = audioRef.current;
+      let level = 0;
       if (analyser && data) {
-        analyser.getByteFrequencyData(data as unknown as Uint8Array<ArrayBuffer>);
-        // RMS over the low/mid bins gives a musical-feeling level
+        analyser.getByteTimeDomainData(data as unknown as Uint8Array<ArrayBuffer>);
+        // RMS on the waveform follows the real loudness more reliably than
+        // frequency bins for streamed radio audio.
         let sum = 0;
         for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
-        const rms = Math.sqrt(sum / data.length) / 255;
-        listenersRef.current.forEach((cb) => cb(rms));
+        for (let i = 0; i < data.length; i++) {
+          const centered = (data[i] - 128) / 128;
+          sum += centered * centered;
+        }
+        level = Math.sqrt(sum / data.length);
+        if (level > 0.006) lastLiveLevelRef.current = level;
       }
+
+      // If the browser refuses to expose analyser samples for the stream, keep
+      // the wave alive while playback time is progressing instead of freezing.
+      const audioIsAdvancing = !!el && !el.paused && el.readyState > 1 && el.currentTime !== lastAudioTimeRef.current;
+      lastAudioTimeRef.current = el?.currentTime ?? 0;
+      if (level <= 0.006 && audioIsAdvancing) {
+        fallbackPhaseRef.current += 0.18;
+        const pulse =
+          0.05 +
+          Math.abs(Math.sin(fallbackPhaseRef.current)) * 0.08 +
+          Math.abs(Math.sin(fallbackPhaseRef.current * 0.43)) * 0.05;
+        level = Math.max(lastLiveLevelRef.current * 0.6, pulse);
+      }
+      listenersRef.current.forEach((cb) => cb(Math.min(1, level)));
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
