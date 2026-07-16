@@ -154,14 +154,33 @@ async function searchArtwork(artist: string, title: string) {
 async function searchDeezerArtwork(artist: string, title: string, exact = true) {
   const query = encodeURIComponent(exact ? `artist:"${artist}" track:"${title}"` : `${artist} ${title}`);
   if (!query) return null;
-  const res = await fetchWithRetry(`https://api.deezer.com/search?q=${query}&limit=5`, {
+  const res = await fetchWithRetry(`https://api.deezer.com/search?q=${query}&limit=15`, {
     headers: { "User-Agent": "IndiRadio/1.0" },
   });
   if (!res || !res.ok) return null;
   const json = (await res.json().catch(() => null)) as {
-    data?: Array<{ album?: { cover_xl?: string; cover_big?: string; cover_medium?: string } }>;
+    data?: Array<{
+      title?: string;
+      artist?: { name?: string };
+      album?: { cover_xl?: string; cover_big?: string; cover_medium?: string };
+    }>;
   } | null;
-  const album = json?.data?.[0]?.album;
+  const results = json?.data ?? [];
+  const wantArtist = keyPart(artist);
+  const wantTitle = keyPart(title);
+  const scored = results
+    .map((r) => {
+      const a = keyPart(r.artist?.name ?? "");
+      const t = keyPart(r.title ?? "");
+      let score = 0;
+      if (a === wantArtist) score += 4;
+      else if (a && (a.includes(wantArtist) || wantArtist.includes(a))) score += 2;
+      if (t === wantTitle) score += 4;
+      else if (t && (t.includes(wantTitle) || wantTitle.includes(t))) score += 2;
+      return { r, score };
+    })
+    .sort((a, b) => b.score - a.score);
+  const album = (scored[0]?.score ?? 0) >= 2 ? scored[0]?.r.album : results[0]?.album;
   return album?.cover_xl ?? album?.cover_big ?? album?.cover_medium ?? null;
 }
 
