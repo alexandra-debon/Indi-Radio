@@ -5,42 +5,10 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import ogHome from "@/assets/og-home.jpg";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
-
-async function fetchFlipHtml5Cover(url: string): Promise<string | null> {
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "IndiRadioBot/1.0 (+https://radio.indi-art-culture.com)",
-        Accept: "text/html,application/xhtml+xml",
-      },
-      redirect: "follow",
-    });
-    clearTimeout(timer);
-    if (!res.ok) return null;
-    const buf = await res.arrayBuffer();
-    const html = new TextDecoder("utf-8").decode(new Uint8Array(buf).slice(0, 200_000));
-    const patterns = [
-      /<meta[^>]+property=["']og:image["'][^>]*content=["']([^"']+)["']/i,
-      /<meta[^>]+content=["']([^"']+)["'][^>]*property=["']og:image["']/i,
-      /<meta[^>]+name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i,
-    ];
-    for (const re of patterns) {
-      const m = html.match(re);
-      if (m?.[1]) {
-        try { return new URL(m[1], url).toString(); } catch { return m[1]; }
-      }
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 export const Route = createFileRoute("/magazines/$magazineId")({
   loader: async ({ params }) => {
@@ -50,9 +18,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
       .eq("id", params.magazineId)
       .maybeSingle();
     if (error || !data) throw notFound();
-    const shareImage =
-      data.cover_url || (await fetchFlipHtml5Cover(data.magazine_url)) || null;
-    return { ...data, share_image: shareImage };
+    return data;
   },
   head: ({ params, loaderData }) => {
     const url = `${BASE_URL}/magazines/${params.magazineId}`;
@@ -66,7 +32,12 @@ export const Route = createFileRoute("/magazines/$magazineId")({
     }
     const title = `${loaderData.title} — Magazine Indi Art Culture`;
     const desc = (loaderData.body ?? loaderData.title).slice(0, 200);
-    const image = loaderData.share_image || loaderData.cover_url || OG_FALLBACK;
+    // Priorité : miniature FlipHTML5 (dérivée automatiquement du lien),
+    // puis couverture personnalisée si renseignée, sinon fallback Indi Radio.
+    const image =
+      flipHtml5ThumbnailUrl(loaderData.magazine_url) ||
+      loaderData.cover_url ||
+      OG_FALLBACK;
     return {
       meta: [
         { title },
