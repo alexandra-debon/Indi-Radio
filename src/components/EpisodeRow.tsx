@@ -156,9 +156,12 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
             aria-label="Progression de l'écoute"
             className="h-1 w-full cursor-pointer accent-primary"
           />
-          <div className="flex justify-between text-[10px] tabular-nums text-muted-foreground">
-            <span>{fmt(current)}</span>
-            <span>{duration ? fmt(duration) : "--:--"}</span>
+          <div className="flex items-center justify-between text-xs font-semibold tabular-nums">
+            <span className="text-primary">{fmt(current)}</span>
+            <span className="text-muted-foreground">
+              {duration ? `-${fmt(Math.max(0, duration - current))}` : ""}
+            </span>
+            <span className="text-foreground">{duration ? fmt(duration) : "--:--"}</span>
           </div>
         </div>
       )}
