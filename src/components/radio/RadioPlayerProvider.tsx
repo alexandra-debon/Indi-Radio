@@ -236,9 +236,11 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         subscribeLevel,
       }}
     >
-      {/* Persistent audio element — never re-mounts across route changes */}
-      {/* crossOrigin is required so MediaElementAudioSourceNode can read samples */}
-      <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
+      {/* Persistent audio element — never re-mounts across route changes.
+          Stream is served through a same-origin proxy so no crossOrigin
+          attribute is needed — and adding one triggers a CORS preflight
+          Icecast doesn't answer, which silently zeroes the analyser. */}
+      <audio ref={audioRef} preload="none" />
       {children}
     </RadioContext.Provider>
   );
