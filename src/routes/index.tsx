@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
@@ -198,16 +199,37 @@ function NewsletterBanner() {
 }
 
 function RadioWave() {
+  const { subscribeLevel } = useRadio();
+  const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
+  // Multipliers per bar so the outer bars react a bit less than the inner ones
+  const weights = [0.7, 0.95, 1.15, 0.95, 0.7];
+
+  useEffect(() => {
+    const smoothed = new Array(weights.length).fill(0);
+    return subscribeLevel((level) => {
+      // Boost quiet passages (audio RMS is usually 0.05..0.3) but clamp to 1
+      const boosted = Math.min(1, level * 3.2);
+      for (let i = 0; i < weights.length; i++) {
+        const target = Math.min(1, boosted * weights[i]);
+        // Ease toward target for a springy feel
+        smoothed[i] = smoothed[i] * 0.55 + target * 0.45;
+        const h = 20 + smoothed[i] * 80; // 20% .. 100%
+        const el = barsRef.current[i];
+        if (el) el.style.height = `${h}%`;
+      }
+    });
+  }, [subscribeLevel]);
+
   return (
-    <span
-      aria-hidden
-      className="inline-flex h-5 items-end gap-0.5"
-    >
-      {[0, 0.15, 0.3, 0.45, 0.6].map((delay, i) => (
+    <span aria-hidden className="inline-flex h-5 items-center gap-0.5">
+      {weights.map((_, i) => (
         <span
           key={i}
-          className="radio-wave-bar block w-0.5 rounded-sm bg-primary"
-          style={{ height: "100%", animationDelay: `${delay}s` }}
+          ref={(el) => {
+            barsRef.current[i] = el;
+          }}
+          className="block w-0.5 rounded-sm bg-primary transition-[height] duration-75 ease-out"
+          style={{ height: "20%" }}
         />
       ))}
     </span>
