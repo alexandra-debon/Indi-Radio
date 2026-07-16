@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RADIO_CONFIG } from "@/config/radio";
+import sacemLogo from "@/assets/sacem-logo.png.asset.json";
+import tuneinLogo from "@/assets/tunein-logo.webp.asset.json";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -48,6 +50,13 @@ function AboutPage() {
           <p>
             <strong>{RADIO_CONFIG.stationName}</strong> est une radio non-commerciale, sans publicité et sans informations généralistes hors culture. Elle demeure sous statut particulier durant ses premiers mois d’existence au nom de sa fondatrice Alexandra Debon (Melody Alex. Patrick) avant de rejoindre définitivement la société à mission à la fin de cette année 2026.
           </p>
+          <div className="flex flex-wrap items-start justify-center gap-8 pt-4">
+            <img src={sacemLogo.url} alt="Logo SACEM" className="h-20 w-20 object-contain" />
+            <div className="flex flex-col items-center gap-1">
+              <img src={tuneinLogo.url} alt="Logo TuneIn" className="h-20 w-20 object-contain" />
+              <span className="text-xs text-muted-foreground">Diffusion internationale</span>
+            </div>
+          </div>
         </div>
       </section>
     </div>
