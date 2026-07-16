@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, Pause, Star, ExternalLink } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,32 @@ export type EpisodeLike = {
 export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
   const [playing, setPlaying] = useState(false);
   const [audio] = useState(() => (typeof Audio !== "undefined" && ep.audio_url ? new Audio(ep.audio_url) : null));
+  const [current, setCurrent] = useState(0);
+  const [duration, setDuration] = useState<number>(ep.duration_seconds ?? 0);
+  const seekingRef = useRef(false);
+
+  useEffect(() => {
+    if (!audio) return;
+    const onTime = () => { if (!seekingRef.current) setCurrent(audio.currentTime); };
+    const onMeta = () => { if (!Number.isNaN(audio.duration) && Number.isFinite(audio.duration)) setDuration(audio.duration); };
+    const onEnd = () => { setPlaying(false); setCurrent(0); };
+    audio.addEventListener("timeupdate", onTime);
+    audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("ended", onEnd);
+    return () => {
+      audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("ended", onEnd);
+      audio.pause();
+    };
+  }, [audio]);
+
+  const fmt = (s: number) => {
+    if (!Number.isFinite(s) || s < 0) s = 0;
+    const m = Math.floor(s / 60);
+    const r = Math.floor(s % 60);
+    return `${m}:${r.toString().padStart(2, "0")}`;
+  };
   const { session, requireAuth } = useAuth();
   const qc = useQueryClient();
   const [stars, setStars] = useState(0);
@@ -87,11 +113,11 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
     <div className="card-brut space-y-2 p-3">
       <div className="flex items-center gap-3">
         {ep.audio_url ? (
-          <button onClick={toggle} aria-label={playing ? `Mettre en pause « ${ep.title} »` : `Lire l'épisode « ${ep.title} »`} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+          <button onClick={toggle} aria-label={playing ? `Mettre en pause « ${ep.title} »` : `Lire l'épisode « ${ep.title} »`} className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
             {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
           </button>
         ) : ep.external_url ? (
-          <a href={ep.external_url} target="_blank" rel="noreferrer" aria-label={`Écouter « ${ep.title} » (nouvelle fenêtre)`} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
+          <a href={ep.external_url} target="_blank" rel="noreferrer" aria-label={`Écouter « ${ep.title} » (nouvelle fenêtre)`} className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
             <ExternalLink className="size-4" />
           </a>
         ) : null}
@@ -104,9 +130,6 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
             {agg && agg.count > 0 && ` · ★ ${agg.avg.toFixed(1)} (${agg.count})`}
           </div>
         </div>
-        {ep.audio_url && ep.external_url && (
-          <a href={ep.external_url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">Manager</a>
-        )}
         <ShareButton
           target={{
             url: `/episodes/${ep.id}`,
@@ -115,6 +138,30 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
           }}
         />
       </div>
+      {ep.audio_url && (
+        <div className="space-y-1">
+          <input
+            type="range"
+            min={0}
+            max={duration || 0}
+            step={0.1}
+            value={Math.min(current, duration || 0)}
+            onPointerDown={() => { seekingRef.current = true; }}
+            onPointerUp={() => { seekingRef.current = false; }}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setCurrent(v);
+              if (audio) audio.currentTime = v;
+            }}
+            aria-label="Progression de l'écoute"
+            className="h-1 w-full cursor-pointer accent-primary"
+          />
+          <div className="flex justify-between text-[10px] tabular-nums text-muted-foreground">
+            <span>{fmt(current)}</span>
+            <span>{duration ? fmt(duration) : "--:--"}</span>
+          </div>
+        </div>
+      )}
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
