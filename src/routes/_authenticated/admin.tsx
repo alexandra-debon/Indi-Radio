@@ -132,12 +132,14 @@ function MagazinesAdmin() {
       </div>
 
       {creating && (
-        <MagazineEntryEditor
-          onDone={() => {
-            setCreating(false);
-            qc.invalidateQueries({ queryKey: ["admin-magazine-entries"] });
-          }}
-        />
+        <div className="pt-4">
+          <MagazineEntryEditor
+            onDone={() => {
+              setCreating(false);
+              qc.invalidateQueries({ queryKey: ["admin-magazine-entries"] });
+            }}
+          />
+        </div>
       )}
 
       {entries.length === 0 && !creating && (
