@@ -548,7 +548,7 @@ function EpisodesAdmin({ podcastId }: { podcastId: string }) {
         audio_url: form.audio_url || null,
         external_url: form.external_url || null,
         cover_url: form.cover_url || null,
-        duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : null,
+        duration_seconds: parseDuration(form.duration_seconds),
         published_at: new Date().toISOString(),
       });
       if (error) throw error;
@@ -573,7 +573,7 @@ function EpisodesAdmin({ podcastId }: { podcastId: string }) {
         <Input placeholder="URL audio du flux (mp3/aac direct)" value={form.audio_url} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} />
         <Input placeholder="Lien externe manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
         <div className="flex gap-2">
-          <Input type="number" placeholder="Durée (sec)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
+          <Input placeholder="Durée (mm:ss)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
           <Input placeholder="Pochette épisode (URL, optionnel)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
         </div>
         <Button size="sm" onClick={() => create.mutate()}>Ajouter l'épisode</Button>
@@ -616,7 +616,7 @@ function EpisodeEdit({ episode, invalidateKeys, onDone }: {
         audio_url: f.audio_url || null,
         external_url: f.external_url || null,
         cover_url: f.cover_url || null,
-        duration_seconds: f.duration_seconds ? Number(f.duration_seconds) : null,
+        duration_seconds: parseDuration(f.duration_seconds),
       }).eq("id", episode.id);
       if (error) throw error;
     },
@@ -630,7 +630,7 @@ function EpisodeEdit({ episode, invalidateKeys, onDone }: {
       <Input placeholder="URL audio" value={f.audio_url} onChange={(e) => setF({ ...f, audio_url: e.target.value })} />
       <Input placeholder="Lien externe" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
       <div className="flex gap-2">
-        <Input type="number" placeholder="Durée (sec)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
+        <Input placeholder="Durée (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
         <Input placeholder="Pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
       </div>
       <div className="flex gap-2">
@@ -798,7 +798,7 @@ function ShowEpisodesAdmin({ showId }: { showId: string }) {
         audio_url: form.audio_url || null,
         external_url: form.external_url || null,
         cover_url: form.cover_url || null,
-        duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : null,
+        duration_seconds: parseDuration(form.duration_seconds),
         published_at: new Date().toISOString(),
       });
       if (error) throw error;
@@ -823,7 +823,7 @@ function ShowEpisodesAdmin({ showId }: { showId: string }) {
         <Input placeholder="URL audio (mp3/aac direct)" value={form.audio_url} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} />
         <Input placeholder="Lien externe manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
         <div className="flex gap-2">
-          <Input type="number" placeholder="Durée (sec)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
+          <Input placeholder="Durée (mm:ss)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
           <Input placeholder="Pochette (URL, optionnel)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
         </div>
         <Button size="sm" onClick={() => create.mutate()}>Ajouter le replay</Button>
