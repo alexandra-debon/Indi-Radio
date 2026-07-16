@@ -157,6 +157,27 @@ function LivePage() {
 }
 
 function NewsletterBanner() {
+  return null as never;
+}
+
+function RadioWave() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-5 items-end gap-0.5"
+    >
+      {[0, 0.15, 0.3, 0.45, 0.6].map((delay, i) => (
+        <span
+          key={i}
+          className="radio-wave-bar block w-0.5 rounded-sm bg-primary"
+          style={{ height: "100%", animationDelay: `${delay}s` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function NewsletterBannerReal() {
   return (
     <Link
       to="/newsletter"
