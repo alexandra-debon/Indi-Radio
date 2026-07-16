@@ -24,6 +24,7 @@ import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
 import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
@@ -110,6 +111,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
+  id: '/$magazineId',
+  path: '/$magazineId',
+  getParentRoute: () => MagazinesRoute,
+} as any)
 const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
   id: '/episodes/$episodeId',
   path: '/episodes/$episodeId',
@@ -177,7 +183,7 @@ export interface FileRoutesByFullPath {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRoute
+  '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -204,7 +211,7 @@ export interface FileRoutesByTo {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRoute
+  '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -233,7 +241,7 @@ export interface FileRoutesById {
   '/clips': typeof ClipsRouteWithChildren
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRoute
+  '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
 }
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/magazines/$magazineId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesByTo: FileRoutesByTo
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/magazines/$magazineId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   id:
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/magazines/$magazineId'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
   fileRoutesById: FileRoutesById
@@ -346,7 +358,7 @@ export interface RootRouteChildren {
   ClipsRoute: typeof ClipsRouteWithChildren
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
-  MagazinesRoute: typeof MagazinesRoute
+  MagazinesRoute: typeof MagazinesRouteWithChildren
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -462,6 +474,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/magazines/$magazineId': {
+      id: '/magazines/$magazineId'
+      path: '/$magazineId'
+      fullPath: '/magazines/$magazineId'
+      preLoaderRoute: typeof MagazinesMagazineIdRouteImport
+      parentRoute: typeof MagazinesRoute
     }
     '/episodes/$episodeId': {
       id: '/episodes/$episodeId'
@@ -604,6 +623,18 @@ const EmissionsRouteWithChildren = EmissionsRoute._addFileChildren(
   EmissionsRouteChildren,
 )
 
+interface MagazinesRouteChildren {
+  MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
+}
+
+const MagazinesRouteChildren: MagazinesRouteChildren = {
+  MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
+}
+
+const MagazinesRouteWithChildren = MagazinesRoute._addFileChildren(
+  MagazinesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -615,7 +646,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsRoute: ClipsRouteWithChildren,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
-  MagazinesRoute: MagazinesRoute,
+  MagazinesRoute: MagazinesRouteWithChildren,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
