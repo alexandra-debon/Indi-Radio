@@ -13,6 +13,7 @@ interface CurrentTrack {
 
 interface RadioContextValue {
   playing: boolean;
+  loading: boolean;
   toggle: () => void;
   currentTrack: CurrentTrack | null;
   loadingTrack: boolean;
@@ -23,6 +24,7 @@ const RadioContext = createContext<RadioContextValue | null>(null);
 export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
 
   // Latest track from DB (updated externally or by admin)
@@ -66,11 +68,16 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       // Force re-load to reset the stream buffer
       el.src = RADIO_CONFIG.streamUrl;
       el.load();
-      el.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+      setLoading(true);
+      el.play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false))
+        .finally(() => setLoading(false));
     } else {
       el.pause();
       el.src = ""; // stop network usage
       setPlaying(false);
+      setLoading(false);
     }
   }, []);
 
@@ -79,16 +86,28 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     if (!el) return;
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
+    const onWaiting = () => setLoading(true);
+    const onPlaying = () => setLoading(false);
+    const onCanPlay = () => setLoading(false);
+    const onError = () => setLoading(false);
     el.addEventListener("play", onPlay);
     el.addEventListener("pause", onPause);
+    el.addEventListener("waiting", onWaiting);
+    el.addEventListener("playing", onPlaying);
+    el.addEventListener("canplay", onCanPlay);
+    el.addEventListener("error", onError);
     return () => {
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
+      el.removeEventListener("waiting", onWaiting);
+      el.removeEventListener("playing", onPlaying);
+      el.removeEventListener("canplay", onCanPlay);
+      el.removeEventListener("error", onError);
     };
   }, []);
 
   return (
-    <RadioContext.Provider value={{ playing, toggle, currentTrack, loadingTrack }}>
+    <RadioContext.Provider value={{ playing, loading, toggle, currentTrack, loadingTrack }}>
       {/* Persistent audio element — never re-mounts across route changes */}
       <audio ref={audioRef} preload="none" />
       {children}
