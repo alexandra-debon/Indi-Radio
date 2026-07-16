@@ -93,11 +93,19 @@ function LivePage() {
               <div className="mt-3 flex items-center gap-2">
                 <button
                   onClick={toggle}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground"
+                  aria-label={playing ? "Mettre en pause Indi Radio" : "Écouter Indi Radio"}
+                  className="group grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-[3px_3px_0_0_oklch(0_0_0)] transition hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-                  {playing ? "Pause" : "Écouter"}
+                  {playing ? (
+                    <Pause className="size-5" fill="currentColor" />
+                  ) : (
+                    <Play className="size-5 translate-x-[1px]" fill="currentColor" />
+                  )}
                 </button>
+                <span className="text-sm font-bold uppercase tracking-wide">
+                  {playing ? "En direct" : "Écouter Indi Radio"}
+                </span>
+                {playing && <RadioWave />}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
             </div>
@@ -167,6 +175,23 @@ function NewsletterBanner() {
         S'inscrire →
       </span>
     </Link>
+  );
+}
+
+function RadioWave() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-5 items-end gap-0.5"
+    >
+      {[0, 0.15, 0.3, 0.45, 0.6].map((delay, i) => (
+        <span
+          key={i}
+          className="radio-wave-bar block w-0.5 rounded-sm bg-primary"
+          style={{ height: "100%", animationDelay: `${delay}s` }}
+        />
+      ))}
+    </span>
   );
 }
 
