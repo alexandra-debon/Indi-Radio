@@ -102,7 +102,6 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         // RMS on the waveform follows the real loudness more reliably than
         // frequency bins for streamed radio audio.
         let sum = 0;
-        for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
         for (let i = 0; i < data.length; i++) {
           const centered = (data[i] - 128) / 128;
           sum += centered * centered;
