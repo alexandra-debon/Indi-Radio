@@ -15,6 +15,30 @@ import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, 
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 
+/** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
+function parseDuration(v: string): number | null {
+  const s = v.trim();
+  if (!s) return null;
+  if (s.includes(":")) {
+    const parts = s.split(":").map((p) => Number(p));
+    if (parts.some((n) => !Number.isFinite(n) || n < 0)) return null;
+    let total = 0;
+    for (const n of parts) total = total * 60 + n;
+    return Math.round(total);
+  }
+  const n = Number(s);
+  return Number.isFinite(n) && n >= 0 ? Math.round(n) : null;
+}
+function formatDuration(sec: number | null | undefined): string {
+  if (sec == null || !Number.isFinite(sec) || sec <= 0) return "";
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const r = Math.floor(sec % 60);
+  const mm = h > 0 ? m.toString().padStart(2, "0") : String(m);
+  const ss = r.toString().padStart(2, "0");
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
 const adminSearchSchema = z.object({
   tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines"]).catch("users"),
 });
