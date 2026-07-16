@@ -70,7 +70,7 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid grid-cols-3 sm:grid-cols-7">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-7">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
