@@ -24,6 +24,32 @@
   animation: radio-wave 1s ease-in-out infinite;
 }
 
+/* Volume slider — style the native <input type="range"> thumb consistently */
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  border: 2px solid oklch(0 0 0);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 0 oklch(0 0 0);
+}
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  border: 2px solid oklch(0 0 0);
+  cursor: pointer;
+  box-shadow: 1px 1px 0 0 oklch(0 0 0);
+}
+.volume-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /*
