@@ -27,29 +27,41 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
+    <Preview>Bienvenue sur Indi Radio — confirme ton adresse email</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
+        <Heading style={h1}>Bienvenue sur Indi Radio 🎙️</Heading>
         <Text style={text}>
-          Thanks for signing up for{' '}
+          Salut, et bienvenue dans la communauté d'{' '}
           <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          !
+            <strong>Indi Radio</strong>
+          </Link>{' '}
+          — la radio d'InDi ArT CulTuRe, dédiée aux arts et à la scène indépendante.
         </Text>
         <Text style={text}>
-          Please confirm your email address (
+          Pour finaliser ton inscription et activer ton compte ({' '}
           <Link href={`mailto:${recipient}`} style={link}>
             {recipient}
           </Link>
-          ) by clicking the button below:
+          ), clique sur le bouton ci-dessous :
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Verify Email
+          Confirmer mon adresse email
         </Button>
+        <Text style={text}>
+          Une fois ton compte validé, tu pourras :
+        </Text>
+        <Text style={list}>
+          • Écouter le live et participer au mur social<br />
+          • Liker, commenter et voter dans les charts<br />
+          • Envoyer des dédicaces à l'antenne<br />
+          • Gagner des points de présence et monter en niveau
+        </Text>
+        <Text style={text}>
+          <strong>Règles d'usage :</strong> reste bienveillant·e, respecte les autres auditeurs et les artistes. Les comportements toxiques peuvent entraîner une mise en quarantaine, puis la suppression du compte.
+        </Text>
         <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
+          Si tu n'es pas à l'origine de cette inscription, tu peux simplement ignorer cet email — aucun compte ne sera créé sans ta confirmation.
         </Text>
       </Container>
     </Body>
@@ -82,3 +94,10 @@ const button = {
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const list = {
+  fontSize: '14px',
+  color: '#55575d',
+  lineHeight: '1.8',
+  margin: '0 0 25px',
+  paddingLeft: '4px',
+}
