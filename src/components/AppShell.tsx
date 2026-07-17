@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { ShareButton } from "@/components/share/ShareButton";
+import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
@@ -69,6 +70,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
+      <EmailVerificationBanner />
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-28 pt-4">{children}</main>
 
       {/* Drawer */}
