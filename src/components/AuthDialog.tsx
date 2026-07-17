@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,14 @@ export function AuthDialog() {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<"tabs" | "forgot">("tabs");
   const [forgotEmail, setForgotEmail] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resending, setResending] = useState(false);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
 
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
@@ -20,6 +28,27 @@ export function AuthDialog() {
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPseudo, setSignUpPseudo] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+
+  async function handleResend() {
+    if (!signInEmail) {
+      toast.error("Entre ton email ci-dessus pour recevoir un nouveau lien.");
+      return;
+    }
+    if (resendCooldown > 0) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: signInEmail,
+      options: { emailRedirectTo: `${window.location.origin}/` },
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Lien de confirmation renvoyé ! Vérifie ta boîte mail.");
+      setResendCooldown(60);
+    }
+  }
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -131,6 +160,18 @@ export function AuthDialog() {
                 onClick={() => { setForgotEmail(signInEmail); setView("forgot"); }}
               >
                 Mot de passe oublié ?
+              </button>
+              <button
+                type="button"
+                className="w-full text-sm text-muted-foreground underline disabled:opacity-50 disabled:no-underline"
+                onClick={handleResend}
+                disabled={resending || resendCooldown > 0}
+              >
+                {resendCooldown > 0
+                  ? `Renvoyer le lien de confirmation (${resendCooldown}s)`
+                  : resending
+                    ? "Envoi…"
+                    : "Renvoyer le lien de confirmation"}
               </button>
             </form>
           </TabsContent>
