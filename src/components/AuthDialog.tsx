@@ -56,7 +56,10 @@ export function AuthDialog() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Compte créé, tu peux te connecter !");
+      toast.success(
+        "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter.",
+        { duration: 8000 }
+      );
     }
   }
 
