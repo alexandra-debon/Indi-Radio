@@ -829,20 +829,6 @@ export type Database = {
             foreignKeyName: "track_likes_track_history_id_fkey"
             columns: ["track_history_id"]
             isOneToOne: false
-            referencedRelation: "chart_all_time"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "track_likes_track_history_id_fkey"
-            columns: ["track_history_id"]
-            isOneToOne: false
-            referencedRelation: "chart_week"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "track_likes_track_history_id_fkey"
-            columns: ["track_history_id"]
-            isOneToOne: false
             referencedRelation: "track_history"
             referencedColumns: ["id"]
           },
@@ -862,6 +848,7 @@ export type Database = {
           artist: string | null
           id: string | null
           likes: number | null
+          plays: number | null
           title: string | null
         }
         Relationships: []
@@ -871,6 +858,7 @@ export type Database = {
           artist: string | null
           id: string | null
           likes: number | null
+          plays: number | null
           title: string | null
         }
         Relationships: []
