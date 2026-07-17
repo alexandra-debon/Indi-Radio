@@ -685,6 +685,8 @@ export type Database = {
           level: number
           points: number
           pseudo: string
+          quarantine_reason: string | null
+          quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
         }
         Insert: {
@@ -697,6 +699,8 @@ export type Database = {
           level?: number
           points?: number
           pseudo: string
+          quarantine_reason?: string | null
+          quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
         }
         Update: {
@@ -709,6 +713,8 @@ export type Database = {
           level?: number
           points?: number
           pseudo?: string
+          quarantine_reason?: string | null
+          quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
         }
         Relationships: []
@@ -878,6 +884,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_quarantined: { Args: { _user_id: string }; Returns: boolean }
       notif_pref_enabled: {
         Args: { _kind: string; _user_id: string }
         Returns: boolean
