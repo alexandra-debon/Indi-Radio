@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { computeMentionInsertion } from "./insert-mention";
 
 interface Suggestion {
   id: string;
@@ -70,15 +71,10 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
     const el = localRef.current;
     if (el === null || tokenStart === null) return;
     const caret = el.selectionStart ?? value.length;
-    // Swallow any stray '@' just before the token (mobile keyboards sometimes
-    // duplicate '@'), so we never end up producing "@@pseudo".
-    let start = tokenStart;
-    while (start > 0 && value[start - 1] === "@") start -= 1;
-    const next = value.slice(0, start) + "@" + pseudo + " " + value.slice(caret);
+    const { next, pos } = computeMentionInsertion(value, tokenStart, caret, pseudo);
     const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
     nativeSetter?.call(el, next);
     el.dispatchEvent(new Event("input", { bubbles: true }));
-    const pos = start + pseudo.length + 2;
     requestAnimationFrame(() => { el.setSelectionRange(pos, pos); el.focus(); });
     setQuery(null);
     setTokenStart(null);
