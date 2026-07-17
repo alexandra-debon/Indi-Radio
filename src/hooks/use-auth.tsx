@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
+import { toast } from "sonner";
 
 export type Profile = Tables<"profiles">;
 
@@ -14,6 +15,7 @@ interface AuthContextValue {
   isAdmin: boolean;
   isAnimateur: boolean;
   isArtiste: boolean;
+  isEmailVerified: boolean;
   requireAuth: (fn: () => void) => void;
   openAuth: () => void;
   closeAuth: () => void;
@@ -67,12 +69,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin: profile?.role === "admin",
     isAnimateur: profile?.role === "animateur",
     isArtiste: profile?.role === "artiste",
+    isEmailVerified: !!session?.user.email_confirmed_at,
     authOpen,
     openAuth: () => setAuthOpen(true),
     closeAuth: () => setAuthOpen(false),
     requireAuth: (fn) => {
-      if (session) fn();
-      else setAuthOpen(true);
+      if (!session) {
+        setAuthOpen(true);
+        return;
+      }
+      if (!session.user.email_confirmed_at) {
+        toast.error(
+          "Confirme ton adresse email pour publier, liker ou commenter. Vérifie ta boîte mail.",
+          { duration: 6000 }
+        );
+        return;
+      }
+      fn();
     },
     signOut: async () => {
       await supabase.auth.signOut();
