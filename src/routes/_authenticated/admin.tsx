@@ -507,8 +507,9 @@ function BanUserDialog({
             Bannir {target?.pseudo}
           </DialogTitle>
           <DialogDescription>
-            Le compte sera <strong>définitivement supprimé</strong>. Le message ci-dessous
-            lui sera envoyé par email pour expliquer la décision.
+            Le compte est déjà en quarantaine. Cette action le
+            <strong> supprime définitivement</strong> et envoie le message
+            ci-dessous par email pour expliquer la décision.
           </DialogDescription>
         </DialogHeader>
         <Textarea
