@@ -11,9 +11,12 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useServerFn } from "@tanstack/react-start";
+import { banUser } from "@/lib/admin-ban.functions";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -277,6 +280,8 @@ function UserAdmin() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
+
   return (
     <div className="space-y-3">
       <Input placeholder="Rechercher un pseudo…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -303,6 +308,15 @@ function UserAdmin() {
                 Team Indi
               </label>
               <span className="ml-auto text-xs text-muted-foreground">{p.points} pts · Niv. {p.level}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setBanTarget({ id: p.id, pseudo: p.pseudo })}
+                title="Bannir cet utilisateur"
+              >
+                <Ban className="size-4" />
+              </Button>
             </div>
             <BadgeEditor
               badges={(p as any).badges ?? []}
@@ -311,7 +325,82 @@ function UserAdmin() {
           </li>
         ))}
       </ul>
+      <BanUserDialog
+        target={banTarget}
+        onClose={() => setBanTarget(null)}
+        onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
+      />
     </div>
+  );
+}
+
+function BanUserDialog({
+  target,
+  onClose,
+  onDone,
+}: {
+  target: { id: string; pseudo: string } | null;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const ban = useServerFn(banUser);
+
+  const submit = async () => {
+    if (!target) return;
+    const trimmed = reason.trim();
+    if (!trimmed) {
+      toast.error("Merci d'expliquer le motif — il sera envoyé à l'utilisateur.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await ban({ data: { userId: target.id, reason: trimmed } });
+      if (res.emailStatus === "sent") toast.success(`${target.pseudo} banni. Email envoyé.`);
+      else if (res.emailStatus === "suppressed") toast.success(`${target.pseudo} banni (l'email a été bloqué par le serveur mail).`);
+      else if (res.emailStatus === "no_email") toast.success(`${target.pseudo} banni (aucune adresse email).`);
+      else toast.warning(`${target.pseudo} banni, mais l'envoi de l'email a échoué.`);
+      setReason("");
+      onDone();
+      onClose();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={!!target} onOpenChange={(open) => { if (!open) { setReason(""); onClose(); } }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Ban className="size-5 text-destructive" />
+            Bannir {target?.pseudo}
+          </DialogTitle>
+          <DialogDescription>
+            Le compte sera <strong>définitivement supprimé</strong>. Le message ci-dessous
+            lui sera envoyé par email pour expliquer la décision.
+          </DialogDescription>
+        </DialogHeader>
+        <Textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Expliquez le motif du bannissement (visible par l'utilisateur dans l'email)…"
+          rows={6}
+          maxLength={2000}
+          autoFocus
+        />
+        <div className="text-xs text-muted-foreground text-right">{reason.length}/2000</div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={submitting}>Annuler</Button>
+          <Button variant="destructive" onClick={submit} disabled={submitting || !reason.trim()}>
+            {submitting ? "Bannissement…" : "Bannir et notifier"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
