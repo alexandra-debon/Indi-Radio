@@ -11,12 +11,12 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
-import { banUser } from "@/lib/admin-ban.functions";
+import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -281,14 +281,37 @@ function UserAdmin() {
   });
 
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
+
+  const release = useServerFn(releaseUser);
+  const releaseMut = useMutation({
+    mutationFn: async (id: string) => release({ data: { userId: id } }),
+    onSuccess: () => { toast.success("Compte réactivé"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   return (
     <div className="space-y-3">
       <Input placeholder="Rechercher un pseudo…" value={q} onChange={(e) => setQ(e.target.value)} />
       <ul className="space-y-2">
-        {profiles.map((p) => (
-          <li key={p.id} className="card-brut space-y-2 p-3">
+        {profiles.map((p) => {
+          const isQuarantined = !!(p as any).quarantined_at;
+          return (
+          <li key={p.id} className={`card-brut space-y-2 p-3 ${isQuarantined ? "border-destructive/60 bg-destructive/5" : ""}`}>
             <UserBadge profile={p} className="text-sm" />
+            {isQuarantined && (
+              <div className="flex items-start gap-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-destructive">En quarantaine</div>
+                  {(p as any).quarantine_reason && (
+                    <div className="mt-1 whitespace-pre-wrap text-muted-foreground">
+                      {(p as any).quarantine_reason}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               <Select value={p.role} onValueChange={(v) => updateRole.mutate({ id: p.id, role: v as any })}>
                 <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
@@ -308,29 +331,133 @@ function UserAdmin() {
                 Team Indi
               </label>
               <span className="ml-auto text-xs text-muted-foreground">{p.points} pts · Niv. {p.level}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => setBanTarget({ id: p.id, pseudo: p.pseudo })}
-                title="Bannir cet utilisateur"
-              >
-                <Ban className="size-4" />
-              </Button>
+              {isQuarantined ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => releaseMut.mutate(p.id)}
+                    disabled={releaseMut.isPending}
+                    title="Lever la quarantaine"
+                  >
+                    <Undo2 className="size-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => setBanTarget({ id: p.id, pseudo: p.pseudo })}
+                    title="Supprimer définitivement"
+                  >
+                    <Ban className="size-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-orange-600 hover:bg-orange-500/10 hover:text-orange-600 dark:text-orange-400"
+                  onClick={() => setQuarantineTarget({ id: p.id, pseudo: p.pseudo })}
+                  title="Mettre en quarantaine"
+                >
+                  <ShieldOff className="size-4" />
+                </Button>
+              )}
             </div>
             <BadgeEditor
               badges={(p as any).badges ?? []}
               onChange={(badges) => updateBadges.mutate({ id: p.id, badges })}
             />
           </li>
-        ))}
+          );
+        })}
       </ul>
+      <QuarantineDialog
+        target={quarantineTarget}
+        onClose={() => setQuarantineTarget(null)}
+        onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
+      />
       <BanUserDialog
         target={banTarget}
         onClose={() => setBanTarget(null)}
         onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
       />
     </div>
+  );
+}
+
+function QuarantineDialog({
+  target,
+  onClose,
+  onDone,
+}: {
+  target: { id: string; pseudo: string } | null;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const quarantine = useServerFn(quarantineUser);
+
+  const submit = async () => {
+    if (!target) return;
+    const trimmed = reason.trim();
+    if (!trimmed) {
+      toast.error("Merci d'expliquer le motif — il sera envoyé à l'utilisateur.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await quarantine({ data: { userId: target.id, reason: trimmed } });
+      const suffix =
+        res.emailStatus === "sent" ? " Email envoyé." :
+        res.emailStatus === "suppressed" ? " (email bloqué par le serveur mail)" :
+        res.emailStatus === "no_email" ? " (aucune adresse email)" :
+        " (échec de l'envoi de l'email)";
+      toast.success(`${target.pseudo} mis en quarantaine.${suffix}`);
+      setReason("");
+      onDone();
+      onClose();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={!!target} onOpenChange={(open) => { if (!open) { setReason(""); onClose(); } }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ShieldOff className="size-5 text-orange-600 dark:text-orange-400" />
+            Mettre {target?.pseudo} en quarantaine
+          </DialogTitle>
+          <DialogDescription>
+            Le compte reste actif mais ses publications, commentaires, likes et
+            dédicaces seront <strong>masqués et bloqués</strong>. Le message
+            ci-dessous lui sera envoyé par email. La suppression définitive
+            reste possible ensuite.
+          </DialogDescription>
+        </DialogHeader>
+        <Textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Expliquez le motif de la mise en quarantaine…"
+          rows={6}
+          maxLength={2000}
+          autoFocus
+        />
+        <div className="text-right text-xs text-muted-foreground">{reason.length}/2000</div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={submitting}>Annuler</Button>
+          <Button onClick={submit} disabled={submitting || !reason.trim()}
+            className="bg-orange-600 text-white hover:bg-orange-700">
+            {submitting ? "Envoi…" : "Mettre en quarantaine"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -380,8 +507,9 @@ function BanUserDialog({
             Bannir {target?.pseudo}
           </DialogTitle>
           <DialogDescription>
-            Le compte sera <strong>définitivement supprimé</strong>. Le message ci-dessous
-            lui sera envoyé par email pour expliquer la décision.
+            Le compte est déjà en quarantaine. Cette action le
+            <strong> supprime définitivement</strong> et envoie le message
+            ci-dessous par email pour expliquer la décision.
           </DialogDescription>
         </DialogHeader>
         <Textarea

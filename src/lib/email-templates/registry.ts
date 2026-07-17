@@ -18,7 +18,9 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 import { template as userBanTemplate } from './user-ban'
+import { template as userQuarantineTemplate } from './user-quarantine'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'user-ban': userBanTemplate,
+  'user-quarantine': userQuarantineTemplate,
 }
