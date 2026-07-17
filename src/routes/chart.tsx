@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Heart, Trophy, Medal } from "lucide-react";
+import { Heart, Trophy, Medal, Radio } from "lucide-react";
 
 export const Route = createFileRoute("/chart")({
   head: () => ({
@@ -46,9 +46,15 @@ function ChartList({ view }: { view: "chart_week" | "chart_all_time" }) {
             <div className="truncate text-sm font-semibold">{t.title}</div>
             <div className="truncate text-xs text-muted-foreground">{t.artist}</div>
           </div>
-          <div className="flex items-center gap-1 text-sm">
-            <Heart className="size-4 fill-primary text-primary" />
-            <span className="font-bold">{t.likes}</span>
+          <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-1" title="Likes">
+              <Heart className="size-4 fill-primary text-primary" />
+              <span className="font-bold tabular-nums">{t.likes}</span>
+            </div>
+            <div className="flex items-center gap-1 text-muted-foreground" title="Passages à l'antenne">
+              <Radio className="size-4" />
+              <span className="font-semibold tabular-nums">{t.plays ?? 0}</span>
+            </div>
           </div>
         </li>
       ))}
