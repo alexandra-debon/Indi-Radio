@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MailWarning } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,11 +7,18 @@ import { toast } from "sonner";
 export function EmailVerificationBanner() {
   const { session, isEmailVerified } = useAuth();
   const [sending, setSending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   if (!session || isEmailVerified) return null;
 
   async function resend() {
-    if (!session?.user.email) return;
+    if (!session?.user.email || cooldown > 0) return;
     setSending(true);
     const { error } = await supabase.auth.resend({
       type: "signup",
@@ -19,8 +26,12 @@ export function EmailVerificationBanner() {
       options: { emailRedirectTo: `${window.location.origin}/` },
     });
     setSending(false);
-    if (error) toast.error(error.message);
-    else toast.success("Email de confirmation renvoyé. Vérifie ta boîte mail !");
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Email de confirmation renvoyé. Vérifie ta boîte mail !");
+      setCooldown(60);
+    }
   }
 
   return (
@@ -36,10 +47,10 @@ export function EmailVerificationBanner() {
         </div>
         <button
           onClick={resend}
-          disabled={sending}
+          disabled={sending || cooldown > 0}
           className="shrink-0 rounded-md border border-amber-400/60 bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-50 hover:bg-amber-500/30 disabled:opacity-50"
         >
-          {sending ? "Envoi…" : "Renvoyer l'email"}
+          {cooldown > 0 ? `Renvoyer (${cooldown}s)` : sending ? "Envoi…" : "Renvoyer l'email"}
         </button>
       </div>
     </div>
