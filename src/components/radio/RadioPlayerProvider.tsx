@@ -305,16 +305,38 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   }, [playing]);
 
   // Compteur temps écoulé (affiché sur autoradio / lockscreen via
-  // MediaSession.setPositionState). On repart de 0 :
-  //   - à chaque démarrage du flux
-  //   - à chaque changement de piste
-  //   - en particulier sur les jingles Laurent Oleff
+  // MediaSession.setPositionState). On repart de 0 uniquement :
+  //   - au démarrage du flux
+  //   - quand la piste courante est réellement un jingle
+  //     (jingle Laurent Oleff, ou toute piste dont l'artiste/titre contient
+  //     "jingle" — même règle que la pochette « J » côté serveur).
   // Duration=0 masque la barre de progression (le compteur affiché ne
   // "yoyote" plus car il est piloté par nous, plus par l'OS).
+  const normalize = (s?: string | null) =>
+    (s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const isJingleTrack = (t: CurrentTrack | null) => {
+    if (!t) return false;
+    const a = normalize(t.artist);
+    const ti = normalize(t.title);
+    if (a.includes("jingle") || ti.includes("jingle")) return true;
+    // Laurent Oleff = voix des jingles : matcher son nom (tolère fautes
+    // d'orthographe courantes : Olef, Olleff, Oleffe...).
+    const oleffRe = /\bl(au|o)rent\s+ol[e]{1,2}ff?e?\b/;
+    return oleffRe.test(a) || oleffRe.test(ti);
+  };
   const startedAtRef = useRef<number>(Date.now());
+  const wasPlayingRef = useRef(false);
   useEffect(() => {
-    startedAtRef.current = Date.now();
-  }, [playing, currentTrack?.id]);
+    // Reset au (re)démarrage du flux
+    if (playing && !wasPlayingRef.current) startedAtRef.current = Date.now();
+    wasPlayingRef.current = playing;
+  }, [playing]);
+  useEffect(() => {
+    // Reset uniquement si la nouvelle piste est un jingle
+    if (playing && isJingleTrack(currentTrack)) {
+      startedAtRef.current = Date.now();
+    }
+  }, [currentTrack?.id, playing]);
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
