@@ -1,4 +1,4 @@
-import { Volume2, VolumeX, Volume1, Volume } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { useRadio } from "./RadioPlayerProvider";
 
 /**
@@ -8,11 +8,8 @@ import { useRadio } from "./RadioPlayerProvider";
  *   shadow, same focus-visible ring, aria-pressed on the mute toggle.
  */
 export function VolumeControl() {
-  const { volume, muted, setVolume, toggleMute } = useRadio();
-
-  const effective = muted ? 0 : volume;
-  const Icon = muted || volume === 0 ? VolumeX : volume < 0.34 ? Volume : volume < 0.67 ? Volume1 : Volume2;
-  const pct = Math.round(effective * 100);
+  const { muted, toggleMute } = useRadio();
+  const Icon = muted ? VolumeX : Volume2;
 
   return (
     <div
@@ -30,24 +27,6 @@ export function VolumeControl() {
       >
         <Icon className="size-4" aria-hidden />
       </button>
-
-      <label className="inline-flex items-center gap-2">
-        <span className="sr-only">Volume ({pct}%)</span>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          step={1}
-          value={pct}
-          onChange={(e) => setVolume(Number(e.currentTarget.value) / 100)}
-          aria-label="Volume"
-          aria-valuetext={`${pct} pour cent`}
-          className="volume-slider h-1.5 w-24 cursor-pointer appearance-none rounded-full bg-muted outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          style={{
-            backgroundImage: `linear-gradient(to right, var(--color-primary) ${pct}%, var(--color-muted) ${pct}%)`,
-          }}
-        />
-      </label>
     </div>
   );
 }
