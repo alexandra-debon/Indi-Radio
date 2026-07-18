@@ -14,6 +14,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
+import { useQueryClient } from "@tanstack/react-query";
 import { useHashHighlight } from "@/lib/notif-navigate";
 import ogHome from "@/assets/og-home.jpg";
 
@@ -83,7 +84,18 @@ function LivePage() {
                   src={heroArtwork}
                   alt={currentTrack ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}` : "Pochette de l'album en cours"}
                   className="absolute inset-0 size-full object-cover"
-                  loading="lazy"
+                  loading="eager"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
+                  onError={(e) => {
+                    // Retry once by cache-busting; some mobile networks return a transient 403.
+                    const img = e.currentTarget;
+                    if (!img.dataset.retried) {
+                      img.dataset.retried = "1";
+                      img.src = heroArtwork + (heroArtwork.includes("?") ? "&" : "?") + "r=" + Date.now();
+                    }
+                  }}
                 />
               ) : (
                 <RadioIcon className="size-10" />
