@@ -5,6 +5,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { ContentLikeButton, ContentCommentsSection } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -175,6 +176,14 @@ function ChroniqueDetailPage() {
       )}
 
       <SocialLinksBar links={(r as { social_links?: SocialLinks | null }).social_links ?? null} className="pt-1" />
+
+      <section className="card-brut space-y-3 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Réactions</h2>
+          <ContentLikeButton contentType="album_review" contentId={r.id} />
+        </div>
+        <ContentCommentsSection contentType="album_review" contentId={r.id} />
+      </section>
     </article>
   );
 }
