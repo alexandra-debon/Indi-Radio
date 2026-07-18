@@ -2,7 +2,7 @@ import { Play, Pause, Radio } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRadio } from "./RadioPlayerProvider";
 import { LikeButton } from "./LikeButton";
-import { AudioWave } from "./AudioWave";
+import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
 
 export function MiniPlayer() {
