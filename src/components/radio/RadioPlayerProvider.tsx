@@ -58,6 +58,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
   const dataRef = useRef<Uint8Array | null>(null);
   const rafRef = useRef<number | null>(null);
   const fallbackPhaseRef = useRef(0);
@@ -79,16 +80,20 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
       analyser.smoothingTimeConstant = 0.7;
+      const gain = ctx.createGain();
+      gain.gain.value = muted ? 0 : volume;
       source.connect(analyser);
-      analyser.connect(ctx.destination);
+      analyser.connect(gain);
+      gain.connect(ctx.destination);
       audioCtxRef.current = ctx;
       sourceRef.current = source;
       analyserRef.current = analyser;
+      gainRef.current = gain;
       dataRef.current = new Uint8Array(analyser.frequencyBinCount);
     } catch {
       /* CORS or unsupported: leave analyser null → RadioWave falls back */
     }
-  }, []);
+  }, [muted, volume]);
 
   // iOS Safari specifics:
   // 1. AudioContext is created in the "suspended" state and can only be
@@ -215,6 +220,19 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     if (el) {
       el.volume = volume;
       el.muted = muted;
+    }
+    // iOS Safari ignores HTMLMediaElement.volume (always 1). When the Web
+    // Audio graph is active, drive volume through the GainNode instead so
+    // the slider works on every platform.
+    const gain = gainRef.current;
+    const ctx = audioCtxRef.current;
+    if (gain && ctx) {
+      const target = muted ? 0 : volume;
+      try {
+        gain.gain.setTargetAtTime(target, ctx.currentTime, 0.01);
+      } catch {
+        gain.gain.value = target;
+      }
     }
     try {
       window.localStorage.setItem("indi-radio:volume", String(volume));
