@@ -174,7 +174,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   }, [autoOpenComments]);
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "" });
+  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "", social_links: (post.social_links ?? {}) as SocialLinks });
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
 
@@ -236,6 +236,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         title: editForm.title,
         content: editForm.content,
         image_url: editForm.image_url || null,
+        social_links: sanitizeLinks(editForm.social_links),
       }).eq("id", post.id);
       if (error) throw error;
     },
@@ -285,6 +286,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
             <Input value={editForm.image_url} onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })} placeholder="Image URL (optionnel)" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
+            <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
               <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
@@ -297,6 +299,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <p className="whitespace-pre-wrap text-sm">{stripMediaUrls(post.content)}</p>
             )}
             <UrlEmbeds text={post.content} />
+            <SocialLinksBar links={post.social_links} className="pt-1" />
           </>
         )}
         <div className="flex items-center gap-2 pt-1">
