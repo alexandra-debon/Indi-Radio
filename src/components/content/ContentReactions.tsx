@@ -172,6 +172,16 @@ export function ContentRatingSection({ contentType, contentId }: Props) {
   const [comment, setComment] = useState("");
   const key = ["content-ratings", contentType, contentId];
 
+  useEffect(() => {
+    const ch = supabase
+      .channel(`crate-${contentType}-${contentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "content_ratings", filter: `content_id=eq.${contentId}` }, () =>
+        qc.invalidateQueries({ queryKey: key }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [contentType, contentId, qc]);
+
   const { data: agg } = useQuery({
     queryKey: [...key, "agg"],
     queryFn: async () => {
