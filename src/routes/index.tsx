@@ -8,6 +8,7 @@ import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
+import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
