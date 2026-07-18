@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.trg_notify_content_comment_reply() FROM PUBLIC, anon, authenticated;
