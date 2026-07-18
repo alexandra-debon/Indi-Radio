@@ -1,7 +1,7 @@
-import { Facebook, Instagram, Youtube, Music2, ExternalLink } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
-export type SocialLinks = Partial<Record<SocialKey, string>>;
+export type SocialLinks = Partial<Record<SocialKey, string>> & { __order?: SocialKey[] };
 
 export const SOCIAL_KEYS = [
   "facebook",
@@ -15,6 +15,13 @@ export const SOCIAL_KEYS = [
   "spotify",
 ] as const;
 export type SocialKey = (typeof SOCIAL_KEYS)[number];
+
+function orderedKeys(links: SocialLinks): SocialKey[] {
+  const ord = Array.isArray(links.__order) ? links.__order.filter((k): k is SocialKey => (SOCIAL_KEYS as readonly string[]).includes(k)) : [];
+  const seen = new Set<SocialKey>(ord);
+  const rest = SOCIAL_KEYS.filter((k) => !seen.has(k));
+  return [...ord, ...rest];
+}
 
 const TikTokIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -49,7 +56,7 @@ export function normalizeUrl(u: string): string | null {
 
 export function SocialLinksBar({ links, className = "" }: { links: SocialLinks | null | undefined; className?: string }) {
   if (!links) return null;
-  const entries = SOCIAL_KEYS
+  const entries = orderedKeys(links)
     .map((k) => [k, links[k]] as const)
     .filter(([, v]) => typeof v === "string" && v.trim().length > 0);
   if (entries.length === 0) return null;
@@ -82,11 +89,19 @@ export function SocialLinksBar({ links, className = "" }: { links: SocialLinks |
 }
 
 export function SocialLinksEditor({ value, onChange }: { value: SocialLinks; onChange: (v: SocialLinks) => void }) {
+  const keys = orderedKeys(value);
+  const move = (idx: number, dir: -1 | 1) => {
+    const next = [...keys];
+    const j = idx + dir;
+    if (j < 0 || j >= next.length) return;
+    [next[idx], next[j]] = [next[j], next[idx]];
+    onChange({ ...value, __order: next });
+  };
   return (
     <div className="space-y-1.5 rounded-md border border-border/60 bg-muted/30 p-2">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Liens réseaux & plateformes (optionnel)</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Liens réseaux & plateformes (optionnel) — utilisez les flèches pour réordonner</div>
       <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-        {SOCIAL_KEYS.map((k) => {
+        {keys.map((k, idx) => {
           const meta = SOCIAL_META[k];
           const Icon = meta.Icon;
           return (
@@ -105,6 +120,14 @@ export function SocialLinksEditor({ value, onChange }: { value: SocialLinks; onC
                 placeholder={meta.placeholder}
                 className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground/60"
               />
+              <div className="flex shrink-0 flex-col">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} aria-label={`Monter ${meta.label}`} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                  <ChevronUp className="size-3.5" />
+                </button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === keys.length - 1} aria-label={`Descendre ${meta.label}`} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
+                  <ChevronDown className="size-3.5" />
+                </button>
+              </div>
             </label>
           );
         })}
@@ -118,6 +141,10 @@ export function sanitizeLinks(v: SocialLinks): SocialLinks {
   for (const k of SOCIAL_KEYS) {
     const val = v[k]?.trim();
     if (val) out[k] = val;
+  }
+  if (Array.isArray(v.__order)) {
+    const filtered = v.__order.filter((k): k is SocialKey => (SOCIAL_KEYS as readonly string[]).includes(k) && !!out[k]);
+    if (filtered.length > 0) out.__order = filtered;
   }
   return out;
 }
