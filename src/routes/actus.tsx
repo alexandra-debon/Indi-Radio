@@ -18,6 +18,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
+import { ReportButton } from "@/components/moderation/ReportButton";
 import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 
@@ -385,6 +386,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                   {!isEditingC && (
                     <div className="mt-1">
                       <CommentLikeButton commentId={c.id} kind="news" />
+                      {sessionUserId && sessionUserId !== c.author_id && (
+                        <span className="ml-3"><ReportButton commentType="news_comment" commentId={c.id} /></span>
+                      )}
                     </div>
                   )}
                 </div>
