@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
 export type SocialLinks = Partial<Record<SocialKey, string>> & { __order?: SocialKey[] };
