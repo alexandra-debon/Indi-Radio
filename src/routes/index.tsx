@@ -132,17 +132,16 @@ function LivePage() {
                     <Play className="size-5 translate-x-[1px]" fill="currentColor" aria-hidden />
                   )}
                 </button>
-                <span
-                  className="text-sm font-bold uppercase tracking-wide"
-                  aria-live="polite"
-                >
-                  {loading
-                    ? "Connexion…"
-                    : playing
-                    ? "En direct"
-                    : "Écouter Indi Radio"}
-                </span>
-                {playing && <RadioWave />}
+                {playing ? (
+                  <LiveIndicator />
+                ) : (
+                  <span
+                    className="text-sm font-bold uppercase tracking-wide"
+                    aria-live="polite"
+                  >
+                    {loading ? "Connexion…" : "Écouter Indi Radio"}
+                  </span>
+                )}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
               <div className="mt-2">
