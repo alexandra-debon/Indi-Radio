@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
 });
 
 function LivePage() {
-  const { playing, loading, toggle, currentTrack } = useRadio();
+  const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
