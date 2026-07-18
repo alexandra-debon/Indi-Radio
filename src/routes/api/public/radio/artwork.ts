@@ -90,7 +90,7 @@ function forcedArtwork(artist: string, title: string) {
 
 const JINGLE_COVER_PATH = "/jingle-cover.png";
 
-function isJingle(value: string | null) {
+function isJingle(value: string | null | undefined) {
   if (!value) return false;
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("jingle");
 }
