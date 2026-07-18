@@ -16,6 +16,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
+import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 interface PostRow {
   id: string;
@@ -24,6 +25,7 @@ interface PostRow {
   created_at: string;
   pinned_at: string | null;
   pin_label: string | null;
+  social_links: SocialLinks | null;
   author: {
     id: string;
     pseudo: string;
@@ -72,6 +74,8 @@ export function SocialWall() {
   const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [socialDraft, setSocialDraft] = useState<SocialLinks>({});
+  const [editSocial, setEditSocial] = useState<SocialLinks>({});
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
@@ -92,7 +96,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
@@ -199,12 +203,14 @@ export function SocialWall() {
         author_id: session.user.id,
         content: finalContent,
         mentions,
+        social_links: isAdmin ? sanitizeLinks(socialDraft) : {},
       });
       if (error) throw error;
     },
     onSuccess: () => {
       setContent("");
       setVideoUrl("");
+      setSocialDraft({});
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
@@ -213,9 +219,11 @@ export function SocialWall() {
   });
 
   const updatePost = useMutation({
-    mutationFn: async ({ id, content }: { id: string; content: string }) => {
+    mutationFn: async ({ id, content, social_links }: { id: string; content: string; social_links?: SocialLinks }) => {
       const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
-      const { error } = await supabase.from("posts").update({ content, mentions }).eq("id", id);
+      const payload: Record<string, unknown> = { content, mentions };
+      if (social_links !== undefined) payload.social_links = sanitizeLinks(social_links);
+      const { error } = await supabase.from("posts").update(payload).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
