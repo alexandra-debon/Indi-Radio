@@ -6,7 +6,7 @@ import { Heart, Star, Trophy, Medal, Headphones, Disc3 } from "lucide-react";
 import { ContentCommentsSection, ContentLikeButton } from "@/components/content/ContentReactions";
 
 // Fixed UUID identifying the /top discussion thread
-const TOP_THREAD_ID = "00000000-0000-0000-0000-000000000top".replace(/top$/, "10ff") as string;
+const TOP_THREAD_ID = "00000000-0000-0000-0000-00000000t0p1".replace(/[^0-9a-f-]/gi, "0");
 
 export const Route = createFileRoute("/top")({
   head: () => ({
