@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
 export type SocialLinks = Partial<Record<SocialKey, string>> & { __order?: SocialKey[] };
@@ -97,6 +97,14 @@ export function SocialLinksEditor({ value, onChange }: { value: SocialLinks; onC
     [next[idx], next[j]] = [next[j], next[idx]];
     onChange({ ...value, __order: next });
   };
+  const remove = (k: SocialKey) => {
+    const next = { ...value };
+    delete (next as any)[k];
+    if (Array.isArray(next.__order)) {
+      next.__order = next.__order.filter((x) => x !== k);
+    }
+    onChange(next);
+  };
   return (
     <div className="space-y-1.5 rounded-md border border-border/60 bg-muted/30 p-2">
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Liens réseaux & plateformes (optionnel) — utilisez les flèches pour réordonner</div>
@@ -104,6 +112,7 @@ export function SocialLinksEditor({ value, onChange }: { value: SocialLinks; onC
         {keys.map((k, idx) => {
           const meta = SOCIAL_META[k];
           const Icon = meta.Icon;
+          const hasValue = typeof value[k] === "string" && value[k]!.trim().length > 0;
           return (
             <label key={k} className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1">
               <span
@@ -120,6 +129,16 @@ export function SocialLinksEditor({ value, onChange }: { value: SocialLinks; onC
                 placeholder={meta.placeholder}
                 className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground/60"
               />
+              <button
+                type="button"
+                onClick={() => remove(k)}
+                disabled={!hasValue}
+                aria-label={`Retirer ${meta.label}`}
+                title={hasValue ? "Retirer ce lien" : "Aucun lien à retirer"}
+                className="shrink-0 rounded p-0.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-30"
+              >
+                <X className="size-3.5" />
+              </button>
               <div className="flex shrink-0 flex-col">
                 <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} aria-label={`Monter ${meta.label}`} className="text-muted-foreground hover:text-foreground disabled:opacity-30">
                   <ChevronUp className="size-3.5" />
