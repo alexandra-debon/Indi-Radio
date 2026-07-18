@@ -102,7 +102,7 @@ function Stars({ value }: { value: number }) {
 }
 
 function linkFor(row: Row) {
-  if (row.kind === "podcast") return { to: "/podcasts" as const, search: { p: row.id } as any };
+  if (row.kind === "podcast") return { to: "/podcasts" as const };
   return { to: "/chroniques/$slug" as const, params: { slug: row.slug ?? row.id } };
 }
 
