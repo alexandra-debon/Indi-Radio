@@ -1316,3 +1316,138 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
     </div>
   );
 }
+function ReportsAdmin() {
+  const qc = useQueryClient();
+  const { session } = useAuth();
+  const [status, setStatus] = useState<"pending" | "resolved" | "dismissed">("pending");
+
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ["admin-comment-reports", status],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("comment_reports")
+        .select("*")
+        .eq("status", status)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  // Fetch comment bodies + reporter pseudos
+  const { data: enriched = [] } = useQuery({
+    queryKey: ["admin-comment-reports-enriched", reports.map((r) => r.id).join("|")],
+    enabled: reports.length > 0,
+    queryFn: async () => {
+      const byType: Record<string, string[]> = { content_comment: [], news_comment: [], post_comment: [] };
+      for (const r of reports) byType[r.comment_type]?.push(r.comment_id);
+      const [cc, nc, pc] = await Promise.all([
+        byType.content_comment.length
+          ? supabase.from("content_comments").select("id, body, author_id, content_type, content_id").in("id", byType.content_comment)
+          : Promise.resolve({ data: [] as any[] }),
+        byType.news_comment.length
+          ? supabase.from("news_comments").select("id, content, author_id, news_post_id").in("id", byType.news_comment)
+          : Promise.resolve({ data: [] as any[] }),
+        byType.post_comment.length
+          ? supabase.from("post_comments").select("id, content, author_id, post_id").in("id", byType.post_comment)
+          : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const map = new Map<string, any>();
+      (cc.data ?? []).forEach((c: any) => map.set(`content_comment:${c.id}`, { body: c.body, author_id: c.author_id, context: `${c.content_type}/${c.content_id}` }));
+      (nc.data ?? []).forEach((c: any) => map.set(`news_comment:${c.id}`, { body: c.content, author_id: c.author_id, context: `actu/${c.news_post_id}` }));
+      (pc.data ?? []).forEach((c: any) => map.set(`post_comment:${c.id}`, { body: c.content, author_id: c.author_id, context: `post/${c.post_id}` }));
+      const uids = Array.from(new Set([...reports.map((r) => r.reporter_id), ...Array.from(map.values()).map((v: any) => v.author_id)].filter(Boolean)));
+      let profs: Record<string, string> = {};
+      if (uids.length) {
+        const { data: p } = await supabase.from("profiles").select("id, pseudo").in("id", uids);
+        profs = Object.fromEntries((p ?? []).map((x: any) => [x.id, x.pseudo]));
+      }
+      return reports.map((r) => {
+        const c = map.get(`${r.comment_type}:${r.comment_id}`);
+        return {
+          ...r,
+          comment_body: c?.body ?? "(commentaire supprimé)",
+          comment_author: c?.author_id ? profs[c.author_id] ?? "auditeur" : null,
+          comment_context: c?.context ?? "",
+          reporter_pseudo: profs[r.reporter_id] ?? "auditeur",
+        };
+      });
+    },
+  });
+
+  const setStatusMut = useMutation({
+    mutationFn: async ({ id, next }: { id: string; next: "resolved" | "dismissed" }) => {
+      const { error } = await supabase
+        .from("comment_reports")
+        .update({ status: next, resolved_at: new Date().toISOString(), resolved_by: session?.user.id ?? null })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Signalement traité");
+      qc.invalidateQueries({ queryKey: ["admin-comment-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deleteComment = useMutation({
+    mutationFn: async ({ type, id }: { type: string; id: string }) => {
+      const table = type === "news_comment" ? "news_comments" : type === "post_comment" ? "post_comments" : "content_comments";
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Commentaire supprimé");
+      qc.invalidateQueries({ queryKey: ["admin-comment-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {(["pending", "resolved", "dismissed"] as const).map((s) => (
+          <Button key={s} size="sm" variant={status === s ? "default" : "outline"} onClick={() => setStatus(s)}>
+            {s === "pending" ? "En attente" : s === "resolved" ? "Résolus" : "Rejetés"}
+          </Button>
+        ))}
+      </div>
+      {isLoading && <div className="card-brut p-3 text-sm text-muted-foreground">Chargement…</div>}
+      {!isLoading && enriched.length === 0 && (
+        <div className="card-brut p-4 text-sm text-muted-foreground">Aucun signalement.</div>
+      )}
+      <ul className="space-y-2">
+        {enriched.map((r: any) => (
+          <li key={r.id} className="card-brut space-y-2 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div>
+                <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">{r.comment_type}</span>
+                <span className="ml-2 text-muted-foreground">{r.comment_context}</span>
+              </div>
+              <span className="text-muted-foreground">
+                Signalé par <b>{r.reporter_pseudo}</b> · {new Date(r.created_at).toLocaleString("fr-FR")}
+              </span>
+            </div>
+            <div className="rounded border border-border bg-muted/40 p-2 text-sm">
+              <div className="mb-1 text-[11px] text-muted-foreground">Auteur : {r.comment_author ?? "—"}</div>
+              <p className="whitespace-pre-wrap">{r.comment_body}</p>
+            </div>
+            <div className="text-xs">
+              <span className="font-semibold">Motif :</span> {r.reason}
+            </div>
+            {status === "pending" && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="destructive" onClick={() => { if (confirm("Supprimer le commentaire ?")) { deleteComment.mutate({ type: r.comment_type, id: r.comment_id }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
+                  <Trash2 className="mr-1 size-3" /> Supprimer & résoudre
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
+                <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "dismissed" })}>Rejeter</Button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
