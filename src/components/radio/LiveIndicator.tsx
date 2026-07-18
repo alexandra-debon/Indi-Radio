@@ -9,10 +9,7 @@ import { useRadio } from "./RadioPlayerProvider";
 export function LiveIndicator({ className = "" }: { className?: string }) {
   const { durationKnown } = useRadio();
   return (
-    <span
-      className={`inline-flex items-center gap-2 ${className}`}
-      aria-live="polite"
-    >
+    <span className={`inline-flex items-center gap-2 ${className}`} aria-live="polite">
       <span className="relative flex size-2.5">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
         <span className="relative inline-flex size-2.5 rounded-full bg-primary" />

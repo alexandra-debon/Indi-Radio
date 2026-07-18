@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { RADIO_CONFIG } from "@/config/radio";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -85,10 +93,10 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el || analyserRef.current) return;
     try {
-      const Ctx =
-        (window.AudioContext ||
-          (window as unknown as { webkitAudioContext?: typeof AudioContext })
-            .webkitAudioContext) as typeof AudioContext | undefined;
+      const Ctx = (window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext) as
+        | typeof AudioContext
+        | undefined;
       if (!Ctx) return;
       const ctx = new Ctx();
       const source = ctx.createMediaElementSource(el);
@@ -121,9 +129,11 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const isIOS = useCallback(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
-    return /iPad|iPhone|iPod/.test(ua) ||
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
       // iPadOS 13+ reports as Mac; detect touch to disambiguate
-      (ua.includes("Macintosh") && "ontouchend" in document);
+      (ua.includes("Macintosh") && "ontouchend" in document)
+    );
   }, []);
 
   // Must be invoked *synchronously* inside the user-gesture handler on iOS.
@@ -194,7 +204,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
 
       // If the browser refuses to expose analyser samples for the stream, keep
       // the wave alive while playback time is progressing instead of freezing.
-      const audioIsAdvancing = !!el && !el.paused && el.readyState > 1 && el.currentTime !== lastAudioTimeRef.current;
+      const audioIsAdvancing =
+        !!el && !el.paused && el.readyState > 1 && el.currentTime !== lastAudioTimeRef.current;
       lastAudioTimeRef.current = el?.currentTime ?? 0;
       if (level <= 0.006 && audioIsAdvancing) {
         fallbackPhaseRef.current += 0.18;
@@ -335,7 +346,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       const raw = window.localStorage.getItem("indi-radio:jingleThreshold");
       const n = raw ? Number(raw) : NaN;
       if (Number.isFinite(n) && n > 0.5 && n <= 1) return n;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return 0.82;
   })();
 
@@ -464,7 +477,10 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     };
     tick();
     const id = setInterval(tick, 30_000);
-    return () => { cancelled = true; clearInterval(id); };
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, [queryClient]);
 
   const toggle = useCallback(() => {

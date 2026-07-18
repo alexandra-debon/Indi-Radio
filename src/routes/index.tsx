@@ -25,9 +25,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Indi Radio — Live 24/7 des arts indépendants" },
-      { name: "description", content: "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne." },
+      {
+        name: "description",
+        content:
+          "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne.",
+      },
       { property: "og:title", content: "Indi Radio — Live 24/7 des arts indépendants" },
-      { property: "og:description", content: "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé." },
+      {
+        property: "og:description",
+        content:
+          "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé.",
+      },
       { property: "og:url", content: "https://radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_HOME },
@@ -82,7 +90,11 @@ function LivePage() {
               {heroArtwork ? (
                 <img
                   src={heroArtwork}
-                  alt={currentTrack ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}` : "Pochette de l'album en cours"}
+                  alt={
+                    currentTrack
+                      ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}`
+                      : "Pochette de l'album en cours"
+                  }
                   className="absolute inset-0 size-full object-cover"
                   loading="eager"
                   decoding="async"
@@ -93,7 +105,8 @@ function LivePage() {
                     const img = e.currentTarget;
                     if (!img.dataset.retried) {
                       img.dataset.retried = "1";
-                      img.src = heroArtwork + (heroArtwork.includes("?") ? "&" : "?") + "r=" + Date.now();
+                      img.src =
+                        heroArtwork + (heroArtwork.includes("?") ? "&" : "?") + "r=" + Date.now();
                     }
                   }}
                 />
@@ -106,8 +119,12 @@ function LivePage() {
                 <span className="animate-heartbeat">On air</span>
                 <AudioBars />
               </div>
-              <div className="mt-1 truncate text-xl font-bold">{currentTrack?.title ?? "Indi Radio — live"}</div>
-              <div className="truncate text-sm text-muted-foreground">{currentTrack?.artist ?? "Le flux tourne 24/7"}</div>
+              <div className="mt-1 truncate text-xl font-bold">
+                {currentTrack?.title ?? "Indi Radio — live"}
+              </div>
+              <div className="truncate text-sm text-muted-foreground">
+                {currentTrack?.artist ?? "Le flux tourne 24/7"}
+              </div>
               <div className="mt-3 flex items-center gap-2">
                 <button
                   type="button"
@@ -116,8 +133,8 @@ function LivePage() {
                     loading
                       ? "Chargement du flux Indi Radio"
                       : playing
-                      ? "Mettre en pause Indi Radio"
-                      : "Écouter Indi Radio"
+                        ? "Mettre en pause Indi Radio"
+                        : "Écouter Indi Radio"
                   }
                   aria-pressed={playing}
                   aria-busy={loading}
@@ -135,10 +152,7 @@ function LivePage() {
                 {playing ? (
                   <LiveIndicator />
                 ) : (
-                  <span
-                    className="text-sm font-bold uppercase tracking-wide"
-                    aria-live="polite"
-                  >
+                  <span className="text-sm font-bold uppercase tracking-wide" aria-live="polite">
                     {loading ? "Connexion…" : "Écouter Indi Radio"}
                   </span>
                 )}
@@ -216,8 +230,6 @@ function NewsletterBanner() {
     </Link>
   );
 }
-
-
 
 function HistoryRow({
   track,

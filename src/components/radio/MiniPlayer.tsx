@@ -9,10 +9,17 @@ export function MiniPlayer() {
   const { playing, toggle, currentTrack } = useRadio();
   const { data: artwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   const [imgError, setImgError] = useState(false);
-  useEffect(() => { setImgError(false); }, [artwork]);
+  useEffect(() => {
+    setImgError(false);
+  }, [artwork]);
   const showImg = artwork && !imgError;
-  const initials = (currentTrack?.artist ?? "IR")
-    .split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "IR";
+  const initials =
+    (currentTrack?.artist ?? "IR")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase() || "IR";
 
   return (
     <div className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -43,9 +50,7 @@ export function MiniPlayer() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold">
-            {currentTrack?.title ?? "En direct"}
-          </div>
+          <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
           <div className="truncate text-xs text-muted-foreground">
             {currentTrack?.artist ?? "Indi Radio · live"}
           </div>
