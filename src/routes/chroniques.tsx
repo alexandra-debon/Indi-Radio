@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
+import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
@@ -60,7 +61,8 @@ function ChroniquesPage() {
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {reviews.map((r) => (
           <li key={r.id} className="relative">
-            <div className="absolute right-2 top-2 z-10">
+            <div className="absolute right-2 top-2 z-10 flex items-center gap-1">
+              <ContentLikeButton contentType="album_review" contentId={r.id} />
               <ShareButton
                 target={{
                   url: `/chroniques/${r.slug}`,
