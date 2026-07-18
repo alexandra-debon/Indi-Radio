@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { EpisodeRow } from "@/components/EpisodeRow";
+import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import { ArrowLeft, Mic2 } from "lucide-react";
 import ogEmissions from "@/assets/og-emissions.jpg";
 
@@ -83,16 +84,29 @@ function ShowDetailPage() {
         <div className="space-y-2 p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[10px] uppercase tracking-widest text-primary">{label}</div>
-            <ShareButton
-              variant="chip"
-              target={{ url, title: `${show.title} — ${label} · Indi Radio`, text: show.description ?? show.title }}
-            />
+            <div className="flex items-center gap-2">
+              <ContentLikeButton contentType="show" contentId={show.id} />
+              <ShareButton
+                variant="chip"
+                target={{ url, title: `${show.title} — ${label} · Indi Radio`, text: show.description ?? show.title }}
+              />
+            </div>
           </div>
           <h1 className="text-2xl font-bold">{show.title}</h1>
           {show.schedule && <div className="text-sm text-muted-foreground">{show.schedule}</div>}
           {show.description && <p className="text-sm">{show.description}</p>}
         </div>
       </div>
+
+      <section className="card-brut space-y-2 p-4">
+        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Note & avis</h2>
+        <ContentRatingSection contentType="show" contentId={show.id} />
+      </section>
+
+      <section className="card-brut space-y-2 p-4">
+        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Commentaires</h2>
+        <ContentCommentsSection contentType="show" contentId={show.id} />
+      </section>
 
       <section className="space-y-2">
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Anciens épisodes</h2>
