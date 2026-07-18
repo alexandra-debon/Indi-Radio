@@ -327,6 +327,11 @@ export function SocialWall() {
           disabled={!session}
           className="mt-2 h-8 text-xs"
         />
+        {isAdmin && (
+          <div className="mt-2">
+            <SocialLinksEditor value={socialDraft} onChange={setSocialDraft} />
+          </div>
+        )}
         <div className="mt-2 flex justify-end">
           <Button
             size="sm"
