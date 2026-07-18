@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
@@ -9,6 +8,7 @@ import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
+import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -25,9 +25,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Indi Radio — Live 24/7 des arts indépendants" },
-      { name: "description", content: "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne." },
+      {
+        name: "description",
+        content:
+          "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne.",
+      },
       { property: "og:title", content: "Indi Radio — Live 24/7 des arts indépendants" },
-      { property: "og:description", content: "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé." },
+      {
+        property: "og:description",
+        content:
+          "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé.",
+      },
       { property: "og:url", content: "https://radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_HOME },
@@ -42,7 +50,7 @@ export const Route = createFileRoute("/")({
 });
 
 function LivePage() {
-  const { playing, loading, toggle, currentTrack } = useRadio();
+  const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
@@ -82,7 +90,11 @@ function LivePage() {
               {heroArtwork ? (
                 <img
                   src={heroArtwork}
-                  alt={currentTrack ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}` : "Pochette de l'album en cours"}
+                  alt={
+                    currentTrack
+                      ? `Pochette de « ${currentTrack.title} » par ${currentTrack.artist}`
+                      : "Pochette de l'album en cours"
+                  }
                   className="absolute inset-0 size-full object-cover"
                   loading="eager"
                   decoding="async"
@@ -93,7 +105,8 @@ function LivePage() {
                     const img = e.currentTarget;
                     if (!img.dataset.retried) {
                       img.dataset.retried = "1";
-                      img.src = heroArtwork + (heroArtwork.includes("?") ? "&" : "?") + "r=" + Date.now();
+                      img.src =
+                        heroArtwork + (heroArtwork.includes("?") ? "&" : "?") + "r=" + Date.now();
                     }
                   }}
                 />
@@ -106,8 +119,12 @@ function LivePage() {
                 <span className="animate-heartbeat">On air</span>
                 <AudioBars />
               </div>
-              <div className="mt-1 truncate text-xl font-bold">{currentTrack?.title ?? "Indi Radio — live"}</div>
-              <div className="truncate text-sm text-muted-foreground">{currentTrack?.artist ?? "Le flux tourne 24/7"}</div>
+              <div className="mt-1 truncate text-xl font-bold">
+                {currentTrack?.title ?? "Indi Radio — live"}
+              </div>
+              <div className="truncate text-sm text-muted-foreground">
+                {currentTrack?.artist ?? "Le flux tourne 24/7"}
+              </div>
               <div className="mt-3 flex items-center gap-2">
                 <button
                   type="button"
@@ -116,8 +133,8 @@ function LivePage() {
                     loading
                       ? "Chargement du flux Indi Radio"
                       : playing
-                      ? "Mettre en pause Indi Radio"
-                      : "Écouter Indi Radio"
+                        ? "Mettre en pause Indi Radio"
+                        : "Écouter Indi Radio"
                   }
                   aria-pressed={playing}
                   aria-busy={loading}
@@ -132,17 +149,13 @@ function LivePage() {
                     <Play className="size-5 translate-x-[1px]" fill="currentColor" aria-hidden />
                   )}
                 </button>
-                <span
-                  className="text-sm font-bold uppercase tracking-wide"
-                  aria-live="polite"
-                >
-                  {loading
-                    ? "Connexion…"
-                    : playing
-                    ? "En direct"
-                    : "Écouter Indi Radio"}
-                </span>
-                {playing && <RadioWave />}
+                {playing ? (
+                  <LiveIndicator />
+                ) : (
+                  <span className="text-sm font-bold uppercase tracking-wide" aria-live="polite">
+                    {loading ? "Connexion…" : "Écouter Indi Radio"}
+                  </span>
+                )}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
               <div className="mt-2">
@@ -215,47 +228,6 @@ function NewsletterBanner() {
         S'inscrire →
       </span>
     </Link>
-  );
-}
-
-function RadioWave() {
-  const { subscribeLevel } = useRadio();
-  const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
-  // Multipliers per bar so the outer bars react a bit less than the inner ones
-  const weights = [0.7, 0.95, 1.15, 0.95, 0.7];
-
-  useEffect(() => {
-    const smoothed = new Array(weights.length).fill(0);
-    const lastApplied = new Array(weights.length).fill(-1);
-    return subscribeLevel((level) => {
-      // Boost quiet passages (audio RMS is usually 0.05..0.3) but clamp to 1
-      const boosted = Math.min(1, level * 3.2);
-      for (let i = 0; i < weights.length; i++) {
-        const target = Math.min(1, boosted * weights[i]);
-        // Ease toward target for a springy feel
-        smoothed[i] = smoothed[i] * 0.55 + target * 0.45;
-        const s = 0.2 + smoothed[i] * 0.8;
-        if (Math.abs(s - lastApplied[i]) < 0.01) continue;
-        lastApplied[i] = s;
-        const el = barsRef.current[i];
-        if (el) el.style.transform = `scaleY(${s})`;
-      }
-    });
-  }, [subscribeLevel]);
-
-  return (
-    <span aria-hidden className="inline-flex h-5 items-center gap-0.5">
-      {weights.map((_, i) => (
-        <span
-          key={i}
-          ref={(el) => {
-            barsRef.current[i] = el;
-          }}
-          className="block h-full w-0.5 rounded-sm bg-primary will-change-transform"
-          style={{ transform: "scaleY(0.2)", transformOrigin: "center" }}
-        />
-      ))}
-    </span>
   );
 }
 

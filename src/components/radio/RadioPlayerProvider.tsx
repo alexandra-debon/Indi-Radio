@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { RADIO_CONFIG } from "@/config/radio";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +35,17 @@ interface RadioContextValue {
    * animation frame while the stream is playing. Returns an unsubscribe fn.
    */
   subscribeLevel: (cb: (level: number) => void) => () => void;
+  /**
+   * Duration reported by the <audio> element. For a live stream this is
+   * Infinity / NaN, which means the progress bar must be hidden and a simple
+   * "live" indicator shown instead.
+   */
+  duration: number | null;
+  /**
+   * True when the browser reports a finite, positive duration (i.e. a file
+   * with a known length). For the live radio stream this is always false.
+   */
+  durationKnown: boolean;
 }
 
 const RadioContext = createContext<RadioContextValue | null>(null);
@@ -35,6 +54,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Duration of the <audio> element: Infinity/NaN for the live stream.
+  const [duration, setDuration] = useState<number | null>(null);
+  const durationKnown = typeof duration === "number" && Number.isFinite(duration) && duration > 0;
   // SSR-safe defaults; persisted values are loaded post-mount to avoid
   // hydration mismatches on the volume slider label / fill.
   const [volume, setVolumeState] = useState<number>(0.8);
@@ -71,10 +93,10 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el || analyserRef.current) return;
     try {
-      const Ctx =
-        (window.AudioContext ||
-          (window as unknown as { webkitAudioContext?: typeof AudioContext })
-            .webkitAudioContext) as typeof AudioContext | undefined;
+      const Ctx = (window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext) as
+        | typeof AudioContext
+        | undefined;
       if (!Ctx) return;
       const ctx = new Ctx();
       const source = ctx.createMediaElementSource(el);
@@ -107,9 +129,11 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const isIOS = useCallback(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
-    return /iPad|iPhone|iPod/.test(ua) ||
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
       // iPadOS 13+ reports as Mac; detect touch to disambiguate
-      (ua.includes("Macintosh") && "ontouchend" in document);
+      (ua.includes("Macintosh") && "ontouchend" in document)
+    );
   }, []);
 
   // Must be invoked *synchronously* inside the user-gesture handler on iOS.
@@ -180,7 +204,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
 
       // If the browser refuses to expose analyser samples for the stream, keep
       // the wave alive while playback time is progressing instead of freezing.
-      const audioIsAdvancing = !!el && !el.paused && el.readyState > 1 && el.currentTime !== lastAudioTimeRef.current;
+      const audioIsAdvancing =
+        !!el && !el.paused && el.readyState > 1 && el.currentTime !== lastAudioTimeRef.current;
       lastAudioTimeRef.current = el?.currentTime ?? 0;
       if (level <= 0.006 && audioIsAdvancing) {
         fallbackPhaseRef.current += 0.18;
@@ -321,7 +346,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       const raw = window.localStorage.getItem("indi-radio:jingleThreshold");
       const n = raw ? Number(raw) : NaN;
       if (Number.isFinite(n) && n > 0.5 && n <= 1) return n;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return 0.82;
   })();
 
@@ -406,18 +433,33 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
     if (typeof navigator.mediaSession.setPositionState !== "function") return;
-    // Flux live : on n'envoie AUCUN état de position. Certains OS
-    // (Android Auto, CarPlay, Bluetooth) interprètent position=0 +
-    // duration=0 comme "seek en cours" et affichent une jauge qui
-    // yoyote. En laissant setPositionState non appelé, l'autoradio
-    // n'affiche qu'un compteur temps écoulé simple (ou rien), sans
-    // barre de progression trompeuse.
+
+    if (durationKnown) {
+      // Known duration: a real progress bar is allowed. For this radio the
+      // stream is live, so this branch is normally unused.
+      try {
+        navigator.mediaSession.setPositionState({
+          duration,
+          position: 0,
+          playbackRate: 1,
+        });
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+
+    // Flux live (durée inconnue / Infinity) : on efface explicitement
+    // l'état de position pour masquer la barre de progression. Certains OS
+    // (Android Auto, CarPlay, Bluetooth) affichent alors seulement un
+    // indicateur "live" ou un compteur temps écoulé simple, sans jauge
+    // trompeuse qui yoyote.
     try {
       navigator.mediaSession.setPositionState!();
     } catch {
       /* certains OS refusent l'appel sans argument */
     }
-  }, [playing, currentTrack?.id]);
+  }, [playing, currentTrack?.id, duration, durationKnown]);
 
   // Scrape Icecast metadata every 30s and upsert into track_history.
   useEffect(() => {
@@ -435,7 +477,10 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     };
     tick();
     const id = setInterval(tick, 30_000);
-    return () => { cancelled = true; clearInterval(id); };
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, [queryClient]);
 
   const toggle = useCallback(() => {
@@ -532,12 +577,22 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     };
     const onCanPlay = () => setLoading(false);
     const onError = () => setLoading(false);
+    const onDurationChange = () => {
+      // For a live Icecast stream the duration stays Infinity/NaN.
+      // We expose it so the UI + MediaSession can hide the progress bar.
+      setDuration(Number.isFinite(el.duration) && el.duration > 0 ? el.duration : null);
+    };
+    const onLoadedMetadata = () => {
+      setDuration(Number.isFinite(el.duration) && el.duration > 0 ? el.duration : null);
+    };
     el.addEventListener("play", onPlay);
     el.addEventListener("pause", onPause);
     el.addEventListener("waiting", onWaiting);
     el.addEventListener("playing", onPlaying);
     el.addEventListener("canplay", onCanPlay);
     el.addEventListener("error", onError);
+    el.addEventListener("durationchange", onDurationChange);
+    el.addEventListener("loadedmetadata", onLoadedMetadata);
     return () => {
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
@@ -545,6 +600,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       el.removeEventListener("playing", onPlaying);
       el.removeEventListener("canplay", onCanPlay);
       el.removeEventListener("error", onError);
+      el.removeEventListener("durationchange", onDurationChange);
+      el.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
   }, [ensureAnalyser, startLevelLoop]);
 
@@ -561,6 +618,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         setVolume,
         toggleMute,
         subscribeLevel,
+        duration,
+        durationKnown,
       }}
     >
       {/* Persistent audio element — never re-mounts across route changes.
