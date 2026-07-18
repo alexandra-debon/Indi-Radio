@@ -1,4 +1,5 @@
 import { Heart } from "lucide-react";
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,6 +12,18 @@ export function CommentLikeButton({ commentId, kind }: { commentId: string; kind
   const table = kind === "post" ? "post_comment_likes" : "news_comment_likes";
   const uid = session?.user.id ?? null;
   const key = ["comment-likes", kind, commentId, uid ?? "anon"];
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`clike-${kind}-${commentId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table, filter: `comment_id=eq.${commentId}` },
+        () => qc.invalidateQueries({ queryKey: ["comment-likes", kind, commentId] }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [commentId, kind, table, qc]);
 
   const { data } = useQuery({
     queryKey: key,
