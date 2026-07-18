@@ -30,7 +30,9 @@ export function MiniPlayer() {
               src={artwork}
               alt={currentTrack ? `${currentTrack.artist} — ${currentTrack.title}` : ""}
               className="size-full object-cover"
-              loading="lazy"
+              loading="eager"
+              decoding="async"
+              crossOrigin="anonymous"
               referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
