@@ -88,6 +88,17 @@ function forcedArtwork(artist: string, title: string) {
   return FORCED_ARTWORK[`${keyPart(artist)}|${keyPart(title)}`] ?? null;
 }
 
+const JINGLE_COVER_PATH = "/jingle-cover.png";
+
+function isJingle(value: string | null | undefined) {
+  if (!value) return false;
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("jingle");
+}
+
+function looksLikeJingle(artist?: string | null, title?: string | null) {
+  return isJingle(artist) || isJingle(title);
+}
+
 function clean(value: string | null) {
   return (value ?? "")
     .replace(/\([^)]*\)/g, " ")
@@ -235,6 +246,13 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
 
         if (!artist || !title) {
           return Response.json({ url: null }, { headers: CORS_HEADERS });
+        }
+
+        if (looksLikeJingle(originalArtist, originalTitle) || looksLikeJingle(artist, title)) {
+          return Response.json(
+            { url: new URL(JINGLE_COVER_PATH, request.url).toString() },
+            { headers: { ...CORS_HEADERS, "Cache-Control": HIT_CACHE } },
+          );
         }
 
         const t0 = Date.now();
