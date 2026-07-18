@@ -71,6 +71,8 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   const { session, requireAuth } = useAuth();
   const qc = useQueryClient();
   const [text, setText] = useState("");
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
   const key = ["content-comments", contentType, contentId];
 
   useEffect(() => {
@@ -88,11 +90,11 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("content_comments")
-        .select("id, body, author_id, created_at")
+        .select("id, body, author_id, created_at, parent_id")
         .eq("content_type", contentType)
         .eq("content_id", contentId)
-        .order("created_at", { ascending: false })
-        .limit(50);
+        .order("created_at", { ascending: true })
+        .limit(200);
       const rows = data ?? [];
       const ids = Array.from(new Set(rows.map((r) => r.author_id)));
       let pseudos: Record<string, string> = {};
@@ -105,17 +107,22 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   });
 
   const add = useMutation({
-    mutationFn: async () => {
-      if (!session || !text.trim()) return;
+    mutationFn: async (opts: { body: string; parentId: string | null }) => {
+      if (!session || !opts.body.trim()) return;
       const { error } = await supabase.from("content_comments").insert({
         content_type: contentType,
         content_id: contentId,
         author_id: session.user.id,
-        body: text.trim(),
+        body: opts.body.trim(),
+        parent_id: opts.parentId,
       });
       if (error) throw error;
     },
-    onSuccess: () => { setText(""); qc.invalidateQueries({ queryKey: key }); },
+    onSuccess: (_d, vars) => {
+      if (vars?.parentId) { setReplyText(""); setReplyTo(null); }
+      else { setText(""); }
+      qc.invalidateQueries({ queryKey: key });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -127,39 +134,66 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     onSuccess: () => qc.invalidateQueries({ queryKey: key }),
   });
 
+  const roots = comments.filter((c) => !c.parent_id).slice().reverse();
+  const childrenOf = (id: string) => comments.filter((c) => c.parent_id === id);
+
+  const renderComment = (c: typeof comments[number], depth = 0) => (
+    <li key={c.id} className={cn("rounded border border-border p-2 text-xs", depth > 0 && "ml-4 mt-2 bg-muted/30")}>
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">{c.pseudo}</span>
+        <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
+      </div>
+      <p className="mt-1 whitespace-pre-wrap text-foreground/90">{c.body}</p>
+      <div className="mt-1 flex items-center gap-3">
+        {session && (
+          <button
+            onClick={() => { setReplyTo(replyTo === c.id ? null : c.id); setReplyText(""); }}
+            className="text-[10px] text-muted-foreground hover:text-primary"
+          >
+            Répondre
+          </button>
+        )}
+        {session?.user.id === c.author_id && (
+          <button onClick={() => del.mutate(c.id)} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive">
+            <Trash2 className="size-3" /> Supprimer
+          </button>
+        )}
+        {session && session.user.id !== c.author_id && (
+          <ReportButton commentType="content_comment" commentId={c.id} />
+        )}
+      </div>
+      {replyTo === c.id && session && (
+        <div className="mt-2 space-y-1">
+          <Textarea rows={2} placeholder="Ta réponse…" value={replyText} onChange={(e) => setReplyText(e.target.value)} />
+          <div className="flex gap-2">
+            <Button size="sm" disabled={add.isPending || !replyText.trim()} onClick={() => add.mutate({ body: replyText, parentId: c.id })}>Répondre</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setReplyTo(null); setReplyText(""); }}>Annuler</Button>
+          </div>
+        </div>
+      )}
+      {childrenOf(c.id).length > 0 && (
+        <ul className="mt-2 space-y-1">
+          {childrenOf(c.id).map((child) => renderComment(child, depth + 1))}
+        </ul>
+      )}
+    </li>
+  );
+
   return (
     <div className="space-y-3">
       {session ? (
         <div className="space-y-2">
           <Textarea rows={2} placeholder="Ton commentaire…" value={text} onChange={(e) => setText(e.target.value)} />
-          <Button size="sm" disabled={add.isPending || !text.trim()} onClick={() => add.mutate()}>Publier</Button>
+          <Button size="sm" disabled={add.isPending || !text.trim()} onClick={() => add.mutate({ body: text, parentId: null })}>Publier</Button>
         </div>
       ) : (
         <button onClick={() => requireAuth(() => {})} className="text-xs text-primary underline">
           Connecte-toi pour commenter
         </button>
       )}
-      {comments.length === 0 && <p className="text-xs text-muted-foreground">Aucun commentaire pour l'instant.</p>}
+      {roots.length === 0 && <p className="text-xs text-muted-foreground">Aucun commentaire pour l'instant.</p>}
       <ul className="space-y-2">
-        {comments.map((c) => (
-          <li key={c.id} className="rounded border border-border p-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold">{c.pseudo}</span>
-              <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
-            </div>
-            <p className="mt-1 whitespace-pre-wrap text-foreground/90">{c.body}</p>
-            <div className="mt-1 flex items-center gap-3">
-              {session?.user.id === c.author_id && (
-                <button onClick={() => del.mutate(c.id)} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive">
-                  <Trash2 className="size-3" /> Supprimer
-                </button>
-              )}
-              {session && session.user.id !== c.author_id && (
-                <ReportButton commentType="content_comment" commentId={c.id} />
-              )}
-            </div>
-          </li>
-        ))}
+        {roots.map((c) => renderComment(c))}
       </ul>
     </div>
   );
