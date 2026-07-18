@@ -14,6 +14,7 @@ import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
+import { ReportButton } from "@/components/moderation/ReportButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
@@ -543,7 +544,12 @@ export function SocialWall() {
                               )}
                               <UrlEmbeds text={c.content} compact />
                               <div className="mt-1 flex items-center justify-between gap-2">
-                                <CommentLikeButton commentId={c.id} kind="post" />
+                                <div className="flex items-center gap-3">
+                                  <CommentLikeButton commentId={c.id} kind="post" />
+                                  {session && session.user.id !== c.author_id && (
+                                    <ReportButton commentType="post_comment" commentId={c.id} />
+                                  )}
+                                </div>
                                 {canDelC && (
                                   <button
                                     onClick={() => { if (confirm("Supprimer cette réponse ?")) deleteComment.mutate(c.id); }}
