@@ -36,7 +36,7 @@ export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType
   bandcamp: { label: "Bandcamp", Icon: BandcampIcon, color: "#1DA0C3", placeholder: "https://artist.bandcamp.com/…" },
   apple_music: { label: "Apple Music", Icon: Music2, color: "#FA243C", placeholder: "https://music.apple.com/…" },
   deezer: { label: "Deezer", Icon: Music2, color: "#A238FF", placeholder: "https://deezer.com/…" },
-  soundcloud: { label: "SoundCloud", Icon: Music2, color: "#FF5500", placeholder: "https://soundcamp.com/…" },
+  soundcloud: { label: "SoundCloud", Icon: Music2, color: "#FF5500", placeholder: "https://soundcloud.com/…" },
   spotify: { label: "Spotify", Icon: Music2, color: "#1DB954", placeholder: "https://open.spotify.com/…" },
 };
 
