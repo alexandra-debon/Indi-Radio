@@ -1,5 +1,13 @@
 import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X, Type } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
+import spotifyLogoRaw from "@/assets/spotify-logo.jpeg.asset.json";
+import deezerLogoRaw from "@/assets/deezer-logo.jpeg.asset.json";
+import appleMusicLogoRaw from "@/assets/apple-music-logo.png.asset.json";
+import soundcloudLogoRaw from "@/assets/soundcloud-logo.jpeg.asset.json";
+const spotifyLogo = spotifyLogoRaw as { url: string };
+const deezerLogo = deezerLogoRaw as { url: string };
+const appleMusicLogo = appleMusicLogoRaw as { url: string };
+const soundcloudLogo = soundcloudLogoRaw as { url: string };
 
 export type SocialLinks = Partial<Record<SocialKey, string>> & {
   __order?: SocialKey[];
@@ -38,16 +46,24 @@ const BandcampIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType<SVGProps<SVGSVGElement>>; color: string; placeholder: string }> = {
+function makeImgIcon(src: string, alt: string): ComponentType<SVGProps<SVGSVGElement>> {
+  const Cmp = ({ className, style }: SVGProps<SVGSVGElement>) => (
+    <img src={src} alt={alt} className={className as string | undefined} style={style as any} draggable={false} />
+  );
+  Cmp.displayName = `ImgIcon(${alt})`;
+  return Cmp as unknown as ComponentType<SVGProps<SVGSVGElement>>;
+}
+
+export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType<SVGProps<SVGSVGElement>>; color: string; placeholder: string; hasImage?: boolean }> = {
   facebook: { label: "Facebook", Icon: Facebook, color: "#1877F2", placeholder: "https://facebook.com/…" },
   instagram: { label: "Instagram", Icon: Instagram, color: "#E4405F", placeholder: "https://instagram.com/…" },
   tiktok: { label: "TikTok", Icon: TikTokIcon, color: "#000000", placeholder: "https://tiktok.com/@…" },
   youtube: { label: "YouTube", Icon: Youtube, color: "#FF0000", placeholder: "https://youtube.com/…" },
   bandcamp: { label: "Bandcamp", Icon: BandcampIcon, color: "#1DA0C3", placeholder: "https://artist.bandcamp.com/…" },
-  apple_music: { label: "Apple Music", Icon: Music2, color: "#FA243C", placeholder: "https://music.apple.com/…" },
-  deezer: { label: "Deezer", Icon: Music2, color: "#A238FF", placeholder: "https://deezer.com/…" },
-  soundcloud: { label: "SoundCloud", Icon: Music2, color: "#FF5500", placeholder: "https://soundcloud.com/…" },
-  spotify: { label: "Spotify", Icon: Music2, color: "#1DB954", placeholder: "https://open.spotify.com/…" },
+  apple_music: { label: "Apple Music", Icon: makeImgIcon(appleMusicLogo.url, "Apple Music"), color: "#FA243C", placeholder: "https://music.apple.com/…", hasImage: true },
+  deezer: { label: "Deezer", Icon: makeImgIcon(deezerLogo.url, "Deezer"), color: "#A238FF", placeholder: "https://deezer.com/…", hasImage: true },
+  soundcloud: { label: "SoundCloud", Icon: makeImgIcon(soundcloudLogo.url, "SoundCloud"), color: "#FF5500", placeholder: "https://soundcloud.com/…", hasImage: true },
+  spotify: { label: "Spotify", Icon: makeImgIcon(spotifyLogo.url, "Spotify"), color: "#1DB954", placeholder: "https://open.spotify.com/…", hasImage: true },
 };
 
 export function normalizeUrl(u: string): string | null {
