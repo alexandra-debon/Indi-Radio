@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -44,7 +44,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines", "reports"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -74,6 +74,7 @@ function AdminPage() {
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
+    { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
   ];
   return (
     <div className="space-y-4">
@@ -98,7 +99,7 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-7">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-8">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
@@ -106,6 +107,7 @@ function AdminPage() {
           <TabsTrigger value="shows">Émissions</TabsTrigger>
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
+          <TabsTrigger value="reports">Signalements</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
         <TabsContent value="requests" className="mt-4"><RequestsAdmin /></TabsContent>
@@ -114,6 +116,7 @@ function AdminPage() {
         <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
+        <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
       </Tabs>
     </div>
   );
