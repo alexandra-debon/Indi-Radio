@@ -8,6 +8,7 @@ import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2 } from "lu
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
+import { AudioBars } from "@/components/radio/AudioBars";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
