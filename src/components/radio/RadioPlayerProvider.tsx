@@ -312,17 +312,82 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   //     "jingle" — même règle que la pochette « J » côté serveur).
   // Duration=0 masque la barre de progression (le compteur affiché ne
   // "yoyote" plus car il est piloté par nous, plus par l'OS).
+  // Seuil de similarité (0..1) au-dessus duquel un token est considéré
+  // comme correspondant à "laurent" ou "oleff". Configurable via
+  // localStorage("indi-radio:jingleThreshold") pour ajuster à chaud sans
+  // redéploiement en cas de faux positifs / négatifs.
+  const JINGLE_SIM_THRESHOLD = (() => {
+    try {
+      const raw = window.localStorage.getItem("indi-radio:jingleThreshold");
+      const n = raw ? Number(raw) : NaN;
+      if (Number.isFinite(n) && n > 0.5 && n <= 1) return n;
+    } catch { /* ignore */ }
+    return 0.82;
+  })();
+
   const normalize = (s?: string | null) =>
-    (s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    (s ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  // Distance de Levenshtein compacte (O(n*m) temps, O(min) mémoire).
+  const levenshtein = (a: string, b: string): number => {
+    if (a === b) return 0;
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    if (a.length < b.length) [a, b] = [b, a];
+    let prev = new Array(b.length + 1);
+    for (let j = 0; j <= b.length; j++) prev[j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      let curr = [i];
+      for (let j = 1; j <= b.length; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+      }
+      prev = curr;
+    }
+    return prev[b.length];
+  };
+
+  const similarity = (a: string, b: string): number => {
+    const max = Math.max(a.length, b.length);
+    if (!max) return 1;
+    return 1 - levenshtein(a, b) / max;
+  };
+
+  // Cherche le meilleur score de similarité entre `target` et chaque token
+  // (mot) du texte donné. Ignore les tokens trop courts pour éviter les
+  // matchs bruit ("le", "un", ...).
+  const bestTokenSimilarity = (text: string, target: string): number => {
+    let best = 0;
+    for (const tok of text.split(" ")) {
+      if (tok.length < Math.max(3, target.length - 2)) continue;
+      const s = similarity(tok, target);
+      if (s > best) best = s;
+      if (best === 1) break;
+    }
+    return best;
+  };
+
   const isJingleTrack = (t: CurrentTrack | null) => {
     if (!t) return false;
     const a = normalize(t.artist);
     const ti = normalize(t.title);
-    if (a.includes("jingle") || ti.includes("jingle")) return true;
-    // Laurent Oleff = voix des jingles : matcher son nom (tolère fautes
-    // d'orthographe courantes : Olef, Olleff, Oleffe...).
-    const oleffRe = /\bl(au|o)rent\s+ol[e]{1,2}ff?e?\b/;
-    return oleffRe.test(a) || oleffRe.test(ti);
+    // Match exact "jingle" — sans fuzzy pour éviter d'attraper "single",
+    // "jungle", etc.
+    const hay = `${a} ${ti}`;
+    if (/\bjingle[s]?\b/.test(hay)) return true;
+    // Fuzzy "laurent" + "oleff" : les deux tokens doivent dépasser le seuil
+    // dans la même chaîne (artist OU title), sinon on rejette. Évite les
+    // faux positifs sur "Laurent Voulzy" ou "Oleg ...".
+    const check = (s: string) =>
+      bestTokenSimilarity(s, "laurent") >= JINGLE_SIM_THRESHOLD &&
+      bestTokenSimilarity(s, "oleff") >= JINGLE_SIM_THRESHOLD;
+    return check(a) || check(ti);
   };
   const startedAtRef = useRef<number>(Date.now());
   const wasPlayingRef = useRef(false);
