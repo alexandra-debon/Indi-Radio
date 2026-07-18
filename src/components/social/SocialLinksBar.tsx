@@ -8,6 +8,7 @@ export const SOCIAL_KEYS = [
   "instagram",
   "tiktok",
   "youtube",
+  "bandcamp",
   "apple_music",
   "deezer",
   "soundcloud",
@@ -21,11 +22,18 @@ const TikTokIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const BandcampIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M0 18.75l7.437-13.5H24l-7.438 13.5H0z" />
+  </svg>
+);
+
 export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType<SVGProps<SVGSVGElement>>; color: string; placeholder: string }> = {
   facebook: { label: "Facebook", Icon: Facebook, color: "#1877F2", placeholder: "https://facebook.com/…" },
   instagram: { label: "Instagram", Icon: Instagram, color: "#E4405F", placeholder: "https://instagram.com/…" },
   tiktok: { label: "TikTok", Icon: TikTokIcon, color: "#000000", placeholder: "https://tiktok.com/@…" },
   youtube: { label: "YouTube", Icon: Youtube, color: "#FF0000", placeholder: "https://youtube.com/…" },
+  bandcamp: { label: "Bandcamp", Icon: BandcampIcon, color: "#1DA0C3", placeholder: "https://artist.bandcamp.com/…" },
   apple_music: { label: "Apple Music", Icon: Music2, color: "#FA243C", placeholder: "https://music.apple.com/…" },
   deezer: { label: "Deezer", Icon: Music2, color: "#A238FF", placeholder: "https://deezer.com/…" },
   soundcloud: { label: "SoundCloud", Icon: Music2, color: "#FF5500", placeholder: "https://soundcloud.com/…" },
