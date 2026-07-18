@@ -88,6 +88,17 @@ function forcedArtwork(artist: string, title: string) {
   return FORCED_ARTWORK[`${keyPart(artist)}|${keyPart(title)}`] ?? null;
 }
 
+const JINGLE_COVER_PATH = "/jingle-cover.png";
+
+function isJingle(value: string | null) {
+  if (!value) return false;
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("jingle");
+}
+
+function looksLikeJingle(artist?: string | null, title?: string | null) {
+  return isJingle(artist) || isJingle(title);
+}
+
 function clean(value: string | null) {
   return (value ?? "")
     .replace(/\([^)]*\)/g, " ")
