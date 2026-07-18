@@ -221,9 +221,11 @@ export function SocialWall() {
   const updatePost = useMutation({
     mutationFn: async ({ id, content, social_links }: { id: string; content: string; social_links?: SocialLinks }) => {
       const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
-      const payload: Record<string, unknown> = { content, mentions };
-      if (social_links !== undefined) payload.social_links = sanitizeLinks(social_links);
-      const { error } = await supabase.from("posts").update(payload).eq("id", id);
+      const { error } = await supabase.from("posts").update(
+        social_links !== undefined
+          ? { content, mentions, social_links: sanitizeLinks(social_links) }
+          : { content, mentions },
+      ).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
