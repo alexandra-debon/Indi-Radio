@@ -3,6 +3,7 @@ import { RADIO_CONFIG } from "@/config/radio";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { scrapeCurrentTrack } from "@/lib/track-scrape.functions";
+import { useArtwork } from "@/hooks/use-artwork";
 
 interface CurrentTrack {
   id: string;
@@ -265,6 +266,44 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     refetchInterval: 30_000,
   });
 
+  // Pochette du morceau en cours (best-effort) pour l'affichage sur les
+  // autoradios, écrans Bluetooth et écrans de verrouillage via Media Session.
+  const { data: artworkUrl } = useArtwork(currentTrack?.artist, currentTrack?.title);
+
+  // Media Session: expose titre + artiste (+ pochette si dispo) au système.
+  // Les autoradios modernes, casques Bluetooth et écrans de verrouillage
+  // lisent ces métadonnées automatiquement.
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    if (!currentTrack) {
+      navigator.mediaSession.metadata = null;
+      return;
+    }
+    try {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: currentTrack.title || "InDi Radio",
+        artist: currentTrack.artist || "InDi Radio",
+        album: "InDi Radio",
+        artwork: artworkUrl
+          ? [
+              { src: artworkUrl, sizes: "512x512", type: "image/jpeg" },
+              { src: artworkUrl, sizes: "256x256", type: "image/jpeg" },
+              { src: artworkUrl, sizes: "128x128", type: "image/jpeg" },
+            ]
+          : [],
+      });
+    } catch {
+      /* MediaMetadata indisponible */
+    }
+  }, [currentTrack, artworkUrl]);
+
+  // Media Session: état de lecture + actions play/pause/stop pour les
+  // télécommandes matérielles (volant, casque, écran de verrouillage).
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    navigator.mediaSession.playbackState = playing ? "playing" : "paused";
+  }, [playing]);
+
   // Scrape Icecast metadata every 30s and upsert into track_history.
   useEffect(() => {
     let cancelled = false;
@@ -315,6 +354,35 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       stopLevelLoop();
     }
   }, [primeAudioForIOS, startLevelLoop, stopLevelLoop]);
+
+  // Bind Media Session action handlers (play / pause / stop) → togglent le flux.
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    const ms = navigator.mediaSession;
+    const doToggle = () => toggle();
+    try {
+      ms.setActionHandler("play", doToggle);
+      ms.setActionHandler("pause", doToggle);
+      ms.setActionHandler("stop", doToggle);
+      // Le flux est en direct : désactiver seek / prev / next pour éviter
+      // que l'autoradio affiche des contrôles inopérants.
+      ms.setActionHandler("seekbackward", null);
+      ms.setActionHandler("seekforward", null);
+      ms.setActionHandler("previoustrack", null);
+      ms.setActionHandler("nexttrack", null);
+    } catch {
+      /* certains handlers non supportés */
+    }
+    return () => {
+      try {
+        ms.setActionHandler("play", null);
+        ms.setActionHandler("pause", null);
+        ms.setActionHandler("stop", null);
+      } catch {
+        /* ignore */
+      }
+    };
+  }, [toggle]);
 
   // iOS: when the tab goes to the background, the AudioContext transitions
   // to "interrupted". Resume it as soon as the user comes back so the wave
