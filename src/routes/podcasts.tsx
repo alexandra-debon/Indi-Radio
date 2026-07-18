@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Headphones } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
+import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
@@ -96,6 +97,17 @@ function PodcastEpisodes({ podcastId }: { podcastId: string }) {
 
   return (
     <section className="space-y-2">
+      <div className="card-brut space-y-3 p-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Noter ce podcast</h2>
+          <ContentLikeButton contentType="podcast" contentId={podcastId} />
+        </div>
+        <ContentRatingSection contentType="podcast" contentId={podcastId} />
+        <div className="border-t pt-3">
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Commentaires</h3>
+          <ContentCommentsSection contentType="podcast" contentId={podcastId} />
+        </div>
+      </div>
       <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Épisodes</h2>
       {episodes.length === 0 && <div className="card-brut p-3 text-sm text-muted-foreground">Aucun épisode.</div>}
       {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
