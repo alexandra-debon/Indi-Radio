@@ -4,6 +4,7 @@ import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
+import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -172,6 +173,8 @@ function ChroniqueDetailPage() {
           </ul>
         </section>
       )}
+
+      <SocialLinksBar links={(r as { social_links?: SocialLinks | null }).social_links ?? null} className="pt-1" />
     </article>
   );
 }
