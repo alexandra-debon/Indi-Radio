@@ -401,6 +401,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          social_links: Json
           title: string
         }
         Insert: {
@@ -409,6 +410,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          social_links?: Json
           title: string
         }
         Update: {
@@ -417,6 +419,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          social_links?: Json
           title?: string
         }
         Relationships: [

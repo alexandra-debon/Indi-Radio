@@ -19,6 +19,7 @@ import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import ogActus from "@/assets/og-actus.jpg";
+import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -64,6 +65,7 @@ interface NewsPost {
   content: string;
   image_url: string | null;
   created_at: string;
+  social_links: SocialLinks | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
 }
 
@@ -83,7 +85,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id,author_id,title,content,image_url,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -95,6 +97,7 @@ function ActusPage() {
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
 
   const create = useMutation({
     mutationFn: async () => {
@@ -111,12 +114,13 @@ function ActusPage() {
         title,
         content: finalContent,
         image_url: imageUrl || null,
+        social_links: sanitizeLinks(socialLinks),
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Publié !");
-      setTitle(""); setContent(""); setImageUrl(""); setVideoUrl("");
+      setTitle(""); setContent(""); setImageUrl(""); setVideoUrl(""); setSocialLinks({});
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -134,6 +138,7 @@ function ActusPage() {
           <Input placeholder="Image URL (optionnel)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
           <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
           <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
+          <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
           <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>Publier</Button>
         </div>
       )}
@@ -169,7 +174,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   }, [autoOpenComments]);
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "" });
+  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "", social_links: (post.social_links ?? {}) as SocialLinks });
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
 
@@ -231,6 +236,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         title: editForm.title,
         content: editForm.content,
         image_url: editForm.image_url || null,
+        social_links: sanitizeLinks(editForm.social_links),
       }).eq("id", post.id);
       if (error) throw error;
     },
@@ -280,6 +286,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
             <Input value={editForm.image_url} onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })} placeholder="Image URL (optionnel)" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
+            <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
               <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
@@ -292,6 +299,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <p className="whitespace-pre-wrap text-sm">{stripMediaUrls(post.content)}</p>
             )}
             <UrlEmbeds text={post.content} />
+            <SocialLinksBar links={post.social_links} className="pt-1" />
           </>
         )}
         <div className="flex items-center gap-2 pt-1">
