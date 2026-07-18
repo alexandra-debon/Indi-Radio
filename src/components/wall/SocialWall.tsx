@@ -13,6 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
+import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 
@@ -522,8 +523,9 @@ export function SocialWall() {
                                 <p className="whitespace-pre-wrap text-xs">{renderMentions(stripMediaUrls(c.content))}</p>
                               )}
                               <UrlEmbeds text={c.content} compact />
-                              {canDelC && (
-                                <div className="mt-1 flex justify-end">
+                              <div className="mt-1 flex items-center justify-between gap-2">
+                                <CommentLikeButton commentId={c.id} kind="post" />
+                                {canDelC && (
                                   <button
                                     onClick={() => { if (confirm("Supprimer cette réponse ?")) deleteComment.mutate(c.id); }}
                                     className="rounded p-0.5 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
@@ -531,8 +533,8 @@ export function SocialWall() {
                                   >
                                     <Trash2 className="size-3" />
                                   </button>
-                                </div>
-                              )}
+                                )}
+                              </div>
                             </div>
                           );
                         })}
