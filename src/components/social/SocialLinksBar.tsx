@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X, Type } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X, Type, Cloud } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import spotifyLogoRaw from "@/assets/spotify-logo.jpeg.asset.json";
 import deezerLogoRaw from "@/assets/deezer-logo.jpeg.asset.json";
@@ -60,7 +60,7 @@ export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType
   bandcamp: { label: "Bandcamp", Icon: BandcampIcon, color: "#1DA0C3", placeholder: "https://artist.bandcamp.com/…" },
   apple_music: { label: "Apple Music", Icon: makeImgIcon(appleMusicLogo.url, "Apple Music"), color: "#FA243C", placeholder: "https://music.apple.com/…", hasImage: true },
   deezer: { label: "Deezer", Icon: makeImgIcon(deezerLogo.url, "Deezer"), color: "#A238FF", placeholder: "https://deezer.com/…", hasImage: true },
-  soundcloud: { label: "SoundCloud", Icon: makeImgIcon(soundcloudLogo.url, "SoundCloud"), color: "#FF5500", placeholder: "https://soundcloud.com/…", hasImage: true },
+  soundcloud: { label: "SoundCloud", Icon: Cloud, color: "#FF5500", placeholder: "https://soundcloud.com/…" },
   spotify: { label: "Spotify", Icon: makeImgIcon(spotifyLogo.url, "Spotify"), color: "#1DB954", placeholder: "https://open.spotify.com/…", hasImage: true },
 };
 
