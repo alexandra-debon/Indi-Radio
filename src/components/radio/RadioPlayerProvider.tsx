@@ -304,6 +304,39 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     navigator.mediaSession.playbackState = playing ? "playing" : "paused";
   }, [playing]);
 
+  // Compteur temps écoulé (affiché sur autoradio / lockscreen via
+  // MediaSession.setPositionState). On repart de 0 :
+  //   - à chaque démarrage du flux
+  //   - à chaque changement de piste
+  //   - en particulier sur les jingles Laurent Oleff
+  // Duration=0 masque la barre de progression (le compteur affiché ne
+  // "yoyote" plus car il est piloté par nous, plus par l'OS).
+  const startedAtRef = useRef<number>(Date.now());
+  useEffect(() => {
+    startedAtRef.current = Date.now();
+  }, [playing, currentTrack?.id]);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    if (typeof navigator.mediaSession.setPositionState !== "function") return;
+    const push = () => {
+      try {
+        const elapsed = Math.max(0, (Date.now() - startedAtRef.current) / 1000);
+        navigator.mediaSession.setPositionState!({
+          duration: 0,
+          position: playing ? elapsed : 0,
+          playbackRate: 1,
+        });
+      } catch {
+        /* setPositionState refuse certaines combinaisons selon l'OS */
+      }
+    };
+    push();
+    if (!playing) return;
+    const id = setInterval(push, 1000);
+    return () => clearInterval(id);
+  }, [playing, currentTrack?.id]);
+
   // Scrape Icecast metadata every 30s and upsert into track_history.
   useEffect(() => {
     let cancelled = false;
