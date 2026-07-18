@@ -17,6 +17,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
+import { CommentLikeButton } from "@/components/CommentLikeButton";
 import ogActus from "@/assets/og-actus.jpg";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
@@ -371,6 +372,11 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                           )}
                         </div>
                       )}
+                    </div>
+                  )}
+                  {!isEditingC && (
+                    <div className="mt-1">
+                      <CommentLikeButton commentId={c.id} kind="news" />
                     </div>
                   )}
                 </div>
