@@ -209,6 +209,23 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
     },
   });
 
+  useEffect(() => {
+    const channel = supabase
+      .channel(`news-comments-${post.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "news_comments", filter: `news_post_id=eq.${post.id}` },
+        () => qc.invalidateQueries({ queryKey: ["news-comments", post.id] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "news_likes", filter: `news_post_id=eq.${post.id}` },
+        () => qc.invalidateQueries({ queryKey: ["news-likes", post.id] }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [post.id, qc]);
+
   const toggleLike = useMutation({
     mutationFn: async () => {
       if (!sessionUserId) return;
