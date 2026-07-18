@@ -139,7 +139,7 @@ export function NotificationsBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="fixed left-1/2 top-4 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)] sm:translate-x-0">
+          <div className="fixed left-1/2 top-16 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)] sm:translate-x-0">
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
               <span className="text-xs font-bold uppercase tracking-widest">Notifications</span>
               <div className="flex items-center gap-2">
