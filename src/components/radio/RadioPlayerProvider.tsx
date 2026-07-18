@@ -420,18 +420,33 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
     if (typeof navigator.mediaSession.setPositionState !== "function") return;
-    // Flux live : on n'envoie AUCUN état de position. Certains OS
-    // (Android Auto, CarPlay, Bluetooth) interprètent position=0 +
-    // duration=0 comme "seek en cours" et affichent une jauge qui
-    // yoyote. En laissant setPositionState non appelé, l'autoradio
-    // n'affiche qu'un compteur temps écoulé simple (ou rien), sans
-    // barre de progression trompeuse.
+
+    if (durationKnown) {
+      // Known duration: a real progress bar is allowed. For this radio the
+      // stream is live, so this branch is normally unused.
+      try {
+        navigator.mediaSession.setPositionState({
+          duration,
+          position: 0,
+          playbackRate: 1,
+        });
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+
+    // Flux live (durée inconnue / Infinity) : on efface explicitement
+    // l'état de position pour masquer la barre de progression. Certains OS
+    // (Android Auto, CarPlay, Bluetooth) affichent alors seulement un
+    // indicateur "live" ou un compteur temps écoulé simple, sans jauge
+    // trompeuse qui yoyote.
     try {
       navigator.mediaSession.setPositionState!();
     } catch {
       /* certains OS refusent l'appel sans argument */
     }
-  }, [playing, currentTrack?.id]);
+  }, [playing, currentTrack?.id, duration, durationKnown]);
 
   // Scrape Icecast metadata every 30s and upsert into track_history.
   useEffect(() => {
