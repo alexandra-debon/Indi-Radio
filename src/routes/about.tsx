@@ -45,7 +45,7 @@ function AboutPage() {
             dédicaces.
           </p>
           <p>
-            Nous tenons à respecter les droits d’auteurs conformément à nos statuts. <strong>{RADIO_CONFIG.stationName}</strong> est titulaire d’une licence SACEM concernant la radio et les podcasts et cotisera comme il se doit à la SPRE chaque fin d’année pour respecter comme il se doit les artistes et leurs productions.
+            Nous tenons à respecter les droits d’auteurs conformément à nos statuts. <strong>{RADIO_CONFIG.stationName}</strong> est titulaire d’une licence SACEM concernant la radio et les podcasts et cotisera à la SPRE chaque fin d’année pour respecter comme il se doit les artistes et leurs productions.
           </p>
           <p>
             <strong>{RADIO_CONFIG.stationName}</strong> est une radio non-commerciale, sans publicité et sans informations généralistes hors culture. Elle demeure sous statut particulier durant ses premiers mois d’existence au nom de sa fondatrice Alexandra Debon (Melody Alex. Patrick) avant de rejoindre définitivement la société à mission à la fin de cette année 2026.
