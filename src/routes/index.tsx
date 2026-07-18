@@ -90,8 +90,9 @@ function LivePage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] uppercase tracking-widest text-primary">
+              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
                 <span className="animate-heartbeat">On air</span>
+                <AudioBars />
               </div>
               <div className="mt-1 truncate text-xl font-bold">{currentTrack?.title ?? "Indi Radio — live"}</div>
               <div className="truncate text-sm text-muted-foreground">{currentTrack?.artist ?? "Le flux tourne 24/7"}</div>
