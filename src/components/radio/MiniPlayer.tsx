@@ -49,7 +49,7 @@ export function MiniPlayer() {
           <div className="truncate text-xs text-muted-foreground">
             {currentTrack?.artist ?? "Indi Radio · live"}
           </div>
-          {playing && <AudioWave className="mt-1.5" bars={28} />}
+          {playing && <LiveIndicator className="mt-1.5" />}
         </div>
         {currentTrack && <LikeButton trackId={currentTrack.id} />}
       </div>
