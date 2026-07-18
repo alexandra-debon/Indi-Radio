@@ -30,6 +30,7 @@ export type Database = {
           rating: number | null
           release_date: string | null
           slug: string
+          social_links: Json
           soundcloud_url: string | null
           spotify_url: string | null
           title: string
@@ -51,6 +52,7 @@ export type Database = {
           rating?: number | null
           release_date?: string | null
           slug: string
+          social_links?: Json
           soundcloud_url?: string | null
           spotify_url?: string | null
           title: string
@@ -72,6 +74,7 @@ export type Database = {
           rating?: number | null
           release_date?: string | null
           slug?: string
+          social_links?: Json
           soundcloud_url?: string | null
           spotify_url?: string | null
           title?: string
@@ -688,6 +691,7 @@ export type Database = {
           mentions: string[] | null
           pin_label: string | null
           pinned_at: string | null
+          social_links: Json
         }
         Insert: {
           author_id: string
@@ -697,6 +701,7 @@ export type Database = {
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
+          social_links?: Json
         }
         Update: {
           author_id?: string
@@ -706,6 +711,7 @@ export type Database = {
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
+          social_links?: Json
         }
         Relationships: [
           {

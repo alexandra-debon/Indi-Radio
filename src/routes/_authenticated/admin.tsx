@@ -17,6 +17,7 @@ import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magaz
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
+import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -1097,6 +1098,7 @@ type ReviewRow = {
   youtube_url: string | null;
   soundcloud_url: string | null;
   apple_music_url: string | null;
+  social_links: SocialLinks | null;
   published: boolean;
 };
 
@@ -1111,6 +1113,7 @@ function ChroniquesAdmin() {
   const qc = useQueryClient();
   const { session } = useAuth();
   const [form, setForm] = useState(EMPTY_REVIEW);
+  const [socialDraft, setSocialDraft] = useState<SocialLinks>({});
   const [editId, setEditId] = useState<string | null>(null);
 
   const { data: reviews = [] } = useQuery({
@@ -1141,6 +1144,7 @@ function ChroniquesAdmin() {
         youtube_url: form.youtube_url || null,
         soundcloud_url: form.soundcloud_url || null,
         apple_music_url: form.apple_music_url || null,
+        social_links: sanitizeLinks(socialDraft),
         published: form.published,
         author_id: session.user.id,
       });
@@ -1149,6 +1153,7 @@ function ChroniquesAdmin() {
     onSuccess: () => {
       toast.success("Chronique publiée");
       setForm(EMPTY_REVIEW);
+      setSocialDraft({});
       qc.invalidateQueries({ queryKey: ["admin-album-reviews"] });
       qc.invalidateQueries({ queryKey: ["album-reviews"] });
     },
@@ -1189,6 +1194,7 @@ function ChroniquesAdmin() {
           <Input placeholder="SoundCloud URL" value={form.soundcloud_url} onChange={(e) => setForm({ ...form, soundcloud_url: e.target.value })} />
           <Input placeholder="Apple Music URL" value={form.apple_music_url} onChange={(e) => setForm({ ...form, apple_music_url: e.target.value })} />
         </div>
+        <SocialLinksEditor value={socialDraft} onChange={setSocialDraft} />
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
             <Switch checked={form.published} onCheckedChange={(v) => setForm({ ...form, published: v })} />
@@ -1244,6 +1250,7 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
     apple_music_url: review.apple_music_url ?? "",
     published: review.published,
   });
+  const [social, setSocial] = useState<SocialLinks>((review.social_links as SocialLinks | null) ?? {});
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("album_reviews").update({
@@ -1261,6 +1268,7 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
         youtube_url: f.youtube_url || null,
         soundcloud_url: f.soundcloud_url || null,
         apple_music_url: f.apple_music_url || null,
+        social_links: sanitizeLinks(social),
         published: f.published,
       }).eq("id", review.id);
       if (error) throw error;
@@ -1293,6 +1301,7 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
         <Input placeholder="SoundCloud" value={f.soundcloud_url} onChange={(e) => setF({ ...f, soundcloud_url: e.target.value })} />
         <Input placeholder="Apple Music" value={f.apple_music_url} onChange={(e) => setF({ ...f, apple_music_url: e.target.value })} />
       </div>
+      <SocialLinksEditor value={social} onChange={setSocial} />
       <div className="flex items-center gap-3">
         <label className="flex items-center gap-2 text-xs">
           <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
