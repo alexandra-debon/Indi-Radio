@@ -561,12 +561,22 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     };
     const onCanPlay = () => setLoading(false);
     const onError = () => setLoading(false);
+    const onDurationChange = () => {
+      // For a live Icecast stream the duration stays Infinity/NaN.
+      // We expose it so the UI + MediaSession can hide the progress bar.
+      setDuration(Number.isFinite(el.duration) && el.duration > 0 ? el.duration : null);
+    };
+    const onLoadedMetadata = () => {
+      setDuration(Number.isFinite(el.duration) && el.duration > 0 ? el.duration : null);
+    };
     el.addEventListener("play", onPlay);
     el.addEventListener("pause", onPause);
     el.addEventListener("waiting", onWaiting);
     el.addEventListener("playing", onPlaying);
     el.addEventListener("canplay", onCanPlay);
     el.addEventListener("error", onError);
+    el.addEventListener("durationchange", onDurationChange);
+    el.addEventListener("loadedmetadata", onLoadedMetadata);
     return () => {
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
@@ -574,6 +584,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       el.removeEventListener("playing", onPlaying);
       el.removeEventListener("canplay", onCanPlay);
       el.removeEventListener("error", onError);
+      el.removeEventListener("durationchange", onDurationChange);
+      el.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
   }, [ensureAnalyser, startLevelLoop]);
 
