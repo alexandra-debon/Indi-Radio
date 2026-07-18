@@ -1,15 +1,19 @@
 // Utilities for FlipHTML5 magazine URLs.
-// Public flipbook URLs look like:
-//   https://online.fliphtml5.com/<userId>/<bookId>/
-// The same URL can be embedded inside an <iframe>.
+// Public flipbook URLs come in several shapes, all sharing the same
+// trailing `/<...>/<bookId>/` structure:
+//   - https://online.fliphtml5.com/<userId>/<bookId>/            (default)
+//   - https://<custom-domain>/books/<bookId>/                    (custom, e.g. Indi Art Culture)
+//   - https://<custom-domain>/<userId>/<bookId>/                 (other custom setups)
+// The same URL can be embedded inside an <iframe>, and the cover
+// thumbnail is always served at `<book-root>/files/shot.jpg`.
 
 export function isValidFlipHtml5Url(url: string): boolean {
   try {
     const u = new URL(url);
-    return (
-      (u.hostname === "online.fliphtml5.com" || u.hostname.endsWith(".fliphtml5.com")) &&
-      u.pathname.split("/").filter(Boolean).length >= 2
-    );
+    if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+    // Accept any host — custom domains are common — as long as the path
+    // has at least one segment identifying the book.
+    return u.pathname.split("/").filter(Boolean).length >= 1;
   } catch {
     return false;
   }
@@ -36,9 +40,12 @@ export function flipHtml5ThumbnailUrl(url: string): string | null {
   try {
     const u = new URL(url);
     const parts = u.pathname.split("/").filter(Boolean);
-    if (parts.length < 2) return null;
-    const [userId, bookId] = parts;
-    return `${u.origin}/${userId}/${bookId}/files/shot.jpg`;
+    if (parts.length < 1) return null;
+    // The thumbnail lives at `<book-root>/files/shot.jpg`, regardless of
+    // how many path segments precede the book id (custom domains use
+    // `/books/<bookId>/`, the default host uses `/<userId>/<bookId>/`).
+    const bookPath = parts.join("/");
+    return `${u.origin}/${bookPath}/files/shot.jpg`;
   } catch {
     return null;
   }
