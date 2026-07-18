@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
@@ -54,6 +55,24 @@ function LivePage() {
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
+  const qcRoot = useQueryClient();
+  useEffect(() => {
+    const ch = supabase
+      .channel("track-history-live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "track_history" },
+        () => {
+          qcRoot.invalidateQueries({ queryKey: ["track-history-short"] });
+          qcRoot.invalidateQueries({ queryKey: ["current-track"] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [qcRoot]);
+
   const { data: history = [] } = useQuery({
     queryKey: ["track-history-short"],
     queryFn: async () => {
@@ -64,6 +83,8 @@ function LivePage() {
         .limit(8);
       return data ?? [];
     },
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false,
   });
 
   return (
