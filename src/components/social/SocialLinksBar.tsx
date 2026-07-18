@@ -3,11 +3,9 @@ import type { ComponentType, SVGProps } from "react";
 import spotifyLogoRaw from "@/assets/spotify-logo.jpeg.asset.json";
 import deezerLogoRaw from "@/assets/deezer-logo.jpeg.asset.json";
 import appleMusicLogoRaw from "@/assets/apple-music-logo.png.asset.json";
-import soundcloudLogoRaw from "@/assets/soundcloud-logo.jpeg.asset.json";
 const spotifyLogo = spotifyLogoRaw as { url: string };
 const deezerLogo = deezerLogoRaw as { url: string };
 const appleMusicLogo = appleMusicLogoRaw as { url: string };
-const soundcloudLogo = soundcloudLogoRaw as { url: string };
 
 export type SocialLinks = Partial<Record<SocialKey, string>> & {
   __order?: SocialKey[];
