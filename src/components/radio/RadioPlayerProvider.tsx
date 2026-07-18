@@ -27,6 +27,17 @@ interface RadioContextValue {
    * animation frame while the stream is playing. Returns an unsubscribe fn.
    */
   subscribeLevel: (cb: (level: number) => void) => () => void;
+  /**
+   * Duration reported by the <audio> element. For a live stream this is
+   * Infinity / NaN, which means the progress bar must be hidden and a simple
+   * "live" indicator shown instead.
+   */
+  duration: number | null;
+  /**
+   * True when the browser reports a finite, positive duration (i.e. a file
+   * with a known length). For the live radio stream this is always false.
+   */
+  durationKnown: boolean;
 }
 
 const RadioContext = createContext<RadioContextValue | null>(null);
