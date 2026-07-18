@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TopRouteImport } from './routes/top'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
@@ -40,6 +41,11 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
 
+const TopRoute = TopRouteImport.update({
+  id: '/top',
+  path: '/top',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/top': typeof TopRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/top'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/top'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/top'
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
@@ -400,6 +412,7 @@ export interface RootRouteChildren {
   PodcastsRoute: typeof PodcastsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TopRoute: typeof TopRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
@@ -410,6 +423,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/top': {
+      id: '/top'
+      path: '/top'
+      fullPath: '/top'
+      preLoaderRoute: typeof TopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -712,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastsRoute: PodcastsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TopRoute: TopRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,

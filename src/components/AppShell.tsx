@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -15,6 +15,7 @@ const NAV = [
   { to: "/actus", label: "Actus · Indi Rézo", icon: Newspaper },
   { to: "/emissions", label: "Émissions & Animateurs", icon: Mic2 },
   { to: "/chart", label: "Chart des auditeurs", icon: BarChart3 },
+  { to: "/top", label: "Top Podcasts & Chroniques", icon: Star },
   { to: "/podcasts", label: "Podcasts", icon: Headphones },
   { to: "/chroniques", label: "Chroniques d'albums", icon: Disc3 },
   { to: "/clips", label: "Clip Addict", icon: Film },
