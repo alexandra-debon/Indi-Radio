@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Heart, Star, Trophy, Medal, Headphones, Disc3 } from "lucide-react";
+import { ContentCommentsSection, ContentLikeButton } from "@/components/content/ContentReactions";
+
+// Fixed UUID identifying the /top discussion thread
+const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]/gi, "0");
 
 export const Route = createFileRoute("/top")({
   head: () => ({
@@ -166,6 +170,15 @@ function TopPage() {
         <TabsContent value="rating" className="mt-4"><TopList metric="rating" /></TabsContent>
         <TabsContent value="likes" className="mt-4"><TopList metric="likes" /></TabsContent>
       </Tabs>
+
+      <section className="card-brut space-y-3 p-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-lg font-black tracking-tight">Discussion — Classements</h2>
+          <ContentLikeButton contentType="top" contentId={TOP_THREAD_ID} />
+        </div>
+        <p className="text-xs text-muted-foreground">Réagis en direct aux classements avec la communauté.</p>
+        <ContentCommentsSection contentType="top" contentId={TOP_THREAD_ID} />
+      </section>
     </div>
   );
 }
