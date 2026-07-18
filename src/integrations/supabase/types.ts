@@ -205,6 +205,7 @@ export type Database = {
           content_type: string
           created_at: string
           id: string
+          parent_id: string | null
           updated_at: string
         }
         Insert: {
@@ -214,6 +215,7 @@ export type Database = {
           content_type: string
           created_at?: string
           id?: string
+          parent_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -223,9 +225,18 @@ export type Database = {
           content_type?: string
           created_at?: string
           id?: string
+          parent_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "content_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "content_comments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       content_likes: {
         Row: {
