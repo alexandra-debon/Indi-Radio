@@ -387,13 +387,16 @@ export function SocialWall() {
                     rows={2}
                     className="resize-none"
                   />
+                  {isAdmin && (
+                    <SocialLinksEditor value={editSocial} onChange={setEditSocial} />
+                  )}
                   <div className="flex justify-end gap-2">
                     <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
                       <X className="size-3.5" /> Annuler
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim() })}
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined })}
                       disabled={!editContent.trim() || updatePost.isPending}
                     >
                       <Check className="size-3.5" /> Enregistrer
@@ -406,6 +409,7 @@ export function SocialWall() {
                     <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
                   )}
                   <UrlEmbeds text={p.content} />
+                  <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
                     <div className="mt-2 flex justify-end gap-1">
                       {isAdmin && !isPinned && (
@@ -430,7 +434,7 @@ export function SocialWall() {
                       )}
                       {canEdit && (
                         <button
-                          onClick={() => { setEditingId(p.id); setEditContent(p.content); }}
+                          onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); }}
                           className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           aria-label="Modifier"
                         >
