@@ -1,4 +1,4 @@
-import { Volume2, VolumeX, Volume1, Volume } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { useRadio } from "./RadioPlayerProvider";
 
 /**
