@@ -264,7 +264,8 @@ function HistoryRow({
 }: {
   track: { id: string; title: string; artist: string; played_at: string };
 }) {
-  const { data: artwork } = useArtwork(track.artist, track.title);
+  const { data: artwork, refetch } = useArtwork(track.artist, track.title);
+  const qc = useQueryClient();
   return (
     <li className="card-brut flex items-center gap-3 p-2.5">
       <div className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded bg-muted text-muted-foreground">
@@ -274,6 +275,20 @@ function HistoryRow({
             alt={`${track.title} — ${track.artist}`}
             className="absolute inset-0 size-full object-cover"
             loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (!img.dataset.retried) {
+                img.dataset.retried = "1";
+                img.src = artwork + (artwork.includes("?") ? "&" : "?") + "r=" + Date.now();
+              } else {
+                // Give up on this URL and re-query the provider.
+                qc.removeQueries({ queryKey: ["artwork", "v4", track.artist, track.title] });
+                refetch();
+              }
+            }}
           />
         ) : (
           <History className="size-4" />
