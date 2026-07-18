@@ -46,6 +46,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Duration of the <audio> element: Infinity/NaN for the live stream.
+  const [duration, setDuration] = useState<number | null>(null);
+  const durationKnown = typeof duration === "number" && Number.isFinite(duration) && duration > 0;
   // SSR-safe defaults; persisted values are loaded post-mount to avoid
   // hydration mismatches on the volume slider label / fill.
   const [volume, setVolumeState] = useState<number>(0.8);
