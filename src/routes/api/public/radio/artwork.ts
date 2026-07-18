@@ -248,6 +248,13 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
           return Response.json({ url: null }, { headers: CORS_HEADERS });
         }
 
+        if (looksLikeJingle(originalArtist, originalTitle) || looksLikeJingle(artist, title)) {
+          return Response.json(
+            { url: new URL(JINGLE_COVER_PATH, request.url).toString() },
+            { headers: { ...CORS_HEADERS, "Cache-Control": HIT_CACHE } },
+          );
+        }
+
         const t0 = Date.now();
         const attempts: Attempt[] = [];
         try {
