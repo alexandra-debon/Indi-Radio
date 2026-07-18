@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Heart, Star, Trash2 } from "lucide-react";
+import { Heart, Star, Trash2, Flag } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ReportButton } from "@/components/moderation/ReportButton";
 
 type Props = { contentType: string; contentId: string };
 
@@ -147,11 +148,16 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
               <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
             </div>
             <p className="mt-1 whitespace-pre-wrap text-foreground/90">{c.body}</p>
-            {session?.user.id === c.author_id && (
-              <button onClick={() => del.mutate(c.id)} className="mt-1 inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive">
-                <Trash2 className="size-3" /> Supprimer
-              </button>
-            )}
+            <div className="mt-1 flex items-center gap-3">
+              {session?.user.id === c.author_id && (
+                <button onClick={() => del.mutate(c.id)} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive">
+                  <Trash2 className="size-3" /> Supprimer
+                </button>
+              )}
+              {session && session.user.id !== c.author_id && (
+                <ReportButton commentType="content_comment" commentId={c.id} />
+              )}
+            </div>
           </li>
         ))}
       </ul>
