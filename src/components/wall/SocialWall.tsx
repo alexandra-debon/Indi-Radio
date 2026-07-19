@@ -274,10 +274,11 @@ export function SocialWall() {
 
   // Restore saved scroll position once the list has content.
   useEffect(() => {
+    if (typeof window === "undefined" || typeof window.sessionStorage === "undefined") return;
     if (!hasPosts) return;
     const el = listRef.current;
     if (!el) return;
-    const saved = sessionStorage.getItem(SCROLL_KEY);
+    const saved = window.sessionStorage.getItem(SCROLL_KEY);
     if (saved == null) return;
     const y = Number(saved);
     if (Number.isNaN(y)) return;
@@ -286,6 +287,7 @@ export function SocialWall() {
 
   // Persist scroll position as the user scrolls (throttled via rAF).
   useEffect(() => {
+    if (typeof window === "undefined" || typeof window.sessionStorage === "undefined") return;
     const el = listRef.current;
     if (!el) return;
     let raf = 0;
@@ -293,7 +295,7 @@ export function SocialWall() {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
+        window.sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
       });
     };
     el.addEventListener("scroll", onScroll, { passive: true });

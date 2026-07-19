@@ -87,7 +87,10 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
     if (el === null || tokenStart === null) return;
     const caret = el.selectionStart ?? value.length;
     const { next, pos } = computeMentionInsertion(value, tokenStart, caret, pseudo);
-    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+    const nativeSetter =
+      typeof window !== "undefined" && typeof window.HTMLTextAreaElement !== "undefined"
+        ? Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set
+        : undefined;
     nativeSetter?.call(el, next);
     el.dispatchEvent(new Event("input", { bubbles: true }));
     requestAnimationFrame(() => { el.setSelectionRange(pos, pos); el.focus(); });

@@ -38,7 +38,9 @@ export function DeployCheckPanel() {
     // Trigger the Lovable publish flow via URL scheme used by the editor overlay.
     // Falls back to a manual instruction if the parent editor is not present.
     try {
-      window.parent?.postMessage({ type: "lovable:publish" }, "*");
+      if (typeof window !== "undefined" && window.parent) {
+        window.parent.postMessage({ type: "lovable:publish" }, "*");
+      }
     } catch {
       // ignore — the check will still run after countdown
     }
