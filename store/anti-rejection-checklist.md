@@ -24,11 +24,10 @@ les plus fréquents pour les apps de radio / streaming audio.
 ### Guideline 4.8 — Sign in with Apple
 Si l'app propose Google / Facebook / autre login social, Apple **exige**
 aussi Sign in with Apple sur iOS.
+- ✅ Providers activés côté backend : Google + Apple (Lovable Cloud gère
+  les flux OAuth).
 - ⚠️ À activer côté Apple Developer (Capabilities → Sign In with Apple)
-  ET côté Supabase (Authentication → Providers → Apple).
-  Guide : https://supabase.com/docs/guides/auth/social-login/auth-apple
-- Si tu n'ajoutes pas Apple Sign-In, désactive Google login sur iOS avant
-  soumission (mais garde-le sur Android).
+  pour le bundle `com.indiartculture.radio` avant soumission.
 
 ### Guideline 1.2 — Contenu généré par utilisateurs (UGC)
 **Obligatoire dès qu'il y a commentaires publics :**
