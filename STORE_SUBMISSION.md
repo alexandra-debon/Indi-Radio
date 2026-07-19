@@ -1,4 +1,4 @@
-# Publication sur l'App Store & Google Play — Indi Radio
+# Publication sur l'App Store & Google Play — InDi RaDio
 
 Ce guide t'accompagne pas-à-pas pour publier l'app sur les deux stores. **Tout ne peut pas être fait depuis Lovable** : Apple exige un Mac + Xcode + un compte Apple Developer, et Google Play exige un keystore que tu dois générer et conserver toi-même.
 
@@ -71,7 +71,7 @@ bun run cap:sync
 1. Va sur https://appstoreconnect.apple.com/
 2. *Mes apps → +* → *Nouvelle app*
 3. Plateforme : **iOS**
-4. Nom : **Indi Radio**
+4. Nom : **InDi RaDio**
 5. Langue principale : **Français**
 6. Bundle ID : **com.indiartculture.radio** (créé automatiquement depuis Xcode au premier archive)
 7. SKU : `indi-radio-ios-001`
@@ -114,7 +114,7 @@ Comme `capacitor.config.ts` pointe `server.url` vers ton site web, Apple peut re
 ### 5B.1 — Créer l'app dans Play Console
 1. Va sur https://play.google.com/console
 2. *Toutes les apps → Créer une application*
-3. Nom : **Indi Radio**
+3. Nom : **InDi RaDio**
 4. Langue par défaut : **Français (France)**
 5. Type : **App**
 6. Gratuit
@@ -136,7 +136,7 @@ Dans Android Studio :
 ### 5B.4 — Uploader
 1. Play Console → *Test et publication → Production → Créer une release*
 2. Upload le `.aab`
-3. Notes de version : « Première version d'Indi Radio »
+3. Notes de version : « Première version d'InDi RaDio »
 4. Remplis les sections obligatoires :
    - **Fiche du store** : description depuis `store/listing-fr.md`
    - **Classification** : questionnaire IARC (répondre honnêtement : contenu musical, UGC modéré → PEGI 12)

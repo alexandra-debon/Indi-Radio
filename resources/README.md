@@ -1,4 +1,4 @@
-# Ressources natives Indi Radio
+# Ressources natives InDi RaDio
 
 Ce dossier contient les images sources utilisées par `bun run cap:assets`
 pour générer automatiquement toutes les tailles d'icône et de splash screen
@@ -14,8 +14,8 @@ requises par iOS et Android.
 
 ## Comment les générer
 
-1. Exporte ton logo carré Indi Radio en 1024×1024 → place-le ici sous le nom `icon.png`.
-2. Crée un canvas 2732×2732 noir #0a0a0a, centre le logo (~30% de la largeur) + le wordmark "Indi Radio" en dessous → exporte en `splash.png`.
+1. Exporte ton logo carré InDi RaDio en 1024×1024 → place-le ici sous le nom `icon.png`.
+2. Crée un canvas 2732×2732 noir #0a0a0a, centre le logo (~30% de la largeur) + le wordmark "InDi RaDio" en dessous → exporte en `splash.png`.
 3. Lance :
    ```bash
    bun run cap:assets

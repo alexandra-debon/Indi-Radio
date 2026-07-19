@@ -1,4 +1,4 @@
-# ✅ Checklist anti-rejet App Store & Google Play — Indi Radio
+# ✅ Checklist anti-rejet App Store & Google Play — InDi RaDio
 
 Suis cette checklist AVANT de soumettre. Elle couvre les motifs de rejet
 les plus fréquents pour les apps de radio / streaming audio.
@@ -104,7 +104,7 @@ aussi Sign in with Apple sur iOS.
 ## 📝 Réponse type si Apple rejette pour 4.2
 
 > Bonjour,
-> Indi Radio n'est pas un simple wrapper web. L'application implémente :
+> InDi RaDio n'est pas un simple wrapper web. L'application implémente :
 > - Lecture audio en arrière-plan via AVAudioSession (mode `audio`) ;
 > - Media Session API pour contrôles CarPlay / Bluetooth / écran verrouillé ;
 > - Notifications locales et distantes ;

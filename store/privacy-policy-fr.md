@@ -1,4 +1,4 @@
-# Politique de confidentialité — Indi Radio (FR)
+# Politique de confidentialité — InDi RaDio (FR)
 
 > Version courte prête à copier-coller dans les champs "Politique de confidentialité" de l'App Store et du Google Play Console.
 > URL publique : `https://radio.indi-art-culture.com/privacy`
@@ -7,7 +7,7 @@
 
 ## Version courte (App Store / Play Store — 500 caractères max environ)
 
-Indi Radio collecte l'email, le pseudo, le mot de passe hashé, les commentaires, les likes, les votes et les préférences de notification nécessaires au fonctionnement de l'application communautaire. Aucune publicité n'est diffusée et aucune donnée n'est revendue à des tiers. Les données sont hébergées sur une infrastructure cloud sécurisée et chiffrées en transit. L'utilisateur peut accéder, rectifier ou supprimer ses données via son profil ou en contactant radio@indi-art-culture.com.
+InDi RaDio collecte l'email, le pseudo, le mot de passe hashé, les commentaires, les likes, les votes et les préférences de notification nécessaires au fonctionnement de l'application communautaire. Aucune publicité n'est diffusée et aucune donnée n'est revendue à des tiers. Les données sont hébergées sur une infrastructure cloud sécurisée et chiffrées en transit. L'utilisateur peut accéder, rectifier ou supprimer ses données via son profil ou en contactant radio@indi-art-culture.com.
 
 ---
 
