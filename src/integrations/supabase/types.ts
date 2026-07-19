@@ -1090,6 +1090,10 @@ export type Database = {
         Args: { _kind: string; _user_id: string }
         Returns: boolean
       }
+      notify_mentions_from_text: {
+        Args: { _actor_id: string; _content: string; _url: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "auditeur" | "artiste" | "animateur" | "admin"

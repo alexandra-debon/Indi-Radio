@@ -3,11 +3,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { computeMentionInsertion } from "./insert-mention";
+import { useAuth } from "@/hooks/use-auth";
+import { Megaphone } from "lucide-react";
 
 interface Suggestion {
   id: string;
   pseudo: string;
   role: string;
+  group?: boolean;
+  hint?: string;
 }
 
 interface Props extends React.ComponentProps<typeof Textarea> {
@@ -18,12 +22,19 @@ interface Props extends React.ComponentProps<typeof Textarea> {
 // Broad mention token: letters (unicode), digits, underscore, hyphen, dot
 const TOKEN_RE = /(^|\s)@([\p{L}\p{N}_.-]*)$/u;
 
+const GROUP_TAGS: Suggestion[] = [
+  { id: "grp-allindi", pseudo: "AllIndi", role: "Toute la communauté", group: true, hint: "Notifie tous les utilisateurs" },
+  { id: "grp-allartists", pseudo: "AllArtists", role: "Tous les artistes", group: true, hint: "Notifie les comptes artistes" },
+  { id: "grp-allfans", pseudo: "AllFans", role: "Tous les auditeurs", group: true, hint: "Notifie les auditeurs" },
+];
+
 export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function MentionTextarea(
   { value, onChange, className, ...rest },
   ref,
 ) {
   const localRef = useRef<HTMLTextAreaElement | null>(null);
   useImperativeHandle(ref, () => localRef.current as HTMLTextAreaElement);
+  const { isAdmin } = useAuth();
 
   const [query, setQuery] = useState<string | null>(null);
   const [tokenStart, setTokenStart] = useState<number | null>(null);
@@ -59,13 +70,17 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
       if (q.length > 0) req = req.ilike("pseudo", `${q}%`);
       const { data } = await req.abortSignal(controller.signal);
       if (!controller.signal.aborted) {
-        setSuggestions((data ?? []) as Suggestion[]);
+        const users = (data ?? []) as Suggestion[];
+        const groups = isAdmin
+          ? GROUP_TAGS.filter((g) => q.length === 0 || g.pseudo.toLowerCase().startsWith(q.toLowerCase()))
+          : [];
+        setSuggestions([...groups, ...users]);
         setActiveIdx(0);
       }
     };
     const t = setTimeout(run, 120);
     return () => { controller.abort(); clearTimeout(t); };
-  }, [query]);
+  }, [query, isAdmin]);
 
   const insert = (pseudo: string) => {
     const el = localRef.current;
@@ -124,9 +139,12 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
                 i === activeIdx ? "bg-primary text-primary-foreground" : "hover:bg-muted",
               )}
             >
-              <span className="font-semibold">@{s.pseudo}</span>
+              <span className="inline-flex items-center gap-1.5 font-semibold">
+                {s.group && <Megaphone className="size-3.5" />}
+                @{s.pseudo}
+              </span>
               <span className={cn("ml-2 text-xs", i === activeIdx ? "text-primary-foreground/80" : "text-muted-foreground")}>
-                {s.role}
+                {s.group ? s.hint : s.role}
               </span>
             </li>
           ))}
