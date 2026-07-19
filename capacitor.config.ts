@@ -3,22 +3,25 @@ import type { CapacitorConfig } from "@capacitor/cli";
 /**
  * Capacitor config — Indi Radio native app (iOS + Android).
  *
- * `server.url` fait pointer l'app native vers le site publié :
- * les changements web se propagent instantanément sans repasser
- * par l'App Store / Play Store.
+ * IMPORTANT — App Store Guideline 4.2 :
+ * Une app qui ne fait que charger un site web distant (server.url pointant
+ * vers un domaine public) est très souvent rejetée comme « repackaged web
+ * content ». On embarque donc le bundle `dist/` par défaut : l'app est un
+ * vrai hybride (audio en arrière-plan, Media Session, notifications,
+ * PWA offline, écrans natifs de splash).
  *
- * Pour builder en mode 100% offline (bundle web embarqué),
- * commenter `server.url` puis lancer `bun run build && bunx cap sync`.
+ * Pour développer contre le site en live, dé-commente le bloc `server`
+ * ci-dessous (uniquement en local, JAMAIS pour la build de production).
  */
 const config: CapacitorConfig = {
   appId: "com.indiartculture.radio",
   appName: "Indi Radio",
   webDir: "dist",
-  server: {
-    url: "https://radio.indi-art-culture.com",
-    cleartext: false,
-    androidScheme: "https",
-  },
+  // server: {
+  //   url: "https://radio.indi-art-culture.com", // DEV UNIQUEMENT
+  //   cleartext: false,
+  //   androidScheme: "https",
+  // },
   ios: {
     contentInset: "always",
     backgroundColor: "#0a0a0a",
