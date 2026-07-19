@@ -1,16 +1,16 @@
-# Store listing — Indi Radio (EN)
+# Store listing — InDi RaDio (EN)
 
 ## App name (30 chars)
-Indi Radio
+InDi RaDio
 
 ## Subtitle / short title (30 chars)
-Indie music radio & podcasts
+100% indie, no ads, no news
 
 ## Short description (Play, 80 chars)
-100% indie music radio — live, podcasts, reviews, community. No ads, no news.
+100% indie music, no ads, no news, with social wall and interactive magazine.
 
 ## Long description (4000 chars)
-Indi Radio is the official radio of InDi ArT CulTuRe: 100% independent music, no ads, no news breaks.
+InDi RaDio is the official radio of InDi ArT CulTuRe: 100% independent music, no ads, no news, with an integrated social network and interactive magazine.
 
 Listen to the 24/7 live stream, catch shows and reviews on demand, discover music videos, community-voted charts and the Indi Art Culture interactive magazine.
 
@@ -20,7 +20,7 @@ Listen to the 24/7 live stream, catch shows and reviews on demand, discover musi
 • Community charts — vote for your favorite tracks
 • Interactive "Indi Art Culture" magazine
 • Song dedications — request a track on-air
-• Social wall — react in real time with other listeners
+• Integrated social wall — react in real time with other listeners
 • Customizable notifications (mentions, replies, news)
 • User profiles with badges and levels
 
