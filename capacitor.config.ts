@@ -15,7 +15,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
  */
 const config: CapacitorConfig = {
   appId: "com.indiartculture.radio",
-  appName: "Indi Radio",
+  appName: "InDi RaDio",
   webDir: "dist",
   // server: {
   //   url: "https://radio.indi-art-culture.com", // DEV UNIQUEMENT
