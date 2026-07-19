@@ -23,6 +23,7 @@ import { IosInstallHint } from "@/components/IosInstallHint";
 
 function NotFoundComponent() {
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.location.pathname === "/index") {
       window.history.replaceState(null, "", "/");
       window.location.reload();
