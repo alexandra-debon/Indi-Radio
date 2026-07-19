@@ -14,6 +14,9 @@ Ce guide t'accompagne pas-à-pas pour publier l'app sur les deux stores. **Tout 
 - ✅ Snippets Info.plist / AndroidManifest à copier
 - ✅ Privacy Manifest iOS
 - ✅ Scripts npm : `cap:sync`, `cap:ios`, `cap:android`, `cap:assets`
+- ✅ **Suppression de compte in-app** (`/profile` → Zone dangereuse) — obligatoire Apple 5.1.1(v)
+- ✅ **Bundle web embarqué** (pas de `server.url`) — évite le rejet 4.2 « repackaged web »
+- ✅ **Checklist anti-rejet complète** : `store/anti-rejection-checklist.md` **← LIS-LA AVANT DE SOUMETTRE**
 
 ## ⚠️ Ce que tu dois faire toi-même
 

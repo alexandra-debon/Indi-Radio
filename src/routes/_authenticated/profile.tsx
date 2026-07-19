@@ -3,14 +3,28 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut, AtSign } from "lucide-react";
+import { LogOut, AtSign, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { parseNotifUrl } from "@/lib/notif-navigate";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteMyAccount } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Mon profil — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -22,6 +36,9 @@ const LEVEL_THRESHOLDS = [0, 20, 60, 150, 300];
 function ProfilePage() {
   const { profile, signOut, isAdmin, session } = useAuth();
   const qc = useQueryClient();
+  const deleteFn = useServerFn(deleteMyAccount);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const { data: mentions = [] } = useQuery({
     queryKey: ["profile-mentions", session?.user.id],
@@ -130,6 +147,60 @@ function ProfilePage() {
       <Button variant="outline" className="w-full" onClick={signOut}>
         <LogOut className="size-4" /> Déconnexion
       </Button>
+
+      <section className="card-brut border-destructive/40 p-4">
+        <h2 className="mb-2 text-sm font-black uppercase tracking-widest text-destructive">
+          Zone dangereuse
+        </h2>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Supprimer ton compte efface définitivement ton profil, tes commentaires,
+          tes likes, tes notes et tes notifications. Cette action est irréversible.
+        </p>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" className="w-full">
+              <Trash2 className="size-4" /> Supprimer mon compte
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Suppression définitive du compte</AlertDialogTitle>
+              <AlertDialogDescription>
+                Toutes tes données seront supprimées et ne pourront pas être récupérées.
+                Tape <strong>SUPPRIMER</strong> ci-dessous pour confirmer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <input
+              autoFocus
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="SUPPRIMER"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setConfirmText("")}>Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={confirmText !== "SUPPRIMER" || deleting}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setDeleting(true);
+                  try {
+                    await deleteFn();
+                    toast.success("Compte supprimé.");
+                    await signOut();
+                    window.location.href = "/";
+                  } catch (err: any) {
+                    toast.error(err?.message ?? "Erreur lors de la suppression.");
+                    setDeleting(false);
+                  }
+                }}
+              >
+                {deleting ? "Suppression…" : "Supprimer définitivement"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </section>
     </div>
   );
 }
