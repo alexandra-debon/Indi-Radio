@@ -9,6 +9,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import {
+  canUseNativeAuth,
+  signInWithGoogleNative,
+  signInWithAppleNative,
+} from "@/lib/native-auth";
 
 export function AuthDialog() {
   const { authOpen, closeAuth } = useAuth();
@@ -111,6 +116,21 @@ export function AuthDialog() {
 
   async function handleOAuth(provider: "google" | "apple") {
     setLoading(true);
+    // Dans l'app native (iOS/Android), on utilise le plugin natif
+    // pour éviter le popup web (obligatoire pour être accepté par Apple).
+    if (canUseNativeAuth(provider)) {
+      try {
+        if (provider === "google") await signInWithGoogleNative();
+        else await signInWithAppleNative();
+        toast.success("Bienvenue !");
+        closeAuth();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Erreur de connexion.");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
     const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: window.location.origin,
     });
