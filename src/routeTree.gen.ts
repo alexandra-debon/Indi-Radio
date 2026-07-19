@@ -18,7 +18,6 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as MagazinesRouteImport } from './routes/magazines'
-import { Route as IndexRouteImport } from './routes/index_'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -90,11 +89,6 @@ const NewsletterRoute = NewsletterRouteImport.update({
 const MagazinesRoute = MagazinesRouteImport.update({
   id: '/magazines',
   path: '/magazines',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/index_',
-  path: '/index',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmissionsRoute = EmissionsRouteImport.update({
@@ -245,7 +239,6 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/index': typeof IndexRoute
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -283,7 +276,6 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/index': typeof IndexRoute
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -323,7 +315,6 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
-  '/index_': typeof IndexRoute
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -363,7 +354,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dedicaces'
     | '/emissions'
-    | '/index'
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
@@ -401,7 +391,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dedicaces'
     | '/emissions'
-    | '/index'
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
@@ -440,7 +429,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dedicaces'
     | '/emissions'
-    | '/index_'
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
@@ -480,7 +468,6 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
-  IndexRoute: typeof IndexRoute
   MagazinesRoute: typeof MagazinesRouteWithChildren
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
@@ -562,13 +549,6 @@ declare module '@tanstack/react-router' {
       path: '/magazines'
       fullPath: '/magazines'
       preLoaderRoute: typeof MagazinesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/index_': {
-      id: '/index_'
-      path: '/index'
-      fullPath: '/index'
-      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/emissions': {
@@ -848,7 +828,6 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
-  IndexRoute: IndexRoute,
   MagazinesRoute: MagazinesRouteWithChildren,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
