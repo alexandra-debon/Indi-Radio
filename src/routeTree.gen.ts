@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TopRouteImport } from './routes/top'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -47,6 +48,11 @@ import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/r
 const TopRoute = TopRouteImport.update({
   id: '/top',
   path: '/top',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
+  '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
+  '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
+  '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
+    | '/terms'
     | '/top'
     | '/admin'
     | '/notif-test'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
+    | '/terms'
     | '/top'
     | '/admin'
     | '/notif-test'
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
+    | '/terms'
     | '/top'
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
@@ -451,6 +463,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
+  TermsRoute: typeof TermsRoute
   TopRoute: typeof TopRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
@@ -467,6 +480,13 @@ declare module '@tanstack/react-router' {
       path: '/top'
       fullPath: '/top'
       preLoaderRoute: typeof TopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/soumission-artistes': {
@@ -795,6 +815,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoumissionArtistesRoute: SoumissionArtistesRoute,
+  TermsRoute: TermsRoute,
   TopRoute: TopRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
