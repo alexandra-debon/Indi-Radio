@@ -1,7 +1,7 @@
 {
-  "name": "Indi Radio — InDi ArT CulTuRe",
-  "short_name": "Indi Radio",
-  "description": "La radio d'InDi ArT CulTuRe : le live, le mur social, les podcasts et les actus des arts indépendants.",
+  "name": "InDi RaDio — InDi ArT CulTuRe",
+  "short_name": "InDi RaDio",
+  "description": "La radio 100% musique indé, sans pub ni info, avec réseau social intégré et magazine interactif.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

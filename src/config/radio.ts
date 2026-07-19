@@ -1,5 +1,5 @@
 /**
- * Configuration centralisée de la radio Indi Radio.
+ * Configuration centralisée de la radio InDi RaDio.
  * Ne PAS coder ces valeurs en dur ailleurs dans le projet.
  *
  * Note ATS iOS : ce flux est en HTTP non chiffré. Pour un futur wrapper natif
@@ -15,6 +15,6 @@ export const RADIO_CONFIG = {
   statusPageUrl: "http://ecmanager6.pro-fhi.net:2180/",
   // Endpoint Icecast metadata (best-effort ; peut ne pas répondre en HTTPS)
   statusJsonUrl: "http://ecmanager6.pro-fhi.net:2180/status-json.xsl",
-  stationName: "Indi Radio",
+  stationName: "InDi RaDio",
   parentStructure: "InDi ArT CulTuRe",
 } as const;

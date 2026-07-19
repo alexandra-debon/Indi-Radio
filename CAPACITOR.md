@@ -1,4 +1,4 @@
-# Indi Radio — App iOS & Android (Capacitor)
+# InDi RaDio — App iOS & Android (Capacitor)
 
 Ce projet est enveloppé avec **Capacitor** : le site web devient une vraie
 application native, publiable sur l'App Store et Google Play, tout en
