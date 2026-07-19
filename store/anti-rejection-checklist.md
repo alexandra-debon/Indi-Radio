@@ -7,15 +7,35 @@ les plus fréquents pour les apps de radio / streaming audio.
 
 ### Guideline 4.2 — « Minimum functionality » / repackaged web
 **Risque le plus fréquent pour les apps radio.**
-- ✅ `capacitor.config.ts` embarque le bundle `dist/` (pas de `server.url` en prod).
-- ✅ L'app expose des fonctions natives : lecture audio en arrière-plan
-  (`UIBackgroundModes → audio`), Media Session (contrôles Bluetooth / CarPlay),
-  splash natif, icônes natives, notifications.
-- ✅ Dans « Notes pour l'examinateur » sur App Store Connect, écris :
-  > *App radio hybride : lecture audio en arrière-plan via AVAudioSession,
-  > contrôles Media Session pour Bluetooth / voiture, notifications push,
-  > interactions natives (partage, ouverture apps musicales). Radio
-  > communautaire française indépendante.*
+
+⚠️ **Configuration actuelle assumée** : `capacitor.config.ts` utilise
+`server.url = "https://radio.indi-art-culture.com"` (webDir = `dist/client`
+comme fallback offline via `scripts/capacitor-shell.mjs`). La stack
+TanStack Start + Nitro n'émet pas de bundle SPA autonome, donc l'app
+native charge le site publié dans la WebView. Pour éviter le rejet 4.2,
+l'argumentaire "app hybride native" ci-dessous doit être fourni explicitement
+à la review.
+
+**Fonctionnalités natives distinctives réellement présentes** (à citer
+telles quelles dans les notes de review) :
+- Lecture audio en arrière-plan via `AVAudioSession` (`UIBackgroundModes → audio`)
+  — l'utilisateur peut verrouiller l'écran ou quitter l'app, le flux
+  Icecast continue.
+- Media Session API branchée sur le lecteur radio → contrôles play/pause
+  et métadonnées morceau/artiste visibles sur **CarPlay**, sur les casques
+  et enceintes **Bluetooth**, et sur l'écran verrouillé.
+- **Sign in with Apple natif** via `@capacitor-community/apple-sign-in`
+  (flow système iOS, pas de WebView OAuth) — conforme 4.8.
+- **Google Sign-In natif** via `@codetrix-studio/capacitor-google-auth`
+  (compte système Google, pas de popup web).
+- Notifications système (préférences utilisateur + notifications admin
+  pour dédicaces, inscriptions, mentions, réponses).
+- **Splash screen et icônes natifs** générés depuis `resources/icon.png`
+  et `resources/splash.png` via `bun run cap:assets`.
+- **Partage natif** via `@capacitor/share` (feuille système iOS/Android).
+- **Suppression de compte in-app** (`/profile` → Zone dangereuse), conforme 5.1.1(v).
+- Shell offline embarqué (`dist/client/index.html`) → pas d'écran blanc
+  si le device est hors-ligne au cold-start.
 
 ### Guideline 5.1.1(v) — Suppression de compte (OBLIGATOIRE)
 - ✅ Bouton « Supprimer mon compte » dans `/profile` (implémenté).
