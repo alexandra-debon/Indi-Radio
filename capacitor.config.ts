@@ -16,12 +16,19 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.indiartculture.radio",
   appName: "InDi RaDio",
-  webDir: "dist",
-  // server: {
-  //   url: "https://radio.indi-art-culture.com", // DEV UNIQUEMENT
-  //   cleartext: false,
-  //   androidScheme: "https",
-  // },
+  // TanStack Start + Nitro n'émet PAS de bundle SPA autonome : le build
+  // génère `dist/client/` (assets + shell index.html injecté par
+  // `scripts/capacitor-shell.mjs`) et `dist/server/` (worker SSR). L'app
+  // native charge donc le site publié via `server.url` ; le shell HTML sert
+  // uniquement de fallback offline + à satisfaire l'invariant `cap sync`
+  // qui exige un `index.html` dans `webDir`.
+  webDir: "dist/client",
+  server: {
+    url: "https://radio.indi-art-culture.com",
+    cleartext: false,
+    androidScheme: "https",
+    iosScheme: "https",
+  },
   ios: {
     contentInset: "always",
     backgroundColor: "#0a0a0a",
