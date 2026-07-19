@@ -18,7 +18,11 @@ export function IosInstallHint() {
       // @ts-expect-error iOS Safari legacy
       window.navigator.standalone === true;
     if (!isIOS || isStandalone) return;
-    if (localStorage.getItem(STORAGE_KEY) === "1") return;
+    try {
+      if (window.localStorage.getItem(STORAGE_KEY) === "1") return;
+    } catch {
+      return;
+    }
     const t = setTimeout(() => setShow(true), 1500);
     return () => clearTimeout(t);
   }, []);
@@ -26,7 +30,11 @@ export function IosInstallHint() {
   if (!show) return null;
 
   const dismiss = () => {
-    localStorage.setItem(STORAGE_KEY, "1");
+    try {
+      window.localStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      /* storage unavailable */
+    }
     setShow(false);
   };
 

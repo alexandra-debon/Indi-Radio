@@ -63,6 +63,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const [volume, setVolumeState] = useState<number>(0.8);
   const [muted, setMuted] = useState<boolean>(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
     try {
       const raw = window.localStorage.getItem("indi-radio:volume");
       const parsed = raw ? Number(raw) : NaN;
@@ -91,6 +92,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   const listenersRef = useRef<Set<(l: number) => void>>(new Set());
 
   const ensureAnalyser = useCallback(() => {
+    if (typeof window === "undefined") return;
     const el = audioRef.current;
     if (!el || analyserRef.current) return;
     try {
@@ -171,6 +173,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   }, [ensureAnalyser, isIOS]);
 
   const startLevelLoop = useCallback(() => {
+    if (typeof requestAnimationFrame === "undefined") return;
     if (rafRef.current != null) return;
     // Cap the visual refresh at ~30fps: the wave doesn't need 120Hz on
     // ProMotion devices, and skipping every other frame roughly halves
@@ -227,7 +230,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const stopLevelLoop = useCallback(() => {
-    if (rafRef.current != null) {
+    if (rafRef.current != null && typeof cancelAnimationFrame !== "undefined") {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
@@ -261,6 +264,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         gain.gain.value = target;
       }
     }
+    if (typeof window === "undefined") return;
     try {
       window.localStorage.setItem("indi-radio:volume", String(volume));
       window.localStorage.setItem("indi-radio:muted", muted ? "1" : "0");
@@ -300,12 +304,13 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // Les autoradios modernes, casques Bluetooth et écrans de verrouillage
   // lisent ces métadonnées automatiquement.
   useEffect(() => {
-    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    if (typeof window === "undefined" || typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
     if (!currentTrack) {
       navigator.mediaSession.metadata = null;
       return;
     }
     try {
+      if (!("MediaMetadata" in window)) return;
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: currentTrack.title || "InDi Radio",
         artist: currentTrack.artist || "InDi Radio",
