@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -75,6 +75,20 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <EmailVerificationBanner />
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-40 pt-4">{children}</main>
+
+      <footer className="border-t border-border bg-muted/40 py-6">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 px-3 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
+          <span>© {new Date().getFullYear()} Indi Radio — Tous droits réservés</span>
+          <div className="flex items-center gap-4">
+            <Link to="/about" className="hover:text-foreground">À propos</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
+            <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-foreground">
+              <FileText className="size-3.5" />
+              Politique de confidentialité
+            </Link>
+          </div>
+        </div>
+      </footer>
 
       {/* Drawer */}
       <div
