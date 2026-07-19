@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RADIO_CONFIG } from "@/config/radio";
 import sacemLogo from "@/assets/sacem-logo.png.asset.json";
 import tuneinLogo from "@/assets/tunein-logo.webp.asset.json";
+import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
   return (
     <div className="space-y-6">
+      <IndiLinksBar />
       <section className="space-y-3">
         <h1 className="section-title">À propos d'InDi ArT CulTuRe — Hub des arts indépendants</h1>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
