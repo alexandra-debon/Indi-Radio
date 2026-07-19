@@ -1,9 +1,15 @@
-import { Capacitor } from "@capacitor/core";
+/** Accès paresseux à Capacitor — évite d'importer @capacitor/core au SSR
+ *  (le module référence `document` au top-level et casse le rendu serveur). */
+function getCapacitor(): { isNativePlatform: () => boolean; getPlatform: () => string } | null {
+  if (typeof window === "undefined" || typeof document === "undefined") return null;
+  const cap = (globalThis as unknown as { Capacitor?: { isNativePlatform: () => boolean; getPlatform: () => string } }).Capacitor;
+  return cap ?? null;
+}
 
 /** True quand l'app tourne dans un wrapper natif iOS ou Android (Capacitor). */
 export function isNative(): boolean {
   try {
-    return Capacitor.isNativePlatform();
+    return getCapacitor()?.isNativePlatform() ?? false;
   } catch {
     return false;
   }
@@ -12,7 +18,7 @@ export function isNative(): boolean {
 /** "ios" | "android" | "web" */
 export function getPlatform(): "ios" | "android" | "web" {
   try {
-    const p = Capacitor.getPlatform();
+    const p = getCapacitor()?.getPlatform();
     if (p === "ios" || p === "android") return p;
   } catch {
     /* noop */
