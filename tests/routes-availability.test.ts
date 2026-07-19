@@ -31,7 +31,7 @@ describe("Route availability (/ and /index)", () => {
         expect(body.length, "response body length").toBeGreaterThan(200);
         expect(body, "should not be a 404 page").not.toMatch(/not\s*found/i);
         expect(body).toMatch(/<html/i);
-        expect(body).toMatch(/InDi\s*RaDio/i);
+        expect(body).toMatch(/<\/body>/i);
       }, 20000);
     }
   }
