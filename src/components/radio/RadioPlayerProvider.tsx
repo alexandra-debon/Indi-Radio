@@ -133,7 +133,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     return (
       /iPad|iPhone|iPod/.test(ua) ||
       // iPadOS 13+ reports as Mac; detect touch to disambiguate
-      (ua.includes("Macintosh") && "ontouchend" in document)
+      (ua.includes("Macintosh") && typeof document !== "undefined" && "ontouchend" in document)
     );
   }, []);
 
@@ -550,6 +550,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // to "interrupted". Resume it as soon as the user comes back so the wave
   // doesn't stay frozen after unlocking the phone.
   useEffect(() => {
+    if (typeof document === "undefined") return;
     const onVisibility = () => {
       if (document.visibilityState === "visible") {
         audioCtxRef.current?.resume().catch(() => {});

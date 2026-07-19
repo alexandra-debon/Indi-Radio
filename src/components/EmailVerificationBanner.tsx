@@ -4,6 +4,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+function getBrowserOrigin() {
+  return typeof window === "undefined" ? "https://radio.indi-art-culture.com" : window.location.origin;
+}
+
 export function EmailVerificationBanner() {
   const { session, isEmailVerified } = useAuth();
   const [sending, setSending] = useState(false);
@@ -23,7 +27,7 @@ export function EmailVerificationBanner() {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: session.user.email,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+      options: { emailRedirectTo: `${getBrowserOrigin()}/` },
     });
     setSending(false);
     if (error) {

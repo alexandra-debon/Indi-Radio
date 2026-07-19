@@ -9,6 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
+function getBrowserOrigin() {
+  return typeof window === "undefined" ? "https://radio.indi-art-culture.com" : window.location.origin;
+}
+
 export function AuthDialog() {
   const { authOpen, closeAuth } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -40,7 +44,7 @@ export function AuthDialog() {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: signInEmail,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+      options: { emailRedirectTo: `${getBrowserOrigin()}/` },
     });
     setResending(false);
     if (error) {
@@ -78,7 +82,7 @@ export function AuthDialog() {
       email: signUpEmail,
       password: signUpPassword,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${getBrowserOrigin()}/`,
         data: { pseudo: signUpPseudo.trim() },
       },
     });
@@ -97,7 +101,7 @@ export function AuthDialog() {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getBrowserOrigin()}/reset-password`,
     });
     setLoading(false);
     if (error) {
@@ -129,7 +133,7 @@ export function AuthDialog() {
     try {
       const { lovable } = await import("@/integrations/lovable/index");
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin,
+        redirect_uri: getBrowserOrigin(),
       });
       if (result.error) {
         toast.error(result.error instanceof Error ? result.error.message : "Erreur de connexion.");

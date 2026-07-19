@@ -48,7 +48,8 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      const normalizedRequest = normalizeIncomingRequest(request);
+      const response = await handler.fetch(normalizedRequest, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
@@ -59,3 +60,10 @@ export default {
     }
   },
 };
+
+function normalizeIncomingRequest(request: Request): Request {
+  const url = new URL(request.url);
+  if (url.pathname !== "/index") return request;
+  url.pathname = "/";
+  return new Request(url.toString(), request);
+}
