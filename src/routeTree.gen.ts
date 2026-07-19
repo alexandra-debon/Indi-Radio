@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TopRouteImport } from './routes/top'
+import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
@@ -17,6 +18,7 @@ import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as MagazinesRouteImport } from './routes/magazines'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ClipsRouteImport } from './routes/clips'
 import { Route as ChroniquesRouteImport } from './routes/chroniques'
 import { Route as ChartRouteImport } from './routes/chart'
@@ -44,6 +46,11 @@ import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/r
 const TopRoute = TopRouteImport.update({
   id: '/top',
   path: '/top',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
+  id: '/soumission-artistes',
+  path: '/soumission-artistes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -79,6 +86,11 @@ const EmissionsRoute = EmissionsRouteImport.update({
 const DedicacesRoute = DedicacesRouteImport.update({
   id: '/dedicaces',
   path: '/dedicaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClipsRoute = ClipsRouteImport.update({
@@ -206,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
+  '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -213,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/soumission-artistes': typeof SoumissionArtistesRoute
   '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
@@ -238,6 +252,7 @@ export interface FileRoutesByTo {
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
+  '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -245,6 +260,7 @@ export interface FileRoutesByTo {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/soumission-artistes': typeof SoumissionArtistesRoute
   '/top': typeof TopRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
@@ -272,6 +288,7 @@ export interface FileRoutesById {
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
+  '/contact': typeof ContactRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -279,6 +296,7 @@ export interface FileRoutesById {
   '/podcasts': typeof PodcastsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/soumission-artistes': typeof SoumissionArtistesRoute
   '/top': typeof TopRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
@@ -306,6 +324,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/chroniques'
     | '/clips'
+    | '/contact'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -313,6 +332,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/soumission-artistes'
     | '/top'
     | '/admin'
     | '/notif-test'
@@ -338,6 +358,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/chroniques'
     | '/clips'
+    | '/contact'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -345,6 +366,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/soumission-artistes'
     | '/top'
     | '/admin'
     | '/notif-test'
@@ -371,6 +393,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/chroniques'
     | '/clips'
+    | '/contact'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -378,6 +401,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/soumission-artistes'
     | '/top'
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
@@ -405,6 +429,7 @@ export interface RootRouteChildren {
   ChartRoute: typeof ChartRoute
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
   ClipsRoute: typeof ClipsRouteWithChildren
+  ContactRoute: typeof ContactRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
   MagazinesRoute: typeof MagazinesRouteWithChildren
@@ -412,6 +437,7 @@ export interface RootRouteChildren {
   PodcastsRoute: typeof PodcastsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SoumissionArtistesRoute: typeof SoumissionArtistesRoute
   TopRoute: typeof TopRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
@@ -428,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/top'
       fullPath: '/top'
       preLoaderRoute: typeof TopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/soumission-artistes': {
+      id: '/soumission-artistes'
+      path: '/soumission-artistes'
+      fullPath: '/soumission-artistes'
+      preLoaderRoute: typeof SoumissionArtistesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -477,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/dedicaces'
       fullPath: '/dedicaces'
       preLoaderRoute: typeof DedicacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clips': {
@@ -725,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChartRoute: ChartRoute,
   ChroniquesRoute: ChroniquesRouteWithChildren,
   ClipsRoute: ClipsRouteWithChildren,
+  ContactRoute: ContactRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
   MagazinesRoute: MagazinesRouteWithChildren,
@@ -732,6 +773,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastsRoute: PodcastsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SoumissionArtistesRoute: SoumissionArtistesRoute,
   TopRoute: TopRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
@@ -743,3 +785,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

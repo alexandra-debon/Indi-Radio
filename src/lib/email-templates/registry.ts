@@ -19,8 +19,10 @@ export interface TemplateEntry {
  */
 import { template as userBanTemplate } from './user-ban'
 import { template as userQuarantineTemplate } from './user-quarantine'
+import { template as contactTemplate } from './contact'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'user-ban': userBanTemplate,
   'user-quarantine': userQuarantineTemplate,
+  'contact': contactTemplate,
 }
