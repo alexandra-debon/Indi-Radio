@@ -1,16 +1,16 @@
-# Fiche de listing — Indi Radio (FR)
+# Fiche de listing — InDi RaDio (FR)
 
 ## Nom de l'app (30 car. max)
-Indi Radio
+InDi RaDio
 
 ## Sous-titre iOS / titre court Play (30 car.)
-Radio indé, podcasts, live
+Radio 100% indé sans pub ni info
 
 ## Description promotionnelle courte (Play, 80 car.)
-La radio 100% musique indé : live, podcasts, chroniques et communauté.
+Musique 100% indé, sans pub ni info, avec réseau social intégré et magazine interactif.
 
 ## Description longue (App Store & Play, 4000 car.)
-Indi Radio est la radio d'InDi ArT CulTuRe : 100% musique indépendante, sans pub ni info.
+InDi RaDio est la radio d'InDi ArT CulTuRe : 100% musique indépendante, sans pub ni info, avec un réseau social intégré et un magazine interactif.
 
 Écoute le direct 24/7, retrouve les émissions et chroniques en podcast, découvre les clips, les charts votés par la communauté et le magazine culturel Indi Art Culture.
 
@@ -20,11 +20,11 @@ Indi Radio est la radio d'InDi ArT CulTuRe : 100% musique indépendante, sans pu
 • Charts communautaires : vote tes titres préférés
 • Magazine "Indi Art Culture" en lecture interactive
 • Dédicaces : demande une chanson à l'antenne
-• Mur social : réagis en temps réel avec les autres auditeurs
+• Mur social intégré : réagis en temps réel avec les autres auditeurs
 • Notifications personnalisables (mentions, réponses, actus)
 • Compte utilisateur avec badges, niveaux et profil
 
-Développée par une équipe indépendante, Indi Radio soutient les artistes non-signés et la culture indé francophone.
+Développée par une équipe indépendante, InDi RaDio soutient les artistes non-signés et la culture indé francophone.
 
 Site : https://radio.indi-art-culture.com
 Contact : radio@indi-art-culture.com
