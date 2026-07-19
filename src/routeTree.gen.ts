@@ -13,6 +13,7 @@ import { Route as TopRouteImport } from './routes/top'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as MagazinesRouteImport } from './routes/magazines'
@@ -61,6 +62,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PodcastsRoute = PodcastsRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/magazines': typeof MagazinesRouteWithChildren
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/magazines'
     | '/newsletter'
     | '/podcasts'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   MagazinesRoute: typeof MagazinesRouteWithChildren
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
@@ -475,6 +488,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/podcasts': {
@@ -771,6 +791,7 @@ const rootRouteChildren: RootRouteChildren = {
   MagazinesRoute: MagazinesRouteWithChildren,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoumissionArtistesRoute: SoumissionArtistesRoute,
