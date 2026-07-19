@@ -249,6 +249,18 @@ function UserAdmin() {
     },
   });
 
+  const fetchEmails = useServerFn(listUserEmails);
+  const profileIds = profiles.map((p) => p.id);
+  const { data: emailsMap = {} } = useQuery({
+    queryKey: ["admin-user-emails", profileIds],
+    queryFn: async () => {
+      if (profileIds.length === 0) return {} as Record<string, string | null>;
+      return await fetchEmails({ data: { userIds: profileIds } });
+    },
+    enabled: profileIds.length > 0,
+    staleTime: 60_000,
+  });
+
   const updateRole = useMutation({
     mutationFn: async ({ id, role }: { id: string; role: "auditeur" | "artiste" | "animateur" | "admin" }) => {
       const { error } = await supabase.from("profiles").update({ role }).eq("id", id);
