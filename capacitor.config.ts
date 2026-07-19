@@ -22,9 +22,13 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: "always",
     backgroundColor: "#0a0a0a",
+    limitsNavigationsToAppBoundDomains: true,
   },
   android: {
     backgroundColor: "#0a0a0a",
+    allowMixedContent: false,
+    captureInput: true,
+    webContentsDebuggingEnabled: false,
   },
   plugins: {
     SplashScreen: {
