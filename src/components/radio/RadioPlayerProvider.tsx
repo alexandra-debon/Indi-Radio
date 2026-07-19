@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -341,8 +342,9 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // comme correspondant à "laurent" ou "oleff". Configurable via
   // localStorage("indi-radio:jingleThreshold") pour ajuster à chaud sans
   // redéploiement en cas de faux positifs / négatifs.
-  const JINGLE_SIM_THRESHOLD = (() => {
+  const JINGLE_SIM_THRESHOLD = useMemo(() => {
     try {
+      if (typeof window === "undefined") return 0.82;
       const raw = window.localStorage.getItem("indi-radio:jingleThreshold");
       const n = raw ? Number(raw) : NaN;
       if (Number.isFinite(n) && n > 0.5 && n <= 1) return n;
@@ -350,7 +352,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
       /* ignore */
     }
     return 0.82;
-  })();
+  }, []);
 
   const normalize = (s?: string | null) =>
     (s ?? "")
