@@ -74,7 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <EmailVerificationBanner />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-28 pt-4">{children}</main>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-40 pt-4">{children}</main>
 
       {/* Drawer */}
       <div
