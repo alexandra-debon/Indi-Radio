@@ -3,7 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 export type Profile = Tables<"profiles">;
 

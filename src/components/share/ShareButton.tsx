@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   DropdownMenu,
   DropdownMenuContent,

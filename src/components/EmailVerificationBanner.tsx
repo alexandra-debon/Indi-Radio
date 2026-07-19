@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MailWarning } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 function getBrowserOrigin() {
   return typeof window === "undefined" ? "https://radio.indi-art-culture.com" : window.location.origin;

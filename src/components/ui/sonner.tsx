@@ -1,16 +1,25 @@
-import { useEffect, useState, type ComponentProps } from "react";
-import { Toaster as Sonner } from "sonner";
+import { useEffect, useState, type ComponentType } from "react";
 
-type ToasterProps = ComponentProps<typeof Sonner>;
+type ToasterProps = Record<string, unknown>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const [mounted, setMounted] = useState(false);
+  const [Sonner, setSonner] = useState<ComponentType<any> | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    let cancelled = false;
+    import("sonner")
+      .then((mod) => {
+        if (!cancelled) setSonner(() => mod.Toaster as ComponentType<any>);
+      })
+      .catch(() => {
+        if (!cancelled) setSonner(null);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  if (!mounted) return null;
+  if (!Sonner) return null;
 
   return (
     <Sonner

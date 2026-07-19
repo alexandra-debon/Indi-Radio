@@ -9,7 +9,7 @@ import {
   sanitizeLinks,
   type SocialLinks,
 } from "@/components/social/SocialLinksBar";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 const KEY = "indi_links";
 

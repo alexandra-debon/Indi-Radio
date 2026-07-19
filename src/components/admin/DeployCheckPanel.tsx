@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { runDeployCheck, type DeployCheckResult } from "@/lib/deploy-check.functions";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, Rocket, RefreshCw } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type Report = {
   baseUrl: string;

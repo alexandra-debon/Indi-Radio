@@ -11,7 +11,7 @@ import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
