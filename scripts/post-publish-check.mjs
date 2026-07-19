@@ -28,6 +28,12 @@ const CHECKS = [
     expectContains: [/<html/i, /InDi\s*RaDio/i, /<\/body>/i],
   },
   {
+    label: "SSR /index (alias)",
+    path: "/index",
+    expectStatus: 200,
+    expectContains: [/<html/i, /<\/body>/i],
+  },
+  {
     label: "SSR /about",
     path: "/about",
     expectStatus: 200,
