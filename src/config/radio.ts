@@ -1,5 +1,5 @@
 /**
- * Configuration centralisée de la radio Indi Radio.
+ * Configuration centralisée de la radio InDi RaDio.
  * Ne PAS coder ces valeurs en dur ailleurs dans le projet.
  *
  * Note ATS iOS : ce flux est en HTTP non chiffré. Pour un futur wrapper natif

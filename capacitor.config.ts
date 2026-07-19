@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 /**
- * Capacitor config — Indi Radio native app (iOS + Android).
+ * Capacitor config — InDi RaDio native app (iOS + Android).
  *
  * IMPORTANT — App Store Guideline 4.2 :
  * Une app qui ne fait que charger un site web distant (server.url pointant
