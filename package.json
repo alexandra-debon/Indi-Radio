@@ -15,7 +15,9 @@
     "cap:android": "vite build && cap sync android && cap open android",
     "cap:assets": "capacitor-assets generate --iconBackgroundColor '#0a0a0a' --splashBackgroundColor '#0a0a0a'"
     ,
-    "check:deploy": "node scripts/post-publish-check.mjs"
+    "check:deploy": "node scripts/post-publish-check.mjs",
+    "test": "vitest run",
+    "test:routes": "vitest run tests/routes-availability.test.ts"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
