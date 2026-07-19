@@ -247,6 +247,7 @@ export function AuthDialog() {
             </form>
           </TabsContent>
         </Tabs>
+        </div>
         )}
       </DialogContent>
     </Dialog>
