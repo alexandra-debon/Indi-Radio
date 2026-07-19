@@ -42,6 +42,17 @@ const config: CapacitorConfig = {
       splashFullScreen: true,
       splashImmersive: true,
     },
+    // Sign in with Google natif (iOS + Android).
+    // Renseigne les IDs OAuth récupérés dans Google Cloud Console :
+    // - clientId  = OAuth Web application client ID (obligatoire)
+    // - iosClientId = OAuth iOS client ID
+    // Puis expose côté build : VITE_GOOGLE_WEB_CLIENT_ID (même valeur que clientId).
+    GoogleAuth: {
+      scopes: ["profile", "email"],
+      // clientId: "REMPLACER_PAR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com",
+      // iosClientId: "REMPLACER_PAR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com",
+      forceCodeForRefreshToken: false,
+    },
   },
 };
 
