@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { sendContactEmail } from "@/lib/contact.functions";
 import { toast } from "sonner";
-import ogImage from "@/assets/og-contact.jpg.asset-json";
+import ogImage from "@/assets/og-contact.jpg.asset.json";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
