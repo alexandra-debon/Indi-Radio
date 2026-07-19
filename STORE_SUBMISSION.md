@@ -160,7 +160,10 @@ Tu dois publier une page `/privacy` sur https://radio.indi-art-culture.com/priva
 - Comment demander leur suppression (email à `radio@indi-art-culture.com`)
 - Cookies utilisés
 
-Si tu veux, je peux générer cette page automatiquement — dis-moi juste "génère la page privacy" et je m'en occupe.
+La page `/privacy` a été générée et est disponible sur :
+`https://radio.indi-art-culture.com/privacy`
+
+Un texte court prêt à copier-coller dans les champs store se trouve dans `store/privacy-policy-fr.md`.
 
 ---
 
