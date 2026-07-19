@@ -1,16 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, Send, Loader2 } from "lucide-react";
+import { Mail, Send, Loader2, Phone, Users, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { sendContactEmail } from "@/lib/contact.functions";
+import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 import { toast } from "sonner";
 import ogContact from "@/assets/og-contact.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CONTACT = `${BASE_URL}${ogContact}`;
+
+const CONTACTS = [
+  {
+    icon: Users,
+    label: "Contact auditeurs & artistes",
+    email: "radio@indi-art-culture.com",
+    description: "Programmation, soumissions, diffusion et échanges",
+  },
+  {
+    icon: HelpCircle,
+    label: "En cas de difficulté",
+    email: "help@indi-art-culture.com",
+    description: "Assistance technique ou questions pratiques",
+  },
+  {
+    icon: Phone,
+    label: "Standard téléphonique",
+    href: "tel:+33481095152",
+    value: "+33 4 81 09 51 52",
+    description: "Du lundi au vendredi, de 10h à 18h",
+  },
+];
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -19,13 +42,13 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Contactez l'équipe d'InDi RaDio. Une question, une suggestion, une soumission artiste ? Écrivez-nous.",
+          "Contactez l'équipe d'InDi RaDio : auditeurs, artistes, soumissions ou assistance. Email, téléphone et formulaire.",
       },
       { property: "og:title", content: "Contact — InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Contactez l'équipe d'InDi RaDio. Une question, une suggestion, une soumission artiste ? Écrivez-nous.",
+          "Contactez l'équipe d'InDi RaDio : auditeurs, artistes, soumissions ou assistance. Email, téléphone et formulaire.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/contact" },
       { property: "og:type", content: "website" },
@@ -67,17 +90,54 @@ function ContactPage() {
 
   return (
     <div className="space-y-6">
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Mail className="size-7 text-radio-yellow" />
-          <h1 className="section-title">Contact</h1>
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-radio-yellow/15 via-background to-background p-5 shadow-lg">
+        <div className="absolute -right-4 -top-4 size-24 rounded-full bg-radio-yellow/10 blur-2xl" aria-hidden />
+        <div className="relative flex items-center gap-3">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+            <Mail className="size-6" />
+          </div>
+          <div>
+            <h1 className="section-title">Contact</h1>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Une question, une suggestion, une soumission artiste ? On vous répond.
+            </p>
+          </div>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Une question, une suggestion ou une demande artiste ? Écrivez-nous directement.
-        </p>
+      </section>
+
+      <IndiLinksBar />
+
+      <section className="grid gap-3 sm:grid-cols-2">
+        {CONTACTS.map((c) => {
+          const Icon = c.icon;
+          return (
+            <a
+              key={c.label}
+              href={c.href ?? `mailto:${c.email}`}
+              className="card-brut group relative overflow-hidden p-4 transition hover:border-primary/60 hover:bg-primary/5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary transition group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Icon className="size-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-display text-sm uppercase tracking-wide">{c.label}</h3>
+                  <p className="mt-0.5 truncate font-semibold text-foreground">
+                    {c.value ?? c.email}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{c.description}</p>
+                </div>
+              </div>
+            </a>
+          );
+        })}
       </section>
 
       <section className="card-brut space-y-4 p-4">
+        <div className="flex items-center gap-2">
+          <Send className="size-5 text-primary" />
+          <h2 className="font-display text-base uppercase tracking-wide">Envoyer un message</h2>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nom</Label>
@@ -137,18 +197,6 @@ function ContactPage() {
             )}
           </Button>
         </form>
-      </section>
-
-      <section className="card-brut space-y-3 p-4 text-center">
-        <h2 className="font-display text-base uppercase tracking-wide">Ou contactez-nous par email</h2>
-        <p className="text-sm leading-relaxed">
-          <a
-            href="mailto:radio@indi-art-culture.com"
-            className="font-semibold text-radio-yellow underline"
-          >
-            radio@indi-art-culture.com
-          </a>
-        </p>
       </section>
     </div>
   );
