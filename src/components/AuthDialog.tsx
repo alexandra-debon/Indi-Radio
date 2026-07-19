@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -127,17 +126,23 @@ export function AuthDialog() {
       }
       return;
     }
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: window.location.origin,
-    });
-    setLoading(false);
-    if (result.error) {
-      toast.error(result.error instanceof Error ? result.error.message : "Erreur de connexion.");
-      return;
-    }
-    if (!result.redirected) {
-      toast.success("Bienvenue !");
-      closeAuth();
+    try {
+      const { lovable } = await import("@/integrations/lovable/index");
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error(result.error instanceof Error ? result.error.message : "Erreur de connexion.");
+        return;
+      }
+      if (!result.redirected) {
+        toast.success("Bienvenue !");
+        closeAuth();
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur de connexion.");
+    } finally {
+      setLoading(false);
     }
   }
 
