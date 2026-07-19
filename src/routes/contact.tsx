@@ -7,7 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { sendContactEmail } from "@/lib/contact.functions";
 import { toast } from "sonner";
-import ogImage from "@/assets/og-contact.jpg.asset.json";
+import ogContact from "@/assets/og-contact.jpg";
+
+const BASE_URL = "https://radio.indi-art-culture.com";
+const OG_CONTACT = `${BASE_URL}${ogContact}`;
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -26,9 +29,11 @@ export const Route = createFileRoute("/contact")({
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/contact" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: ogImage.url },
+      { property: "og:image", content: OG_CONTACT },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { property: "twitter:card", content: "summary_large_image" },
-      { property: "twitter:image", content: ogImage.url },
+      { property: "twitter:image", content: OG_CONTACT },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/contact" }],
   }),

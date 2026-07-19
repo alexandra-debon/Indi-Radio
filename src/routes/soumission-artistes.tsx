@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Heart, ShieldCheck, Music, Gift, Users } from "lucide-react";
-import ogImage from "@/assets/og-soumission-artistes.jpg.asset.json";
+import ogSoumission from "@/assets/og-soumission-artistes.jpg";
+
+const BASE_URL = "https://radio.indi-art-culture.com";
+const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
 
 export const Route = createFileRoute("/soumission-artistes")({
   head: () => ({
@@ -19,9 +22,11 @@ export const Route = createFileRoute("/soumission-artistes")({
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/soumission-artistes" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: ogImage.url },
+      { property: "og:image", content: OG_SOUMISSION },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { property: "twitter:card", content: "summary_large_image" },
-      { property: "twitter:image", content: ogImage.url },
+      { property: "twitter:image", content: OG_SOUMISSION },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/soumission-artistes" }],
   }),
