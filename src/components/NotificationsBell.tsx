@@ -24,7 +24,7 @@ export function NotificationsBell() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  const { data: allNotifs = [] } = useQuery<Notif[]>({
+  const { data: notifs = [] } = useQuery<Notif[]>({
     queryKey: ["notifications", session?.user.id],
     enabled: !!session,
     queryFn: async () => {
@@ -36,9 +36,6 @@ export function NotificationsBell() {
       return (data ?? []) as Notif[];
     },
   });
-  // Mentions are surfaced in the user's profile page and inline in comments/replies,
-  // so we hide them from the top-bar bell to avoid duplicate signals.
-  const notifs = useMemo(() => allNotifs.filter((n) => n.type !== "mention"), [allNotifs]);
 
   useEffect(() => {
     if (!session) return;
