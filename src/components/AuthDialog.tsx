@@ -109,6 +109,22 @@ export function AuthDialog() {
     }
   }
 
+  async function handleOAuth(provider: "google" | "apple") {
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth(provider, {
+      redirect_uri: window.location.origin,
+    });
+    setLoading(false);
+    if (result.error) {
+      toast.error(result.error instanceof Error ? result.error.message : "Erreur de connexion.");
+      return;
+    }
+    if (!result.redirected) {
+      toast.success("Bienvenue !");
+      closeAuth();
+    }
+  }
+
   return (
     <Dialog open={authOpen} onOpenChange={(o) => { if (!o) { closeAuth(); setView("tabs"); } }}>
       <DialogContent className="sm:max-w-md">
