@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bell, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { Bell, Check, ChevronDown, ChevronRight, AtSign, MessageCircle, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -24,7 +24,7 @@ export function NotificationsBell() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  const { data: allNotifs = [] } = useQuery<Notif[]>({
+  const { data: notifs = [] } = useQuery<Notif[]>({
     queryKey: ["notifications", session?.user.id],
     enabled: !!session,
     queryFn: async () => {
@@ -36,9 +36,6 @@ export function NotificationsBell() {
       return (data ?? []) as Notif[];
     },
   });
-  // Mentions are surfaced in the user's profile page and inline in comments/replies,
-  // so we hide them from the top-bar bell to avoid duplicate signals.
-  const notifs = useMemo(() => allNotifs.filter((n) => n.type !== "mention"), [allNotifs]);
 
   useEffect(() => {
     if (!session) return;
