@@ -82,6 +82,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-4">
             <Link to="/about" className="hover:text-foreground">À propos</Link>
             <Link to="/contact" className="hover:text-foreground">Contact</Link>
+            <Link to="/terms" className="hover:text-foreground">CGU</Link>
             <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-foreground">
               <FileText className="size-3.5" />
               Politique de confidentialité
