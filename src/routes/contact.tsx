@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, Send, Loader2, Phone, Users, HelpCircle } from "lucide-react";
+import { Mail, Send, Loader2, Phone, Users, HelpCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,6 +66,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const [sentInfo, setSentInfo] = useState<{ email: string; ackSent: boolean } | null>(null);
 
   const handleChange = (field: keyof typeof form) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,8 +78,9 @@ function ContactPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await sendContactEmail({ data: form });
+      const res = await sendContactEmail({ data: form });
       toast.success("Message envoyé ! Nous vous répondrons dès que possible.");
+      setSentInfo({ email: form.email, ackSent: Boolean(res?.ackSent) });
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue";
@@ -138,6 +140,30 @@ function ContactPage() {
           <Send className="size-5 text-primary" />
           <h2 className="font-display text-base uppercase tracking-wide">Envoyer un message</h2>
         </div>
+        {sentInfo && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="flex items-start gap-3 rounded-lg border border-green-500/40 bg-green-500/10 p-3 text-sm"
+          >
+            <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-600" />
+            <div className="space-y-1">
+              <p className="font-semibold text-foreground">Message bien reçu, merci !</p>
+              <p className="text-muted-foreground">
+                {sentInfo.ackSent
+                  ? <>Un accusé de réception vient d'être envoyé à <strong>{sentInfo.email}</strong>. Pensez à vérifier vos spams.</>
+                  : <>Nous avons bien reçu votre message et vous répondrons dès que possible.</>}
+              </p>
+              <button
+                type="button"
+                onClick={() => setSentInfo(null)}
+                className="text-xs font-medium text-primary underline underline-offset-2"
+              >
+                Envoyer un autre message
+              </button>
+            </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nom</Label>
