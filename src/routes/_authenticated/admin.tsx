@@ -17,6 +17,7 @@ import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magaz
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
+import { listUserEmails } from "@/lib/admin-users.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
@@ -248,6 +249,18 @@ function UserAdmin() {
     },
   });
 
+  const fetchEmails = useServerFn(listUserEmails);
+  const profileIds = profiles.map((p) => p.id);
+  const { data: emailsMap = {} } = useQuery({
+    queryKey: ["admin-user-emails", profileIds],
+    queryFn: async () => {
+      if (profileIds.length === 0) return {} as Record<string, string | null>;
+      return await fetchEmails({ data: { userIds: profileIds } });
+    },
+    enabled: profileIds.length > 0,
+    staleTime: 60_000,
+  });
+
   const updateRole = useMutation({
     mutationFn: async ({ id, role }: { id: string; role: "auditeur" | "artiste" | "animateur" | "admin" }) => {
       const { error } = await supabase.from("profiles").update({ role }).eq("id", id);
@@ -303,6 +316,14 @@ function UserAdmin() {
           return (
           <li key={p.id} className={`card-brut space-y-2 p-3 ${isQuarantined ? "border-destructive/60 bg-destructive/5" : ""}`}>
             <UserBadge profile={p} className="text-sm" />
+            {emailsMap[p.id] && (
+              <div className="text-xs text-muted-foreground">
+                <span className="font-medium">Email :</span>{" "}
+                <a href={`mailto:${emailsMap[p.id]}`} className="underline">
+                  {emailsMap[p.id]}
+                </a>
+              </div>
+            )}
             {isQuarantined && (
               <div className="flex items-start gap-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
