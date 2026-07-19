@@ -16,12 +16,14 @@
     "cap:assets": "capacitor-assets generate --iconBackgroundColor '#0a0a0a' --splashBackgroundColor '#0a0a0a'"
   },
   "dependencies": {
+    "@capacitor-community/apple-sign-in": "^7.1.0",
     "@capacitor/android": "^8.4.1",
     "@capacitor/app": "^8.1.0",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.1",
     "@capacitor/share": "^8.0.1",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@lovable.dev/email-js": "0.1.0",
