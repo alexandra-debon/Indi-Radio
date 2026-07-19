@@ -18,6 +18,8 @@
     "check:deploy": "node scripts/post-publish-check.mjs",
     "test": "vitest run",
     "test:routes": "vitest run tests/routes-availability.test.ts"
+    ,
+    "publish:verify": "node scripts/publish-verify.mjs"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
