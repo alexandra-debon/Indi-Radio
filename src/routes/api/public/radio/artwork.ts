@@ -92,11 +92,19 @@ const JINGLE_COVER_PATH = "/jingle-cover.png";
 
 function isJingle(value: string | null | undefined) {
   if (!value) return false;
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("jingle");
+  const s = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (s.includes("jingle")) return true;
+  // Laurent Oleff = jingles maison → toujours afficher la pochette « L »
+  if (s.includes("laurent") && s.includes("oleff")) return true;
+  if (s.includes("oleff")) return true;
+  return false;
 }
 
 function looksLikeJingle(artist?: string | null, title?: string | null) {
-  return isJingle(artist) || isJingle(title);
+  if (isJingle(artist) || isJingle(title)) return true;
+  // Combinaison artiste/titre : "jingle" d'un côté + "laurent/oleff" de l'autre
+  const combined = `${artist ?? ""} ${title ?? ""}`;
+  return isJingle(combined);
 }
 
 function clean(value: string | null) {
