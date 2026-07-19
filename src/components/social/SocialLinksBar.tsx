@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X, Type, Cloud } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2, ExternalLink, ChevronUp, ChevronDown, X, Type, Cloud, Globe } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import spotifyLogoRaw from "@/assets/spotify-logo.jpeg.asset.json";
 import deezerLogoRaw from "@/assets/deezer-logo.jpeg.asset.json";
@@ -13,6 +13,7 @@ export type SocialLinks = Partial<Record<SocialKey, string>> & {
 };
 
 export const SOCIAL_KEYS = [
+  "website",
   "facebook",
   "instagram",
   "tiktok",
@@ -53,6 +54,7 @@ function makeImgIcon(src: string, alt: string): ComponentType<SVGProps<SVGSVGEle
 }
 
 export const SOCIAL_META: Record<SocialKey, { label: string; Icon: ComponentType<SVGProps<SVGSVGElement>>; color: string; placeholder: string; hasImage?: boolean }> = {
+  website: { label: "Site Web", Icon: Globe, color: "#0EA5E9", placeholder: "https://votre-site.com" },
   facebook: { label: "Facebook", Icon: Facebook, color: "#1877F2", placeholder: "https://facebook.com/…" },
   instagram: { label: "Instagram", Icon: Instagram, color: "#E4405F", placeholder: "https://instagram.com/…" },
   tiktok: { label: "TikTok", Icon: TikTokIcon, color: "#000000", placeholder: "https://tiktok.com/@…" },
