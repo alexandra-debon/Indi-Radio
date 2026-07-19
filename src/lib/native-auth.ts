@@ -53,7 +53,24 @@ export async function signInWithGoogleNative() {
 
 /** Sign in with Apple natif (iOS uniquement). */
 export async function signInWithAppleNative() {
-  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
+  const SignInWithApple = (globalThis as unknown as {
+    Capacitor?: {
+      Plugins?: {
+        SignInWithApple?: {
+          authorize: (options: {
+            clientId: string;
+            redirectURI: string;
+            scopes?: string;
+            state?: string;
+            nonce?: string;
+          }) => Promise<{
+            response?: { identityToken?: string | null };
+          }>;
+        };
+      };
+    };
+  }).Capacitor?.Plugins?.SignInWithApple;
+  if (!SignInWithApple) throw new Error("Sign in with Apple indisponible sur cet appareil.");
   const res = await SignInWithApple.authorize({
     clientId: "com.indiartculture.radio",
     // redirectURI est ignoré en flow natif mais requis par le type.
