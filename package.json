@@ -14,6 +14,8 @@
     "cap:ios": "vite build && cap sync ios && cap open ios",
     "cap:android": "vite build && cap sync android && cap open android",
     "cap:assets": "capacitor-assets generate --iconBackgroundColor '#0a0a0a' --splashBackgroundColor '#0a0a0a'"
+    ,
+    "check:deploy": "node scripts/post-publish-check.mjs"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
