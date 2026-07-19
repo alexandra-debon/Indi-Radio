@@ -316,6 +316,14 @@ function UserAdmin() {
           return (
           <li key={p.id} className={`card-brut space-y-2 p-3 ${isQuarantined ? "border-destructive/60 bg-destructive/5" : ""}`}>
             <UserBadge profile={p} className="text-sm" />
+            {emailsMap[p.id] && (
+              <div className="text-xs text-muted-foreground">
+                <span className="font-medium">Email :</span>{" "}
+                <a href={`mailto:${emailsMap[p.id]}`} className="underline">
+                  {emailsMap[p.id]}
+                </a>
+              </div>
+            )}
             {isQuarantined && (
               <div className="flex items-start gap-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
