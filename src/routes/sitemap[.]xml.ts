@@ -23,6 +23,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/newsletter", changefreq: "monthly", priority: "0.4" },
           { path: "/soumission-artistes", changefreq: "monthly", priority: "0.5" },
           { path: "/contact", changefreq: "monthly", priority: "0.5" },
+          { path: "/privacy", changefreq: "monthly", priority: "0.5" },
         ];
         try {
           const sb = createClient<Database>(
