@@ -108,8 +108,11 @@ function EditProfilePage() {
         contentType: file.type,
       });
       if (upErr) throw upErr;
-      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-      setAvatarUrl(data.publicUrl);
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("avatars")
+        .createSignedUrl(path, 60 * 60 * 24 * 365 * 10); // ~10 ans
+      if (signErr) throw signErr;
+      setAvatarUrl(signed.signedUrl);
       toast.success("Avatar téléversé — n'oublie pas d'enregistrer.");
     } catch (err: any) {
       toast.error(err?.message ?? "Échec du téléversement");
