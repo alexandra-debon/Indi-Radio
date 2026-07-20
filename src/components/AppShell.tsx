@@ -80,16 +80,16 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div className="safe-bottom fixed inset-x-0 bottom-0 z-40">
         <MiniPlayer />
-        <footer className="border-t border-border bg-muted/40 py-4">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-2 px-3 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
-            <span>© {new Date().getFullYear()} Indi Radio — Tous droits réservés</span>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-              <Link to="/about" className="hover:text-foreground">À propos</Link>
-              <Link to="/contact" className="hover:text-foreground">Contact</Link>
-              <Link to="/terms" className="hover:text-foreground">CGU</Link>
-              <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-foreground">
-                <FileText className="size-3.5" />
-                Politique de confidentialité
+        <footer className="border-t border-black/60 bg-black py-2 text-neutral-300">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-3 text-center text-[11px] sm:flex-row sm:justify-between sm:text-left">
+            <span>© {new Date().getFullYear()} Indi Radio</span>
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
+              <Link to="/about" className="hover:text-primary">À propos</Link>
+              <Link to="/contact" className="hover:text-primary">Contact</Link>
+              <Link to="/terms" className="hover:text-primary">CGU</Link>
+              <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-primary">
+                <FileText className="size-3" />
+                Confidentialité
               </Link>
             </div>
           </div>
