@@ -7,6 +7,7 @@ import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
+import { useT } from "@/lib/i18n";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/podcasts")({
 });
 
 function PodcastsPage() {
+  const t = useT();
   const [openId, setOpenId] = useState<string | null>(null);
   const { data: podcasts = [] } = useQuery({
     queryKey: ["podcasts"],
@@ -42,7 +44,7 @@ function PodcastsPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Podcasts</h1>
+      <h1 className="section-title">{t("page.podcasts.title")}</h1>
       {podcasts.length === 0 && (
         <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun podcast pour l'instant.</div>
       )}
