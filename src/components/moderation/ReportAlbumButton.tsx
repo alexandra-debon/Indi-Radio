@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/lib/toast";
+import { notifyAdminAlbumReported } from "@/lib/album-report-email.functions";
 
 export function ReportAlbumButton({ albumId, variant = "inline" }: { albumId: string; variant?: "inline" | "overlay" }) {
   const { session, requireAuth } = useAuth();
@@ -19,16 +20,19 @@ export function ReportAlbumButton({ albumId, variant = "inline" }: { albumId: st
     if (r.length < 3) { toast.error("Merci de préciser le motif"); return; }
     if (r.length > 500) { toast.error("Motif trop long (max 500)"); return; }
     setSending(true);
-    const { error } = await supabase.from("album_reports").insert({
-      reporter_id: session.user.id,
-      album_id: albumId,
-      reason: r,
-    });
+    const { data: inserted, error } = await supabase
+      .from("album_reports")
+      .insert({ reporter_id: session.user.id, album_id: albumId, reason: r })
+      .select("id")
+      .single();
     setSending(false);
     if (error) {
       if (error.code === "23505") toast.info("Tu as déjà signalé cet album");
       else toast.error(error.message);
       return;
+    }
+    if (inserted?.id) {
+      notifyAdminAlbumReported({ data: { reportId: inserted.id } }).catch(() => {});
     }
     toast.success("Signalement envoyé à la modération");
     setReason("");
