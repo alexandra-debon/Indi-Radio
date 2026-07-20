@@ -16,6 +16,9 @@ const emailSchema = z
   .max(255, { message: "Email trop long (255 caractères max)." });
 
 export const Route = createFileRoute("/newsletter")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    source: typeof search.source === "string" ? search.source : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Newsletter — Indi Radio" },
