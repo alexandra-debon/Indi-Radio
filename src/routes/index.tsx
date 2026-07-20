@@ -20,7 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import indiRadioWordmark from "@/assets/indi-radio-wordmark-live.png.asset.json";
+
 import { useLang, useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
