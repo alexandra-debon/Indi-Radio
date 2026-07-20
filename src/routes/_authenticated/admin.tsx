@@ -11,13 +11,14 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
 import { listUserEmails } from "@/lib/admin-users.functions";
+import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
@@ -48,7 +49,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines", "reports", "deploy"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines", "reports", "deploy", "emails"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -94,6 +95,7 @@ function AdminPage() {
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
+    { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
     { key: "deploy" as const, label: "Déploiement", icon: Rocket, desc: "Publier et vérifier le site en ligne" },
   ];
   return (
@@ -122,7 +124,7 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-9">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-10">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
@@ -131,6 +133,7 @@ function AdminPage() {
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
           <TabsTrigger value="reports">Signalements</TabsTrigger>
+          <TabsTrigger value="emails">Emails</TabsTrigger>
           <TabsTrigger value="deploy">Déploiement</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
@@ -141,6 +144,7 @@ function AdminPage() {
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
+        <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
         <TabsContent value="deploy" className="mt-4"><DeployCheckPanel /></TabsContent>
       </Tabs>
     </div>
