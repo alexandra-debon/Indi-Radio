@@ -6,6 +6,7 @@ import { computeMentionInsertion } from "./insert-mention";
 import { useAuth } from "@/hooks/use-auth";
 import { Megaphone, Hash } from "lucide-react";
 import { suggestHashtags } from "@/lib/hashtag-suggest";
+import { normalizeHashtag } from "@/lib/hashtag";
 
 interface Suggestion {
   id: string;
@@ -118,11 +119,10 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
       const results = await suggestHashtags(hashQuery, { limit: 6, signal: controller.signal });
       if (controller.signal.aborted) return;
       const items: HashtagItem[] = results.map((r) => ({ id: r.tag, tag: r.tag, count: r.count }));
-      const q = hashQuery.trim();
-      const isValid = /^[\p{L}\p{N}_.-]+$/u.test(q);
-      const exact = items.some((i) => i.tag.toLowerCase() === q.toLowerCase());
-      if (isValid && !exact) {
-        items.unshift({ id: `__new__:${q}`, tag: q, count: 0, isNew: true });
+      const normalized = normalizeHashtag(hashQuery);
+      const exact = items.some((i) => i.tag.toLowerCase() === normalized);
+      if (normalized.length > 0 && !exact) {
+        items.unshift({ id: `__new__:${normalized}`, tag: normalized, count: 0, isNew: true });
       }
       setHashSuggestions(items);
       setHashActive(0);
@@ -149,10 +149,12 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   const insertHashtag = (tag: string) => {
     const el = localRef.current;
     if (el === null || hashStart === null) return;
+    const clean = normalizeHashtag(tag);
+    if (!clean) { setHashQuery(null); setHashStart(null); return; }
     const caret = el.selectionStart ?? value.length;
     const before = value.slice(0, hashStart);
     const after = value.slice(caret);
-    const snippet = `#${tag}`;
+    const snippet = `#${clean}`;
     const needsSpace = after.length === 0 || !/^\s/.test(after);
     const next = `${before}${snippet}${needsSpace ? " " : ""}${after}`;
     const pos = before.length + snippet.length + (needsSpace ? 1 : 0);
