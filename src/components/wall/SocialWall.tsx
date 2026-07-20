@@ -602,29 +602,30 @@ export function SocialWall() {
                       if (error) throw error;
                       qc.invalidateQueries({ queryKey: ["wall-posts"] });
                     };
-                    const CaptionSlot = ({ i }: { i: number }) => {
-                      if (canEditMeta) {
-                        return (
-                          <InlineEditable
-                            initial={captions[i] ?? ""}
-                            placeholder="Légende…"
-                            ariaLabel={`Légende de l'image ${i + 1}`}
-                            maxLength={200}
-                            className="text-[11px] text-muted-foreground"
-                            withEmoji
-                            preview
-                            save={saveCaption(i)}
-                          />
-                        );
-                      }
-                      return captions[i] ? (
-                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">
-                          <TranslatedText entityType="post" entityKey={`${p.id}:cap:${i}`} field="caption" text={captions[i]}>
-                            {(t) => <>{renderRich(t)}</>}
-                          </TranslatedText>
-                        </p>
-                      ) : null;
-                    };
+                     const renderCaption = (i: number) => {
+                       if (canEditMeta) {
+                         return (
+                           <InlineEditable
+                             key={`cap-${p.id}-${i}`}
+                             initial={captions[i] ?? ""}
+                             placeholder="Légende…"
+                             ariaLabel={`Légende de l'image ${i + 1}`}
+                             maxLength={200}
+                             className="text-[11px] text-muted-foreground"
+                             withEmoji
+                             preview
+                             save={saveCaption(i)}
+                           />
+                         );
+                       }
+                       return captions[i] ? (
+                         <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">
+                           <TranslatedText entityType="post" entityKey={`${p.id}:cap:${i}`} field="caption" text={captions[i]}>
+                             {(t) => <>{renderRich(t)}</>}
+                           </TranslatedText>
+                         </p>
+                       ) : null;
+                     };
                     if (imgs.length === 1) {
                       return (
                         <div className="mt-2">
@@ -634,7 +635,7 @@ export function SocialWall() {
                               <ReportImageButton postId={p.id} imageUrl={imgs[0]} />
                             )}
                           </div>
-                          <CaptionSlot i={0} />
+                           {renderCaption(0)}
                         </div>
                       );
                     }
@@ -648,7 +649,7 @@ export function SocialWall() {
                                 <ReportImageButton postId={p.id} imageUrl={u} />
                               )}
                             </div>
-                            <CaptionSlot i={i} />
+                             {renderCaption(i)}
                           </div>
                         ))}
                       </div>

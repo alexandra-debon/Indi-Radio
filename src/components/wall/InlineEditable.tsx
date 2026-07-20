@@ -57,8 +57,12 @@ export function InlineEditable({
   };
 
   useEffect(() => {
-    setValue(initial ?? "");
-    last.current = initial ?? "";
+    const next = initial ?? "";
+    // Don't clobber the user's in-progress edit if the incoming value
+    // matches what we last successfully saved (typical after a refetch).
+    if (next === last.current) return;
+    setValue(next);
+    last.current = next;
   }, [initial]);
 
   useEffect(() => {
