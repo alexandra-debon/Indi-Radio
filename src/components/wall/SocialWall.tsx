@@ -20,6 +20,7 @@ import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
+import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 
 interface PostRow {
   id: string;
