@@ -823,6 +823,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          image_urls: string[]
           mentions: string[] | null
           pin_label: string | null
           pinned_at: string | null
@@ -834,6 +835,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[]
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
@@ -845,6 +847,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_urls?: string[]
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
