@@ -21,6 +21,7 @@ import { listUserEmails } from "@/lib/admin-users.functions";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
+import { ImageUploader } from "@/components/media/ImageUploader";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
