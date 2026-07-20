@@ -20,6 +20,7 @@ import { AppShell } from "@/components/AppShell";
 import { AuthDialog } from "@/components/AuthDialog";
 import { Toaster } from "@/components/ui/sonner";
 import { IosInstallHint } from "@/components/IosInstallHint";
+import { LanguageProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   useEffect(() => {
@@ -188,6 +189,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <LanguageProvider>
         <RadioPlayerProvider>
           <AppShell>
             <Outlet />
@@ -197,6 +199,7 @@ function RootComponent() {
           <IosInstallHint />
           <Toaster />
         </RadioPlayerProvider>
+        </LanguageProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
