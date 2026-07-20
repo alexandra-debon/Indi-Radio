@@ -8,8 +8,9 @@ import { useRadio } from "./RadioPlayerProvider";
  *   shadow, same focus-visible ring, aria-pressed on the mute toggle.
  */
 export function VolumeControl() {
-  const { muted, toggleMute } = useRadio();
-  const Icon = muted ? VolumeX : Volume2;
+  const { muted, toggleMute, volume, setVolume } = useRadio();
+  const Icon = muted || volume === 0 ? VolumeX : Volume2;
+  const percent = Math.round((muted ? 0 : volume) * 100);
 
   return (
     <div
@@ -27,6 +28,23 @@ export function VolumeControl() {
       >
         <Icon className="size-4" aria-hidden />
       </button>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={1}
+        value={percent}
+        onChange={(e) => setVolume(Number(e.target.value) / 100)}
+        aria-label="Réglage du volume"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        aria-valuetext={`${percent}%`}
+        // touch-none prevents the browser from swallowing horizontal drags as
+        // page scrolls on mobile; h-6 gives a fat hit area for touch.
+        className="h-6 w-28 cursor-pointer touch-none accent-primary"
+        style={{ WebkitAppearance: "none" }}
+      />
     </div>
   );
 }
