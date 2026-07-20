@@ -26,6 +26,7 @@ import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 interface PostRow {
   id: string;
@@ -568,11 +569,19 @@ export function SocialWall() {
                       );
                     }
                     return p.title ? (
-                      <h3 className="text-base font-bold leading-tight">{renderRich(p.title)}</h3>
+                      <h3 className="text-base font-bold leading-tight">
+                        <TranslatedText entityType="post" entityKey={p.id} field="title" text={p.title}>
+                          {(t) => <>{renderRich(t)}</>}
+                        </TranslatedText>
+                      </h3>
                     ) : null;
                   })()}
                   {stripMediaUrls(p.content) && (
-                    <p className="whitespace-pre-wrap text-sm">{renderRich(stripMediaUrls(p.content))}</p>
+                    <p className="whitespace-pre-wrap text-sm">
+                      <TranslatedText entityType="post" entityKey={p.id} field="content" text={stripMediaUrls(p.content)}>
+                        {(t) => <>{renderRich(t)}</>}
+                      </TranslatedText>
+                    </p>
                   )}
                   {(() => {
                     const imgs = (p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : []);
@@ -605,7 +614,11 @@ export function SocialWall() {
                         );
                       }
                       return captions[i] ? (
-                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">{renderRich(captions[i])}</p>
+                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">
+                          <TranslatedText entityType="post" entityKey={`${p.id}:cap:${i}`} field="caption" text={captions[i]}>
+                            {(t) => <>{renderRich(t)}</>}
+                          </TranslatedText>
+                        </p>
                       ) : null;
                     };
                     if (imgs.length === 1) {
@@ -824,7 +837,11 @@ export function SocialWall() {
                                 </span>
                               </div>
                               {stripMediaUrls(c.content) && (
-                                <p className="whitespace-pre-wrap text-xs">{renderRich(stripMediaUrls(c.content))}</p>
+                                <p className="whitespace-pre-wrap text-xs">
+                                  <TranslatedText entityType="post_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)}>
+                                    {(t) => <>{renderRich(t)}</>}
+                                  </TranslatedText>
+                                </p>
                               )}
                               <UrlEmbeds text={c.content} compact />
                               <div className="mt-1 flex items-center justify-between gap-2">
