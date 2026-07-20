@@ -131,6 +131,21 @@ function NewsletterPage() {
               </p>
             )}
           </div>
+          <div className="flex items-start gap-2">
+            <Checkbox
+              id="consent"
+              checked={consent}
+              onCheckedChange={(v) => setConsent(v === true)}
+              aria-describedby="consent-desc"
+            />
+            <label htmlFor="consent" id="consent-desc" className="text-xs text-muted-foreground leading-5">
+              J'accepte que mon email soit utilisé pour recevoir la newsletter.{" "}
+              <Link to="/privacy" className="underline hover:text-primary">
+                Voir la politique de confidentialité
+              </Link>
+              .
+            </label>
+          </div>
           <Button className="w-full" disabled={loading}>
             {loading ? "Inscription…" : "S'inscrire"}
           </Button>
