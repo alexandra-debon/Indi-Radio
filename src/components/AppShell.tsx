@@ -11,28 +11,32 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
+import { useT } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/i18n/LanguageToggle";
+import type { DictKey } from "@/lib/i18n/dict";
 
-const NAV = [
-  { to: "/", label: "En direct", icon: Radio },
-  { to: "/actus", label: "Actus · Indi Rézo", icon: Newspaper },
-  { to: "/emissions", label: "Émissions & Animateurs", icon: Mic2 },
-  { to: "/chart", label: "Chart des auditeurs", icon: BarChart3 },
-  { to: "/top", label: "Top Podcasts & Chroniques", icon: Star },
-  { to: "/top-users", label: "Top Utilisateurs", icon: Trophy },
-  { to: "/podcasts", label: "Podcasts", icon: Headphones },
-  { to: "/chroniques", label: "Chroniques d'albums", icon: Disc3 },
-  { to: "/clips", label: "Clip Addict", icon: Film },
-  { to: "/magazines", label: "Magazine Indi Art Culture", icon: BookOpen },
-  { to: "/dedicaces", label: "Dédicaces", icon: Send },
-  { to: "/soumission-artistes", label: "Soumission artistes", icon: Mic },
-  { to: "/contact", label: "Contact", icon: Mail },
-  { to: "/about", label: "À propos", icon: Info },
-] as const;
+const NAV: { to: string; key: DictKey; icon: any }[] = [
+  { to: "/", key: "nav.live", icon: Radio },
+  { to: "/actus", key: "nav.news", icon: Newspaper },
+  { to: "/emissions", key: "nav.shows", icon: Mic2 },
+  { to: "/chart", key: "nav.chart", icon: BarChart3 },
+  { to: "/top", key: "nav.top", icon: Star },
+  { to: "/top-users", key: "nav.topUsers", icon: Trophy },
+  { to: "/podcasts", key: "nav.podcasts", icon: Headphones },
+  { to: "/chroniques", key: "nav.reviews", icon: Disc3 },
+  { to: "/clips", key: "nav.clips", icon: Film },
+  { to: "/magazines", key: "nav.magazines", icon: BookOpen },
+  { to: "/dedicaces", key: "nav.dedications", icon: Send },
+  { to: "/soumission-artistes", key: "nav.submissions", icon: Mic },
+  { to: "/contact", key: "nav.contact", icon: Mail },
+  { to: "/about", key: "nav.about", icon: Info },
+];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { profile, isAdmin, session, openAuth, signOut } = useAuth();
+  const t = useT();
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -41,7 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:gap-3">
           <button
             onClick={() => setOpen(true)}
-            aria-label="Menu"
+            aria-label={t("action.menu")}
             className="grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
           >
             <Menu className="size-5" />
@@ -51,14 +55,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <img src={wordmarkAsset.url} alt="Indi Radio" className="h-9 sm:h-10 md:h-11 lg:h-12 w-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] min-w-0 shrink object-contain" />
           </Link>
           <div className="flex items-center justify-end">
-            <ShareButton target={{}} label="Partager cette page" className="mr-1" />
+            <LanguageToggle className="mr-1" />
+            <ShareButton target={{}} label={t("action.share")} className="mr-1" />
             {session && profile ? (
               <div className="flex items-center gap-2">
                 <NotificationsBell />
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    aria-label="Panneau admin"
+                    aria-label={t("nav.admin")}
                     className="hidden lg:inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
                   >
                     <Shield className="size-3.5" /> Admin
@@ -67,7 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <div className="flex min-w-0 items-center gap-1">
                   <Link
                     to="/profile"
-                    aria-label="Mon espace"
+                    aria-label={t("profile.mySpace")}
                     className="flex min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden lg:max-w-[10rem]"
                   >
                     <UserBadge profile={profile} compact className="text-xs" />
@@ -78,14 +83,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                         <Link
                           to="/u/$pseudo"
                           params={{ pseudo: profile.pseudo }}
-                          aria-label="Voir mon profil public"
+                          aria-label={t("profile.viewPublic")}
                           className="group inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
                         >
                           <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" sideOffset={6} className="border-2 border-black font-semibold shadow-[2px_2px_0_0_#000]">
-                        Voir mon profil public
+                        {t("profile.viewPublic")}
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -93,7 +98,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             ) : (
               <button onClick={openAuth} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
-                <LogIn className="size-3.5" /> Connexion
+                <LogIn className="size-3.5" /> {t("action.login")}
               </button>
             )}
           </div>
@@ -143,7 +148,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <img src={logoAsset.url} alt="" className="size-9 sm:size-10 md:size-11 shrink-0 rounded-sm object-contain" />
               <img src={wordmarkAsset.url} alt="Indi Radio" className="h-7 sm:h-8 md:h-9 w-auto shrink-0 object-contain" />
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Fermer" className="grid size-8 place-items-center rounded-md hover:bg-muted">
+            <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-muted">
               <X className="size-4" />
             </button>
           </div>
@@ -162,7 +167,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   )}
                 >
                   <Icon className="size-4" />
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               );
             })}
@@ -175,7 +180,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   pathname === "/admin" && "bg-destructive text-destructive-foreground",
                 )}
               >
-                <Shield className="size-4" /> Panneau admin
+                <Shield className="size-4" /> {t("nav.admin")}
               </Link>
             )}
           </nav>
@@ -189,7 +194,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <button
                   onClick={async () => { await signOut(); setOpen(false); }}
                   className="grid size-9 place-items-center rounded-md border border-border hover:bg-muted"
-                  aria-label="Déconnexion"
+                  aria-label={t("action.logout")}
                 >
                   <LogOut className="size-4" />
                 </button>
@@ -199,7 +204,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onClick={() => { openAuth(); setOpen(false); }}
                 className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
               >
-                <LogIn className="size-4" /> Se connecter
+                <LogIn className="size-4" /> {t("action.signin")}
               </button>
             )}
           </div>
