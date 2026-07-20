@@ -1362,6 +1362,22 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
   );
 }
 function ReportsAdmin() {
+  const [kind, setKind] = useState<"comments" | "images">("comments");
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {(["comments", "images"] as const).map((k) => (
+          <Button key={k} size="sm" variant={kind === k ? "default" : "outline"} onClick={() => setKind(k)}>
+            {k === "comments" ? "Commentaires" : "Photos"}
+          </Button>
+        ))}
+      </div>
+      {kind === "comments" ? <CommentReportsAdmin /> : <ImageReportsAdmin />}
+    </div>
+  );
+}
+
+function CommentReportsAdmin() {
   const qc = useQueryClient();
   const { session } = useAuth();
   const [status, setStatus] = useState<"pending" | "resolved" | "dismissed">("pending");
@@ -1485,6 +1501,141 @@ function ReportsAdmin() {
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="destructive" onClick={() => { if (confirm("Supprimer le commentaire ?")) { deleteComment.mutate({ type: r.comment_type, id: r.comment_id }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
                   <Trash2 className="mr-1 size-3" /> Supprimer & résoudre
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
+                <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "dismissed" })}>Rejeter</Button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ImageReportsAdmin() {
+  const qc = useQueryClient();
+  const { session } = useAuth();
+  const [status, setStatus] = useState<"pending" | "resolved" | "dismissed">("pending");
+
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ["admin-image-reports", status],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("image_reports")
+        .select("*")
+        .eq("status", status)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: enriched = [] } = useQuery({
+    queryKey: ["admin-image-reports-enriched", reports.map((r) => r.id).join("|")],
+    enabled: reports.length > 0,
+    queryFn: async () => {
+      const postIds = Array.from(new Set(reports.map((r) => r.post_id)));
+      const uids = Array.from(new Set(reports.map((r) => r.reporter_id)));
+      const [postsRes, profRes] = await Promise.all([
+        postIds.length
+          ? supabase.from("posts").select("id, author_id, content, image_url, image_urls").in("id", postIds)
+          : Promise.resolve({ data: [] as any[] }),
+        uids.length
+          ? supabase.from("profiles").select("id, pseudo").in("id", uids)
+          : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const posts = new Map<string, any>((postsRes.data ?? []).map((p: any) => [p.id, p]));
+      const authorIds = Array.from(new Set(Array.from(posts.values()).map((p: any) => p.author_id))).filter(Boolean);
+      let authorMap: Record<string, string> = {};
+      if (authorIds.length) {
+        const { data: a } = await supabase.from("profiles").select("id, pseudo").in("id", authorIds);
+        authorMap = Object.fromEntries((a ?? []).map((x: any) => [x.id, x.pseudo]));
+      }
+      const profs = Object.fromEntries((profRes.data ?? []).map((x: any) => [x.id, x.pseudo]));
+      return reports.map((r) => {
+        const p = posts.get(r.post_id);
+        return {
+          ...r,
+          post_author: p?.author_id ? authorMap[p.author_id] ?? "auditeur" : null,
+          post_author_id: p?.author_id ?? null,
+          post_excerpt: (p?.content ?? "").slice(0, 160),
+          reporter_pseudo: profs[r.reporter_id] ?? "auditeur",
+        };
+      });
+    },
+  });
+
+  const setStatusMut = useMutation({
+    mutationFn: async ({ id, next }: { id: string; next: "resolved" | "dismissed" }) => {
+      const { error } = await supabase
+        .from("image_reports")
+        .update({ status: next, resolved_at: new Date().toISOString(), resolved_by: session?.user.id ?? null })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Signalement traité");
+      qc.invalidateQueries({ queryKey: ["admin-image-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const removeImage = useMutation({
+    mutationFn: async ({ post_id, image_url }: { post_id: string; image_url: string }) => {
+      const { data: post, error: e1 } = await supabase.from("posts").select("image_url, image_urls").eq("id", post_id).maybeSingle();
+      if (e1) throw e1;
+      if (!post) return;
+      const nextUrls = (post.image_urls ?? []).filter((u: string) => u !== image_url);
+      const nextMain = post.image_url === image_url ? (nextUrls[0] ?? null) : post.image_url;
+      const { error } = await supabase.from("posts").update({ image_url: nextMain, image_urls: nextUrls }).eq("id", post_id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Photo retirée de la publication");
+      qc.invalidateQueries({ queryKey: ["admin-image-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {(["pending", "resolved", "dismissed"] as const).map((s) => (
+          <Button key={s} size="sm" variant={status === s ? "default" : "outline"} onClick={() => setStatus(s)}>
+            {s === "pending" ? "En attente" : s === "resolved" ? "Résolus" : "Rejetés"}
+          </Button>
+        ))}
+      </div>
+      {isLoading && <div className="card-brut p-3 text-sm text-muted-foreground">Chargement…</div>}
+      {!isLoading && enriched.length === 0 && (
+        <div className="card-brut p-4 text-sm text-muted-foreground">Aucun signalement.</div>
+      )}
+      <ul className="space-y-2">
+        {enriched.map((r: any) => (
+          <li key={r.id} className="card-brut space-y-2 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">post/{r.post_id.slice(0, 8)}</span>
+              <span className="text-muted-foreground">
+                Signalé par <b>{r.reporter_pseudo}</b> · {new Date(r.created_at).toLocaleString("fr-FR")}
+              </span>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="relative overflow-hidden rounded border border-border bg-muted sm:w-64" style={{ aspectRatio: "16/9" }}>
+                <img src={r.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
+              </div>
+              <div className="flex-1 space-y-1 text-sm">
+                <div className="text-[11px] text-muted-foreground">Auteur : {r.post_author ?? "—"}</div>
+                {r.post_excerpt && <p className="whitespace-pre-wrap text-muted-foreground">{r.post_excerpt}</p>}
+                <div className="text-xs"><span className="font-semibold">Motif :</span> {r.reason}</div>
+                <a href={r.image_url} target="_blank" rel="noreferrer" className="inline-block text-[11px] underline">Ouvrir la photo</a>
+              </div>
+            </div>
+            {status === "pending" && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="destructive" onClick={() => { if (confirm("Retirer cette photo de la publication ?")) { removeImage.mutate({ post_id: r.post_id, image_url: r.image_url }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
+                  <Trash2 className="mr-1 size-3" /> Retirer & résoudre
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
                 <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "dismissed" })}>Rejeter</Button>

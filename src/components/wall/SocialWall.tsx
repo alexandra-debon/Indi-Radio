@@ -20,6 +20,7 @@ import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
+import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 
 interface PostRow {
   id: string;
@@ -438,16 +439,22 @@ export function SocialWall() {
                     if (imgs.length === 0) return null;
                     if (imgs.length === 1) {
                       return (
-                        <div className="mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                        <div className="relative mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
                           <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
+                          {session && session.user.id !== p.author_id && (
+                            <ReportImageButton postId={p.id} imageUrl={imgs[0]} />
+                          )}
                         </div>
                       );
                     }
                     return (
                       <div className={`mt-2 grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
                         {imgs.map((u, i) => (
-                          <div key={i} className="overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                          <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
                             <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                            {session && session.user.id !== p.author_id && (
+                              <ReportImageButton postId={p.id} imageUrl={u} />
+                            )}
                           </div>
                         ))}
                       </div>
