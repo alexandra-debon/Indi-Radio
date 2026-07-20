@@ -25,7 +25,7 @@ import { InlineEditable } from "@/components/wall/InlineEditable";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
-import { Hash, X as XIcon } from "lucide-react";
+import { Hash } from "lucide-react";
 
 interface PostRow {
   id: string;
