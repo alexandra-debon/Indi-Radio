@@ -45,6 +45,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
@@ -238,6 +239,12 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicPrewarmTranslationRoute =
+  ApiPublicPrewarmTranslationRouteImport.update({
+    id: '/api/public/prewarm-translation',
+    path: '/api/public/prewarm-translation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
   id: '/api/public/mention-email',
   path: '/api/public/mention-email',
@@ -338,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
+  '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -386,6 +394,7 @@ export interface FileRoutesByTo {
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
+  '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -436,6 +445,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
+  '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/api/public/health'
     | '/api/public/mention-email'
+    | '/api/public/prewarm-translation'
     | '/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/api/public/health'
     | '/api/public/mention-email'
+    | '/api/public/prewarm-translation'
     | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -583,6 +595,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/edit'
     | '/api/public/health'
     | '/api/public/mention-email'
+    | '/api/public/prewarm-translation'
     | '/_authenticated/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -622,6 +635,7 @@ export interface RootRouteChildren {
   UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
+  ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -883,6 +897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/prewarm-translation': {
+      id: '/api/public/prewarm-translation'
+      path: '/api/public/prewarm-translation'
+      fullPath: '/api/public/prewarm-translation'
+      preLoaderRoute: typeof ApiPublicPrewarmTranslationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/mention-email': {
       id: '/api/public/mention-email'
       path: '/api/public/mention-email'
@@ -1083,6 +1104,7 @@ const rootRouteChildren: RootRouteChildren = {
   UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
+  ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
