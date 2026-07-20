@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/lib/toast";
 import { sendTestEmail, listRecentEmailEvents } from "@/lib/email-diagnostics.functions";
+import { checkEmailDns } from "@/lib/dns-check.functions";
+import { CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
 
 const SENDER = "notify.radio.indi-art-culture.com";
 const ROOT = "radio.indi-art-culture.com";
@@ -23,6 +25,14 @@ export function EmailStatusPanel() {
 
   const runTest = useServerFn(sendTestEmail);
   const fetchEvents = useServerFn(listRecentEmailEvents);
+  const runDnsCheck = useServerFn(checkEmailDns);
+
+  const dnsQuery = useQuery({
+    queryKey: ["admin-email-dns"],
+    queryFn: () => runDnsCheck(),
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+  });
 
   const eventsQuery = useQuery({
     queryKey: ["admin-email-events"],
@@ -57,10 +67,59 @@ export function EmailStatusPanel() {
             <span className="font-medium">Sous-domaine :</span>{" "}
             <code className="bg-muted px-1.5 py-0.5 rounded">{SENDER}</code>
           </div>
-          <div>
-            <span className="font-medium">État :</span>{" "}
-            <Badge variant="outline">Voir résultat du test ci-dessous</Badge>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-medium">État propagation DNS :</span>{" "}
+            {dnsQuery.isLoading || dnsQuery.isFetching ? (
+              <Badge variant="outline" className="gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" /> Vérification…
+              </Badge>
+            ) : dnsQuery.data?.allOk ? (
+              <Badge className="bg-green-600 hover:bg-green-600 gap-1">
+                <CheckCircle2 className="h-3 w-3" /> Vérifié
+              </Badge>
+            ) : (
+              <Badge variant="destructive" className="gap-1">
+                <XCircle className="h-3 w-3" /> En attente
+              </Badge>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => dnsQuery.refetch()} className="h-6 px-2">
+              <RefreshCw className="h-3 w-3 mr-1" /> Revérifier
+            </Button>
+            {dnsQuery.data?.checkedAt && (
+              <span className="text-xs text-muted-foreground">
+                MAJ {new Date(dnsQuery.data.checkedAt).toLocaleTimeString("fr-FR")}
+              </span>
+            )}
           </div>
+          {dnsQuery.data && (
+            <div className="rounded border p-2 space-y-1 text-xs">
+              <div className="flex items-center gap-2">
+                {dnsQuery.data.ns.ok ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-red-600" />
+                )}
+                <span className="font-medium">NS {dnsQuery.data.sender}</span>
+                <span className="text-muted-foreground">
+                  attendu : {dnsQuery.data.ns.expected.join(", ")}
+                </span>
+              </div>
+              <div className="pl-6 text-muted-foreground">
+                trouvé : {dnsQuery.data.ns.found.length ? dnsQuery.data.ns.found.join(", ") : "aucun"}
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                {dnsQuery.data.txt.ok ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-red-600" />
+                )}
+                <span className="font-medium">TXT {dnsQuery.data.txt.host}</span>
+              </div>
+              <div className="pl-6 text-muted-foreground break-all">
+                trouvé : {dnsQuery.data.txt.found.length ? dnsQuery.data.txt.found.join(" | ") : "aucun"}
+              </div>
+            </div>
+          )}
           <div className="pt-2">
             <p className="font-medium mb-2">Enregistrements DNS attendus (chez votre registrar) :</p>
             <div className="overflow-x-auto">
