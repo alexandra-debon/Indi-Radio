@@ -21,6 +21,7 @@ import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } fr
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
+import { InlineEditable } from "@/components/wall/InlineEditable";
 
 interface PostRow {
   id: string;
@@ -32,6 +33,8 @@ interface PostRow {
   social_links: SocialLinks | null;
   image_url: string | null;
   image_urls: string[] | null;
+  title: string | null;
+  image_captions: string[] | null;
   author: {
     id: string;
     pseudo: string;
@@ -79,6 +82,7 @@ export function SocialWall() {
   const canUploadImages = !!session;
   const qc = useQueryClient();
   const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -108,7 +112,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
@@ -218,11 +222,14 @@ export function SocialWall() {
         social_links: isAdmin ? sanitizeLinks(socialDraft) : {},
         image_url: canUploadImages ? (imageDraft.trim() || imagesDraft[0] || null) : null,
         image_urls: canUploadImages ? imagesDraft : [],
+        title: title.trim() || null,
+        image_captions: canUploadImages ? new Array(imagesDraft.length).fill("") : [],
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       setContent("");
+      setTitle("");
       setVideoUrl("");
       setSocialDraft({});
       setImageDraft("");
@@ -337,6 +344,14 @@ export function SocialWall() {
           disabled={!session}
         />
         <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Titre (optionnel)"
+          maxLength={120}
+          disabled={!session}
+          className="mt-2 h-8 text-xs font-semibold"
+        />
+        <Input
           type="url"
           inputMode="url"
           value={videoUrl}
@@ -431,30 +446,90 @@ export function SocialWall() {
                 </div>
               ) : (
                 <>
+                  {(() => {
+                    const canEditMeta = isOwner || isAdmin;
+                    if (canEditMeta) {
+                      return (
+                        <InlineEditable
+                          initial={p.title ?? ""}
+                          placeholder="Ajouter un titre…"
+                          ariaLabel="Titre de la publication"
+                          maxLength={120}
+                          className="text-base font-bold leading-tight"
+                          save={async (v) => {
+                            const { error } = await supabase
+                              .from("posts")
+                              .update({ title: v.trim() || null } as any)
+                              .eq("id", p.id);
+                            if (error) throw error;
+                            qc.invalidateQueries({ queryKey: ["wall-posts"] });
+                          }}
+                        />
+                      );
+                    }
+                    return p.title ? (
+                      <h3 className="text-base font-bold leading-tight">{p.title}</h3>
+                    ) : null;
+                  })()}
                   {stripMediaUrls(p.content) && (
                     <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
                   )}
                   {(() => {
                     const imgs = (p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : []);
                     if (imgs.length === 0) return null;
+                    const captions = p.image_captions ?? [];
+                    const canEditMeta = isOwner || isAdmin;
+                    const saveCaption = (idx: number) => async (v: string) => {
+                      const next = imgs.map((_, i) => (captions[i] ?? ""));
+                      next[idx] = v;
+                      const { error } = await supabase
+                        .from("posts")
+                        .update({ image_captions: next } as any)
+                        .eq("id", p.id);
+                      if (error) throw error;
+                      qc.invalidateQueries({ queryKey: ["wall-posts"] });
+                    };
+                    const CaptionSlot = ({ i }: { i: number }) => {
+                      if (canEditMeta) {
+                        return (
+                          <InlineEditable
+                            initial={captions[i] ?? ""}
+                            placeholder="Légende…"
+                            ariaLabel={`Légende de l'image ${i + 1}`}
+                            maxLength={200}
+                            className="text-[11px] text-muted-foreground"
+                            save={saveCaption(i)}
+                          />
+                        );
+                      }
+                      return captions[i] ? (
+                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">{captions[i]}</p>
+                      ) : null;
+                    };
                     if (imgs.length === 1) {
                       return (
-                        <div className="relative mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
-                          <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
-                          {session && session.user.id !== p.author_id && (
-                            <ReportImageButton postId={p.id} imageUrl={imgs[0]} />
-                          )}
+                        <div className="mt-2">
+                          <div className="relative w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                            <img src={imgs[0]} alt={captions[0] ?? ""} loading="lazy" className="w-full h-full object-cover" />
+                            {session && session.user.id !== p.author_id && (
+                              <ReportImageButton postId={p.id} imageUrl={imgs[0]} />
+                            )}
+                          </div>
+                          <CaptionSlot i={0} />
                         </div>
                       );
                     }
                     return (
                       <div className={`mt-2 grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
                         {imgs.map((u, i) => (
-                          <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
-                            <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
-                            {session && session.user.id !== p.author_id && (
-                              <ReportImageButton postId={p.id} imageUrl={u} />
-                            )}
+                          <div key={i} className="flex flex-col">
+                            <div className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                              <img src={u} alt={captions[i] ?? ""} loading="lazy" className="w-full h-full object-cover" />
+                              {session && session.user.id !== p.author_id && (
+                                <ReportImageButton postId={p.id} imageUrl={u} />
+                              )}
+                            </div>
+                            <CaptionSlot i={i} />
                           </div>
                         ))}
                       </div>
