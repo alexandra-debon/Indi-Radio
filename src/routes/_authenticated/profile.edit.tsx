@@ -79,15 +79,26 @@ function EditProfilePage() {
 
   if (!profile || !session) return <div className="p-4">Chargement…</div>;
 
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) { toast.error("Merci de choisir une image"); return; }
     if (file.size > 4 * 1024 * 1024) { toast.error("Image trop lourde (4 Mo max)"); return; }
+    if (avatarUrl) {
+      setPendingFile(file);
+      setShowOverwriteDialog(true);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    void uploadAvatar(file);
+  }
+
+  async function uploadAvatar(file: File) {
+    if (!session) return;
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "jpg";
-      const path = `${session!.user.id}/avatar-${Date.now()}.${ext}`;
+      const path = `${session.user.id}/avatar-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
         cacheControl: "3600",
         upsert: true,
@@ -102,15 +113,14 @@ function EditProfilePage() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+      setPendingFile(null);
     }
   }
 
   async function handleRemoveAvatar() {
     if (!session) return;
-    if (!confirm("Supprimer ton avatar et revenir à l'image par défaut ?")) return;
     setRemoving(true);
     try {
-      // Best-effort: delete previous files in the user's folder
       const { data: files } = await supabase.storage.from("avatars").list(session.user.id);
       if (files && files.length > 0) {
         await supabase.storage
