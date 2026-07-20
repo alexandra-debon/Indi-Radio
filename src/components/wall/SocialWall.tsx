@@ -73,7 +73,8 @@ function renderMentions(content: string) {
 }
 
 export function SocialWall() {
-  const { session, requireAuth, isAdmin } = useAuth();
+  const { session, requireAuth, isAdmin, isArtiste } = useAuth();
+  const canUploadImages = isAdmin || isArtiste;
   const qc = useQueryClient();
   const [content, setContent] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -213,8 +214,8 @@ export function SocialWall() {
         content: finalContent,
         mentions,
         social_links: isAdmin ? sanitizeLinks(socialDraft) : {},
-        image_url: isAdmin ? (imageDraft.trim() || imagesDraft[0] || null) : null,
-        image_urls: isAdmin ? imagesDraft : [],
+        image_url: canUploadImages ? (imageDraft.trim() || imagesDraft[0] || null) : null,
+        image_urls: canUploadImages ? imagesDraft : [],
       } as any);
       if (error) throw error;
     },
@@ -347,7 +348,7 @@ export function SocialWall() {
             <SocialLinksEditor value={socialDraft} onChange={setSocialDraft} />
           </div>
         )}
-        {isAdmin && (
+        {canUploadImages && (
           <div className="mt-2">
             <MultiImageUploader values={imagesDraft} onChange={setImagesDraft} folder="wall" />
           </div>
@@ -410,7 +411,7 @@ export function SocialWall() {
                   {isAdmin && (
                     <SocialLinksEditor value={editSocial} onChange={setEditSocial} />
                   )}
-                  {isAdmin && (
+                  {(isAdmin || isOwner) && (
                     <MultiImageUploader values={editImages} onChange={setEditImages} folder="wall" />
                   )}
                   <div className="flex justify-end gap-2">
@@ -419,7 +420,7 @@ export function SocialWall() {
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: isAdmin ? (editImages[0] || null) : undefined, image_urls: isAdmin ? editImages : undefined })}
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: (isAdmin || isOwner) ? (editImages[0] || null) : undefined, image_urls: (isAdmin || isOwner) ? editImages : undefined })}
                       disabled={!editContent.trim() || updatePost.isPending}
                     >
                       <Check className="size-3.5" /> Enregistrer
