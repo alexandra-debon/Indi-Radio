@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -45,6 +45,7 @@ function EditProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -79,6 +80,33 @@ function EditProfilePage() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function handleRemoveAvatar() {
+    if (!session) return;
+    if (!confirm("Supprimer ton avatar et revenir à l'image par défaut ?")) return;
+    setRemoving(true);
+    try {
+      // Best-effort: delete previous files in the user's folder
+      const { data: files } = await supabase.storage.from("avatars").list(session.user.id);
+      if (files && files.length > 0) {
+        await supabase.storage
+          .from("avatars")
+          .remove(files.map((f) => `${session.user.id}/${f.name}`));
+      }
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null } as any)
+        .eq("id", session.user.id);
+      if (error) throw error;
+      setAvatarUrl(null);
+      await qc.invalidateQueries({ queryKey: ["profile", session.user.id] });
+      toast.success("Avatar supprimé");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Impossible de supprimer l'avatar");
+    } finally {
+      setRemoving(false);
     }
   }
 
@@ -162,13 +190,17 @@ function EditProfilePage() {
               {uploading ? "Envoi…" : "Changer l'avatar"}
             </Button>
             {avatarUrl && (
-              <button
+              <Button
                 type="button"
-                onClick={() => setAvatarUrl(null)}
-                className="block text-[11px] text-muted-foreground underline"
+                variant="outline"
+                size="sm"
+                disabled={removing || uploading}
+                onClick={handleRemoveAvatar}
+                className="text-destructive"
               >
-                Retirer l'avatar
-              </button>
+                {removing ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                {removing ? "Suppression…" : "Supprimer l'avatar"}
+              </Button>
             )}
           </div>
         </div>
