@@ -24,6 +24,8 @@ import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
+import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
+import { Hash } from "lucide-react";
 
 interface PostRow {
   id: string;
@@ -78,6 +80,7 @@ export function SocialWall() {
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [socialDraft, setSocialDraft] = useState<SocialLinks>({});
   const [editSocial, setEditSocial] = useState<SocialLinks>({});
@@ -101,17 +104,28 @@ export function SocialWall() {
   }, [hash]);
 
   const { data: posts = [] } = useQuery<PostRow[]>({
-    queryKey: ["wall-posts"],
+    queryKey: ["wall-posts", activeTag],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let req = supabase
         .from("posts")
         .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
+      if (activeTag) {
+        const needle = `%#${activeTag}%`;
+        req = req.or(`content.ilike.${needle},title.ilike.${needle}`);
+      }
+      const { data, error } = await req;
       if (error) throw error;
       return (data ?? []) as unknown as PostRow[];
     },
+  });
+
+  const { data: popularTags = [] } = useQuery<HashtagSuggestion[]>({
+    queryKey: ["wall-popular-tags"],
+    queryFn: () => suggestHashtags("", { limit: 12 }),
+    staleTime: 60_000,
   });
 
   useEffect(() => {
@@ -424,13 +438,55 @@ export function SocialWall() {
         </div>
       </div>
 
+      {(popularTags.length > 0 || activeTag) && (
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background/40 p-2">
+          <span className="mr-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+            <Hash className="size-3" /> Filtrer
+          </span>
+          {popularTags.map((t) => {
+            const isActive = activeTag === t.tag;
+            return (
+              <button
+                key={t.tag}
+                type="button"
+                onClick={() => setActiveTag(isActive ? null : t.tag)}
+                aria-pressed={isActive}
+                className={
+                  "inline-flex items-center gap-1 rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                  (isActive
+                    ? "bg-primary text-black shadow-[2px_2px_0_0_#000]"
+                    : "bg-background hover:bg-muted")
+                }
+              >
+                #{t.tag}
+                <span className="text-[9px] font-normal opacity-70">{t.count}</span>
+              </button>
+            );
+          })}
+          {activeTag && (
+            <button
+              type="button"
+              onClick={() => setActiveTag(null)}
+              className="ml-auto inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[11px] font-semibold text-muted-foreground hover:bg-muted"
+            >
+              <X className="size-3" /> Réinitialiser
+            </button>
+          )}
+        </div>
+      )}
+
       <ul
         ref={listRef}
         className="max-h-[28rem] space-y-2 overflow-y-auto rounded-lg border border-border bg-background/40 p-2 pr-3"
       >
-        {posts.length === 0 && (
+        {posts.length === 0 && !activeTag && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             Le mur est vide — sois le premier à écrire !
+          </li>
+        )}
+        {posts.length === 0 && activeTag && (
+          <li className="card-brut p-4 text-center text-sm text-muted-foreground">
+            Aucune publication avec <span className="font-semibold text-primary">#{activeTag}</span>.
           </li>
         )}
         {posts.map((p) => {
