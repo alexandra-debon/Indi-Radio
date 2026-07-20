@@ -125,14 +125,14 @@ function LivePage() {
             {t("live.noAdsNoNews")}
           </span>
           <UserCountBadge />
-        </div>
-        <div className="card-brut relative overflow-hidden p-4">
           <img
             src={indiRadioWordmark.url}
             alt="InDi RaDio"
             aria-hidden="true"
-            className="pointer-events-none absolute right-2 top-2 z-10 h-10 w-auto max-w-[6rem] rotate-[4deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-14 sm:max-w-[9rem] md:h-16 md:max-w-[11rem] lg:h-20 lg:max-w-[13rem]"
+            className="pointer-events-none ml-auto h-10 w-auto max-w-[6rem] rotate-[4deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-14 sm:max-w-[9rem] md:h-16 md:max-w-[11rem] lg:h-20 lg:max-w-[13rem]"
           />
+        </div>
+        <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
               {heroArtwork ? (
