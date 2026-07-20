@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -62,9 +62,26 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <Shield className="size-3.5" /> Admin
                   </Link>
                 )}
-                <Link to="/profile" className="flex min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden lg:max-w-[10rem]">
-                  <UserBadge profile={profile} compact className="text-xs" />
-                </Link>
+                <div className="flex min-w-0 items-center gap-1">
+                  <Link
+                    to="/profile"
+                    aria-label="Mon espace"
+                    className="flex min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden lg:max-w-[10rem]"
+                  >
+                    <UserBadge profile={profile} compact className="text-xs" />
+                  </Link>
+                  {profile?.pseudo && (
+                    <Link
+                      to="/u/$pseudo"
+                      params={{ pseudo: profile.pseudo }}
+                      aria-label="Voir mon profil public"
+                      title="Voir mon profil public"
+                      className="group inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+                    >
+                      <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                    </Link>
+                  )}
+                </div>
               </div>
             ) : (
               <button onClick={openAuth} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
