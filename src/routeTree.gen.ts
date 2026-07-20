@@ -31,6 +31,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UPseudoRouteImport } from './routes/u.$pseudo'
+import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
@@ -160,6 +161,11 @@ const IndexRoute = IndexRouteImport.update({
 const UPseudoRoute = UPseudoRouteImport.update({
   id: '/u/$pseudo',
   path: '/u/$pseudo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagTagRoute = TagTagRouteImport.update({
+  id: '/tag/$tag',
+  path: '/tag/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPostIdRoute = PPostIdRouteImport.update({
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -395,6 +403,7 @@ export interface FileRoutesById {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -441,6 +450,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/tag/$tag'
     | '/u/$pseudo'
     | '/profile/albums'
     | '/profile/badges'
@@ -485,6 +495,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/tag/$tag'
     | '/u/$pseudo'
     | '/profile/albums'
     | '/profile/badges'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/tag/$tag'
     | '/u/$pseudo'
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
@@ -568,6 +580,7 @@ export interface RootRouteChildren {
   TopUsersRoute: typeof TopUsersRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   PPostIdRoute: typeof PPostIdRoute
+  TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
@@ -731,6 +744,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$pseudo'
       fullPath: '/u/$pseudo'
       preLoaderRoute: typeof UPseudoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag/$tag': {
+      id: '/tag/$tag'
+      path: '/tag/$tag'
+      fullPath: '/tag/$tag'
+      preLoaderRoute: typeof TagTagRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$postId': {
@@ -997,6 +1017,7 @@ const rootRouteChildren: RootRouteChildren = {
   TopUsersRoute: TopUsersRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   PPostIdRoute: PPostIdRoute,
+  TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,

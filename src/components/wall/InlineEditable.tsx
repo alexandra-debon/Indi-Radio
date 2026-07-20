@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
+import { renderRich } from "@/lib/rich-text";
 
 type Props = {
   initial: string;
@@ -10,6 +12,8 @@ type Props = {
   ariaLabel: string;
   maxLength?: number;
   save: (value: string) => Promise<void>;
+  withEmoji?: boolean;
+  preview?: boolean;
 };
 
 /**
@@ -24,11 +28,33 @@ export function InlineEditable({
   ariaLabel,
   maxLength,
   save,
+  withEmoji,
+  preview,
 }: Props) {
   const [value, setValue] = useState(initial ?? "");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const timer = useRef<number | null>(null);
   const last = useRef(initial ?? "");
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  const [focused, setFocused] = useState(false);
+
+  const insertAtCursor = (snippet: string) => {
+    const el = inputRef.current;
+    if (!el) {
+      setValue((v) => v + snippet);
+      return;
+    }
+    const start = el.selectionStart ?? value.length;
+    const end = el.selectionEnd ?? value.length;
+    const next = value.slice(0, start) + snippet + value.slice(end);
+    if (maxLength && next.length > maxLength) return;
+    setValue(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      const pos = start + snippet.length;
+      try { el.setSelectionRange(pos, pos); } catch { /* noop */ }
+    });
+  };
 
   useEffect(() => {
     setValue(initial ?? "");
@@ -69,22 +95,33 @@ export function InlineEditable({
       {multiline ? (
         <textarea
           aria-label={ariaLabel}
+          ref={(el) => { inputRef.current = el; }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 120)}
           placeholder={placeholder}
           maxLength={maxLength}
           rows={2}
-          className={cn(baseCls, "resize-none")}
+          className={cn(baseCls, "resize-none", withEmoji && "pr-8")}
         />
       ) : (
         <input
           aria-label={ariaLabel}
+          ref={(el) => { inputRef.current = el; }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 120)}
           placeholder={placeholder}
           maxLength={maxLength}
-          className={baseCls}
+          className={cn(baseCls, withEmoji && "pr-8")}
         />
+      )}
+      {withEmoji && (
+        <div className="absolute right-6 top-0.5">
+          <EmojiPickerButton onPick={(e) => insertAtCursor(e)} />
+        </div>
       )}
       <span
         aria-live="polite"
@@ -100,6 +137,12 @@ export function InlineEditable({
         {status === "saved" && "✓"}
         {status === "error" && "!"}
       </span>
+      {preview && focused && value.trim() && (
+        <div className="mt-1 rounded border border-dashed border-border bg-muted/30 px-1.5 py-1 text-[11px] leading-snug">
+          <span className="mr-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu</span>
+          <span className="whitespace-pre-wrap">{renderRich(value)}</span>
+        </div>
+      )}
     </div>
   );
 }

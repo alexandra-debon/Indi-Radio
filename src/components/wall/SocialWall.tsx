@@ -22,6 +22,8 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
+import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
+import { renderRich } from "@/lib/rich-text";
 
 interface PostRow {
   id: string;
@@ -64,17 +66,6 @@ interface CommentRow {
 }
 
 const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
-
-function renderMentions(content: string) {
-  const parts = content.split(/(@[\p{L}\p{N}_.-]+)/gu);
-  return parts.map((p, i) =>
-    p.startsWith("@") ? (
-      <span key={i} className="mention">{p}</span>
-    ) : (
-      <span key={i}>{p}</span>
-    ),
-  );
-}
 
 export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
@@ -351,6 +342,26 @@ export function SocialWall() {
           disabled={!session}
           className="mt-2 h-8 text-xs font-semibold"
         />
+        {(title.trim() || content.trim()) && (
+          <div className="mt-1 flex items-center gap-2">
+            <EmojiPickerButton
+              onPick={(e) => setContent((v) => v + e)}
+              ariaLabel="Insérer un emoji dans le message"
+            />
+            <span className="text-[10px] text-muted-foreground">
+              Astuce : utilise <span className="font-semibold text-primary">#hashtag</span> pour rendre un mot cliquable.
+            </span>
+          </div>
+        )}
+        {(title.trim() || content.trim()) && (
+          <div className="mt-1 rounded border border-dashed border-border bg-muted/30 px-1.5 py-1 text-[11px] leading-snug">
+            <span className="mr-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu</span>
+            {title.trim() && (
+              <span className="mr-1 font-bold">{renderRich(title)}</span>
+            )}
+            <span className="whitespace-pre-wrap">{renderRich(content)}</span>
+          </div>
+        )}
         <Input
           type="url"
           inputMode="url"
@@ -456,6 +467,8 @@ export function SocialWall() {
                           ariaLabel="Titre de la publication"
                           maxLength={120}
                           className="text-base font-bold leading-tight"
+                          withEmoji
+                          preview
                           save={async (v) => {
                             const { error } = await supabase
                               .from("posts")
@@ -468,11 +481,11 @@ export function SocialWall() {
                       );
                     }
                     return p.title ? (
-                      <h3 className="text-base font-bold leading-tight">{p.title}</h3>
+                      <h3 className="text-base font-bold leading-tight">{renderRich(p.title)}</h3>
                     ) : null;
                   })()}
                   {stripMediaUrls(p.content) && (
-                    <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
+                    <p className="whitespace-pre-wrap text-sm">{renderRich(stripMediaUrls(p.content))}</p>
                   )}
                   {(() => {
                     const imgs = (p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : []);
@@ -498,12 +511,14 @@ export function SocialWall() {
                             ariaLabel={`Légende de l'image ${i + 1}`}
                             maxLength={200}
                             className="text-[11px] text-muted-foreground"
+                            withEmoji
+                            preview
                             save={saveCaption(i)}
                           />
                         );
                       }
                       return captions[i] ? (
-                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">{captions[i]}</p>
+                        <p className="mt-1 px-1.5 text-[11px] text-muted-foreground">{renderRich(captions[i])}</p>
                       ) : null;
                     };
                     if (imgs.length === 1) {
@@ -695,7 +710,7 @@ export function SocialWall() {
                                 </span>
                               </div>
                               {stripMediaUrls(c.content) && (
-                                <p className="whitespace-pre-wrap text-xs">{renderMentions(stripMediaUrls(c.content))}</p>
+                                <p className="whitespace-pre-wrap text-xs">{renderRich(stripMediaUrls(c.content))}</p>
                               )}
                               <UrlEmbeds text={c.content} compact />
                               <div className="mt-1 flex items-center justify-between gap-2">
