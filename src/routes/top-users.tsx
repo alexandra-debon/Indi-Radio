@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Medal, Award, BadgeCheck } from "lucide-react";
@@ -76,13 +76,7 @@ function TopUsersPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <Link
-                      to="/u/$pseudo"
-                      params={{ pseudo }}
-                      className="truncate text-sm font-semibold hover:underline"
-                    >
-                      @{pseudo}
-                    </Link>
+                    <span className="truncate text-sm font-semibold">@{pseudo}</span>
                     {u.is_certified && <BadgeCheck className="size-4 shrink-0 text-primary" aria-label="Certifié" />}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
