@@ -149,6 +149,35 @@ function NotificationsCenter() {
     onSuccess: invalidate,
   });
 
+  const { data: mentionsEnabled = true } = useQuery({
+    queryKey: ["notif-pref-mentions", session?.user.id],
+    enabled: !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("notification_preferences")
+        .select("mentions")
+        .eq("user_id", session!.user.id)
+        .maybeSingle();
+      return data?.mentions ?? true;
+    },
+  });
+
+  const toggleMentions = useMutation({
+    mutationFn: async (next: boolean) => {
+      if (!session) return;
+      const { error } = await supabase
+        .from("notification_preferences")
+        .upsert({ user_id: session.user.id, mentions: next }, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: (_d, next) => {
+      qc.invalidateQueries({ queryKey: ["notif-pref-mentions", session?.user.id] });
+      qc.invalidateQueries({ queryKey: ["notification_preferences", session?.user.id] });
+      toast.success(next ? "Notifications @mentions activées" : "Notifications @mentions coupées");
+    },
+    onError: () => toast.error("Impossible de mettre à jour la préférence"),
+  });
+
   const groups = useMemo(() => {
     const map = new Map<string, { key: string; url: string | null; items: Notif[] }>();
     for (const n of filtered) {
