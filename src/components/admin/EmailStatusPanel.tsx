@@ -48,10 +48,18 @@ export function EmailStatusPanel() {
       toast.error("Aucun abonné à exporter");
       return;
     }
-    const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+    const escape = (v: string | null | undefined) =>
+      v == null ? "" : `"${String(v).replace(/"/g, '""')}"`;
     const csv = [
-      "email,subscribed_at",
-      ...rows.map((r: any) => `${escape(r.email)},${escape(r.subscribed_at ?? "")}`),
+      "email,subscribed_at,source,consent_rgpd",
+      ...rows.map((r: any) =>
+        [
+          escape(r.email),
+          escape(r.subscribed_at ?? ""),
+          escape(r.source ?? ""),
+          escape(r.gdpr_consent_at ?? ""),
+        ].join(",")
+      ),
     ].join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
