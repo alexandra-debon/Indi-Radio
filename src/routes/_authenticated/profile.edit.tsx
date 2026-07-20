@@ -86,7 +86,7 @@ function EditProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) { toast.error("Merci de choisir une image"); return; }
-    if (file.size > 4 * 1024 * 1024) { toast.error("Image trop lourde (4 Mo max)"); return; }
+    if (file.size > 20 * 1024 * 1024) { toast.error("Image trop lourde (20 Mo max)"); return; }
     if (avatarUrl) {
       setPendingFile(file);
       setShowOverwriteDialog(true);
