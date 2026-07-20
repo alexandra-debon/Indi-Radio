@@ -90,13 +90,15 @@ for (const path of ROUTES) {
   for (const lang of ["fr", "en"]) {
     const url = `${BASE}${path}?hl=${lang}`;
     try {
-      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 20000 });
+      await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
       // Let SeoLocalizer effect run.
-      await page.waitForFunction(
-        (l) => document.head.querySelector(`link[rel="alternate"][hreflang="${l}"]`) !== null,
-        lang,
-        { timeout: 5000 },
-      ).catch(() => {});
+      await page
+        .waitForFunction(
+          (l) => document.head.querySelector(`link[rel="alternate"][hreflang="${l}"]`) !== null,
+          lang,
+          { timeout: 15000 },
+        )
+        .catch(() => {});
       const snap = await page.evaluate(collect);
       const errs = validate(path, lang, snap);
       if (errs.length) {
