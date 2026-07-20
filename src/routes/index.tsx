@@ -115,28 +115,30 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="flex items-start gap-2">
-          <h1 className="section-title">{t("page.live.now")}</h1>
-          <div className="flex shrink-0 flex-col items-center gap-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
-              <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
-              {t("live.indieNoAds")}
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-1">
-              <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-                {t("live.noAdsNoNews")}
+        <div className="grid grid-cols-[1fr_auto] items-start gap-2">
+          <div className="flex flex-wrap items-start gap-2">
+            <h1 className="section-title">{t("page.live.now")}</h1>
+            <div className="flex shrink-0 flex-col items-center gap-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
+                <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
+                {t("live.indieNoAds")}
               </span>
-              <UserCountBadge />
+              <div className="flex flex-wrap items-center justify-center gap-1">
+                <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+                  {t("live.noAdsNoNews")}
+                </span>
+                <UserCountBadge />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="card-brut relative overflow-hidden p-4">
           <img
             src={indiRadioWordmark.url}
             alt="InDi RaDio"
             aria-hidden="true"
-            className="pointer-events-none absolute -top-1 -right-1 h-14 w-auto max-w-[45%] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:top-2 sm:right-2 sm:h-16 md:h-20 lg:h-24"
+            className="pointer-events-none h-12 w-auto max-w-[8rem] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-14 md:h-16 lg:h-20"
           />
+        </div>
+        <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
               {heroArtwork ? (
