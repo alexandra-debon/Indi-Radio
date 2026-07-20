@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
-import { Images, Plus, Trash2, Check } from "lucide-react";
+import { Images, Plus, Trash2, Check, GripVertical } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/profile/albums")({
   head: () => ({ meta: [{ title: "Mes albums photos — InDi RaDio" }] }),
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/profile/albums")({
   notFoundComponent: () => <div className="p-4">Introuvable.</div>,
 });
 
-type Album = { id: string; title: string; description: string | null; cover_url: string | null; created_at: string };
+type Album = { id: string; title: string; description: string | null; cover_url: string | null; created_at: string; photo_order: string[] | null };
 type PhotoPost = { id: string; image_url: string | null; image_urls: string[] | null; album_id: string | null; title: string | null; created_at: string };
 
 function AlbumsManager() {
@@ -34,7 +34,7 @@ function AlbumsManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("photo_albums")
-        .select("id, title, description, cover_url, created_at")
+        .select("id, title, description, cover_url, created_at, photo_order")
         .eq("owner_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -117,8 +117,52 @@ function AlbumsManager() {
   });
 
   const activeAlbum = albums.find((a) => a.id === selectedAlbum) ?? null;
-  const postsInAlbum = photoPosts.filter((p) => p.album_id === selectedAlbum);
+  const postsInAlbumRaw = photoPosts.filter((p) => p.album_id === selectedAlbum);
   const postsUnassigned = photoPosts.filter((p) => p.album_id !== selectedAlbum);
+
+  // Local ordered list of post IDs for the active album, seeded from the
+  // stored photo_order (falling back to created_at DESC for legacy albums).
+  const [orderedIds, setOrderedIds] = useState<string[]>([]);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const savingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!activeAlbum) { setOrderedIds([]); return; }
+    const stored = (activeAlbum.photo_order ?? []).filter((id) => postsInAlbumRaw.some((p) => p.id === id));
+    const missing = postsInAlbumRaw.map((p) => p.id).filter((id) => !stored.includes(id));
+    setOrderedIds([...stored, ...missing]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeAlbum?.id, postsInAlbumRaw.length]);
+
+  const postsInAlbum = orderedIds
+    .map((id) => postsInAlbumRaw.find((p) => p.id === id))
+    .filter((p): p is PhotoPost => !!p);
+
+  const saveOrder = useMutation({
+    mutationFn: async ({ albumId, order }: { albumId: string; order: string[] }) => {
+      const { error } = await supabase.from("photo_albums").update({ photo_order: order } as any).eq("id", albumId);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: ["my-albums"] });
+      qc.invalidateQueries({ queryKey: ["album", v.albumId] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const scheduleSave = (albumId: string, order: string[]) => {
+    if (savingRef.current) clearTimeout(savingRef.current);
+    savingRef.current = setTimeout(() => { saveOrder.mutate({ albumId, order }); }, 400);
+  };
+
+  const reorder = (from: number, to: number) => {
+    if (!activeAlbum || from === to || from < 0 || to < 0) return;
+    const next = orderedIds.slice();
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    setOrderedIds(next);
+    scheduleSave(activeAlbum.id, next);
+  };
 
   return (
     <div className="mx-auto max-w-4xl space-y-4 p-4">
@@ -194,12 +238,26 @@ function AlbumsManager() {
             {postsInAlbum.length === 0 ? (
               <p className="text-xs text-muted-foreground">Aucune photo — choisis-en dans la liste ci-dessous.</p>
             ) : (
+              <>
+              <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">Glisse pour réorganiser — sauvegarde auto</p>
               <div className="grid grid-cols-3 gap-1 sm:grid-cols-4">
-                {postsInAlbum.map((p) => {
+                {postsInAlbum.map((p, idx) => {
                   const url = (p.image_urls && p.image_urls[0]) || p.image_url || "";
                   return (
-                    <div key={p.id} className="group relative aspect-square overflow-hidden rounded border border-border bg-muted">
+                    <div
+                      key={p.id}
+                      draggable
+                      onDragStart={(e) => { setDragIdx(idx); e.dataTransfer.effectAllowed = "move"; }}
+                      onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
+                      onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) reorder(dragIdx, idx); setDragIdx(null); }}
+                      onDragEnd={() => setDragIdx(null)}
+                      className={`group relative aspect-square cursor-move overflow-hidden rounded border border-border bg-muted ${dragIdx === idx ? "opacity-50" : ""}`}
+                    >
                       <img src={url} alt="" className="h-full w-full object-cover" />
+                      <span className="absolute left-1 top-1 grid size-5 place-items-center rounded bg-black/60 text-white opacity-0 transition group-hover:opacity-100" aria-hidden>
+                        <GripVertical className="size-3" />
+                      </span>
+                      <span className="absolute right-1 top-1 rounded bg-black/60 px-1 text-[9px] font-bold text-white">{idx + 1}</span>
                       <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-black/60 p-1 opacity-0 transition group-hover:opacity-100">
                         <button
                           onClick={() => setCover.mutate({ albumId: activeAlbum.id, coverUrl: url })}
@@ -218,6 +276,7 @@ function AlbumsManager() {
                   );
                 })}
               </div>
+              </>
             )}
           </div>
 
