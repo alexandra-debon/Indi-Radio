@@ -20,6 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
+import indiRadioWordmark from "@/assets/indi-radio-wordmark-hero.jpeg.asset.json";
 import { useLang, useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -130,6 +131,12 @@ function LivePage() {
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
+          <img
+            src={indiRadioWordmark.url}
+            alt="InDi RaDio"
+            aria-hidden="true"
+            className="pointer-events-none absolute right-2 top-2 h-10 w-auto rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:right-4 sm:top-4 sm:h-16 md:h-20"
+          />
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
               {heroArtwork ? (
