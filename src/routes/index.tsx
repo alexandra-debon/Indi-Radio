@@ -254,6 +254,7 @@ function NewsletterBanner() {
   return (
     <Link
       to="/newsletter"
+      search={{ source: "home-banner" }}
       className="card-brut flex items-center gap-3 p-3 transition hover:-translate-y-0.5 hover:bg-primary/10"
     >
       <div className="grid size-10 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
