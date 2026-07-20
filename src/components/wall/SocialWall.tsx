@@ -37,6 +37,8 @@ interface PostRow {
   image_urls: string[] | null;
   title: string | null;
   image_captions: string[] | null;
+  album_id: string | null;
+  album: { id: string; title: string } | null;
   author: {
     id: string;
     pseudo: string;
@@ -103,7 +105,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
