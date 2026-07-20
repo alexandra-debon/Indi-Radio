@@ -7,6 +7,7 @@ import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
+import { useT } from "@/lib/i18n";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/podcasts")({
 });
 
 function PodcastsPage() {
+  const t = useT();
   const [openId, setOpenId] = useState<string | null>(null);
   const { data: podcasts = [] } = useQuery({
     queryKey: ["podcasts"],
@@ -42,7 +44,7 @@ function PodcastsPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Podcasts</h1>
+      <h1 className="section-title">{t("page.podcasts.title")}</h1>
       {podcasts.length === 0 && (
         <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun podcast pour l'instant.</div>
       )}
@@ -87,6 +89,7 @@ function PodcastsPage() {
 }
 
 function PodcastEpisodes({ podcastId }: { podcastId: string }) {
+  const t = useT();
   const { data: episodes = [] } = useQuery({
     queryKey: ["episodes", podcastId],
     queryFn: async () => {
@@ -99,7 +102,7 @@ function PodcastEpisodes({ podcastId }: { podcastId: string }) {
     <section className="space-y-2">
       <div className="card-brut space-y-3 p-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Noter ce podcast</h2>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.podcasts.rate")}</h2>
           <ContentLikeButton contentType="podcast" contentId={podcastId} />
         </div>
         <ContentRatingSection contentType="podcast" contentId={podcastId} />
@@ -108,7 +111,7 @@ function PodcastEpisodes({ podcastId }: { podcastId: string }) {
           <ContentCommentsSection contentType="podcast" contentId={podcastId} />
         </div>
       </div>
-      <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Épisodes</h2>
+      <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.podcasts.episodes")}</h2>
       {episodes.length === 0 && <div className="card-brut p-3 text-sm text-muted-foreground">Aucun épisode.</div>}
       {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
     </section>

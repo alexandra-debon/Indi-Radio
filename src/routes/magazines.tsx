@@ -12,6 +12,7 @@ import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
@@ -50,6 +51,7 @@ interface MagazineRow {
 }
 
 function MagazinesPage() {
+  const t = useT();
   const { isAdmin } = useAuth();
   const [creating, setCreating] = useState(false);
 
@@ -71,7 +73,7 @@ function MagazinesPage() {
       <header className="space-y-1">
         <div className="flex items-center gap-2">
           <BookOpen className="size-5 text-primary" />
-          <h1 className="section-title">Magazine Indi Art Culture</h1>
+          <h1 className="section-title">{t("page.magazines.title")}</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           Articles interactifs issus du magazine innovant <em>Indi Art Culture</em>. Cliquez sur l'aperçu A4
@@ -81,7 +83,7 @@ function MagazinesPage() {
 
       <section className="space-y-3">
         <div className="flex items-baseline justify-between">
-          <h2 className="section-title text-lg">Articles interactifs</h2>
+          <h2 className="section-title text-lg">{t("page.magazines.articles")}</h2>
           {isAdmin && !creating && (
             <Button size="sm" onClick={() => setCreating(true)}>
               <Plus className="size-3.5" /> Nouvel article

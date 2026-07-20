@@ -12,6 +12,7 @@ import { ClipEntryEditor, type ClipEntryDraft } from "@/components/clips/ClipEnt
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
 import ogClips from "@/assets/og-clips.jpg";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CLIPS = `${BASE_URL}${ogClips}`;
@@ -53,6 +54,7 @@ interface ClipRow {
 }
 
 function ClipsPage() {
+  const t = useT();
   const { data: entries = [] } = useQuery<ClipRow[]>({
     queryKey: ["clip-entries"],
     queryFn: async () => {
@@ -74,7 +76,7 @@ function ClipsPage() {
       <header className="space-y-1">
         <div className="flex items-center gap-2">
           <Film className="size-5 text-primary" />
-          <h1 className="section-title">Clip Addict</h1>
+          <h1 className="section-title">{t("page.clips.title")}</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           Clips actu et playlists vidéo — sélectionnés par la rédaction. On regarde tout ici, sans quitter l'appli.

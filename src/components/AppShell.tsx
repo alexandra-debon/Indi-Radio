@@ -117,12 +117,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-3 text-center text-[11px] sm:flex-row sm:justify-between sm:text-left">
             <span>© {new Date().getFullYear()} Indi Radio</span>
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
-              <Link to="/about" className="hover:text-primary">À propos</Link>
-              <Link to="/contact" className="hover:text-primary">Contact</Link>
-              <Link to="/terms" className="hover:text-primary">CGU</Link>
+              <Link to="/about" className="hover:text-primary">{t("footer.about")}</Link>
+              <Link to="/contact" className="hover:text-primary">{t("footer.contact")}</Link>
+              <Link to="/terms" className="hover:text-primary">{t("footer.terms")}</Link>
               <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-primary">
                 <FileText className="size-3" />
-                Confidentialité
+                {t("footer.privacy")}
               </Link>
             </div>
           </div>

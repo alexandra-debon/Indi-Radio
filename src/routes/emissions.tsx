@@ -8,6 +8,12 @@ import { Mic2 } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
 import ogEmissions from "@/assets/og-emissions.jpg";
+import { useT } from "@/lib/i18n";
+
+function ArchiveHeading() {
+  const t = useT();
+  return <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.shows.old")}</h2>;
+}
 
 const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 
@@ -117,7 +123,7 @@ function ShowArchive({ showId }: { showId: string }) {
 
   return (
     <section className="space-y-2">
-      <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Anciennes émissions</h2>
+      <ArchiveHeading />
       {episodes.length === 0 && (
         <div className="card-brut p-3 text-sm text-muted-foreground">Aucun replay pour l'instant.</div>
       )}
@@ -127,9 +133,10 @@ function ShowArchive({ showId }: { showId: string }) {
 }
 
 function EmissionsPage() {
+  const t = useT();
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Émissions & Animateurs</h1>
+      <h1 className="section-title">{t("page.shows.title")}</h1>
       <Tabs defaultValue="emission">
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="emission">Émissions</TabsTrigger>

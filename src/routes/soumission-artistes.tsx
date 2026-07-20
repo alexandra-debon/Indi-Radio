@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Heart, ShieldCheck, Music, Gift, Users } from "lucide-react";
 import ogSoumission from "@/assets/og-soumission-artistes.jpg";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
@@ -62,12 +63,13 @@ const SECTIONS = [
 ];
 
 function ArtistSubmissionPage() {
+  const t = useT();
   return (
     <div className="space-y-6">
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <Music className="size-7 text-radio-yellow" />
-          <h1 className="section-title">Appel aux Artistes : Soumettez votre univers à InDi RaDio</h1>
+          <h1 className="section-title">{t("page.submissions.title")}</h1>
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Vous êtes artiste indépendant ? Faites découvrir votre musique à la communauté InDi RaDio.
@@ -88,7 +90,7 @@ function ArtistSubmissionPage() {
       })}
 
       <section className="card-brut space-y-3 p-4 text-center">
-        <h2 className="font-display text-base uppercase tracking-wide">Prêt à nous écrire ?</h2>
+        <h2 className="font-display text-base uppercase tracking-wide">{t("page.submissions.readyWrite")}</h2>
         <p className="text-sm leading-relaxed">
           Envoyez-nous un email à{" "}
           <a

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Users, HelpCircle } from "lucide-react";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 import ogContact from "@/assets/og-contact.jpg";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CONTACT = `${BASE_URL}${ogContact}`;
@@ -57,6 +58,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const t = useT();
   return (
     <div className="space-y-6">
       <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-radio-yellow/15 via-background to-background p-5 shadow-lg">
@@ -66,7 +68,7 @@ function ContactPage() {
             <Mail className="size-6" />
           </div>
           <div>
-            <h1 className="section-title">Contact</h1>
+            <h1 className="section-title">{t("page.contact.title")}</h1>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               Une question, une suggestion, une soumission artiste ? On vous répond.
             </p>

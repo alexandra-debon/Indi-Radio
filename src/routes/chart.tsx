@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Heart, Trophy, Medal, Radio } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/chart")({
   head: () => ({
@@ -63,9 +64,10 @@ function ChartList({ view }: { view: "chart_week" | "chart_all_time" }) {
 }
 
 function ChartPage() {
+  const t = useT();
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Chart des auditeurs</h1>
+      <h1 className="section-title">{t("page.chart.title")}</h1>
       <Tabs defaultValue="week">
         <TabsList className="grid grid-cols-2">
           <TabsTrigger value="week">Cette semaine</TabsTrigger>

@@ -23,6 +23,7 @@ import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT } from "@/lib/i18n";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -74,6 +75,7 @@ interface NewsPost {
 
 function ActusPage() {
   const { session, profile, isAdmin, isAnimateur, openAuth } = useAuth();
+  const t = useT();
   const qc = useQueryClient();
   useHashHighlight();
   const hash = useRouterState({ select: (s) => s.location.hash });
@@ -131,7 +133,7 @@ function ActusPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Indi Rézo — Actualités de la scène indépendante</h1>
+      <h1 className="section-title">{t("page.actus.title")}</h1>
       <p className="text-sm text-muted-foreground">Le fil des actus artistes, orchestré par la rédaction. Et l'actu InDi RaDio...</p>
 
       {canPublish && (
@@ -146,7 +148,7 @@ function ActusPage() {
         </div>
       )}
 
-      <h2 className="section-title text-base">Fil d'actualité</h2>
+      <h2 className="section-title text-base">{t("page.actus.feed")}</h2>
       <ul className="space-y-3">
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
