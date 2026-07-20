@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
-import { Images, Plus, Trash2, Check, GripVertical } from "lucide-react";
+import { Images, Plus, Trash2, Check, GripVertical, Star } from "lucide-react";
+import { ImageUploader } from "@/components/media/ImageUploader";
 
 export const Route = createFileRoute("/_authenticated/profile/albums")({
   head: () => ({ meta: [{ title: "Mes albums photos — InDi RaDio" }] }),
@@ -105,13 +106,14 @@ function AlbumsManager() {
   });
 
   const setCover = useMutation({
-    mutationFn: async ({ albumId, coverUrl }: { albumId: string; coverUrl: string }) => {
+    mutationFn: async ({ albumId, coverUrl }: { albumId: string; coverUrl: string | null }) => {
       const { error } = await supabase.from("photo_albums").update({ cover_url: coverUrl } as any).eq("id", albumId);
       if (error) throw error;
     },
-    onSuccess: () => {
-      toast.success("Couverture mise à jour");
+    onSuccess: (_d, v) => {
+      toast.success(v.coverUrl ? "Couverture mise à jour" : "Couverture retirée");
       qc.invalidateQueries({ queryKey: ["my-albums"] });
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
