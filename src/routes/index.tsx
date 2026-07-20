@@ -166,7 +166,7 @@ function LivePage() {
                 <RadioIcon className="size-10" />
               )}
             </div>
-            <div className="min-w-0 flex-1 sm:pr-24 md:pr-32">
+            <div className="min-w-0 flex-1 pr-24 sm:pr-28 md:pr-36 lg:pr-44">
               <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
                 <span className="animate-heartbeat">{t("live.onAir")}</span>
                 <AudioBars />
