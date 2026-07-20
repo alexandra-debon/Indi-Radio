@@ -27,6 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT } from "@/lib/i18n";
 
 interface PostRow {
   id: string;
@@ -74,6 +75,7 @@ const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 
 export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
+  const t = useT();
   // Ouvert à toute la communauté : tout utilisateur connecté peut uploader des photos.
   const canUploadImages = !!session;
   const qc = useQueryClient();

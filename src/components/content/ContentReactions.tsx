@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT } from "@/lib/i18n";
 
 type Props = { contentType: string; contentId: string };
 
@@ -70,6 +71,7 @@ export function ContentLikeButton({ contentType, contentId }: Props) {
 
 export function ContentCommentsSection({ contentType, contentId }: Props) {
   const { session, requireAuth } = useAuth();
+  const t = useT();
   const qc = useQueryClient();
   const [text, setText] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
@@ -153,12 +155,12 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
             onClick={() => { setReplyTo(replyTo === c.id ? null : c.id); setReplyText(""); }}
             className="text-[10px] text-muted-foreground hover:text-primary"
           >
-            Répondre
+            {t("comment.reply")}
           </button>
         )}
         {session?.user.id === c.author_id && (
           <button onClick={() => del.mutate(c.id)} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive">
-            <Trash2 className="size-3" /> Supprimer
+            <Trash2 className="size-3" /> {t("comment.delete")}
           </button>
         )}
         {session && session.user.id !== c.author_id && (
@@ -167,10 +169,10 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       </div>
       {replyTo === c.id && session && (
         <div className="mt-2 space-y-1">
-          <Textarea rows={2} placeholder="Ta réponse…" value={replyText} onChange={(e) => setReplyText(e.target.value)} />
+          <Textarea rows={2} placeholder={t("comment.replyPlaceholder")} value={replyText} onChange={(e) => setReplyText(e.target.value)} />
           <div className="flex gap-2">
-            <Button size="sm" disabled={add.isPending || !replyText.trim()} onClick={() => add.mutate({ body: replyText, parentId: c.id })}>Répondre</Button>
-            <Button size="sm" variant="ghost" onClick={() => { setReplyTo(null); setReplyText(""); }}>Annuler</Button>
+            <Button size="sm" disabled={add.isPending || !replyText.trim()} onClick={() => add.mutate({ body: replyText, parentId: c.id })}>{t("comment.reply")}</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setReplyTo(null); setReplyText(""); }}>{t("comment.cancel")}</Button>
           </div>
         </div>
       )}
@@ -186,15 +188,15 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     <div className="space-y-3">
       {session ? (
         <div className="space-y-2">
-          <Textarea rows={2} placeholder="Ton commentaire…" value={text} onChange={(e) => setText(e.target.value)} />
-          <Button size="sm" disabled={add.isPending || !text.trim()} onClick={() => add.mutate({ body: text, parentId: null })}>Publier</Button>
+          <Textarea rows={2} placeholder={t("comment.placeholder")} value={text} onChange={(e) => setText(e.target.value)} />
+          <Button size="sm" disabled={add.isPending || !text.trim()} onClick={() => add.mutate({ body: text, parentId: null })}>{t("comment.publish")}</Button>
         </div>
       ) : (
         <button onClick={() => requireAuth(() => {})} className="text-xs text-primary underline">
-          Connecte-toi pour commenter
+          {t("comment.signIn")}
         </button>
       )}
-      {roots.length === 0 && <p className="text-xs text-muted-foreground">Aucun commentaire pour l'instant.</p>}
+      {roots.length === 0 && <p className="text-xs text-muted-foreground">{t("comment.empty")}</p>}
       <ul className="space-y-2">
         {roots.map((c) => renderComment(c))}
       </ul>

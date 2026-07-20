@@ -33,6 +33,7 @@ async function callGateway(text: string, target: "en" | "fr", source: string) {
           role: "system",
           content:
             `You are a professional translator. Translate the user's message from ${sourceName} into ${targetName}. ` +
+            `If the message is already in ${targetName}, return it unchanged. ` +
             `Preserve tone, hashtags (#tag), @mentions, emojis, URLs and line breaks. ` +
             `Return ONLY the translated text, no quotes, no explanation.`,
         },

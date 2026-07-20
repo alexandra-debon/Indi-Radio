@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useLang } from "@/lib/i18n";
@@ -18,6 +18,14 @@ type Props = {
   children?: (rendered: string) => React.ReactNode;
 };
 
+function stableTextKey(text: string) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = Math.imul(31, hash) + text.charCodeAt(i) | 0;
+  }
+  return `${text.length}:${hash}`;
+}
+
 // Lightweight heuristic: detect if a piece of text is likely French.
 function detectLang(text: string): "fr" | "en" {
   const t = text.toLowerCase();
@@ -36,9 +44,9 @@ function detectLang(text: string): "fr" | "en" {
 
 /**
  * Renders `text` in the active UI language.
- * When lang === source language (or text empty), returns original untouched.
+ * When a fixed source language equals the UI language (or text is empty), returns original untouched.
  * Otherwise fetches (and caches) a machine translation via the server function.
- * With `manual`, shows a small "translate" button and only fetches on click.
+ * Default mode is automatic so FR/EN applies to all user content as soon as it is read.
  */
 export function TranslatedText({
   entityType,
@@ -48,21 +56,25 @@ export function TranslatedText({
   as: Tag = "span",
   className,
   sourceLang = "auto",
-  manual = true,
+  manual = false,
   children,
 }: Props) {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const fetchFn = useServerFn(translateContent);
   const [manualOn, setManualOn] = useState(false);
 
   const hasText = !!text && text.trim().length > 0;
-  const effectiveSource: "fr" | "en" =
-    sourceLang === "auto" ? (hasText ? detectLang(text!) : "fr") : sourceLang;
-  const langsDiffer = hasText && lang !== effectiveSource;
+  const effectiveSource: "fr" | "en" | "auto" = sourceLang === "auto" ? "auto" : sourceLang;
+  const langsDiffer = hasText && (effectiveSource === "auto" || lang !== effectiveSource);
   const shouldTranslate = langsDiffer && (!manual || manualOn);
+  const textKey = useMemo(() => stableTextKey(text ?? ""), [text]);
+
+  useEffect(() => {
+    setManualOn(false);
+  }, [lang, textKey]);
 
   const query = useQuery({
-    queryKey: ["translation", entityType, entityKey, field, lang, effectiveSource],
+    queryKey: ["translation", entityType, entityKey, field, lang, effectiveSource, textKey],
     enabled: shouldTranslate,
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
@@ -88,7 +100,7 @@ export function TranslatedText({
 
   const showButton = manual && langsDiffer;
   const label = lang === "fr" ? "Traduire" : "Translate";
-  const labelBack = lang === "fr" ? "Original" : "Original";
+  const labelBack = t("translate.original");
   const isLoading = manualOn && query.isFetching && !query.data;
 
   const button = showButton ? (
