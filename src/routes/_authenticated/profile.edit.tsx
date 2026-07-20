@@ -10,6 +10,12 @@ import { ArrowLeft, Upload, Loader2, Trash2, BadgeCheck, Globe, Eye } from "luci
 import { toast } from "@/lib/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+import {
+  SocialLinksBar,
+  SocialLinksEditor,
+  sanitizeLinks,
+  type SocialLinks,
+} from "@/components/social/SocialLinksBar";
 
 export const Route = createFileRoute("/_authenticated/profile/edit")({
   head: () => ({ meta: [{ title: "Modifier mon profil — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -46,6 +52,7 @@ function EditProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
 
   useEffect(() => {
     if (!profile) return;
@@ -53,6 +60,8 @@ function EditProfilePage() {
     setBio((profile as any).bio ?? "");
     setWebsite((profile as any).website ?? "");
     setAvatarUrl(profile.avatar_url ?? null);
+    const sl = (profile as any).social_links;
+    setSocialLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
   }, [profile]);
 
   if (!profile || !session) return <div className="p-4">Chargement…</div>;
@@ -140,6 +149,7 @@ function EditProfilePage() {
           bio: parsed.data.bio || null,
           website: parsed.data.website || null,
           avatar_url: avatarUrl,
+          social_links: sanitizeLinks(socialLinks),
         } as any)
         .eq("id", session!.user.id);
       if (error) throw error;
@@ -236,6 +246,14 @@ function EditProfilePage() {
           />
         </div>
 
+        <div className="space-y-1.5">
+          <Label>Réseaux & plateformes</Label>
+          <p className="text-[11px] text-muted-foreground">
+            Ajoute tes liens Facebook, Instagram, YouTube, Spotify, Deezer… Ils s'afficheront sur ton profil public.
+          </p>
+          <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
+        </div>
+
         <div className="flex gap-2">
           <Button type="submit" disabled={saving || uploading} className="flex-1">
             {saving ? <Loader2 className="size-4 animate-spin" /> : null}
@@ -280,6 +298,11 @@ function EditProfilePage() {
             <p className="text-[11px] italic text-muted-foreground">
               Ajoute une bio et un lien pour enrichir ton profil.
             </p>
+          )}
+          {Object.keys(sanitizeLinks(socialLinks)).some((k) => k !== "__order" && k !== "__labels") && (
+            <div className="border-t border-dashed border-border/60 pt-2">
+              <SocialLinksBar links={sanitizeLinks(socialLinks)} />
+            </div>
           )}
         </div>
         <p className="text-[10px] text-muted-foreground">
