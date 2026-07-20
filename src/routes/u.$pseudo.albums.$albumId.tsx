@@ -274,7 +274,12 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }: {
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
-            style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, cursor: zoom > 1 ? "grab" : "zoom-in", transition: dragRef.current ? "none" : "transform 0.15s ease-out" }}
+            style={{
+              transform: `translate(${(zoom > 1 ? pan.x : swipeDx)}px, ${zoom > 1 ? pan.y : 0}px) scale(${zoom})`,
+              cursor: zoom > 1 ? "grab" : "zoom-in",
+              transition: (dragRef.current || swipeRef.current) ? "none" : "transform 0.15s ease-out",
+              touchAction: "none",
+            }}
             className="max-h-full max-w-full select-none object-contain"
           />
         </div>
