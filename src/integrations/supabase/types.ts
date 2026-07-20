@@ -707,6 +707,7 @@ export type Database = {
           actor_id: string | null
           created_at: string
           id: string
+          mention_email_sent_at: string | null
           message: string
           read_at: string | null
           recipient_id: string
@@ -717,6 +718,7 @@ export type Database = {
           actor_id?: string | null
           created_at?: string
           id?: string
+          mention_email_sent_at?: string | null
           message: string
           read_at?: string | null
           recipient_id: string
@@ -727,6 +729,7 @@ export type Database = {
           actor_id?: string | null
           created_at?: string
           id?: string
+          mention_email_sent_at?: string | null
           message?: string
           read_at?: string | null
           recipient_id?: string
