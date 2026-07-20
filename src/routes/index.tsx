@@ -123,7 +123,7 @@ function LivePage() {
                 <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
                 {t("live.indieNoAds")}
               </span>
-              <div className="flex flex-col items-start gap-1 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="flex flex-wrap items-center justify-start gap-1">
                 <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
                   {t("live.noAdsNoNews")}
                 </span>
