@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut, AtSign, Trash2, Pencil, Trophy } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2 } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -105,6 +105,15 @@ function ProfilePage() {
         >
           <Pencil className="size-4" /> Modifier mon profil
         </button>
+        {profile.pseudo && (
+          <Link
+            to="/u/$pseudo"
+            params={{ pseudo: profile.pseudo }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+          >
+            <Eye className="size-4" /> Voir mon profil public
+          </Link>
+        )}
         <Link
           to="/profile/badges"
           className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-primary px-3 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground hover:opacity-90"
@@ -112,6 +121,27 @@ function ProfilePage() {
           <Trophy className="size-4" /> Mes badges & succès
         </Link>
       </div>
+
+      <section className="card-brut p-4">
+        <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+          <UserCircle2 className="size-4" /> Ma présentation
+        </h2>
+        {profile.bio ? (
+          <p className="whitespace-pre-wrap text-sm text-foreground">{profile.bio}</p>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            Tu n'as pas encore rédigé de présentation. Ajoute quelques lignes pour te
+            présenter à la communauté — elles apparaîtront sur ton profil public.
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/profile/edit" })}
+          className="mt-3 inline-flex items-center gap-2 rounded-md border-2 border-border bg-background px-3 py-1.5 text-[11px] font-black uppercase tracking-widest hover:bg-muted"
+        >
+          <Pencil className="size-3.5" /> {profile.bio ? "Modifier" : "Rédiger ma présentation"}
+        </button>
+      </section>
 
       {isAdmin && (
         <Link to="/admin" className="card-brut block p-3 text-center text-sm font-semibold text-destructive">
