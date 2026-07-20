@@ -247,39 +247,6 @@ export function EmailStatusPanel() {
             </Button>
           </CardTitle>
         </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-4 w-4" /> Abonnés newsletter
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm">
-            {subsQuery.isLoading
-              ? "Chargement…"
-              : `${subsQuery.data?.length ?? 0} abonné(s) inscrit(s).`}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              onClick={exportSubscribersCsv}
-              disabled={subsQuery.isLoading || (subsQuery.data?.length ?? 0) === 0}
-            >
-              <Download className="h-4 w-4 mr-2" /> Exporter en CSV
-            </Button>
-            <Button variant="outline" onClick={() => subsQuery.refetch()}>
-              Rafraîchir
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Le fichier CSV contient l'email et la date d'inscription. Compatible Excel / Google Sheets.
-          </p>
-        </CardContent>
-      </Card>
-      <Card style={{ display: "none" }}>
-        <CardHeader>
-          <CardTitle />
-        </CardHeader>
         <CardContent>
           {eventsQuery.isLoading ? (
             <p className="text-sm text-muted-foreground">Chargement…</p>
