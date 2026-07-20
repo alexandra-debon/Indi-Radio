@@ -112,12 +112,13 @@ function linkFor(row: Row) {
 }
 
 function TopList({ metric }: { metric: Metric }) {
+  const t = useT();
   const { data = [], isLoading } = useQuery({
     queryKey: ["top-content", metric],
     queryFn: () => fetchTop(metric),
   });
-  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
-  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">Pas encore de {metric === "rating" ? "notes" : "likes"}.</div>;
+  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">{t("common.loading")}</div>;
+  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">{metric === "rating" ? t("page.top.emptyRatings") : t("page.top.emptyLikes")}</div>;
   return (
     <ol className="space-y-2">
       {data.map((row, i) => {
@@ -162,7 +163,7 @@ function TopPage() {
     <div className="mx-auto max-w-3xl space-y-4 p-4">
       <div>
         <h1 className="text-2xl font-black tracking-tight">{t("page.top.title")}</h1>
-        <p className="text-sm text-muted-foreground">Podcasts et chroniques préférés des auditeurs.</p>
+        <p className="text-sm text-muted-foreground">{t("page.top.subtitle")}</p>
       </div>
       <Tabs defaultValue="rating">
         <TabsList>
@@ -178,7 +179,7 @@ function TopPage() {
           <h2 className="text-lg font-black tracking-tight">{t("page.top.discussion")}</h2>
           <ContentLikeButton contentType="top" contentId={TOP_THREAD_ID} />
         </div>
-        <p className="text-xs text-muted-foreground">Réagis en direct aux classements avec la communauté.</p>
+        <p className="text-xs text-muted-foreground">{t("page.top.discussSub")}</p>
         <ContentCommentsSection contentType="top" contentId={TOP_THREAD_ID} />
       </section>
     </div>

@@ -35,9 +35,10 @@ function RankIcon({ rank }: { rank: number }) {
 }
 
 function ChartList({ view }: { view: "chart_week" | "chart_all_time" }) {
+  const t = useT();
   const { data = [], isLoading } = useChart(view);
-  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
-  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun titre encore classé.</div>;
+  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">{t("common.loading")}</div>;
+  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.chart.empty")}</div>;
   return (
     <ol className="space-y-2">
       {data.map((t, i) => (
@@ -52,7 +53,7 @@ function ChartList({ view }: { view: "chart_week" | "chart_all_time" }) {
               <Heart className="size-4 fill-primary text-primary" />
               <span className="font-bold tabular-nums">{t.likes}</span>
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground" title="Passages à l'antenne">
+            <div className="flex items-center gap-1 text-muted-foreground" title={t("common.airplays")}>
               <Radio className="size-4" />
               <span className="font-semibold tabular-nums">{t.plays ?? 0}</span>
             </div>
