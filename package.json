@@ -15,12 +15,10 @@
     "cap:sync": "bun run cap:build && cap sync",
     "cap:ios": "bun run cap:build && cap sync ios && cap open ios",
     "cap:android": "bun run cap:build && cap sync android && cap open android",
-    "cap:assets": "capacitor-assets generate --iconBackgroundColor '#0a0a0a' --splashBackgroundColor '#0a0a0a'"
-    ,
+    "cap:assets": "capacitor-assets generate --iconBackgroundColor '#0a0a0a' --splashBackgroundColor '#0a0a0a'",
     "check:deploy": "node scripts/post-publish-check.mjs",
     "test": "vitest run",
-    "test:routes": "vitest run tests/routes-availability.test.ts"
-    ,
+    "test:routes": "vitest run tests/routes-availability.test.ts",
     "publish:verify": "node scripts/publish-verify.mjs"
   },
   "dependencies": {
@@ -75,6 +73,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "emoji-picker-react": "^4.19.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
