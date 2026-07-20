@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2 } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users } from "lucide-react";
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
@@ -17,6 +17,8 @@ import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHashHighlight } from "@/lib/notif-navigate";
+import { useServerFn } from "@tanstack/react-start";
+import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -49,6 +51,21 @@ export const Route = createFileRoute("/")({
   }),
   component: LivePage,
 });
+
+function UserCountBadge() {
+  const fetchCount = useServerFn(getUserCount);
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-count"],
+    queryFn: () => fetchCount(),
+    staleTime: 60_000,
+  });
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+      <Users className="size-3" />
+      {isLoading ? "…" : `${data?.count ?? 0} inscrits`}
+    </span>
+  );
+}
 
 function LivePage() {
   const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
@@ -100,9 +117,12 @@ function LivePage() {
               <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
               Radio 100% musique Indé
             </span>
-            <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-              sans pub ni info
-            </span>
+            <div className="flex flex-wrap items-center justify-center gap-1">
+              <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+                sans pub ni info
+              </span>
+              <UserCountBadge />
+            </div>
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
