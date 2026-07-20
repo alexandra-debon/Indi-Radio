@@ -90,14 +90,14 @@ function TopUsersPage() {
                     <span className="truncate text-sm font-semibold">@{pseudo}</span>
                     {u.is_certified && (
                       <span className="inline-flex items-center gap-0.5 rounded-md border-2 border-border bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-foreground">
-                        <BadgeCheck className="size-3" aria-hidden /> Certifié
+                        <BadgeCheck className="size-3" aria-hidden /> {t("page.topUsers.certified")}
                       </span>
                     )}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
                     <span>{u.role ?? "auditeur"}</span>
                     <span>·</span>
-                    <span>Niveau {u.level ?? 1}</span>
+                    <span>{t("page.topUsers.level")} {u.level ?? 1}</span>
                   </div>
                   {u.badges && u.badges.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">

@@ -9,6 +9,7 @@ import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
 import ogEmissions from "@/assets/og-emissions.jpg";
 import { useT } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 function ArchiveHeading() {
   const t = useT();
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/emissions")({
 type ShowType = "emission" | "chronique" | "animateur";
 
 function ShowsSection({ type, label }: { type: ShowType; label: string }) {
+  const t = useT();
   const { data = [] } = useQuery({
     queryKey: ["shows", type],
     queryFn: async () => {
@@ -51,7 +53,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
   const selected = data[idx];
 
   if (data.length === 0) {
-    return <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun{type === "emission" || type === "chronique" ? "e" : ""} {label.toLowerCase()} pour l'instant.</div>;
+    return <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.shows.empty")}</div>;
   }
 
   return (
@@ -93,13 +95,15 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
               variant="chip"
             />
           </div>
-          <h3 className="mt-1 text-lg font-bold">{selected.title}</h3>
+          <TranslatedText as="h3" className="mt-1 text-lg font-bold" entityType="show" entityKey={selected.id} field="title" text={selected.title} />
           {selected.schedule && <div className="text-sm text-muted-foreground">{selected.schedule}</div>}
-          {(selected as any).host && <div className="text-sm text-muted-foreground">Avec {(selected as any).host}</div>}
+          {(selected as any).host && <div className="text-sm text-muted-foreground">{t("page.shows.with")} {(selected as any).host}</div>}
           {(selected as any).duration_seconds ? (
-            <div className="text-sm text-muted-foreground">Durée : {Math.round((selected as any).duration_seconds / 60)} min</div>
+            <div className="text-sm text-muted-foreground">{t("page.shows.duration")} : {Math.round((selected as any).duration_seconds / 60)} min</div>
           ) : null}
-          {selected.description && <p className="mt-2 text-sm">{selected.description}</p>}
+          {selected.description && (
+            <TranslatedText as="p" className="mt-2 text-sm" entityType="show" entityKey={selected.id} field="description" text={selected.description} />
+          )}
         </div>
       )}
 
@@ -109,6 +113,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
 }
 
 function ShowArchive({ showId }: { showId: string }) {
+  const t = useT();
   const { data: episodes = [] } = useQuery({
     queryKey: ["show-episodes", showId],
     queryFn: async () => {
@@ -125,7 +130,7 @@ function ShowArchive({ showId }: { showId: string }) {
     <section className="space-y-2">
       <ArchiveHeading />
       {episodes.length === 0 && (
-        <div className="card-brut p-3 text-sm text-muted-foreground">Aucun replay pour l'instant.</div>
+        <div className="card-brut p-3 text-sm text-muted-foreground">{t("page.shows.noReplay")}</div>
       )}
       {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
     </section>
@@ -139,13 +144,13 @@ function EmissionsPage() {
       <h1 className="section-title">{t("page.shows.title")}</h1>
       <Tabs defaultValue="emission">
         <TabsList className="grid grid-cols-3">
-          <TabsTrigger value="emission">Émissions</TabsTrigger>
-          <TabsTrigger value="chronique">Chroniques</TabsTrigger>
-          <TabsTrigger value="animateur">Animateurs</TabsTrigger>
+          <TabsTrigger value="emission">{t("page.shows.tabs.emission")}</TabsTrigger>
+          <TabsTrigger value="chronique">{t("page.shows.tabs.chronique")}</TabsTrigger>
+          <TabsTrigger value="animateur">{t("page.shows.tabs.animateur")}</TabsTrigger>
         </TabsList>
-        <TabsContent value="emission" className="mt-4"><ShowsSection type="emission" label="Émission" /></TabsContent>
-        <TabsContent value="chronique" className="mt-4"><ShowsSection type="chronique" label="Chronique" /></TabsContent>
-        <TabsContent value="animateur" className="mt-4"><ShowsSection type="animateur" label="Animateur" /></TabsContent>
+        <TabsContent value="emission" className="mt-4"><ShowsSection type="emission" label={t("page.shows.label.emission")} /></TabsContent>
+        <TabsContent value="chronique" className="mt-4"><ShowsSection type="chronique" label={t("page.shows.label.chronique")} /></TabsContent>
+        <TabsContent value="animateur" className="mt-4"><ShowsSection type="animateur" label={t("page.shows.label.animateur")} /></TabsContent>
       </Tabs>
     </div>
   );

@@ -38,22 +38,22 @@ function DedicacesPage() {
     });
     setLoading(false);
     if (error) toast.error(error.message);
-    else { toast.success("Envoyé ! +1 pt"); setTrack(""); setMsg(""); }
+    else { toast.success(t("page.dedications.sent")); setTrack(""); setMsg(""); }
   }
 
   return (
     <div className="space-y-4">
       <h1 className="section-title">{t("page.dedications.title")}</h1>
       <form onSubmit={submit} className="card-brut space-y-3 p-4">
-        <Input placeholder="Morceau demandé (artiste – titre)" value={track} onChange={(e) => setTrack(e.target.value)} />
-        <Textarea placeholder="Ton message / ta dédicace…" rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} />
+        <Input placeholder={t("page.dedications.trackPh")} value={track} onChange={(e) => setTrack(e.target.value)} />
+        <Textarea placeholder={t("page.dedications.msgPh")} rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} />
         <Button className="w-full" disabled={loading || (!track && !msg)}>
-          Envoyer
+          {t("page.dedications.send")}
         </Button>
       </form>
       {!session && (
         <p className="text-center text-xs text-muted-foreground">
-          Il faut être connecté pour envoyer une dédicace.
+          {t("page.dedications.needLogin")}
         </p>
       )}
     </div>

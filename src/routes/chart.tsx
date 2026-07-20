@@ -71,8 +71,8 @@ function ChartPage() {
       <h1 className="section-title">{t("page.chart.title")}</h1>
       <Tabs defaultValue="week">
         <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="week">Cette semaine</TabsTrigger>
-          <TabsTrigger value="all">All time</TabsTrigger>
+          <TabsTrigger value="week">{t("page.chart.tabs.week")}</TabsTrigger>
+          <TabsTrigger value="all">{t("page.chart.tabs.all")}</TabsTrigger>
         </TabsList>
         <TabsContent value="week" className="mt-3"><ChartList view="chart_week" /></TabsContent>
         <TabsContent value="all" className="mt-3"><ChartList view="chart_all_time" /></TabsContent>
