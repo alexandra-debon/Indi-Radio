@@ -10,7 +10,7 @@ import {
   type ImageUsage,
 } from "@/lib/image-optimize";
 
-const MAX_BYTES = 20 * 1024 * 1024;
+const MAX_BYTES = 50 * 1024 * 1024;
 const BUCKET = "content-images";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 const MAX_FILES = 6;
@@ -38,7 +38,7 @@ interface Props {
 
 function validate(file: File): string | null {
   if (!file.type.startsWith("image/")) return "Format image uniquement";
-  if (file.size > MAX_BYTES) return "Maximum 20 Mo";
+  if (file.size > MAX_BYTES) return "Maximum 50 Mo";
   return null;
 }
 
@@ -242,7 +242,7 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Chaque image est validée (max 20 Mo). En mode auto, le meilleur format (AVIF ou WebP) et la résolution sont choisis selon l'usage ; sinon recadrage 16:9 en WebP.
+        Chaque image est validée (max 50 Mo). En mode auto, le meilleur format (AVIF ou WebP) et la résolution sont choisis selon l'usage ; sinon recadrage 16:9 en WebP.
       </p>
     </div>
   );
