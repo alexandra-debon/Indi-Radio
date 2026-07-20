@@ -40,6 +40,8 @@ function ProfilePage() {
   const deleteFn = useServerFn(deleteMyAccount);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioDraft, setBioDraft] = useState("");
   const navigate = useNavigate();
 
   const { data: mentions = [] } = useQuery({
