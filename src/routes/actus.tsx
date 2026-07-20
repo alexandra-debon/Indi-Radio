@@ -387,7 +387,20 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                   className="scroll-mt-24 rounded-md bg-muted/40 p-2 transition"
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <UserBadge profile={c.author} className="text-[11px]" />
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <UserBadge profile={c.author} className="text-[11px]" />
+                      {c.author?.pseudo && (
+                        <Link
+                          to="/u/$pseudo"
+                          params={{ pseudo: c.author.pseudo }}
+                          title={`Voir le profil public de @${c.author.pseudo}`}
+                          className="inline-flex items-center justify-center rounded border-2 border-black bg-yellow-400 p-0.5 text-black shadow-[1px_1px_0_0_#000] transition hover:-translate-y-0.5 hover:shadow-[2px_2px_0_0_#000]"
+                          aria-label={`Profil public de @${c.author.pseudo}`}
+                        >
+                          <ArrowUpRight className="size-3" />
+                        </Link>
+                      )}
+                    </div>
                     <span className="text-[10px] text-muted-foreground">
                       {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
                     </span>

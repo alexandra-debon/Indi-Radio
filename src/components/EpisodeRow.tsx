@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Star, ExternalLink } from "lucide-react";
+import { Play, Pause, Star, ExternalLink, ArrowUpRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -203,8 +204,21 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
         <ul className="space-y-2 border-t pt-2">
           {comments.map((c, i) => (
             <li key={i} className="text-xs">
-              <span className="font-semibold">{c.pseudo}</span>
-              <span className="text-muted-foreground"> · {"★".repeat(c.stars)}</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="font-semibold">{c.pseudo}</span>
+                {c.pseudo && c.pseudo !== "auditeur" && (
+                  <Link
+                    to="/u/$pseudo"
+                    params={{ pseudo: c.pseudo }}
+                    title={`Voir le profil public de @${c.pseudo}`}
+                    className="inline-flex items-center justify-center rounded border-2 border-black bg-yellow-400 p-0.5 text-black shadow-[1px_1px_0_0_#000] transition hover:-translate-y-0.5 hover:shadow-[2px_2px_0_0_#000]"
+                    aria-label={`Profil public de @${c.pseudo}`}
+                  >
+                    <ArrowUpRight className="size-3" />
+                  </Link>
+                )}
+                <span className="text-muted-foreground"> · {"★".repeat(c.stars)}</span>
+              </span>
               <p className="text-foreground/90">{c.comment}</p>
             </li>
           ))}
