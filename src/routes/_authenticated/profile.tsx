@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
@@ -39,6 +39,7 @@ function ProfilePage() {
   const deleteFn = useServerFn(deleteMyAccount);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const { data: mentions = [] } = useQuery({
     queryKey: ["profile-mentions", session?.user.id],
@@ -97,12 +98,13 @@ function ProfilePage() {
             </div>
           )}
         </div>
-        <Link
-          to="/profile/edit"
-          className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/profile/edit" })}
+          className="mt-2 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
         >
           <Pencil className="size-4" /> Modifier mon profil
-        </Link>
+        </button>
         <Link
           to="/profile/badges"
           className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-primary px-3 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground hover:opacity-90"
