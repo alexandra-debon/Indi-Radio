@@ -6,6 +6,8 @@ import { stripMediaUrls } from "@/lib/media-embed";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import ogHome from "@/assets/og-home.jpg";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -74,6 +76,7 @@ export const Route = createFileRoute("/p/$postId")({
 function PostDetailPage() {
   const post = Route.useLoaderData();
   const { postId } = Route.useParams();
+  const t = useT();
   const url = `${BASE_URL}/p/${postId}`;
   const body = stripMediaUrls(post.content ?? "");
   const images =
@@ -104,7 +107,11 @@ function PostDetailPage() {
             <UserBadge profile={post.author} className="text-xs" />
             <span className="text-[10px] text-muted-foreground">Publié par {author}</span>
           </div>
-          {body && <p className="whitespace-pre-wrap text-sm">{body}</p>}
+          {body && (
+            <p className="whitespace-pre-wrap text-sm">
+              <TranslatedText entityType="post" entityKey={post.id} field="content" text={body} />
+            </p>
+          )}
           <UrlEmbeds text={post.content ?? ""} />
           {post.author?.pseudo && (
             <div className="flex justify-end">
@@ -117,7 +124,7 @@ function PostDetailPage() {
                 <span className="inline-flex size-5 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[1.5px_1.5px_0_0_#000] transition-transform group-hover:-translate-y-0.5">
                   <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
                 </span>
-                Profil public
+                {t("wall.publicProfile")}
               </Link>
             </div>
           )}

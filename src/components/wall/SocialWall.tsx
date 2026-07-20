@@ -10,7 +10,7 @@ import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
@@ -27,6 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useLang, useT } from "@/lib/i18n";
 
 interface PostRow {
   id: string;
@@ -74,6 +75,9 @@ const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 
 export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
+  const t = useT();
+  const { lang } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
   // Ouvert à toute la communauté : tout utilisateur connecté peut uploader des photos.
   const canUploadImages = !!session;
   const qc = useQueryClient();
@@ -367,14 +371,14 @@ export function SocialWall() {
   return (
     <section className="space-y-3">
       <div className="flex items-baseline justify-between">
-        <h2 className="section-title">En direct avec les auditeurs</h2>
+        <h2 className="section-title">{t("wall.title")}</h2>
       </div>
 
       <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
         <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={session ? "Balance ton message…  utilise @pseudo pour mentionner" : "Connecte-toi pour poster"}
+          placeholder={session ? t("wall.placeholderSignedIn") : t("wall.placeholderSignedOut")}
           onFocus={() => { if (!session) requireAuth(() => {}); }}
           rows={2}
           className="resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
@@ -383,7 +387,7 @@ export function SocialWall() {
         <Input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Titre (optionnel)"
+          placeholder={t("wall.postTitle")}
           maxLength={120}
           disabled={!session}
           className="mt-2 h-8 text-xs font-semibold"
@@ -395,13 +399,13 @@ export function SocialWall() {
               ariaLabel="Insérer un emoji dans le message"
             />
             <span className="text-[10px] text-muted-foreground">
-              Astuce : utilise <span className="font-semibold text-primary">#hashtag</span> pour rendre un mot cliquable.
+              {t("wall.emojiHint")}
             </span>
           </div>
         )}
         {(title.trim() || content.trim()) && (
           <div className="mt-1 rounded border border-dashed border-border bg-muted/30 px-1.5 py-1 text-[11px] leading-snug">
-            <span className="mr-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu</span>
+            <span className="mr-1 text-[9px] font-bold uppercase text-muted-foreground">{t("wall.preview")}</span>
             {title.trim() && (
               <span className="mr-1 font-bold">{renderRich(title)}</span>
             )}
@@ -413,7 +417,7 @@ export function SocialWall() {
           inputMode="url"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder="Lien vidéo YouTube ou Vimeo (optionnel)"
+          placeholder={t("wall.videoUrl")}
           disabled={!session}
           className="mt-2 h-8 text-xs"
         />
@@ -434,7 +438,7 @@ export function SocialWall() {
             disabled={(!content.trim() && !videoUrl.trim()) || create.isPending}
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
-            Publier
+            {t("comment.publish")}
           </Button>
         </div>
       </div>
@@ -442,7 +446,7 @@ export function SocialWall() {
       {(popularTags.length > 0 || activeTag) && (
         <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background/40 p-2">
           <span className="mr-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-            <Hash className="size-3" /> Filtrer
+            <Hash className="size-3" /> {t("wall.filter")}
           </span>
           {popularTags.map((t) => {
             const isActive = activeTag === t.tag;
@@ -470,7 +474,7 @@ export function SocialWall() {
               onClick={() => setActiveTag(null)}
               className="ml-auto inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[11px] font-semibold text-muted-foreground hover:bg-muted"
             >
-              <X className="size-3" /> Réinitialiser
+              <X className="size-3" /> {t("wall.reset")}
             </button>
           )}
         </div>
@@ -482,12 +486,12 @@ export function SocialWall() {
       >
         {posts.length === 0 && !activeTag && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
-            Le mur est vide — sois le premier à écrire !
+            {t("wall.empty")}
           </li>
         )}
         {posts.length === 0 && activeTag && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
-            Aucune publication avec <span className="font-semibold text-primary">#{activeTag}</span>.
+            {t("wall.noTag")} <span className="font-semibold text-primary">#{activeTag}</span>.
           </li>
         )}
         {posts.map((p) => {
@@ -506,14 +510,14 @@ export function SocialWall() {
                 <div className="mb-2 flex items-center gap-1.5">
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
                     <Pin className="size-3" />
-                    {p.pin_label || "Épinglé"}
+                    {p.pin_label || t("wall.pinned")}
                   </span>
                 </div>
               )}
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
                 <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: fr })}
+                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
                 </span>
               </div>
               {isEditing ? (
@@ -776,7 +780,7 @@ export function SocialWall() {
                           <span className="inline-flex size-5 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[1.5px_1.5px_0_0_#000] transition-transform group-hover:-translate-y-0.5">
                             <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
                           </span>
-                          Profil public
+                          {t("wall.publicProfile")}
                         </Link>
                       </div>
                     )}
@@ -833,7 +837,7 @@ export function SocialWall() {
                                   )}
                                 </div>
                                 <span className="text-[10px] text-muted-foreground">
-                                  {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
+                                  {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
                                 </span>
                               </div>
                               {stripMediaUrls(c.content) && (
@@ -868,7 +872,7 @@ export function SocialWall() {
                           <MentionTextarea
                             value={replyDraft[p.id] ?? ""}
                             onChange={(e) => setReplyDraft((r) => ({ ...r, [p.id]: e.target.value }))}
-                            placeholder={session ? "Écris une réponse…" : "Connecte-toi pour répondre"}
+                            placeholder={session ? t("comment.writeReply") : t("comment.signInToReply")}
                             onFocus={() => { if (!session) requireAuth(() => {}); }}
                             rows={1}
                             className="min-h-[38px] resize-none text-xs"
@@ -879,7 +883,7 @@ export function SocialWall() {
                             onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "" }))}
                             disabled={!(replyDraft[p.id] ?? "").trim() || addComment.isPending}
                           >
-                            Envoyer
+                            {t("comment.send")}
                           </Button>
                         </div>
                       </div>

@@ -12,7 +12,7 @@ import { AudioBars } from "@/components/radio/AudioBars";
 import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import { useT } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_HOME = `${BASE_URL}${ogHome}`;
@@ -54,6 +54,7 @@ export const Route = createFileRoute("/")({
 });
 
 function UserCountBadge() {
+  const t = useT();
   const fetchCount = useServerFn(getUserCount);
   const { data, isLoading } = useQuery({
     queryKey: ["user-count"],
@@ -63,7 +64,7 @@ function UserCountBadge() {
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
       <Users className="size-3" />
-      {isLoading ? "…" : `${data?.count ?? 0} inscrits`}
+      {isLoading ? "…" : `${data?.count ?? 0} ${t("live.registered")}`}
     </span>
   );
 }
@@ -71,6 +72,7 @@ function UserCountBadge() {
 function LivePage() {
   const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
   const t = useT();
+  const { lang } = useLang();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
@@ -117,11 +119,11 @@ function LivePage() {
           <div className="flex shrink-0 flex-col items-center gap-1">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
               <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
-              Radio 100% musique Indé
+              {t("live.indieNoAds")}
             </span>
             <div className="flex flex-wrap items-center justify-center gap-1">
               <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-                sans pub ni info
+                {t("live.noAdsNoNews")}
               </span>
               <UserCountBadge />
             </div>
@@ -159,14 +161,14 @@ function LivePage() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
-                <span className="animate-heartbeat">On air</span>
+                <span className="animate-heartbeat">{t("live.onAir")}</span>
                 <AudioBars />
               </div>
               <div className="mt-1 truncate text-xl font-bold">
-                {currentTrack?.title ?? "Indi Radio — live"}
+                {currentTrack?.title ?? t("live.defaultTitle")}
               </div>
               <div className="truncate text-sm text-muted-foreground">
-                {currentTrack?.artist ?? "Le flux tourne 24/7"}
+                {currentTrack?.artist ?? t("live.defaultArtist")}
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <button
@@ -177,7 +179,7 @@ function LivePage() {
                       ? "Chargement du flux Indi Radio"
                       : playing
                         ? "Mettre en pause Indi Radio"
-                        : "Écouter Indi Radio"
+                        : t("live.listen")
                   }
                   aria-pressed={playing}
                   aria-busy={loading}
@@ -196,7 +198,7 @@ function LivePage() {
                   <LiveIndicator />
                 ) : (
                   <span className="text-sm font-bold uppercase tracking-wide" aria-live="polite">
-                    {loading ? "Connexion…" : "Écouter Indi Radio"}
+                    {loading ? t("live.connecting") : t("live.listen")}
                   </span>
                 )}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
@@ -228,23 +230,23 @@ function LivePage() {
                 <BarChart3 className="size-5" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-sm font-bold text-primary">Chart des auditeurs</span>
-                <span className="text-[11px] text-muted-foreground">Top des titres aimés</span>
+                <span className="text-sm font-bold text-primary">{t("home.chartTitle")}</span>
+                <span className="text-[11px] text-muted-foreground">{t("home.chartSubtitle")}</span>
               </div>
             </div>
             <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground transition group-hover:translate-x-0.5">
-              Voir →
+              {t("home.see")}
             </span>
           </Link>
         </div>
         <ul className="space-y-2">
           {history.length === 0 && (
             <li className="card-brut p-4 text-center text-sm text-muted-foreground">
-              Aucun titre enregistré pour l'instant.
+              {t("home.historyEmpty")}
             </li>
           )}
           {history.map((t) => (
-            <HistoryRow key={t.id} track={t} />
+            <HistoryRow key={t.id} track={t} locale={lang === "en" ? enUS : fr} />
           ))}
         </ul>
       </section>
@@ -253,6 +255,7 @@ function LivePage() {
 }
 
 function NewsletterBanner() {
+  const t = useT();
   return (
     <Link
       to="/newsletter"
@@ -263,13 +266,13 @@ function NewsletterBanner() {
         <Mail className="size-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-bold">Inscris-toi à la newsletter</div>
+        <div className="text-sm font-bold">{t("newsletter.title")}</div>
         <div className="text-[11px] text-muted-foreground">
-          Une note quand il y a du neuf : émissions, podcasts, sorties.
+          {t("newsletter.subtitle")}
         </div>
       </div>
       <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
-        S'inscrire →
+        {t("newsletter.cta")}
       </span>
     </Link>
   );
@@ -277,8 +280,10 @@ function NewsletterBanner() {
 
 function HistoryRow({
   track,
+  locale,
 }: {
   track: { id: string; title: string; artist: string; played_at: string };
+  locale: typeof fr;
 }) {
   const { data: artwork, refetch } = useArtwork(track.artist, track.title);
   const qc = useQueryClient();
@@ -315,7 +320,7 @@ function HistoryRow({
         <div className="truncate text-xs text-muted-foreground">{track.artist}</div>
       </div>
       <span className="text-[10px] text-muted-foreground">
-        {formatDistanceToNow(new Date(track.played_at), { addSuffix: true, locale: fr })}
+        {formatDistanceToNow(new Date(track.played_at), { addSuffix: true, locale })}
       </span>
     </li>
   );

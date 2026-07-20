@@ -10,7 +10,7 @@ import { Heart, MessageCircle, Newspaper, ArrowUpRight } from "lucide-react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { toast } from "@/lib/toast";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -23,7 +23,7 @@ import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { useT } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -173,6 +173,9 @@ function ActusPage() {
 function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: { post: NewsPost; onSignIn: () => void; sessionUserId: string | null; autoOpenComments?: boolean }) {
   const qc = useQueryClient();
   const { isAdmin } = useAuth();
+  const t = useT();
+  const { lang } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
   const [commentOpen, setCommentOpen] = useState(false);
   useEffect(() => {
     if (autoOpenComments) setCommentOpen(true);
@@ -304,7 +307,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
           <span className="text-[10px] text-muted-foreground">
-            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: fr })}
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
           </span>
         </div>
         {editing ? (
@@ -409,7 +412,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                       )}
                     </div>
                     <span className="text-[10px] text-muted-foreground">
-                      {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
+                      {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
                     </span>
                   </div>
                   {isEditingC ? (
@@ -455,11 +458,11 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             })}
             {sessionUserId ? (
               <div className="flex gap-2">
-                <Input placeholder="Ajouter un commentaire…" value={comment} onChange={(e) => setComment(e.target.value)} />
-                <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim()}>Envoyer</Button>
+                <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
+                <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim()}>{t("comment.send")}</Button>
               </div>
             ) : (
-              <Button size="sm" variant="outline" onClick={onSignIn}>Se connecter pour commenter</Button>
+              <Button size="sm" variant="outline" onClick={onSignIn}>{t("comment.signInToComment")}</Button>
             )}
           </div>
         )}

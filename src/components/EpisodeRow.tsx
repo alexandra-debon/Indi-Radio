@@ -8,6 +8,8 @@ import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ShareButton } from "@/components/share/ShareButton";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT } from "@/lib/i18n";
 
 export type EpisodeLike = {
   id: string;
@@ -20,6 +22,7 @@ export type EpisodeLike = {
 };
 
 export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
+  const t = useT();
   const [playing, setPlaying] = useState(false);
   const [audio] = useState(() => (typeof Audio !== "undefined" && ep.audio_url ? new Audio(ep.audio_url) : null));
   const [current, setCurrent] = useState(0);
@@ -196,7 +199,7 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
             disabled={rate.isPending || !comment.trim()}
             onClick={() => requireAuth(() => rate.mutate({ stars, comment }))}
           >
-            Publier mon commentaire
+            {t("comment.publish")}
           </Button>
         </div>
       )}
@@ -219,7 +222,14 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
                 )}
                 <span className="text-muted-foreground"> · {"★".repeat(c.stars)}</span>
               </span>
-              <p className="text-foreground/90">{c.comment}</p>
+              <p className="text-foreground/90">
+                <TranslatedText
+                  entityType="episode_rating"
+                  entityKey={`${ep.id}:${c.user_id}:${c.created_at}`}
+                  field="comment"
+                  text={c.comment}
+                />
+              </p>
             </li>
           ))}
         </ul>

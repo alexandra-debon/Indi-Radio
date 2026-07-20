@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { shareNative, isNative } from "@/lib/native";
+import { useT } from "@/lib/i18n";
 
 export type ShareTarget = {
   /**
@@ -51,6 +52,7 @@ export function ShareButton({
 }) {
   const [open, setOpen] = useState(false);
   const [nativeShare, setNativeShare] = useState(false);
+  const t = useT();
   useEffect(() => {
     // Only use the native sheet inside a real native wrapper (Capacitor).
     // In browsers (including mobile Safari inside an iframe/preview),
@@ -65,9 +67,9 @@ export function ShareButton({
   async function copy() {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Lien copié !");
+      toast.success(t("share.copied"));
     } catch {
-      toast.error("Impossible de copier le lien");
+      toast.error(t("share.copyError"));
     }
   }
 
@@ -98,7 +100,7 @@ export function ShareButton({
         className={`${triggerClass} ${className}`}
       >
         <Share2 className="size-3.5" />
-        {variant === "chip" && <span>Partager</span>}
+        {variant === "chip" && <span>{label}</span>}
       </button>
     );
   }
@@ -114,7 +116,7 @@ export function ShareButton({
           className={`${triggerClass} ${className}`}
         >
           <Share2 className="size-3.5" />
-          {variant === "chip" && <span>Partager</span>}
+          {variant === "chip" && <span>{label}</span>}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
@@ -150,7 +152,7 @@ export function ShareButton({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={(e) => { e.preventDefault(); copy(); }}>
-          <Copy className="size-4" /> Copier le lien
+          <Copy className="size-4" /> {t("share.copy")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
