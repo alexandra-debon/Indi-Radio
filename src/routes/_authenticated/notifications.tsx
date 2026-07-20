@@ -34,6 +34,7 @@ function NotificationsCenter() {
   const { session } = useAuth();
   const qc = useQueryClient();
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "mention" | "reply" | "like">("all");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const { data: notifs = [], isLoading } = useQuery<Notif[]>({
@@ -124,10 +125,28 @@ function NotificationsCenter() {
     onSuccess: invalidate,
   });
 
-  const filtered = useMemo(
-    () => (filter === "unread" ? notifs.filter((n) => !n.read_at) : notifs),
-    [notifs, filter],
-  );
+  const filtered = useMemo(() => {
+    let list = notifs;
+    if (typeFilter !== "all") list = list.filter((n) => n.type === typeFilter);
+    if (filter === "unread") list = list.filter((n) => !n.read_at);
+    return list;
+  }, [notifs, filter, typeFilter]);
+
+  const typeCounts = useMemo(() => ({
+    mention: notifs.filter((n) => n.type === "mention").length,
+    reply: notifs.filter((n) => n.type === "reply").length,
+    like: notifs.filter((n) => n.type === "like").length,
+  }), [notifs]);
+
+  const deleteFiltered = useMutation({
+    mutationFn: async () => {
+      const ids = filtered.map((n) => n.id);
+      if (!ids.length) return;
+      const { error } = await supabase.from("notifications").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+  });
 
   const groups = useMemo(() => {
     const map = new Map<string, { key: string; url: string | null; items: Notif[] }>();
@@ -166,6 +185,26 @@ function NotificationsCenter() {
               className={cn("px-3 py-1.5 border-l-2 border-border", filter === "unread" ? "bg-primary text-primary-foreground" : "hover:bg-muted")}
             >Non lues</button>
           </div>
+          <div className="inline-flex overflow-hidden rounded-md border-2 border-border text-xs font-bold uppercase">
+            {([
+              ["all", "Tous types", null],
+              ["mention", `@Mentions${typeCounts.mention ? ` (${typeCounts.mention})` : ""}`, AtSign],
+              ["reply", `Réponses${typeCounts.reply ? ` (${typeCounts.reply})` : ""}`, MessageCircle],
+              ["like", `Likes${typeCounts.like ? ` (${typeCounts.like})` : ""}`, Heart],
+            ] as const).map(([val, label, Icon], i) => (
+              <button
+                key={val}
+                onClick={() => setTypeFilter(val)}
+                className={cn(
+                  "inline-flex items-center gap-1 px-2.5 py-1.5",
+                  i > 0 && "border-l-2 border-border",
+                  typeFilter === val ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+                )}
+              >
+                {Icon && <Icon className="size-3" />} {label}
+              </button>
+            ))}
+          </div>
           <button
             onClick={() => markAll.mutate()}
             disabled={unreadTotal === 0 || markAll.isPending}
@@ -173,6 +212,17 @@ function NotificationsCenter() {
           >
             <Check className="size-3.5" /> Tout marquer lu
           </button>
+          {typeFilter !== "all" && (
+            <button
+              onClick={() => {
+                if (confirm(`Supprimer les ${filtered.length} notification(s) affichée(s) ?`)) deleteFiltered.mutate();
+              }}
+              disabled={filtered.length === 0 || deleteFiltered.isPending}
+              className="inline-flex items-center gap-1 rounded-md border border-destructive/60 px-2.5 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-40"
+            >
+              <Trash2 className="size-3.5" /> Supprimer la vue
+            </button>
+          )}
           <button
             onClick={() => {
               if (confirm("Supprimer toutes les notifications déjà lues ?")) deleteAllRead.mutate();
