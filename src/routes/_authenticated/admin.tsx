@@ -1362,6 +1362,22 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
   );
 }
 function ReportsAdmin() {
+  const [kind, setKind] = useState<"comments" | "images">("comments");
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {(["comments", "images"] as const).map((k) => (
+          <Button key={k} size="sm" variant={kind === k ? "default" : "outline"} onClick={() => setKind(k)}>
+            {k === "comments" ? "Commentaires" : "Photos"}
+          </Button>
+        ))}
+      </div>
+      {kind === "comments" ? <CommentReportsAdmin /> : <ImageReportsAdmin />}
+    </div>
+  );
+}
+
+function CommentReportsAdmin() {
   const qc = useQueryClient();
   const { session } = useAuth();
   const [status, setStatus] = useState<"pending" | "resolved" | "dismissed">("pending");
