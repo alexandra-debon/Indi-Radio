@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.trg_prewarm_translation() FROM PUBLIC, anon, authenticated;
