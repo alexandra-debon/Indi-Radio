@@ -9,6 +9,8 @@ import { toast } from "@/lib/toast";
 import { sendTestEmail, listRecentEmailEvents } from "@/lib/email-diagnostics.functions";
 import { checkEmailDns } from "@/lib/dns-check.functions";
 import { CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
+import { Download, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const SENDER = "notify.radio.indi-art-culture.com";
 const ROOT = "radio.indi-art-culture.com";
@@ -26,6 +28,43 @@ export function EmailStatusPanel() {
   const runTest = useServerFn(sendTestEmail);
   const fetchEvents = useServerFn(listRecentEmailEvents);
   const runDnsCheck = useServerFn(checkEmailDns);
+
+  const subsQuery = useQuery({
+    queryKey: ["admin-newsletter-subscribers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("newsletter_subscribers")
+        .select("email, subscribed_at")
+        .order("subscribed_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const exportSubscribersCsv = () => {
+    const rows = subsQuery.data ?? [];
+    if (rows.length === 0) {
+      toast.error("Aucun abonné à exporter");
+      return;
+    }
+    const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+    const csv = [
+      "email,subscribed_at",
+      ...rows.map((r: any) => `${escape(r.email)},${escape(r.subscribed_at ?? "")}`),
+    ].join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `newsletter-subscribers-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`${rows.length} abonné(s) exporté(s)`);
+  };
 
   const dnsQuery = useQuery({
     queryKey: ["admin-email-dns"],
