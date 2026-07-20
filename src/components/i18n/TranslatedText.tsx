@@ -95,8 +95,8 @@ export function TranslatedText({
   const rendered = useMemo(() => {
     if (!shouldTranslate) return text ?? "";
     if (query.data) return query.data;
-    return text ?? "";
-  }, [shouldTranslate, query.data, text]);
+    return t("translate.loading");
+  }, [shouldTranslate, query.data, text, t]);
 
   const showButton = manual && langsDiffer;
   const label = lang === "fr" ? "Traduire" : "Translate";

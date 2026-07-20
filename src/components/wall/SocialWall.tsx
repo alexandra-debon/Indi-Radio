@@ -10,7 +10,7 @@ import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
@@ -27,7 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { useT } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 
 interface PostRow {
   id: string;
@@ -76,6 +76,8 @@ const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
   const t = useT();
+  const { lang } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
   // Ouvert à toute la communauté : tout utilisateur connecté peut uploader des photos.
   const canUploadImages = !!session;
   const qc = useQueryClient();
@@ -515,7 +517,7 @@ export function SocialWall() {
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
                 <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: fr })}
+                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
                 </span>
               </div>
               {isEditing ? (
@@ -835,7 +837,7 @@ export function SocialWall() {
                                   )}
                                 </div>
                                 <span className="text-[10px] text-muted-foreground">
-                                  {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: fr })}
+                                  {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
                                 </span>
                               </div>
                               {stripMediaUrls(c.content) && (
