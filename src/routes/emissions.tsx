@@ -10,6 +10,11 @@ import { ShareButton } from "@/components/share/ShareButton";
 import ogEmissions from "@/assets/og-emissions.jpg";
 import { useT } from "@/lib/i18n";
 
+function ArchiveHeading() {
+  const t = useT();
+  return <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.shows.old")}</h2>;
+}
+
 const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 
 export const Route = createFileRoute("/emissions")({
