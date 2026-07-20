@@ -72,7 +72,19 @@ export const translateContent = createServerFn({ method: "POST" })
       return { text: existing.data.translated_text as string, cached: true };
     }
 
-    const translated = await callGateway(text, targetLang, sourceLang);
+    // Cross-entity reuse: if the same source text was already translated
+    // for ANY other entity in this target language, reuse that translation.
+    const shared = await supabaseAdmin
+      .from("content_translations")
+      .select("translated_text")
+      .eq("lang", targetLang)
+      .eq("source_hash", sourceHash)
+      .limit(1)
+      .maybeSingle();
+
+    const translated = shared.data?.translated_text
+      ? (shared.data.translated_text as string)
+      : await callGateway(text, targetLang, sourceLang);
 
     await supabaseAdmin
       .from("content_translations")
@@ -89,5 +101,5 @@ export const translateContent = createServerFn({ method: "POST" })
         { onConflict: "entity_type,entity_key,field,lang" }
       );
 
-    return { text: translated, cached: false };
+    return { text: translated, cached: !!shared.data };
   });
