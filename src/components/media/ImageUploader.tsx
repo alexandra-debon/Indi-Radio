@@ -14,7 +14,7 @@ import {
   type ImageUsage,
 } from "@/lib/image-optimize";
 
-const MAX_BYTES = 20 * 1024 * 1024;
+const MAX_BYTES = 50 * 1024 * 1024;
 const BUCKET = "content-images";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 
@@ -55,7 +55,7 @@ export function ImageUploader({ value, onChange, folder = "misc", label = "Image
 
   function pickFile(file: File) {
     if (!file.type.startsWith("image/")) { toast.error("Format image uniquement"); return; }
-    if (file.size > MAX_BYTES) { toast.error("Maximum 20 Mo"); return; }
+    if (file.size > MAX_BYTES) { toast.error("Maximum 50 Mo"); return; }
     const url = URL.createObjectURL(file);
     setPreview({ file, url, origSize: file.size });
     setRatio(defaultRatio);
