@@ -438,13 +438,55 @@ export function SocialWall() {
         </div>
       </div>
 
+      {(popularTags.length > 0 || activeTag) && (
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background/40 p-2">
+          <span className="mr-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+            <Hash className="size-3" /> Filtrer
+          </span>
+          {popularTags.map((t) => {
+            const isActive = activeTag === t.tag;
+            return (
+              <button
+                key={t.tag}
+                type="button"
+                onClick={() => setActiveTag(isActive ? null : t.tag)}
+                aria-pressed={isActive}
+                className={
+                  "inline-flex items-center gap-1 rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                  (isActive
+                    ? "bg-primary text-black shadow-[2px_2px_0_0_#000]"
+                    : "bg-background hover:bg-muted")
+                }
+              >
+                #{t.tag}
+                <span className="text-[9px] font-normal opacity-70">{t.count}</span>
+              </button>
+            );
+          })}
+          {activeTag && (
+            <button
+              type="button"
+              onClick={() => setActiveTag(null)}
+              className="ml-auto inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[11px] font-semibold text-muted-foreground hover:bg-muted"
+            >
+              <X className="size-3" /> Réinitialiser
+            </button>
+          )}
+        </div>
+      )}
+
       <ul
         ref={listRef}
         className="max-h-[28rem] space-y-2 overflow-y-auto rounded-lg border border-border bg-background/40 p-2 pr-3"
       >
-        {posts.length === 0 && (
+        {posts.length === 0 && !activeTag && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             Le mur est vide — sois le premier à écrire !
+          </li>
+        )}
+        {posts.length === 0 && activeTag && (
+          <li className="card-brut p-4 text-center text-sm text-muted-foreground">
+            Aucune publication avec <span className="font-semibold text-primary">#{activeTag}</span>.
           </li>
         )}
         {posts.map((p) => {
