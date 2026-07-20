@@ -35,6 +35,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { profile, isAdmin, session, openAuth, signOut } = useAuth();
 
   return (
+    <TooltipProvider delayDuration={200}>
     <div className="flex min-h-screen flex-col">
       <header className="safe-top sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:gap-3">
@@ -72,15 +73,21 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <UserBadge profile={profile} compact className="text-xs" />
                   </Link>
                   {profile?.pseudo && (
-                    <Link
-                      to="/u/$pseudo"
-                      params={{ pseudo: profile.pseudo }}
-                      aria-label="Voir mon profil public"
-                      title="Voir mon profil public"
-                      className="group inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
-                    >
-                      <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
-                    </Link>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          to="/u/$pseudo"
+                          params={{ pseudo: profile.pseudo }}
+                          aria-label="Voir mon profil public"
+                          className="group inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+                        >
+                          <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" sideOffset={6} className="border-2 border-black font-semibold shadow-[2px_2px_0_0_#000]">
+                        Voir mon profil public
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </div>
               </div>
