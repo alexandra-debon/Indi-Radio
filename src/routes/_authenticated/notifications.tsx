@@ -5,10 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart } from "lucide-react";
+import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart, BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseNotifUrl } from "@/lib/notif-navigate";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { toast } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Notifications — Indi Radio" }, { name: "robots", content: "noindex" }] }),
