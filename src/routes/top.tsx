@@ -137,7 +137,7 @@ function TopList({ metric }: { metric: Metric }) {
               <Link {...(l as any)} className="block truncate text-sm font-semibold hover:underline">{row.title}</Link>
               {row.subtitle && <div className="truncate text-xs text-muted-foreground">{row.subtitle}</div>}
               <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                {row.kind === "podcast" ? "Podcast" : "Chronique"}
+                {row.kind === "podcast" ? t("page.top.kind.podcast") : t("page.top.kind.review")}
               </div>
             </div>
             <div className="flex flex-col items-end gap-1 text-sm">
@@ -167,8 +167,8 @@ function TopPage() {
       </div>
       <Tabs defaultValue="rating">
         <TabsList>
-          <TabsTrigger value="rating"><Star className="mr-1 size-4" /> Mieux notés</TabsTrigger>
-          <TabsTrigger value="likes"><Heart className="mr-1 size-4" /> Plus likés</TabsTrigger>
+          <TabsTrigger value="rating"><Star className="mr-1 size-4" /> {t("page.top.tabs.ratings")}</TabsTrigger>
+          <TabsTrigger value="likes"><Heart className="mr-1 size-4" /> {t("page.top.tabs.likes")}</TabsTrigger>
         </TabsList>
         <TabsContent value="rating" className="mt-4"><TopList metric="rating" /></TabsContent>
         <TabsContent value="likes" className="mt-4"><TopList metric="likes" /></TabsContent>
