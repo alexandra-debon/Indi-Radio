@@ -453,7 +453,7 @@ export function SocialWall() {
                       )}
                       {canEdit && (
                         <button
-                          onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); }}
+                          onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); }}
                           className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           aria-label="Modifier"
                         >
