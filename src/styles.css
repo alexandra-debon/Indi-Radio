@@ -52,28 +52,69 @@
   animation: radio-wave 1s ease-in-out infinite;
 }
 
-/* Volume slider — style the native <input type="range"> thumb consistently */
+/* Volume slider — native <input type="range"> stylisé jaune/noir InDi RaDio */
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.volume-slider::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  background: transparent;
+}
+.volume-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: transparent;
+}
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  margin-top: -4px;
   border-radius: 9999px;
   background: var(--color-primary);
   border: 2px solid oklch(0 0 0);
   cursor: pointer;
   box-shadow: 1px 1px 0 0 oklch(0 0 0);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 .volume-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 9999px;
   background: var(--color-primary);
   border: 2px solid oklch(0 0 0);
   cursor: pointer;
   box-shadow: 1px 1px 0 0 oklch(0 0 0);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.volume-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 2px 2px 0 0 oklch(0 0 0);
+}
+.volume-slider:hover::-moz-range-thumb {
+  transform: scale(1.15);
+  box-shadow: 2px 2px 0 0 oklch(0 0 0);
+}
+.volume-slider:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+  background: oklch(0.92 0.2 90);
+  box-shadow: 2px 2px 0 0 oklch(0 0 0);
+}
+.volume-slider:active::-moz-range-thumb {
+  transform: scale(1.25);
+  background: oklch(0.92 0.2 90);
+  box-shadow: 2px 2px 0 0 oklch(0 0 0);
 }
 .volume-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.volume-slider:focus-visible::-moz-range-thumb {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
