@@ -233,6 +233,28 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
             Envoyer {pendingCount}
           </Button>
         )}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={undo}
+          disabled={disabled || busy || past.length === 0}
+          title="Annuler le dernier réordonnancement"
+        >
+          <Undo2 className="mr-1 size-3.5" />
+          Annuler
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={redo}
+          disabled={disabled || busy || future.length === 0}
+          title="Rétablir le réordonnancement"
+        >
+          <Redo2 className="mr-1 size-3.5" />
+          Rétablir
+        </Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
