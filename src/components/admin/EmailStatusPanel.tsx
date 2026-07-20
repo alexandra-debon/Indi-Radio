@@ -312,7 +312,7 @@ export function EmailStatusPanel() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Le fichier CSV contient l'email et la date d'inscription. Compatible Excel / Google Sheets.
+            Le fichier CSV contient : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
           </p>
         </CardContent>
       </Card>
