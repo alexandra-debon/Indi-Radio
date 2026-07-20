@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dedicaces")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/dedicaces")({
 });
 
 function DedicacesPage() {
+  const t = useT();
   const { session, openAuth } = useAuth();
   const [track, setTrack] = useState("");
   const [msg, setMsg] = useState("");
@@ -41,7 +43,7 @@ function DedicacesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Musique à la demande & dédicaces</h1>
+      <h1 className="section-title">{t("page.dedications.title")}</h1>
       <form onSubmit={submit} className="card-brut space-y-3 p-4">
         <Input placeholder="Morceau demandé (artiste – titre)" value={track} onChange={(e) => setTrack(e.target.value)} />
         <Textarea placeholder="Ton message / ta dédicace…" rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} />
