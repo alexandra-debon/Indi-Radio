@@ -46,6 +46,7 @@ import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
+import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -241,6 +242,11 @@ const AuthenticatedProfileAlbumsRoute =
     path: '/profile/albums',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
+  id: '/albums/$albumId',
+  path: '/albums/$albumId',
+  getParentRoute: () => UPseudoRoute,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -299,7 +305,7 @@ export interface FileRoutesByFullPath {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
-  '/u/$pseudo': typeof UPseudoRoute
+  '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -310,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/u/$pseudo/albums/$albumId': typeof UPseudoAlbumsAlbumIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -342,7 +349,7 @@ export interface FileRoutesByTo {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
-  '/u/$pseudo': typeof UPseudoRoute
+  '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -353,6 +360,7 @@ export interface FileRoutesByTo {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/u/$pseudo/albums/$albumId': typeof UPseudoAlbumsAlbumIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -387,7 +395,7 @@ export interface FileRoutesById {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
-  '/u/$pseudo': typeof UPseudoRoute
+  '/u/$pseudo': typeof UPseudoRouteWithChildren
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/u/$pseudo/albums/$albumId': typeof UPseudoAlbumsAlbumIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -443,6 +452,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/u/$pseudo/albums/$albumId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/u/$pseudo/albums/$albumId'
   id:
     | '__root__'
     | '/'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/u/$pseudo/albums/$albumId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -556,7 +568,7 @@ export interface RootRouteChildren {
   TopUsersRoute: typeof TopUsersRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   PPostIdRoute: typeof PPostIdRoute
-  UPseudoRoute: typeof UPseudoRoute
+  UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
@@ -826,6 +838,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/u/$pseudo/albums/$albumId': {
+      id: '/u/$pseudo/albums/$albumId'
+      path: '/albums/$albumId'
+      fullPath: '/u/$pseudo/albums/$albumId'
+      preLoaderRoute: typeof UPseudoAlbumsAlbumIdRouteImport
+      parentRoute: typeof UPseudoRoute
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -943,6 +962,17 @@ const MagazinesRouteWithChildren = MagazinesRoute._addFileChildren(
   MagazinesRouteChildren,
 )
 
+interface UPseudoRouteChildren {
+  UPseudoAlbumsAlbumIdRoute: typeof UPseudoAlbumsAlbumIdRoute
+}
+
+const UPseudoRouteChildren: UPseudoRouteChildren = {
+  UPseudoAlbumsAlbumIdRoute: UPseudoAlbumsAlbumIdRoute,
+}
+
+const UPseudoRouteWithChildren =
+  UPseudoRoute._addFileChildren(UPseudoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -967,7 +997,7 @@ const rootRouteChildren: RootRouteChildren = {
   TopUsersRoute: TopUsersRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   PPostIdRoute: PPostIdRoute,
-  UPseudoRoute: UPseudoRoute,
+  UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
