@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
-import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload, Sparkles, GripVertical } from "lucide-react";
+import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload, Sparkles, GripVertical, Undo2, Redo2 } from "lucide-react";
 import {
   optimizeImageSmart,
   USAGE_PRESETS,
@@ -50,6 +50,45 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
   const [usageChoice, setUsageChoice] = useState<ImageUsage>(usage);
   const [drag, setDrag] = useState<{ kind: "value" | "queue"; index: number } | null>(null);
   const [dragOver, setDragOver] = useState<{ kind: "value" | "queue"; index: number } | null>(null);
+  type Snap = { values: string[]; queueIds: string[] };
+  const [past, setPast] = useState<Snap[]>([]);
+  const [future, setFuture] = useState<Snap[]>([]);
+
+  function snapshot(): Snap {
+    return { values: values.slice(), queueIds: queue.map((q) => q.id) };
+  }
+  function pushHistory() {
+    setPast((p) => [...p, snapshot()]);
+    setFuture([]);
+  }
+  function reorderQueueByIds(ids: string[]) {
+    setQueue((q) => {
+      const map = new Map(q.map((x) => [x.id, x]));
+      const ordered: QueueItem[] = [];
+      ids.forEach((id) => { const it = map.get(id); if (it) { ordered.push(it); map.delete(id); } });
+      // append any items not in snapshot (added since)
+      map.forEach((it) => ordered.push(it));
+      return ordered;
+    });
+  }
+  function applySnap(s: Snap) {
+    onChange(s.values);
+    reorderQueueByIds(s.queueIds);
+  }
+  function undo() {
+    if (past.length === 0) return;
+    const prev = past[past.length - 1];
+    setFuture((f) => [...f, snapshot()]);
+    setPast((p) => p.slice(0, -1));
+    applySnap(prev);
+  }
+  function redo() {
+    if (future.length === 0) return;
+    const next = future[future.length - 1];
+    setPast((p) => [...p, snapshot()]);
+    setFuture((f) => f.slice(0, -1));
+    applySnap(next);
+  }
 
   function reorder<T>(arr: T[], from: number, to: number): T[] {
     const next = arr.slice();
@@ -80,6 +119,7 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
     return (e: React.DragEvent) => {
       e.preventDefault();
       if (!drag || drag.kind !== kind || drag.index === index) { setDrag(null); setDragOver(null); return; }
+      pushHistory();
       if (kind === "value") onChange(reorder(values, drag.index, index));
       else setQueue((q) => reorder(q, drag.index, index));
       setDrag(null); setDragOver(null);
