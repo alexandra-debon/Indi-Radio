@@ -63,6 +63,9 @@ function EditProfilePage() {
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
