@@ -19,6 +19,7 @@ interface HashtagItem {
   id: string;
   tag: string;
   count: number;
+  isNew?: boolean;
 }
 
 interface Props extends React.ComponentProps<typeof Textarea> {
@@ -116,7 +117,14 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
     const t = setTimeout(async () => {
       const results = await suggestHashtags(hashQuery, { limit: 6, signal: controller.signal });
       if (controller.signal.aborted) return;
-      setHashSuggestions(results.map((r) => ({ id: r.tag, tag: r.tag, count: r.count })));
+      const items: HashtagItem[] = results.map((r) => ({ id: r.tag, tag: r.tag, count: r.count }));
+      const q = hashQuery.trim();
+      const isValid = /^[\p{L}\p{N}_.-]+$/u.test(q);
+      const exact = items.some((i) => i.tag.toLowerCase() === q.toLowerCase());
+      if (isValid && !exact) {
+        items.unshift({ id: `__new__:${q}`, tag: q, count: 0, isNew: true });
+      }
+      setHashSuggestions(items);
       setHashActive(0);
     }, 150);
     return () => { controller.abort(); clearTimeout(t); };
@@ -247,7 +255,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
                 #{s.tag}
               </span>
               <span className={cn("text-xs", i === hashActive ? "text-primary-foreground/80" : "text-muted-foreground")}>
-                {s.count} {s.count > 1 ? "publications" : "publication"}
+                {s.isNew ? "Créer ce hashtag" : `${s.count} ${s.count > 1 ? "publications" : "publication"}`}
               </span>
             </li>
           ))}
