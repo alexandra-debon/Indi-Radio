@@ -28,7 +28,7 @@ type AlbumPost = {
 async function fetchAlbum(albumId: string, pseudo: string) {
   const { data: album, error: aerr } = await supabase
     .from("photo_albums")
-    .select("id, owner_id, title, description, cover_url, created_at")
+    .select("id, owner_id, title, description, cover_url, created_at, photo_order")
     .eq("id", albumId)
     .maybeSingle();
   if (aerr) throw aerr;
@@ -44,8 +44,18 @@ async function fetchAlbum(albumId: string, pseudo: string) {
     .order("created_at", { ascending: false });
   if (perr) throw perr;
 
+  const order = ((album as any).photo_order ?? []) as string[];
+  const orderedPosts = (() => {
+    const list = (posts ?? []) as AlbumPost[];
+    if (order.length === 0) return list;
+    const byId = new Map(list.map((p) => [p.id, p]));
+    const head = order.map((id) => byId.get(id)).filter((p): p is AlbumPost => !!p);
+    const rest = list.filter((p) => !order.includes(p.id));
+    return [...head, ...rest];
+  })();
+
   const photos: { postId: string; url: string; caption: string }[] = [];
-  for (const p of (posts ?? []) as AlbumPost[]) {
+  for (const p of orderedPosts) {
     const imgs = (p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : []);
     imgs.forEach((u, i) => photos.push({ postId: p.id, url: u, caption: (p.image_captions?.[i]) ?? "" }));
   }

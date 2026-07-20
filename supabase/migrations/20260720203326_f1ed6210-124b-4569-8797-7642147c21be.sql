@@ -1,0 +1,1 @@
+ALTER TABLE public.photo_albums ADD COLUMN IF NOT EXISTS photo_order uuid[] NOT NULL DEFAULT '{}';
