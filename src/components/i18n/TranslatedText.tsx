@@ -48,7 +48,7 @@ export function TranslatedText({
   as: Tag = "span",
   className,
   sourceLang = "auto",
-  manual = false,
+  manual = true,
   children,
 }: Props) {
   const { lang } = useLang();
