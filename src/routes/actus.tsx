@@ -292,7 +292,11 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
 
   return (
     <li id={`news-${post.id}`} className="card-brut scroll-mt-24 overflow-hidden">
-      {!editing && post.image_url && <img src={post.image_url} alt="" className="h-48 w-full object-cover" />}
+      {!editing && post.image_url && (
+        <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
+          <img src={post.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
+        </div>
+      )}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
