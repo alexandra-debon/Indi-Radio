@@ -117,9 +117,12 @@ function LivePage() {
               <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
               Radio 100% musique Indé
             </span>
-            <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-              sans pub ni info
-            </span>
+            <div className="flex flex-wrap items-center justify-center gap-1">
+              <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+                sans pub ni info
+              </span>
+              <UserCountBadge />
+            </div>
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
