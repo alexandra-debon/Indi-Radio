@@ -642,7 +642,7 @@ export function SocialWall() {
                       </div>
                     )}
                   </div>
-                );
+                </>);
               })()}
             </li>
           );
