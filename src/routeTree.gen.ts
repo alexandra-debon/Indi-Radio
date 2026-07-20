@@ -45,6 +45,7 @@ import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authent
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
+import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -234,6 +235,12 @@ const AuthenticatedProfileBadgesRoute =
     path: '/profile/badges',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfileAlbumsRoute =
+  AuthenticatedProfileAlbumsRouteImport.update({
+    id: '/profile/albums',
+    path: '/profile/albums',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -293,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/u/$pseudo': typeof UPseudoRoute
+  '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
@@ -335,6 +343,7 @@ export interface FileRoutesByTo {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/u/$pseudo': typeof UPseudoRoute
+  '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
@@ -379,6 +388,7 @@ export interface FileRoutesById {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/u/$pseudo': typeof UPseudoRoute
+  '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/u/$pseudo'
+    | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
@@ -465,6 +476,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/u/$pseudo'
+    | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
@@ -508,6 +520,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/u/$pseudo'
+    | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
     | '/api/public/health'
@@ -806,6 +819,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileBadgesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile/albums': {
+      id: '/_authenticated/profile/albums'
+      path: '/profile/albums'
+      fullPath: '/profile/albums'
+      preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -848,6 +868,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedProfileAlbumsRoute: typeof AuthenticatedProfileAlbumsRoute
   AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
   AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
@@ -857,6 +878,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedProfileAlbumsRoute: AuthenticatedProfileAlbumsRoute,
   AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
   AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
