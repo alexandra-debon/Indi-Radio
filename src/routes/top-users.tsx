@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Medal, Award, BadgeCheck } from "lucide-react";
@@ -65,7 +65,12 @@ function TopUsersPage() {
             const rank = i + 1;
             const pseudo = u.pseudo ?? "auditeur";
             return (
-              <li key={u.id} className="card-brut flex items-center gap-3 p-3">
+              <li key={u.id}>
+                <Link
+                  to="/u/$pseudo"
+                  params={{ pseudo: pseudo }}
+                  className="card-brut flex items-center gap-3 p-3 transition hover:-translate-y-0.5"
+                >
                 <div className="grid size-8 place-items-center"><RankBadge rank={rank} /></div>
                 {u.avatar_url ? (
                   <img src={u.avatar_url} alt="" loading="lazy" className="size-12 rounded-full object-cover border-2 border-border" />
@@ -89,6 +94,7 @@ function TopUsersPage() {
                   <span className="text-lg font-black tabular-nums text-primary">{u.points ?? 0}</span>
                   <span className="text-[10px] uppercase tracking-wide text-muted-foreground">points</span>
                 </div>
+                </Link>
               </li>
             );
           })}
