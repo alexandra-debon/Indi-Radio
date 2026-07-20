@@ -134,7 +134,7 @@ function LivePage() {
               src={indiRadioWordmark.url}
               alt="InDi RaDio"
               aria-hidden="true"
-              className="pointer-events-none h-12 w-auto max-w-[8rem] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-14 md:h-16 lg:h-20"
+              className="pointer-events-none h-12 w-auto max-w-[6rem] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:max-w-[7rem] md:max-w-[8rem] sm:h-14 md:h-16 lg:h-20"
             />
           </div>
         </div>
