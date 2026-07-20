@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ArrowLeft, Upload, Loader2, Trash2, BadgeCheck, Globe, Eye } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -53,6 +63,9 @@ function EditProfilePage() {
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -66,15 +79,26 @@ function EditProfilePage() {
 
   if (!profile || !session) return <div className="p-4">Chargement…</div>;
 
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) { toast.error("Merci de choisir une image"); return; }
     if (file.size > 4 * 1024 * 1024) { toast.error("Image trop lourde (4 Mo max)"); return; }
+    if (avatarUrl) {
+      setPendingFile(file);
+      setShowOverwriteDialog(true);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    void uploadAvatar(file);
+  }
+
+  async function uploadAvatar(file: File) {
+    if (!session) return;
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "jpg";
-      const path = `${session!.user.id}/avatar-${Date.now()}.${ext}`;
+      const path = `${session.user.id}/avatar-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
         cacheControl: "3600",
         upsert: true,
@@ -89,15 +113,14 @@ function EditProfilePage() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+      setPendingFile(null);
     }
   }
 
   async function handleRemoveAvatar() {
     if (!session) return;
-    if (!confirm("Supprimer ton avatar et revenir à l'image par défaut ?")) return;
     setRemoving(true);
     try {
-      // Best-effort: delete previous files in the user's folder
       const { data: files } = await supabase.storage.from("avatars").list(session.user.id);
       if (files && files.length > 0) {
         await supabase.storage
@@ -206,7 +229,7 @@ function EditProfilePage() {
                 variant="outline"
                 size="sm"
                 disabled={removing || uploading}
-                onClick={handleRemoveAvatar}
+                onClick={() => setShowRemoveDialog(true)}
                 className="text-destructive"
               >
                 {removing ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
@@ -310,6 +333,47 @@ function EditProfilePage() {
         </p>
       </aside>
       </div>
+
+      <AlertDialog open={showOverwriteDialog} onOpenChange={setShowOverwriteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remplacer l'avatar actuel ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tu as déjà un avatar enregistré. Le téléversement d'une nouvelle image l'écrasera dans ton profil public. Tu peux d'abord annuler et vérifier ton visuel actuel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setPendingFile(null); }}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingFile) void uploadAvatar(pendingFile);
+              }}
+            >
+              Remplacer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Retirer ton avatar ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cela supprimera définitivement l'image actuelle et remettra l'avatar par défaut. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => void handleRemoveAvatar()}
+            >
+              Retirer l'avatar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
