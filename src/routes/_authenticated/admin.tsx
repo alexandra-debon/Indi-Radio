@@ -1362,17 +1362,17 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
   );
 }
 function ReportsAdmin() {
-  const [kind, setKind] = useState<"comments" | "images">("comments");
+  const [kind, setKind] = useState<"comments" | "images" | "albums">("comments");
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        {(["comments", "images"] as const).map((k) => (
+        {(["comments", "images", "albums"] as const).map((k) => (
           <Button key={k} size="sm" variant={kind === k ? "default" : "outline"} onClick={() => setKind(k)}>
-            {k === "comments" ? "Commentaires" : "Photos"}
+            {k === "comments" ? "Commentaires" : k === "images" ? "Photos" : "Albums"}
           </Button>
         ))}
       </div>
-      {kind === "comments" ? <CommentReportsAdmin /> : <ImageReportsAdmin />}
+      {kind === "comments" ? <CommentReportsAdmin /> : kind === "images" ? <ImageReportsAdmin /> : <AlbumReportsAdmin />}
     </div>
   );
 }
