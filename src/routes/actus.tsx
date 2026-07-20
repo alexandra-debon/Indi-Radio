@@ -22,6 +22,7 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -317,9 +318,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           </div>
         ) : (
           <>
-            <h3 className="text-lg font-bold">{post.title}</h3>
+            <h3 className="text-lg font-bold">
+              <TranslatedText entityType="news_post" entityKey={post.id} field="title" text={post.title} />
+            </h3>
             {stripMediaUrls(post.content) && (
-              <p className="whitespace-pre-wrap text-sm">{stripMediaUrls(post.content)}</p>
+              <p className="whitespace-pre-wrap text-sm">
+                <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={stripMediaUrls(post.content)} />
+              </p>
             )}
             <UrlEmbeds text={post.content} />
             <SocialLinksBar links={post.social_links} className="pt-1" />
@@ -417,7 +422,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         {stripMediaUrls(c.content) && (
-                          <p className="text-sm">{stripMediaUrls(c.content)}</p>
+                          <p className="text-sm">
+                            <TranslatedText entityType="news_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)} />
+                          </p>
                         )}
                         <UrlEmbeds text={c.content} compact />
                       </div>

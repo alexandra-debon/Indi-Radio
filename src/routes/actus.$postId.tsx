@@ -6,6 +6,7 @@ import { stripMediaUrls } from "@/lib/media-embed";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import ogActus from "@/assets/og-actus.jpg";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogActus}`;
@@ -74,12 +75,18 @@ function NewsDetailPage() {
       <article className="card-brut overflow-hidden">
         {post.image_url && <img src={post.image_url} alt="" className="h-56 w-full object-cover" />}
         <div className="space-y-3 p-4">
-          <h1 className="text-2xl font-bold">{post.title}</h1>
+          <h1 className="text-2xl font-bold">
+            <TranslatedText entityType="news_post" entityKey={post.id} field="title" text={post.title} />
+          </h1>
           <div className="flex items-center justify-between gap-2">
             <UserBadge profile={post.author} className="text-xs" />
             <span className="text-[10px] text-muted-foreground">Publié par {author}</span>
           </div>
-          {body && <p className="whitespace-pre-wrap text-sm">{body}</p>}
+          {body && (
+            <p className="whitespace-pre-wrap text-sm">
+              <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body} />
+            </p>
+          )}
           <UrlEmbeds text={post.content ?? ""} />
           {post.author?.pseudo && (
             <div className="flex justify-end">
