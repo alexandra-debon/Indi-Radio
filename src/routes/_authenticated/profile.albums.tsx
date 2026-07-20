@@ -235,6 +235,27 @@ function AlbumsManager() {
             </button>
           </div>
 
+          <div className="rounded border border-border bg-muted/30 p-2">
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <div className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Photo de couverture</div>
+              {activeAlbum.cover_url && (
+                <button
+                  onClick={() => setCover.mutate({ albumId: activeAlbum.id, coverUrl: null })}
+                  className="text-[11px] font-bold uppercase tracking-wide text-destructive hover:underline"
+                >
+                  Retirer
+                </button>
+              )}
+            </div>
+            <ImageUploader
+              value={activeAlbum.cover_url ?? ""}
+              onChange={(url) => { if (url) setCover.mutate({ albumId: activeAlbum.id, coverUrl: url }); }}
+              folder={`album-covers/${activeAlbum.id}`}
+              label="Téléverse une couverture personnalisée (ou choisis une photo ci-dessous)"
+              defaultRatio="16:9"
+            />
+          </div>
+
           <div>
             <div className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Dans cet album ({postsInAlbum.length})</div>
             {postsInAlbum.length === 0 ? (
@@ -245,6 +266,7 @@ function AlbumsManager() {
               <div className="grid grid-cols-3 gap-1 sm:grid-cols-4">
                 {postsInAlbum.map((p, idx) => {
                   const url = (p.image_urls && p.image_urls[0]) || p.image_url || "";
+                  const isCover = activeAlbum.cover_url === url;
                   return (
                     <div
                       key={p.id}
@@ -253,19 +275,25 @@ function AlbumsManager() {
                       onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
                       onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) reorder(dragIdx, idx); setDragIdx(null); }}
                       onDragEnd={() => setDragIdx(null)}
-                      className={`group relative aspect-square cursor-move overflow-hidden rounded border border-border bg-muted ${dragIdx === idx ? "opacity-50" : ""}`}
+                      className={`group relative aspect-square cursor-move overflow-hidden rounded border bg-muted ${isCover ? "border-primary ring-2 ring-primary" : "border-border"} ${dragIdx === idx ? "opacity-50" : ""}`}
                     >
                       <img src={url} alt="" className="h-full w-full object-cover" />
                       <span className="absolute left-1 top-1 grid size-5 place-items-center rounded bg-black/60 text-white opacity-0 transition group-hover:opacity-100" aria-hidden>
                         <GripVertical className="size-3" />
                       </span>
                       <span className="absolute right-1 top-1 rounded bg-black/60 px-1 text-[9px] font-bold text-white">{idx + 1}</span>
+                      {isCover && (
+                        <span className="absolute left-1 bottom-1 inline-flex items-center gap-0.5 rounded bg-primary px-1 py-0.5 text-[9px] font-black text-black" title="Couverture actuelle">
+                          <Star className="size-2.5 fill-current" /> Couv.
+                        </span>
+                      )}
                       <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-black/60 p-1 opacity-0 transition group-hover:opacity-100">
                         <button
                           onClick={() => setCover.mutate({ albumId: activeAlbum.id, coverUrl: url })}
-                          className="rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold text-black"
+                          className="rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold text-black disabled:opacity-50"
+                          disabled={isCover}
                         >
-                          Couverture
+                          {isCover ? "✓ Couv." : "Couverture"}
                         </button>
                         <button
                           onClick={() => setPostAlbum.mutate({ postId: p.id, albumId: null })}
