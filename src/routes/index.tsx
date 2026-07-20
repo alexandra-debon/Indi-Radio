@@ -52,6 +52,21 @@ export const Route = createFileRoute("/")({
   component: LivePage,
 });
 
+function UserCountBadge() {
+  const fetchCount = useServerFn(getUserCount);
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-count"],
+    queryFn: () => fetchCount(),
+    staleTime: 60_000,
+  });
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+      <Users className="size-3" />
+      {isLoading ? "…" : `${data?.count ?? 0} inscrits`}
+    </span>
+  );
+}
+
 function LivePage() {
   const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
