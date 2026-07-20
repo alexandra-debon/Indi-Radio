@@ -78,6 +78,26 @@ function ProfilePage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["profile-mentions", session?.user.id] }),
   });
 
+  const saveBio = useMutation({
+    mutationFn: async (newBio: string) => {
+      const trimmed = newBio.trim();
+      if (trimmed.length > 500) throw new Error("500 caractères max");
+      const { error } = await supabase
+        .from("profiles")
+        .update({ bio: trimmed || null } as any)
+        .eq("id", session!.user.id);
+      if (error) throw error;
+    },
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["profile", session?.user.id] });
+      toast.success("Bio enregistrée");
+      setEditingBio(false);
+    },
+    onError: (err: any) => {
+      toast.error(err?.message ?? "Erreur lors de la sauvegarde");
+    },
+  });
+
   if (!profile) return <div className="p-4">Chargement…</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
