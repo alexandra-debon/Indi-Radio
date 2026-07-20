@@ -8,7 +8,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify-i18n:
+    name: i18n dictionary check (blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: verify:i18n (blocks on missing/empty/untranslated EN)
+        run: bun run verify:i18n
+
   verify-seo:
+    needs: verify-i18n
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -31,8 +46,6 @@ jobs:
             sleep 1
           done
           echo "preview did not start" && cat /tmp/preview.log && exit 1
-      - name: verify:i18n
-        run: bun run verify:i18n
       - name: verify:hreflang
         env:
           BASE_URL: http://localhost:8080
