@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText } from "lucide-react";
+import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe } from "lucide-react";
 
 export const Route = createFileRoute("/u/$pseudo")({
   head: ({ params }) => ({
@@ -28,6 +28,8 @@ type Profile = {
   is_team_indi: boolean;
   badges: string[];
   created_at: string;
+  bio: string | null;
+  website: string | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
@@ -35,7 +37,7 @@ type Stats = { posts: number; comments: number; likesGiven: number };
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -123,6 +125,22 @@ function UserProfilePage() {
 
         <LevelBar points={profile.points} level={profile.level} />
       </div>
+
+      {(profile.bio || profile.website) && (
+        <div className="card-brut space-y-2 p-4">
+          {profile.bio && <p className="whitespace-pre-wrap text-sm">{profile.bio}</p>}
+          {profile.website && (
+            <a
+              href={profile.website}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary underline"
+            >
+              <Globe className="size-3.5" /> {profile.website.replace(/^https?:\/\//, "")}
+            </a>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-2">
         <StatCard icon={FileText} label="Publications" value={stats.posts} />

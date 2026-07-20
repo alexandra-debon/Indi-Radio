@@ -879,6 +879,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           badges: string[]
+          bio: string | null
           created_at: string
           id: string
           is_certified: boolean
@@ -889,10 +890,12 @@ export type Database = {
           quarantine_reason: string | null
           quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
           badges?: string[]
+          bio?: string | null
           created_at?: string
           id: string
           is_certified?: boolean
@@ -903,10 +906,12 @@ export type Database = {
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
           badges?: string[]
+          bio?: string | null
           created_at?: string
           id?: string
           is_certified?: boolean
@@ -917,6 +922,7 @@ export type Database = {
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          website?: string | null
         }
         Relationships: []
       }
