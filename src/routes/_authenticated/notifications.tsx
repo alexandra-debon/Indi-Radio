@@ -5,10 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart } from "lucide-react";
+import { Bell, Check, ChevronDown, ChevronRight, Trash2, AtSign, MessageCircle, Heart, BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { parseNotifUrl } from "@/lib/notif-navigate";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { toast } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Notifications — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -148,6 +149,35 @@ function NotificationsCenter() {
     onSuccess: invalidate,
   });
 
+  const { data: mentionsEnabled = true } = useQuery({
+    queryKey: ["notif-pref-mentions", session?.user.id],
+    enabled: !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("notification_preferences")
+        .select("mentions")
+        .eq("user_id", session!.user.id)
+        .maybeSingle();
+      return data?.mentions ?? true;
+    },
+  });
+
+  const toggleMentions = useMutation({
+    mutationFn: async (next: boolean) => {
+      if (!session) return;
+      const { error } = await supabase
+        .from("notification_preferences")
+        .upsert({ user_id: session.user.id, mentions: next }, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: (_d, next) => {
+      qc.invalidateQueries({ queryKey: ["notif-pref-mentions", session?.user.id] });
+      qc.invalidateQueries({ queryKey: ["notification_preferences", session?.user.id] });
+      toast.success(next ? "Notifications @mentions activées" : "Notifications @mentions coupées");
+    },
+    onError: () => toast.error("Impossible de mettre à jour la préférence"),
+  });
+
   const groups = useMemo(() => {
     const map = new Map<string, { key: string; url: string | null; items: Notif[] }>();
     for (const n of filtered) {
@@ -205,6 +235,20 @@ function NotificationsCenter() {
               </button>
             ))}
           </div>
+          <button
+            onClick={() => toggleMentions.mutate(!mentionsEnabled)}
+            disabled={toggleMentions.isPending}
+            title={mentionsEnabled ? "Couper les notifications @mentions" : "Activer les notifications @mentions"}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-md border-2 px-2.5 py-1.5 text-xs font-bold uppercase transition-colors disabled:opacity-40",
+              mentionsEnabled
+                ? "border-primary bg-primary/10 text-primary hover:bg-primary/20"
+                : "border-border bg-muted text-muted-foreground hover:bg-muted/70",
+            )}
+          >
+            {mentionsEnabled ? <AtSign className="size-3.5" /> : <BellOff className="size-3.5" />}
+            @Mentions {mentionsEnabled ? "activées" : "coupées"}
+          </button>
           <button
             onClick={() => markAll.mutate()}
             disabled={unreadTotal === 0 || markAll.isPending}
