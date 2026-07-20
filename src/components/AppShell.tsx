@@ -6,6 +6,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { ShareButton } from "@/components/share/ShareButton";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
+import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
@@ -75,22 +76,25 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <EmailVerificationBanner />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-40 pt-4">{children}</main>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-56 pt-4">{children}</main>
 
-      <footer className="border-t border-border bg-muted/40 py-6">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 px-3 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
-          <span>© {new Date().getFullYear()} Indi Radio — Tous droits réservés</span>
-          <div className="flex items-center gap-4">
-            <Link to="/about" className="hover:text-foreground">À propos</Link>
-            <Link to="/contact" className="hover:text-foreground">Contact</Link>
-            <Link to="/terms" className="hover:text-foreground">CGU</Link>
-            <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-foreground">
-              <FileText className="size-3.5" />
-              Politique de confidentialité
-            </Link>
+      <div className="safe-bottom fixed inset-x-0 bottom-0 z-40">
+        <MiniPlayer />
+        <footer className="border-t border-border bg-muted/40 py-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-2 px-3 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
+            <span>© {new Date().getFullYear()} Indi Radio — Tous droits réservés</span>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              <Link to="/about" className="hover:text-foreground">À propos</Link>
+              <Link to="/contact" className="hover:text-foreground">Contact</Link>
+              <Link to="/terms" className="hover:text-foreground">CGU</Link>
+              <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-foreground">
+                <FileText className="size-3.5" />
+                Politique de confidentialité
+              </Link>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       {/* Drawer */}
       <div
