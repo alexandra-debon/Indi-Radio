@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut, AtSign, Trash2 } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -97,6 +97,12 @@ function ProfilePage() {
             </div>
           )}
         </div>
+        <Link
+          to="/profile/edit"
+          className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+        >
+          <Pencil className="size-4" /> Modifier mon profil
+        </Link>
       </div>
 
       {isAdmin && (
