@@ -37,10 +37,17 @@ export function renderRich(text: string | null | undefined): ReactNode {
       );
     }
     if (p.startsWith("@") && p.length > 1) {
+      const pseudo = p.slice(1);
       return (
-        <span key={i} className="mention">
+        <Link
+          key={i}
+          to="/u/$pseudo"
+          params={{ pseudo }}
+          className="mention font-semibold text-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}
+        >
           {p}
-        </span>
+        </Link>
       );
     }
     return <span key={i}>{p}</span>;
