@@ -14,6 +14,8 @@ import { Route as TopRouteImport } from './routes/top'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
+import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
@@ -78,6 +80,16 @@ const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapFrDotxmlRoute = SitemapFrDotxmlRouteImport.update({
+  id: '/sitemap-fr.xml',
+  path: '/sitemap-fr.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
+  id: '/sitemap-en.xml',
+  path: '/sitemap-en.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -302,6 +314,8 @@ export interface FileRoutesByFullPath {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -348,6 +362,8 @@ export interface FileRoutesByTo {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -396,6 +412,8 @@ export interface FileRoutesById {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -444,6 +462,8 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/sitemap-en.xml'
+    | '/sitemap-fr.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -490,6 +510,8 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/sitemap-en.xml'
+    | '/sitemap-fr.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -537,6 +559,8 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/sitemap-en.xml'
+    | '/sitemap-fr.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -585,6 +609,8 @@ export interface RootRouteChildren {
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
+  SitemapFrDotxmlRoute: typeof SitemapFrDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
   TermsRoute: typeof TermsRoute
@@ -638,6 +664,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-fr.xml': {
+      id: '/sitemap-fr.xml'
+      path: '/sitemap-fr.xml'
+      fullPath: '/sitemap-fr.xml'
+      preLoaderRoute: typeof SitemapFrDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-en.xml': {
+      id: '/sitemap-en.xml'
+      path: '/sitemap-en.xml'
+      fullPath: '/sitemap-en.xml'
+      preLoaderRoute: typeof SitemapEnDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -1030,6 +1070,8 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
+  SitemapFrDotxmlRoute: SitemapFrDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoumissionArtistesRoute: SoumissionArtistesRoute,
   TermsRoute: TermsRoute,
@@ -1050,3 +1092,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
