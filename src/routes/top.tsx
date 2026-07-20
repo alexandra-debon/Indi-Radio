@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Heart, Star, Trophy, Medal, Headphones, Disc3 } from "lucide-react";
 import { ContentCommentsSection, ContentLikeButton } from "@/components/content/ContentReactions";
+import { useT } from "@/lib/i18n";
 
 // Fixed UUID identifying the /top discussion thread
 const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]/gi, "0");
@@ -156,10 +157,11 @@ function TopList({ metric }: { metric: Metric }) {
 }
 
 function TopPage() {
+  const t = useT();
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-4">
       <div>
-        <h1 className="text-2xl font-black tracking-tight">Top</h1>
+        <h1 className="text-2xl font-black tracking-tight">{t("page.top.title")}</h1>
         <p className="text-sm text-muted-foreground">Podcasts et chroniques préférés des auditeurs.</p>
       </div>
       <Tabs defaultValue="rating">
@@ -173,7 +175,7 @@ function TopPage() {
 
       <section className="card-brut space-y-3 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-lg font-black tracking-tight">Discussion — Classements</h2>
+          <h2 className="text-lg font-black tracking-tight">{t("page.top.discussion")}</h2>
           <ContentLikeButton contentType="top" contentId={TOP_THREAD_ID} />
         </div>
         <p className="text-xs text-muted-foreground">Réagis en direct aux classements avec la communauté.</p>
