@@ -83,6 +83,29 @@ export function SeoLocalizer() {
       altEl.setAttribute("content", altLocale);
     }
 
+    // og:url + canonical follow the active language so crawlers see the
+    // localized page as the authoritative one.
+    try {
+      const selfUrl = `${SITE_ORIGIN}${pathname}${lang === "fr" ? "" : `?hl=${lang}`}`;
+      setMeta('meta[property="og:url"]', "content", selfUrl, () => {
+        const m = document.createElement("meta");
+        m.setAttribute("property", "og:url");
+        return m;
+      });
+      setMeta('meta[name="twitter:url"]', "content", selfUrl, () => {
+        const m = document.createElement("meta");
+        m.setAttribute("name", "twitter:url");
+        return m;
+      });
+      let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement("link");
+        canonical.setAttribute("rel", "canonical");
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute("href", selfUrl);
+    } catch {}
+
     // hreflang alternates — same URL with a hl query param so each language has its own indexable URL.
     try {
       const base = SITE_ORIGIN + pathname;
