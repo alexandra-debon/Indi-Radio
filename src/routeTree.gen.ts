@@ -43,6 +43,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
@@ -225,6 +226,11 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
+  id: '/api/public/mention-email',
+  path: '/api/public/mention-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
   path: '/api/public/health',
@@ -317,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -362,6 +369,7 @@ export interface FileRoutesByTo {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -409,6 +417,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -456,6 +465,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
+    | '/api/public/mention-email'
     | '/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
+    | '/api/public/mention-email'
     | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -547,6 +558,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
     | '/api/public/health'
+    | '/api/public/mention-email'
     | '/_authenticated/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -583,6 +595,7 @@ export interface RootRouteChildren {
   TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -830,6 +843,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/mention-email': {
+      id: '/api/public/mention-email'
+      path: '/api/public/mention-email'
+      fullPath: '/api/public/mention-email'
+      preLoaderRoute: typeof ApiPublicMentionEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/health': {
       id: '/api/public/health'
       path: '/api/public/health'
@@ -1020,6 +1040,7 @@ const rootRouteChildren: RootRouteChildren = {
   TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
