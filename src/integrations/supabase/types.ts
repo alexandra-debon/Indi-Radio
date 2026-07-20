@@ -657,17 +657,23 @@ export type Database = {
       newsletter_subscribers: {
         Row: {
           email: string
+          gdpr_consent_at: string | null
           id: string
+          source: string | null
           subscribed_at: string
         }
         Insert: {
           email: string
+          gdpr_consent_at?: string | null
           id?: string
+          source?: string | null
           subscribed_at?: string
         }
         Update: {
           email?: string
+          gdpr_consent_at?: string | null
           id?: string
+          source?: string | null
           subscribed_at?: string
         }
         Relationships: []
