@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -37,6 +37,8 @@ interface PostRow {
   image_urls: string[] | null;
   title: string | null;
   image_captions: string[] | null;
+  album_id: string | null;
+  album: { id: string; title: string } | null;
   author: {
     id: string;
     pseudo: string;
@@ -103,7 +105,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
@@ -550,6 +552,19 @@ export function SocialWall() {
                       </div>
                     );
                   })()}
+                  {p.album && p.author?.pseudo && (
+                    <div className="mt-2">
+                      <Link
+                        to="/u/$pseudo/albums/$albumId"
+                        params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
+                        title={`Voir l'album « ${p.album.title} »`}
+                        className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        <ImageIcon className="size-3.5" />
+                        Album : {p.album.title}
+                      </Link>
+                    </div>
+                  )}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
