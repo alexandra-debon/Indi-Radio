@@ -40,11 +40,11 @@ export function VolumeControl() {
       <div className="relative h-6 w-32 select-none">
         <div
           aria-hidden
-          className="absolute inset-y-1/2 left-0 right-0 h-2 -translate-y-1/2 rounded-full border-2 border-foreground bg-background shadow-[2px_2px_0_0_oklch(0_0_0)]"
+          className="absolute inset-y-1/2 left-0 right-0 h-2 -translate-y-1/2 rounded-full border-2 border-black bg-radio-surface shadow-[2px_2px_0_0_oklch(0_0_0)]"
         />
         <div
           aria-hidden
-          className="absolute inset-y-1/2 left-0 h-2 -translate-y-1/2 rounded-full border-2 border-foreground bg-primary transition-[width] duration-75 ease-out"
+          className="absolute inset-y-1/2 left-0 h-2 -translate-y-1/2 rounded-full border-2 border-black bg-primary transition-[width] duration-75 ease-out"
           style={{ width: `${Math.max(6, percent)}%` }}
         />
         <input
