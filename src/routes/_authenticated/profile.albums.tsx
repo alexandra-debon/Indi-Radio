@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
-import { Images, Plus, Trash2, Check, GripVertical, Star } from "lucide-react";
+import { Images, Plus, Trash2, Check, GripVertical, Star, X } from "lucide-react";
 import { ImageUploader } from "@/components/media/ImageUploader";
 
 export const Route = createFileRoute("/_authenticated/profile/albums")({
@@ -101,6 +101,36 @@ function AlbumsManager() {
       qc.invalidateQueries({ queryKey: ["my-photo-posts"] });
       qc.invalidateQueries({ queryKey: ["my-albums"] });
       qc.invalidateQueries({ queryKey: ["album", v.albumId] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deletePhoto = useMutation({
+    mutationFn: async ({ postId, albumId }: { postId: string; albumId: string | null }) => {
+      const { error } = await supabase.from("posts").delete().eq("id", postId);
+      if (error) throw error;
+      // Recompute photo_order without the deleted id
+      if (albumId) {
+        const album = albums.find((a) => a.id === albumId);
+        const nextOrder = (album?.photo_order ?? orderedIds).filter((id) => id !== postId);
+        await supabase.from("photo_albums").update({ photo_order: nextOrder } as any).eq("id", albumId);
+        // If the deleted photo was the cover, clear it
+        const deleted = photoPosts.find((p) => p.id === postId);
+        const url = (deleted?.image_urls && deleted.image_urls[0]) || deleted?.image_url || "";
+        if (album?.cover_url && album.cover_url === url) {
+          await supabase.from("photo_albums").update({ cover_url: null } as any).eq("id", albumId);
+        }
+      }
+    },
+    onMutate: async ({ postId }) => {
+      // Instant UI update: drop from local order
+      setOrderedIds((prev) => prev.filter((id) => id !== postId));
+    },
+    onSuccess: () => {
+      toast.success("Photo supprimée");
+      qc.invalidateQueries({ queryKey: ["my-photo-posts"] });
+      qc.invalidateQueries({ queryKey: ["my-albums"] });
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -300,6 +330,17 @@ function AlbumsManager() {
                           className="rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-bold text-black"
                         >
                           Retirer
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm("Supprimer définitivement cette photo ? La publication associée sera aussi supprimée.")) {
+                              deletePhoto.mutate({ postId: p.id, albumId: activeAlbum.id });
+                            }
+                          }}
+                          className="inline-flex items-center rounded bg-destructive px-1.5 py-0.5 text-[9px] font-bold text-destructive-foreground"
+                          title="Supprimer la photo"
+                        >
+                          <X className="size-3" />
                         </button>
                       </div>
                     </div>
