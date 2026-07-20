@@ -7,6 +7,7 @@ import { NotificationsBell } from "@/components/NotificationsBell";
 import { ShareButton } from "@/components/share/ShareButton";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
