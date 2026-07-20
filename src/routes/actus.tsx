@@ -6,14 +6,14 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Newspaper } from "lucide-react";
+import { Heart, MessageCircle, Newspaper, ArrowUpRight } from "lucide-react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "@/lib/toast";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
-import { useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
@@ -323,6 +323,21 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             )}
             <UrlEmbeds text={post.content} />
             <SocialLinksBar links={post.social_links} className="pt-1" />
+            {post.author?.pseudo && (
+              <div className="mt-1 flex justify-end">
+                <Link
+                  to="/u/$pseudo"
+                  params={{ pseudo: post.author.pseudo }}
+                  title={`Voir le profil public de @${post.author.pseudo}`}
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:underline"
+                >
+                  <span className="inline-flex size-5 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[1.5px_1.5px_0_0_#000] transition-transform group-hover:-translate-y-0.5">
+                    <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                  </span>
+                  Profil public
+                </Link>
+              </div>
+            )}
           </>
         )}
         <div className="flex items-center gap-2 pt-1">

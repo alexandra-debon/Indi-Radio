@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { parseHashTargets } from "@/lib/notif-navigate";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -538,7 +538,23 @@ export function SocialWall() {
                 const postComments = comments.filter((c) => c.post_id === p.id);
                 const isOpen = openThread === p.id;
                 return (
-                  <div className="mt-2 border-t border-border pt-2">
+                  <>
+                    {p.author?.pseudo && (
+                      <div className="mt-2 flex justify-end">
+                        <Link
+                          to="/u/$pseudo"
+                          params={{ pseudo: p.author.pseudo }}
+                          title={`Voir le profil public de @${p.author.pseudo}`}
+                          className="group inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:underline"
+                        >
+                          <span className="inline-flex size-5 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[1.5px_1.5px_0_0_#000] transition-transform group-hover:-translate-y-0.5">
+                            <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                          </span>
+                          Profil public
+                        </Link>
+                      </div>
+                    )}
+                    <div className="mt-2 border-t border-border pt-2">
                     <div className="flex items-center gap-3 text-xs">
                       <button
                         onClick={() => requireAuth(() => toggleLike.mutate(p.id))}
@@ -626,7 +642,7 @@ export function SocialWall() {
                       </div>
                     )}
                   </div>
-                );
+                </>);
               })()}
             </li>
           );
