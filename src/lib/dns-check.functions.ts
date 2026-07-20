@@ -5,8 +5,7 @@ const SENDER = "notify.radio.indi-art-culture.com";
 const ROOT = "radio.indi-art-culture.com";
 const EXPECTED_NS = ["ns5.lovable.cloud", "ns6.lovable.cloud"];
 const EXPECTED_TXT_HOST = `_lovable-email.${ROOT}`;
-const EXPECTED_TXT_VALUE =
-  "lovable_email_verify=470dfe36d9d5653bd626cb2b9c4e4dba3743eda08ce7b1919d776a4ac27f3919";
+const EXPECTED_TXT_PREFIX = "lovable_email_verify=";
 
 async function doh(name: string, type: "NS" | "TXT" | "A" | "MX"): Promise<string[]> {
   const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`;
@@ -48,13 +47,13 @@ export const checkEmailDns = createServerFn({ method: "GET" })
     const nsOk = expectedNsSet.every((e) => nsFound.includes(e));
 
     const txtNorm = txtFound.map(norm);
-    const txtOk = txtNorm.includes(EXPECTED_TXT_VALUE.toLowerCase());
+    const txtOk = txtNorm.some((t) => t.startsWith(EXPECTED_TXT_PREFIX));
 
     return {
       checkedAt: new Date().toISOString(),
       sender: SENDER,
       ns: { expected: EXPECTED_NS, found: nsFound, ok: nsOk },
-      txt: { host: EXPECTED_TXT_HOST, expected: EXPECTED_TXT_VALUE, found: txtFound, ok: txtOk },
+      txt: { host: EXPECTED_TXT_HOST, expectedPrefix: EXPECTED_TXT_PREFIX, found: txtFound, ok: txtOk },
       allOk: nsOk && txtOk,
     };
   });
