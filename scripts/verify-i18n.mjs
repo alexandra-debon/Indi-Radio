@@ -29,6 +29,14 @@ const ALLOWED_IDENTICAL = new Set([
   "nav.chart", "nav.top", "nav.contact",
   "footer.contact",
   "brand.name",
+  // Brand names / proper nouns identical in both locales.
+  "nav.podcasts", "nav.clips",
+  "action.menu",
+  "live.onAir", "live.defaultTitle",
+  "page.about.radio",
+  "page.contact.title", "page.top.title",
+  "page.clips.title", "page.podcasts.title",
+  "page.top.kind.podcast",
 ]);
 
 function parseDict(src) {
