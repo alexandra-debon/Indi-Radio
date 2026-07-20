@@ -552,6 +552,19 @@ export function SocialWall() {
                       </div>
                     );
                   })()}
+                  {p.album && p.author?.pseudo && (
+                    <div className="mt-2">
+                      <Link
+                        to="/u/$pseudo/albums/$albumId"
+                        params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
+                        title={`Voir l'album « ${p.album.title} »`}
+                        className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        <ImageIcon className="size-3.5" />
+                        Album : {p.album.title}
+                      </Link>
+                    </div>
+                  )}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
