@@ -21,6 +21,7 @@ import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { ImageUploader } from "@/components/media/ImageUploader";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -136,7 +137,7 @@ function ActusPage() {
         <div className="card-brut space-y-2 p-3">
           <div className="text-[10px] uppercase tracking-widest text-primary">Nouveau post — {profile?.role}</div>
           <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <Input placeholder="Image URL (optionnel)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+          <ImageUploader value={imageUrl} onChange={setImageUrl} folder="news" label="Image de couverture" />
           <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
           <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
           <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
@@ -302,7 +303,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         {editing ? (
           <div className="space-y-2">
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
-            <Input value={editForm.image_url} onChange={(e) => setEditForm({ ...editForm, image_url: e.target.value })} placeholder="Image URL (optionnel)" />
+            <ImageUploader value={editForm.image_url} onChange={(v) => setEditForm({ ...editForm, image_url: v })} folder="news" label="Image de couverture" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
