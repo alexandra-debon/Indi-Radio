@@ -98,13 +98,12 @@ function ProfilePage() {
             </div>
           )}
         </div>
-        <button
-          type="button"
-          onClick={() => navigate({ to: "/profile/edit" })}
+        <Link
+          to="/profile/edit"
           className="mt-2 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
         >
           <Pencil className="size-4" /> Modifier mon profil
-        </button>
+        </Link>
         {profile.pseudo && (
           <Link
             to="/u/$pseudo"
@@ -134,13 +133,12 @@ function ProfilePage() {
             présenter à la communauté — elles apparaîtront sur ton profil public.
           </p>
         )}
-        <button
-          type="button"
-          onClick={() => navigate({ to: "/profile/edit" })}
+        <Link
+          to="/profile/edit"
           className="mt-3 inline-flex items-center gap-2 rounded-md border-2 border-border bg-background px-3 py-1.5 text-[11px] font-black uppercase tracking-widest hover:bg-muted"
         >
           <Pencil className="size-3.5" /> {profile.bio ? "Modifier" : "Rédiger ma présentation"}
-        </button>
+        </Link>
       </section>
 
       {isAdmin && (
