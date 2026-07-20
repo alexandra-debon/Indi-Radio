@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 type Props = { contentType: string; contentId: string };
 
@@ -143,7 +144,9 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
         <span className="font-semibold">{c.pseudo}</span>
         <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
       </div>
-      <p className="mt-1 whitespace-pre-wrap text-foreground/90">{c.body}</p>
+      <p className="mt-1 whitespace-pre-wrap text-foreground/90">
+        <TranslatedText entityType="content_comment" entityKey={c.id} field="body" text={c.body} />
+      </p>
       <div className="mt-1 flex items-center gap-3">
         {session && (
           <button
@@ -291,7 +294,16 @@ export function ContentRatingSection({ contentType, contentId }: Props) {
             <li key={i} className="text-xs">
               <span className="font-semibold">{r.pseudo}</span>
               <span className="text-muted-foreground"> · {"★".repeat(r.stars)}</span>
-              {r.comment && <p className="text-foreground/90">{r.comment}</p>}
+              {r.comment && (
+                <p className="text-foreground/90">
+                  <TranslatedText
+                    entityType={`content_rating:${contentType}`}
+                    entityKey={`${contentId}:${r.user_id}:${r.created_at}`}
+                    field="comment"
+                    text={r.comment}
+                  />
+                </p>
+              )}
             </li>
           ))}
         </ul>
