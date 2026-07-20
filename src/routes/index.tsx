@@ -27,17 +27,17 @@ const OG_HOME = `${BASE_URL}${ogHome}`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Indi Radio — Live 24/7 des arts indépendants" },
+      { title: "InDi RaDio — Live 24/7 musique  indépendante" },
       {
         name: "description",
         content:
-          "Écoute Indi Radio en direct, découvre les artistes indé, participe au mur social et retrouve l'historique des titres passés à l'antenne.",
+          "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +",
       },
-      { property: "og:title", content: "Indi Radio — Live 24/7 des arts indépendants" },
+      { property: "og:title", content: "InDi RaDio — Live 24/7 musique  indépendante" },
       {
         property: "og:description",
         content:
-          "Le live d'Indi Radio, le mur social, l'historique des titres et les actus de la scène indé.",
+          "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },

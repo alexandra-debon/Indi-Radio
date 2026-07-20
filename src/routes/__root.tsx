@@ -94,27 +94,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "InDi RaDio — Radio 100% indé, sans pub ni info" },
-      { name: "description", content: "InDi RaDio, la radio d'InDi ArT CulTuRe : musique 100% indépendante, sans pub ni info, avec réseau social intégré et magazine interactif." },
+      { title: "InDi RaDio — Live 24/7 musique  indépendante" },
+      { name: "description", content: "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +" },
       { name: "author", content: "InDi ArT CulTuRe" },
       { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "InDi RaDio" },
-      { property: "og:title", content: "InDi RaDio — Radio 100% indé, sans pub ni info" },
-      { property: "og:description", content: "Musique 100% indé, sans pub ni info, avec réseau social intégré et magazine interactif." },
+      { property: "og:title", content: "InDi RaDio — Live 24/7 musique  indépendante" },
+      { property: "og:description", content: "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "google-site-verification", content: "c0A7GBSm4kA-HXUpLR9BPCC3qCdW7GZ-otAj-YtFVN8" },
       { property: "og:site_name", content: "InDi RaDio" },
+      { name: "twitter:title", content: "InDi RaDio — Live 24/7 musique  indépendante" },
+      { name: "twitter:description", content: "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f0e5e996-5ddd-44f1-9f1c-200000559685/id-preview-41820746--d580aa7f-5dc8-42f8-b519-9acbc3ba6330.lovable.app-1784573012609.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f0e5e996-5ddd-44f1-9f1c-200000559685/id-preview-41820746--d580aa7f-5dc8-42f8-b519-9acbc3ba6330.lovable.app-1784573012609.png" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: logoAsset.url, type: "image/png" },
       { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       ...appleTouchStartupImages,
@@ -189,6 +192,7 @@ function RootComponent() {
           <AppShell>
             <Outlet />
           </AppShell>
+          <MiniPlayer />
           <AuthDialog />
           <IosInstallHint />
           <Toaster />
