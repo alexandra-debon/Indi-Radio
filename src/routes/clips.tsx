@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { Film, Pencil, Trash2, Plus, ListMusic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS } from "date-fns/locale";
 import { ClipEntryEditor, type ClipEntryDraft } from "@/components/clips/ClipEntryEditor";
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
 import ogClips from "@/assets/og-clips.jpg";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CLIPS = `${BASE_URL}${ogClips}`;
@@ -78,23 +79,21 @@ function ClipsPage() {
           <Film className="size-5 text-primary" />
           <h1 className="section-title">{t("page.clips.title")}</h1>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Clips actu et playlists vidéo — sélectionnés par la rédaction. On regarde tout ici, sans quitter l'appli.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("page.clips.subtitle")}</p>
       </header>
 
       <ClipsSection
         section="clips_actu"
-        title="Clips Actu"
-        subtitle="La sélection vidéo du moment"
+        title={t("page.clips.actu")}
+        subtitle={t("page.clips.actuSubtitle")}
         icon={<Film className="size-4" />}
         entries={actu}
       />
 
       <ClipsSection
         section="playlists_clips"
-        title="Playlists Clips"
-        subtitle="Playlists thématiques"
+        title={t("page.clips.playlists")}
+        subtitle={t("page.clips.playlistsSubtitle")}
         icon={<ListMusic className="size-4" />}
         entries={playlists}
       />
@@ -116,6 +115,7 @@ function ClipsSection({
   entries: ClipRow[];
 }) {
   const { isAdmin } = useAuth();
+  const t = useT();
   const [creating, setCreating] = useState(false);
 
   return (
@@ -127,7 +127,7 @@ function ClipsSection({
         </div>
         {isAdmin && !creating && (
           <Button size="sm" onClick={() => setCreating(true)}>
-            <Plus className="size-3.5" /> Nouvelle entrée
+            <Plus className="size-3.5" /> {t("page.clips.newEntry")}
           </Button>
         )}
       </div>
@@ -138,7 +138,7 @@ function ClipsSection({
 
       {entries.length === 0 && !creating && (
         <div className="card-brut p-4 text-center text-sm text-muted-foreground">
-          Rien pour l'instant.
+          {t("page.clips.emptySection")}
         </div>
       )}
 
@@ -153,6 +153,8 @@ function ClipsSection({
 
 function ClipCard({ entry }: { entry: ClipRow }) {
   const { isAdmin } = useAuth();
+  const t = useT();
+  const { lang } = useLang();
   const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
 
@@ -161,7 +163,7 @@ function ClipCard({ entry }: { entry: ClipRow }) {
       const { error } = await supabase.from("clip_entries").delete().eq("id", entry.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Entrée supprimée"); qc.invalidateQueries({ queryKey: ["clip-entries"] }); },
+    onSuccess: () => { toast.success(t("page.clips.deleted")); qc.invalidateQueries({ queryKey: ["clip-entries"] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -186,10 +188,17 @@ function ClipCard({ entry }: { entry: ClipRow }) {
   return (
     <li id={`clip-${entry.id}`} className="card-brut scroll-mt-24 space-y-3 p-3">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-lg font-bold leading-tight">{entry.title}</h3>
+        <TranslatedText
+          as="h3"
+          className="text-lg font-bold leading-tight"
+          entityType="clip_entry"
+          entityKey={entry.id}
+          field="title"
+          text={entry.title}
+        />
         <div className="flex shrink-0 items-center gap-1">
           <span className="text-[10px] text-muted-foreground">
-            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: lang === "en" ? enUS : fr })}
           </span>
           <ShareButton
             target={{
@@ -202,7 +211,14 @@ function ClipCard({ entry }: { entry: ClipRow }) {
       </div>
 
       {entry.body && (
-        <p className="whitespace-pre-wrap text-sm text-foreground">{entry.body}</p>
+        <TranslatedText
+          as="p"
+          className="whitespace-pre-wrap text-sm text-foreground"
+          entityType="clip_entry"
+          entityKey={entry.id}
+          field="body"
+          text={entry.body}
+        />
       )}
 
       {entry.body && <UrlEmbeds text={entry.body} />}
@@ -218,14 +234,14 @@ function ClipCard({ entry }: { entry: ClipRow }) {
           <button
             onClick={() => setEditing(true)}
             className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-            aria-label="Modifier"
+            aria-label={t("action.edit")}
           >
             <Pencil className="size-3.5" />
           </button>
           <button
-            onClick={() => { if (confirm("Supprimer cette entrée ?")) del.mutate(); }}
+            onClick={() => { if (confirm(t("page.clips.confirmDelete"))) del.mutate(); }}
             className="rounded p-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
-            aria-label="Supprimer"
+            aria-label={t("action.delete")}
           >
             <Trash2 className="size-3.5" />
           </button>
