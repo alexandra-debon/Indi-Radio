@@ -76,8 +76,6 @@ interface NewsPost {
 function ActusPage() {
   const { session, profile, isAdmin, isAnimateur, openAuth } = useAuth();
   const t = useT();
-  const { lang } = useLang();
-  const dateLocale = lang === "en" ? enUS : fr;
   const qc = useQueryClient();
   useHashHighlight();
   const hash = useRouterState({ select: (s) => s.location.hash });
@@ -175,6 +173,9 @@ function ActusPage() {
 function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: { post: NewsPost; onSignIn: () => void; sessionUserId: string | null; autoOpenComments?: boolean }) {
   const qc = useQueryClient();
   const { isAdmin } = useAuth();
+  const t = useT();
+  const { lang } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
   const [commentOpen, setCommentOpen] = useState(false);
   useEffect(() => {
     if (autoOpenComments) setCommentOpen(true);
