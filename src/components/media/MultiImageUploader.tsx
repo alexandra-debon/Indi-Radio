@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
-import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload, Sparkles } from "lucide-react";
+import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload, Sparkles, GripVertical } from "lucide-react";
 import {
   optimizeImageSmart,
   USAGE_PRESETS,
@@ -48,6 +48,44 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
   const [busy, setBusy] = useState(false);
   const [auto, setAuto] = useState(true);
   const [usageChoice, setUsageChoice] = useState<ImageUsage>(usage);
+  const [drag, setDrag] = useState<{ kind: "value" | "queue"; index: number } | null>(null);
+  const [dragOver, setDragOver] = useState<{ kind: "value" | "queue"; index: number } | null>(null);
+
+  function reorder<T>(arr: T[], from: number, to: number): T[] {
+    const next = arr.slice();
+    const [it] = next.splice(from, 1);
+    next.splice(to, 0, it);
+    return next;
+  }
+
+  function onDragStart(kind: "value" | "queue", index: number) {
+    return (e: React.DragEvent) => {
+      if (busy) return;
+      setDrag({ kind, index });
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", `${kind}:${index}`);
+    };
+  }
+  function onDragOver(kind: "value" | "queue", index: number) {
+    return (e: React.DragEvent) => {
+      if (!drag || drag.kind !== kind) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (!dragOver || dragOver.kind !== kind || dragOver.index !== index) {
+        setDragOver({ kind, index });
+      }
+    };
+  }
+  function onDrop(kind: "value" | "queue", index: number) {
+    return (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!drag || drag.kind !== kind || drag.index === index) { setDrag(null); setDragOver(null); return; }
+      if (kind === "value") onChange(reorder(values, drag.index, index));
+      else setQueue((q) => reorder(q, drag.index, index));
+      setDrag(null); setDragOver(null);
+    };
+  }
+  function onDragEnd() { setDrag(null); setDragOver(null); }
 
   function addFiles(list: FileList | File[]) {
     const remaining = max - values.length - queue.length;
@@ -186,9 +224,24 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
 
       {(queue.length > 0 || values.length > 0) && (
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {values.map((url) => (
-            <div key={url} className="group relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+          {values.map((url, i) => (
+            <div
+              key={url}
+              draggable={!disabled}
+              onDragStart={onDragStart("value", i)}
+              onDragOver={onDragOver("value", i)}
+              onDrop={onDrop("value", i)}
+              onDragEnd={onDragEnd}
+              className={`group relative overflow-hidden rounded border bg-muted transition-all ${dragOver?.kind === "value" && dragOver.index === i ? "border-primary ring-2 ring-primary" : "border-border"} ${drag?.kind === "value" && drag.index === i ? "opacity-40" : ""}`}
+              style={{ aspectRatio: "16/9" }}
+            >
               <img src={url} alt="" className="w-full h-full object-cover" />
+              <span className="absolute left-1 top-1 rounded bg-background/80 p-1 opacity-0 shadow-sm transition-opacity group-hover:opacity-100" aria-hidden>
+                <GripVertical className="size-3" />
+              </span>
+              <span className="absolute bottom-1 right-1 rounded bg-background/80 px-1 py-0.5 text-[9px] font-bold">
+                #{i + 1}
+              </span>
               <button
                 type="button"
                 onClick={() => removeUploaded(url)}
@@ -203,9 +256,24 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
               </span>
             </div>
           ))}
-          {queue.map((it) => (
-            <div key={it.id} className="group relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+          {queue.map((it, i) => (
+            <div
+              key={it.id}
+              draggable={!busy && it.status !== "uploading"}
+              onDragStart={onDragStart("queue", i)}
+              onDragOver={onDragOver("queue", i)}
+              onDrop={onDrop("queue", i)}
+              onDragEnd={onDragEnd}
+              className={`group relative overflow-hidden rounded border bg-muted transition-all ${dragOver?.kind === "queue" && dragOver.index === i ? "border-primary ring-2 ring-primary" : "border-border"} ${drag?.kind === "queue" && drag.index === i ? "opacity-40" : ""}`}
+              style={{ aspectRatio: "16/9" }}
+            >
               <img src={it.previewUrl} alt="" className="w-full h-full object-cover" />
+              <span className="absolute left-1 top-1 rounded bg-background/80 p-1 opacity-0 shadow-sm transition-opacity group-hover:opacity-100" aria-hidden>
+                <GripVertical className="size-3" />
+              </span>
+              <span className="absolute bottom-1 right-1 rounded bg-background/80 px-1 py-0.5 text-[9px] font-bold">
+                #{values.length + i + 1}
+              </span>
               <button
                 type="button"
                 onClick={() => removeQueueItem(it.id)}
@@ -242,7 +310,7 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Chaque image est validée (max 50 Mo). En mode auto, le meilleur format (AVIF ou WebP) et la résolution sont choisis selon l'usage ; sinon recadrage 16:9 en WebP.
+        Glisse-dépose les vignettes pour réordonner. Chaque image est validée (max 50 Mo). En mode auto, le meilleur format (AVIF ou WebP) et la résolution sont choisis selon l'usage ; sinon recadrage 16:9 en WebP.
       </p>
     </div>
   );
