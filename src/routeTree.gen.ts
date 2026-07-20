@@ -51,6 +51,7 @@ import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
+import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -273,6 +274,12 @@ const AuthenticatedProfileAlbumsRoute =
     path: '/profile/albums',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminSeoPreviewRoute =
+  AuthenticatedAdminSeoPreviewRouteImport.update({
+    id: '/seo-preview',
+    path: '/seo-preview',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
   id: '/albums/$albumId',
   path: '/albums/$albumId',
@@ -328,7 +335,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -340,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -377,7 +385,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -389,6 +397,7 @@ export interface FileRoutesByTo {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -428,7 +437,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -440,6 +449,7 @@ export interface FileRoutesById {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
@@ -540,6 +551,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
@@ -590,6 +602,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/_authenticated/admin/seo-preview'
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
@@ -939,6 +952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/seo-preview': {
+      id: '/_authenticated/admin/seo-preview'
+      path: '/seo-preview'
+      fullPath: '/admin/seo-preview'
+      preLoaderRoute: typeof AuthenticatedAdminSeoPreviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/u/$pseudo/albums/$albumId': {
       id: '/u/$pseudo/albums/$albumId'
       path: '/albums/$albumId'
@@ -984,8 +1004,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileAlbumsRoute: typeof AuthenticatedProfileAlbumsRoute
@@ -995,7 +1026,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileAlbumsRoute: AuthenticatedProfileAlbumsRoute,

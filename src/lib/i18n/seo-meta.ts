@@ -8,7 +8,7 @@ export type SeoEntry = {
 export type SeoBundle = Record<Lang, SeoEntry>;
 
 // Static routes (exact pathname match). Dynamic routes handled by prefix map below.
-const STATIC: Record<string, SeoBundle> = {
+export const STATIC_SEO: Record<string, SeoBundle> = {
   "/": {
     fr: {
       title: "InDi RaDio — Live 24/7 musique indépendante",
@@ -102,7 +102,7 @@ const STATIC: Record<string, SeoBundle> = {
 };
 
 // Prefix map for dynamic routes (nearest-longest-prefix match).
-const PREFIX: Array<{ prefix: string; bundle: SeoBundle }> = [
+export const PREFIX_SEO: Array<{ prefix: string; bundle: SeoBundle }> = [
   { prefix: "/actus/", bundle: {
     fr: { title: "Actualité — InDi RaDio", description: "Article d'actualité indépendant publié sur InDi RaDio." },
     en: { title: "News article — InDi RaDio", description: "Independent news article published on InDi RaDio." },
@@ -143,11 +143,11 @@ const PREFIX: Array<{ prefix: string; bundle: SeoBundle }> = [
 
 export function resolveSeo(pathname: string): SeoBundle | null {
   const clean = pathname.replace(/\/+$/, "") || "/";
-  if (STATIC[clean]) return STATIC[clean];
+  if (STATIC_SEO[clean]) return STATIC_SEO[clean];
   // longest prefix wins
   let best: SeoBundle | null = null;
   let bestLen = -1;
-  for (const { prefix, bundle } of PREFIX) {
+  for (const { prefix, bundle } of PREFIX_SEO) {
     if (pathname.startsWith(prefix) && prefix.length > bestLen) {
       best = bundle;
       bestLen = prefix.length;
