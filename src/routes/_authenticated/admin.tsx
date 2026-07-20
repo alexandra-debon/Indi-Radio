@@ -21,6 +21,7 @@ import { listUserEmails } from "@/lib/admin-users.functions";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
+import { ImageUploader } from "@/components/media/ImageUploader";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -726,7 +727,7 @@ function PodcastsAdmin() {
         <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Nouveau podcast</h3>
         <Input placeholder="Titre (ex : Indi'Legend)" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <Textarea rows={2} placeholder="Description (ex : Histoire d'une légende de la musique indé)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        <Input placeholder="URL pochette carrée (https://…)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+        <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         <Input placeholder="Lien manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
         <Input placeholder="Durée totale (mm:ss, optionnel)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
         <Button onClick={() => create.mutate()} disabled={!form.title}>Créer</Button>
@@ -783,7 +784,7 @@ function PodcastEdit({ podcast, onDone }: { podcast: { id: string; title: string
     <div className="mt-3 space-y-2 border-t border-border pt-3">
       <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
       <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
-      <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
       <Input placeholder="Lien manager radio" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
       <Input placeholder="Durée totale (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
       <div className="flex gap-2">
@@ -844,7 +845,7 @@ function EpisodesAdmin({ podcastId }: { podcastId: string }) {
         <Input placeholder="Lien externe manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
         <div className="flex gap-2">
           <Input placeholder="Durée (mm:ss)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
-          <Input placeholder="Pochette épisode (URL, optionnel)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+          <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         </div>
         <Button size="sm" onClick={() => create.mutate()}>Ajouter l'épisode</Button>
       </div>
@@ -901,7 +902,7 @@ function EpisodeEdit({ episode, invalidateKeys, onDone }: {
       <Input placeholder="Lien externe" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
       <div className="flex gap-2">
         <Input placeholder="Durée (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
-        <Input placeholder="Pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+        <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
       </div>
       <div className="flex gap-2">
         <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
@@ -967,7 +968,7 @@ function ShowsAdmin() {
         <Textarea rows={2} placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <Input placeholder="Horaire (ex : Tous les matins 6h-9h)" value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} />
         <Input placeholder="Animateur·rice·s (ex : Melody, Alex, Patrick)" value={form.host} onChange={(e) => setForm({ ...form, host: e.target.value })} />
-        <Input placeholder="URL pochette carrée" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+        <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         <Input placeholder="Durée (mm:ss, optionnel)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
         <Button onClick={() => create.mutate()} disabled={!form.title}>Ajouter</Button>
       </div>
@@ -1038,7 +1039,7 @@ function ShowEdit({ show, onDone }: { show: { id: string; type: "emission" | "ch
       <Textarea rows={2} placeholder="Description" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
       <Input placeholder="Horaire" value={f.schedule} onChange={(e) => setF({ ...f, schedule: e.target.value })} />
       <Input placeholder="Animateur·rice·s" value={f.host} onChange={(e) => setF({ ...f, host: e.target.value })} />
-      <Input placeholder="URL pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+      <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
       <Input placeholder="Durée (mm:ss)" value={f.duration_seconds} onChange={(e) => setF({ ...f, duration_seconds: e.target.value })} />
       <div className="flex gap-2">
         <Button size="sm" onClick={() => save.mutate()} disabled={!f.title}>Enregistrer</Button>
@@ -1099,7 +1100,7 @@ function ShowEpisodesAdmin({ showId }: { showId: string }) {
         <Input placeholder="Lien externe manager radio (optionnel)" value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} />
         <div className="flex gap-2">
           <Input placeholder="Durée (mm:ss)" value={form.duration_seconds} onChange={(e) => setForm({ ...form, duration_seconds: e.target.value })} />
-          <Input placeholder="Pochette (URL, optionnel)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+          <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         </div>
         <Button size="sm" onClick={() => create.mutate()}>Ajouter le replay</Button>
       </div>
@@ -1230,7 +1231,7 @@ function ChroniquesAdmin() {
           <Input type="date" placeholder="Date de sortie" value={form.release_date} onChange={(e) => setForm({ ...form, release_date: e.target.value })} />
           <Input placeholder="Slug URL (auto si vide)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
           <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
-          <Input className="sm:col-span-2" placeholder="URL pochette (carrée)" value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+          <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         </div>
         <Textarea rows={2} placeholder="Extrait / résumé court" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
         <Textarea rows={6} placeholder="Chronique complète *" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
@@ -1337,7 +1338,7 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
         <Input type="date" placeholder="Sortie" value={f.release_date} onChange={(e) => setF({ ...f, release_date: e.target.value })} />
         <Input placeholder="Slug" value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} />
         <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={f.rating} onChange={(e) => setF({ ...f, rating: e.target.value })} />
-        <Input className="sm:col-span-2" placeholder="Pochette" value={f.cover_url} onChange={(e) => setF({ ...f, cover_url: e.target.value })} />
+        <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
       </div>
       <Textarea rows={2} placeholder="Extrait" value={f.excerpt} onChange={(e) => setF({ ...f, excerpt: e.target.value })} />
       <Textarea rows={6} placeholder="Chronique" value={f.content} onChange={(e) => setF({ ...f, content: e.target.value })} />
