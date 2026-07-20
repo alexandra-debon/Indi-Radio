@@ -5,6 +5,7 @@ import { Disc3, Star } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
+import { useT } from "@/lib/i18n";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/chroniques")({
 });
 
 function ChroniquesPage() {
+  const t = useT();
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["album-reviews"],
     queryFn: async () => {
@@ -44,7 +46,7 @@ function ChroniquesPage() {
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h1 className="section-title">Chroniques d'albums</h1>
+        <h1 className="section-title">{t("page.reviews.title")}</h1>
         <p className="text-sm text-muted-foreground">
           Découverte musicale — nos chroniques d'albums de la scène indépendante française. Résumés, notes et liens pour écouter.
         </p>
