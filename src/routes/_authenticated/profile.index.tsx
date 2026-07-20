@@ -148,20 +148,65 @@ function ProfilePage() {
         <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
           <UserCircle2 className="size-4" /> Ma présentation
         </h2>
-        {profile.bio ? (
-          <p className="whitespace-pre-wrap text-sm text-foreground">{profile.bio}</p>
+        {editingBio ? (
+          <div className="space-y-2">
+            <Textarea
+              value={bioDraft}
+              onChange={(e) => setBioDraft(e.target.value)}
+              maxLength={500}
+              rows={4}
+              placeholder="Quelques mots sur toi…"
+              disabled={saveBio.isPending}
+            />
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+              <span>{bioDraft.length}/500</span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                disabled={saveBio.isPending}
+                onClick={() => saveBio.mutate(bioDraft)}
+                className="flex-1"
+              >
+                {saveBio.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+                Enregistrer
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={saveBio.isPending}
+                onClick={() => {
+                  setEditingBio(false);
+                  setBioDraft(profile.bio ?? "");
+                }}
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Tu n'as pas encore rédigé de présentation. Ajoute quelques lignes pour te
-            présenter à la communauté — elles apparaîtront sur ton profil public.
-          </p>
+          <>
+            {profile.bio ? (
+              <p className="whitespace-pre-wrap text-sm text-foreground">{profile.bio}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Tu n'as pas encore rédigé de présentation. Ajoute quelques lignes pour te
+                présenter à la communauté — elles apparaîtront sur ton profil public.
+              </p>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3 inline-flex items-center gap-2"
+              onClick={() => {
+                setBioDraft(profile.bio ?? "");
+                setEditingBio(true);
+              }}
+            >
+              <Pencil className="size-3.5" /> {profile.bio ? "Modifier" : "Rédiger ma présentation"}
+            </Button>
+          </>
         )}
-        <Link
-          to="/profile/edit"
-          className="mt-3 inline-flex items-center gap-2 rounded-md border-2 border-border bg-background px-3 py-1.5 text-[11px] font-black uppercase tracking-widest hover:bg-muted"
-        >
-          <Pencil className="size-3.5" /> {profile.bio ? "Modifier" : "Rédiger ma présentation"}
-        </Link>
       </section>
 
       {isAdmin && (
