@@ -694,6 +694,36 @@ export type Database = {
         }
         Relationships: []
       }
+      photo_albums: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          owner_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       podcasts: {
         Row: {
           cover_url: string | null
@@ -862,6 +892,7 @@ export type Database = {
       }
       posts: {
         Row: {
+          album_id: string | null
           author_id: string
           content: string
           created_at: string
@@ -876,6 +907,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
+          album_id?: string | null
           author_id: string
           content: string
           created_at?: string
@@ -890,6 +922,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
+          album_id?: string | null
           author_id?: string
           content?: string
           created_at?: string
@@ -904,6 +937,13 @@ export type Database = {
           title?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "photo_albums"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_author_id_fkey"
             columns: ["author_id"]

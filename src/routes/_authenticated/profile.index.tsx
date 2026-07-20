@@ -142,6 +142,12 @@ function ProfilePage() {
         >
           <Trophy className="size-4" /> Mes badges & succès
         </Link>
+        <Link
+          to="/profile/albums"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+        >
+          <Pencil className="size-4" /> Mes albums photos
+        </Link>
       </div>
 
       <section className="card-brut p-4">

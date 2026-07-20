@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe } from "lucide-react";
+import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 export const Route = createFileRoute("/u/$pseudo")({
@@ -63,6 +63,36 @@ async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: 
   };
 }
 
+type AlbumSummary = { id: string; title: string; description: string | null; cover_url: string | null; count: number };
+
+async function fetchAlbums(ownerId: string): Promise<AlbumSummary[]> {
+  const { data: albums, error } = await supabase
+    .from("photo_albums")
+    .select("id, title, description, cover_url")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const list = (albums ?? []) as { id: string; title: string; description: string | null; cover_url: string | null }[];
+  if (list.length === 0) return [];
+  const results: AlbumSummary[] = [];
+  for (const a of list) {
+    const { count } = await supabase.from("posts").select("id", { count: "exact", head: true }).eq("album_id", a.id);
+    let cover = a.cover_url;
+    if (!cover) {
+      const { data: firstPost } = await supabase
+        .from("posts")
+        .select("image_url, image_urls")
+        .eq("album_id", a.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      cover = (firstPost?.image_urls?.[0]) ?? firstPost?.image_url ?? null;
+    }
+    results.push({ ...a, cover_url: cover, count: count ?? 0 });
+  }
+  return results;
+}
+
 function LevelBar({ points, level }: { points: number; level: number }) {
   const thresholds = [0, 20, 60, 150, 300];
   const nextIdx = Math.min(level, 4);
@@ -87,6 +117,11 @@ function UserProfilePage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["profile", pseudo],
     queryFn: () => fetchProfile(pseudo),
+  });
+  const { data: albums = [] } = useQuery({
+    queryKey: ["profile-albums", data?.profile.id],
+    enabled: !!data?.profile.id,
+    queryFn: () => fetchAlbums(data!.profile.id),
   });
 
   if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
@@ -165,6 +200,38 @@ function UserProfilePage() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div className="card-brut p-4">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
+          <Images className="size-4 text-primary" /> Albums photos
+        </h2>
+        {albums.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun album partagé pour le moment.</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {albums.map((a) => (
+              <Link
+                key={a.id}
+                to="/u/$pseudo/albums/$albumId"
+                params={{ pseudo: profile.pseudo, albumId: a.id }}
+                className="card-brut overflow-hidden transition hover:-translate-y-0.5"
+              >
+                <div className="relative aspect-video w-full bg-muted">
+                  {a.cover_url ? (
+                    <img src={a.cover_url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="grid h-full place-items-center text-muted-foreground"><Images className="size-6" /></div>
+                  )}
+                </div>
+                <div className="p-2">
+                  <div className="truncate text-sm font-bold">{a.title}</div>
+                  <div className="text-[11px] text-muted-foreground">{a.count} photo{a.count > 1 ? "s" : ""}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </div>
