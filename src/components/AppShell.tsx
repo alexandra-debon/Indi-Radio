@@ -206,5 +206,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
       </div>
     </div>
+    </TooltipProvider>
   );
 }
