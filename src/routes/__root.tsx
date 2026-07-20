@@ -21,6 +21,7 @@ import { AuthDialog } from "@/components/AuthDialog";
 import { Toaster } from "@/components/ui/sonner";
 import { IosInstallHint } from "@/components/IosInstallHint";
 import { LanguageProvider } from "@/lib/i18n";
+import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 
 function NotFoundComponent() {
   useEffect(() => {
@@ -198,6 +199,7 @@ function RootComponent() {
           <AuthDialog />
           <IosInstallHint />
           <Toaster />
+          <SeoLocalizer />
         </RadioPlayerProvider>
         </LanguageProvider>
       </AuthProvider>

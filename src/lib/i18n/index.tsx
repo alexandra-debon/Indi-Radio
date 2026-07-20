@@ -16,6 +16,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
+      const params = new URLSearchParams(window.location.search);
+      const hl = params.get("hl");
+      if (hl === "en" || hl === "fr") {
+        setLangState(hl);
+        try { localStorage.setItem(STORAGE_KEY, hl); } catch {}
+        return;
+      }
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored === "en" || stored === "fr") setLangState(stored);
     } catch {}
