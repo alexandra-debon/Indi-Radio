@@ -558,7 +558,7 @@ export function SocialWall() {
                       </button>
                       <ShareButton
                         target={{
-                          url: `/#post-${p.id}`,
+                          url: `/p/${p.id}`,
                           title: `${p.author?.pseudo ?? "Un auditeur"} sur Indi Radio`,
                           text: stripMediaUrls(p.content).slice(0, 200),
                         }}
