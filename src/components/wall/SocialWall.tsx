@@ -425,7 +425,9 @@ export function SocialWall() {
                     <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
                   )}
                   {p.image_url && (
-                    <img src={p.image_url} alt="" className="mt-2 max-h-72 w-full rounded border border-border object-cover" />
+                    <div className="mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                      <img src={p.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
+                    </div>
                   )}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
