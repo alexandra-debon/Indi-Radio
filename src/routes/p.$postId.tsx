@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { UserBadge } from "@/components/UserBadge";
 import ogHome from "@/assets/og-home.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
