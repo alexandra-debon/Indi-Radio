@@ -28,23 +28,39 @@ export function VolumeControl() {
       >
         <Icon className="size-4" aria-hidden />
       </button>
-      <input
-        type="range"
-        min={0}
-        max={100}
-        step={1}
-        value={percent}
-        onChange={(e) => setVolume(Number(e.target.value) / 100)}
-        aria-label="Réglage du volume"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={percent}
-        aria-valuetext={`${percent}%`}
-        // touch-none prevents the browser from swallowing horizontal drags as
-        // page scrolls on mobile; h-6 gives a fat hit area for touch.
-        className="h-6 w-28 cursor-pointer touch-none accent-primary"
-        style={{ WebkitAppearance: "none" }}
-      />
+      {/*
+        Custom "growing bar" slider:
+        - The visible bar is a black-bordered track whose yellow fill widens
+          with the volume (from a thin sliver at 0% to full width at 100%).
+        - A transparent native <input type="range"> sits on top to keep
+          full keyboard + touch + pointer accessibility on desktop, mobile
+          and iOS/Android Capacitor WebViews.
+      */}
+      <div className="relative h-6 w-32 select-none">
+        <div
+          aria-hidden
+          className="absolute inset-y-1/2 left-0 right-0 h-2 -translate-y-1/2 rounded-full border-2 border-foreground bg-background shadow-[2px_2px_0_0_oklch(0_0_0)]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-y-1/2 left-0 h-2 -translate-y-1/2 rounded-full border-2 border-foreground bg-primary transition-[width] duration-75"
+          style={{ width: `${Math.max(6, percent)}%` }}
+        />
+        <input
+          type="range"
+          min={0}
+          max={100}
+          step={1}
+          value={percent}
+          onChange={(e) => setVolume(Number(e.target.value) / 100)}
+          aria-label="Réglage du volume"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent}
+          aria-valuetext={`${percent}%`}
+          className="absolute inset-0 h-full w-full cursor-pointer touch-none opacity-0"
+        />
+      </div>
     </div>
   );
 }
