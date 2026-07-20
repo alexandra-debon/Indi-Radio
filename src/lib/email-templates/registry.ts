@@ -23,6 +23,7 @@ import { template as contactTemplate } from './contact'
 import { template as contactConfirmationTemplate } from './contact-confirmation'
 import { template as albumReportNewTemplate } from './album-report-new'
 import { template as albumReportResolvedTemplate } from './album-report-resolved'
+import { template as mentionNotificationTemplate } from './mention-notification'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'user-ban': userBanTemplate,
@@ -31,4 +32,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'contact-confirmation': contactConfirmationTemplate,
   'album-report-new': albumReportNewTemplate,
   'album-report-resolved': albumReportResolvedTemplate,
+  'mention-notification': mentionNotificationTemplate,
 }
