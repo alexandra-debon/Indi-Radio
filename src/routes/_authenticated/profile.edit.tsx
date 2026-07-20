@@ -38,7 +38,10 @@ const schema = z.object({
     .trim()
     .min(3, "Pseudo trop court (3 min)")
     .max(30, "Pseudo trop long (30 max)")
-    .regex(/^[a-zA-Z0-9_.\-]+$/, "Lettres, chiffres, _ . - uniquement"),
+    .regex(
+      /^[\p{L}\p{N} _.\-]+$/u,
+      "Lettres, chiffres, espaces, _ . - uniquement",
+    ),
   bio: z.string().trim().max(500, "500 caractères max").optional().or(z.literal("")),
   website: z
     .string()
