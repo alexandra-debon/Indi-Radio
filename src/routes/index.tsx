@@ -20,6 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
+import liveWordmarkAsset from "@/assets/indi-radio-wordmark-live.png.asset.json";
 
 import { useLang, useT } from "@/lib/i18n";
 
@@ -115,16 +116,29 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="section-title">{t("page.live.now")}</h1>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
-            <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
-            {t("live.indieNoAds")}
-          </span>
-          <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-            {t("live.noAdsNoNews")}
-          </span>
-          <UserCountBadge />
+        <div className="overflow-visible">
+          <h1 className="section-title block w-full pr-2 text-[1.25rem] sm:text-[1.35rem]">
+            {t("page.live.now")}
+          </h1>
+          <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
+                <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
+                {t("live.indieNoAds")}
+              </span>
+              <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+                {t("live.noAdsNoNews")}
+              </span>
+              <UserCountBadge />
+            </div>
+            <img
+              src={liveWordmarkAsset.url}
+              alt="InDi RaDio"
+              className="mt-1 h-11 w-auto max-w-[7rem] shrink-0 object-contain sm:h-12 sm:max-w-[8rem]"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
