@@ -321,19 +321,26 @@ export function EmailStatusPanel() {
               ? "Chargement…"
               : `${subsQuery.data?.length ?? 0} abonné(s) inscrit(s).`}
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               onClick={exportSubscribersCsv}
               disabled={subsQuery.isLoading || (subsQuery.data?.length ?? 0) === 0}
             >
               <Download className="h-4 w-4 mr-2" /> Exporter en CSV
             </Button>
+            <Button
+              variant="outline"
+              onClick={exportSubscribersXlsx}
+              disabled={subsQuery.isLoading || (subsQuery.data?.length ?? 0) === 0}
+            >
+              <Download className="h-4 w-4 mr-2" /> Exporter en XLSX
+            </Button>
             <Button variant="outline" onClick={() => subsQuery.refetch()}>
               Rafraîchir
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Le fichier CSV contient : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
+            Le fichier contient les colonnes : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
           </p>
         </CardContent>
       </Card>
