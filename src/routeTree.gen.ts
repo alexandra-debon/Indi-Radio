@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TopUsersRouteImport } from './routes/top-users'
 import { Route as TopRouteImport } from './routes/top'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
@@ -46,6 +47,11 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
 
+const TopUsersRoute = TopUsersRouteImport.update({
+  id: '/top-users',
+  path: '/top-users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TopRoute = TopRouteImport.update({
   id: '/top',
   path: '/top',
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
+  '/top-users': typeof TopUsersRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
+  '/top-users': typeof TopUsersRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
+  '/top-users': typeof TopUsersRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/soumission-artistes'
     | '/terms'
     | '/top'
+    | '/top-users'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/soumission-artistes'
     | '/terms'
     | '/top'
+    | '/top-users'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/soumission-artistes'
     | '/terms'
     | '/top'
+    | '/top-users'
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
@@ -477,6 +489,7 @@ export interface RootRouteChildren {
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
   TermsRoute: typeof TermsRoute
   TopRoute: typeof TopRoute
+  TopUsersRoute: typeof TopUsersRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
@@ -488,6 +501,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/top-users': {
+      id: '/top-users'
+      path: '/top-users'
+      fullPath: '/top-users'
+      preLoaderRoute: typeof TopUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/top': {
       id: '/top'
       path: '/top'
@@ -837,6 +857,7 @@ const rootRouteChildren: RootRouteChildren = {
   SoumissionArtistesRoute: SoumissionArtistesRoute,
   TermsRoute: TermsRoute,
   TopRoute: TopRoute,
+  TopUsersRoute: TopUsersRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
