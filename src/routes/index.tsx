@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2 } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users } from "lucide-react";
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
@@ -17,6 +17,8 @@ import { PresenceTicker } from "@/components/radio/PresenceTicker";
 import { useArtwork } from "@/hooks/use-artwork";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHashHighlight } from "@/lib/notif-navigate";
+import { useServerFn } from "@tanstack/react-start";
+import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
