@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeHashtag } from "@/lib/hashtag";
 
 export type HashtagSuggestion = { tag: string; count: number };
 
@@ -12,7 +13,7 @@ export async function suggestHashtags(
   opts: { limit?: number; signal?: AbortSignal } = {},
 ): Promise<HashtagSuggestion[]> {
   const limit = opts.limit ?? 6;
-  const needle = prefix.trim().toLowerCase();
+  const needle = normalizeHashtag(prefix);
   const like = `%#${needle}%`;
 
   let req = supabase
@@ -34,8 +35,8 @@ export async function suggestHashtags(
   for (const row of data as Array<{ content: string | null; title: string | null }>) {
     const text = `${row.title ?? ""}\n${row.content ?? ""}`;
     for (const m of text.matchAll(re)) {
-      const raw = m[1];
-      const key = raw.toLowerCase();
+      const key = normalizeHashtag(m[1]);
+      if (!key) continue;
       if (needle.length > 0 && !key.startsWith(needle)) continue;
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
