@@ -242,7 +242,7 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Chaque image est validée (format, taille max 20 Mo), recadrée en 16:9 et convertie en WebP.
+        Chaque image est validée (max 20 Mo). En mode auto, le meilleur format (AVIF ou WebP) et la résolution sont choisis selon l'usage ; sinon recadrage 16:9 en WebP.
       </p>
     </div>
   );
