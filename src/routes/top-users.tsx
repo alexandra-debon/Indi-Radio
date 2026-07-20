@@ -33,6 +33,7 @@ async function fetchTopUsers(): Promise<UserRow[]> {
     .select("id, pseudo, avatar_url, points, level, role, is_certified")
     .is("quarantined_at", null)
     .neq("role", "admin")
+    .not("pseudo", "ilike", "Team Moderation")
     .order("points", { ascending: false })
     .limit(25);
   if (error) throw error;
