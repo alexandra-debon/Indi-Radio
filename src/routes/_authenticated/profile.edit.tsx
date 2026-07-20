@@ -229,7 +229,7 @@ function EditProfilePage() {
                 variant="outline"
                 size="sm"
                 disabled={removing || uploading}
-                onClick={handleRemoveAvatar}
+                onClick={() => setShowRemoveDialog(true)}
                 className="text-destructive"
               >
                 {removing ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
