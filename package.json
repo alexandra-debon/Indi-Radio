@@ -22,7 +22,9 @@
     "publish:verify": "node scripts/publish-verify.mjs"
     ,
     "verify:hreflang": "node scripts/verify-hreflang.mjs",
-    "verify:i18n": "node scripts/verify-i18n.mjs"
+    "verify:i18n": "node scripts/verify-i18n.mjs",
+    "verify:seo": "node scripts/verify-seo-sync.mjs",
+    "verify:all": "bun run verify:i18n && bun run verify:hreflang && bun run verify:seo"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
