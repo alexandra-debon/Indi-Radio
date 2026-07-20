@@ -336,6 +336,42 @@ export type Database = {
         }
         Relationships: []
       }
+      content_translations: {
+        Row: {
+          created_at: string
+          entity_key: string
+          entity_type: string
+          field: string
+          id: string
+          lang: string
+          source_hash: string
+          translated_text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entity_key: string
+          entity_type: string
+          field: string
+          id?: string
+          lang: string
+          source_hash: string
+          translated_text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entity_key?: string
+          entity_type?: string
+          field?: string
+          id?: string
+          lang?: string
+          source_hash?: string
+          translated_text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       episode_ratings: {
         Row: {
           comment: string | null
