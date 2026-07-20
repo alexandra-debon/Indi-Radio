@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/lib/toast";
 
-export const Route = createFileRoute("/_authenticated/profile")({
+export const Route = createFileRoute("/_authenticated/profile/")({
   head: () => ({ meta: [{ title: "Mon profil — Indi Radio" }, { name: "robots", content: "noindex" }] }),
   component: ProfilePage,
 });
