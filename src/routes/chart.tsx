@@ -35,26 +35,27 @@ function RankIcon({ rank }: { rank: number }) {
 }
 
 function ChartList({ view }: { view: "chart_week" | "chart_all_time" }) {
+  const t = useT();
   const { data = [], isLoading } = useChart(view);
-  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
-  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun titre encore classé.</div>;
+  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">{t("common.loading")}</div>;
+  if (data.length === 0) return <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.chart.empty")}</div>;
   return (
     <ol className="space-y-2">
-      {data.map((t, i) => (
-        <li key={t.id ?? i} className="card-brut flex items-center gap-3 p-3">
+      {data.map((row, i) => (
+        <li key={row.id ?? i} className="card-brut flex items-center gap-3 p-3">
           <div className="grid size-8 place-items-center"><RankIcon rank={i + 1} /></div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold">{t.title}</div>
-            <div className="truncate text-xs text-muted-foreground">{t.artist}</div>
+            <div className="truncate text-sm font-semibold">{row.title}</div>
+            <div className="truncate text-xs text-muted-foreground">{row.artist}</div>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <div className="flex items-center gap-1" title="Likes">
               <Heart className="size-4 fill-primary text-primary" />
-              <span className="font-bold tabular-nums">{t.likes}</span>
+              <span className="font-bold tabular-nums">{row.likes}</span>
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground" title="Passages à l'antenne">
+            <div className="flex items-center gap-1 text-muted-foreground" title={t("common.airplays")}>
               <Radio className="size-4" />
-              <span className="font-semibold tabular-nums">{t.plays ?? 0}</span>
+              <span className="font-semibold tabular-nums">{row.plays ?? 0}</span>
             </div>
           </div>
         </li>
@@ -70,8 +71,8 @@ function ChartPage() {
       <h1 className="section-title">{t("page.chart.title")}</h1>
       <Tabs defaultValue="week">
         <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="week">Cette semaine</TabsTrigger>
-          <TabsTrigger value="all">All time</TabsTrigger>
+          <TabsTrigger value="week">{t("page.chart.tabs.week")}</TabsTrigger>
+          <TabsTrigger value="all">{t("page.chart.tabs.all")}</TabsTrigger>
         </TabsList>
         <TabsContent value="week" className="mt-3"><ChartList view="chart_week" /></TabsContent>
         <TabsContent value="all" className="mt-3"><ChartList view="chart_all_time" /></TabsContent>

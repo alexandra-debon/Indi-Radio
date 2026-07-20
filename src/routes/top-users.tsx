@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Medal, Award, BadgeCheck } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 export const Route = createFileRoute("/top-users")({
   head: () => ({
@@ -57,13 +58,13 @@ function TopUsersPage() {
     <div className="mx-auto max-w-3xl space-y-4 p-4">
       <div>
         <h1 className="text-2xl font-black tracking-tight">{t("page.topUsers.title")}</h1>
-        <p className="text-sm text-muted-foreground">Les 25 membres les plus actifs de la communauté, classés par points.</p>
+        <p className="text-sm text-muted-foreground">{t("page.topUsers.subtitle")}</p>
       </div>
 
       {isLoading ? (
-        <div className="p-4 text-sm text-muted-foreground">Chargement…</div>
+        <div className="p-4 text-sm text-muted-foreground">{t("common.loading")}</div>
       ) : data.length === 0 ? (
-        <div className="card-brut p-4 text-center text-sm text-muted-foreground">Pas encore de classement.</div>
+        <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.topUsers.empty")}</div>
       ) : (
         <ol className="space-y-2">
           {data.map((u, i) => {
@@ -89,14 +90,14 @@ function TopUsersPage() {
                     <span className="truncate text-sm font-semibold">@{pseudo}</span>
                     {u.is_certified && (
                       <span className="inline-flex items-center gap-0.5 rounded-md border-2 border-border bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-foreground">
-                        <BadgeCheck className="size-3" aria-hidden /> Certifié
+                        <BadgeCheck className="size-3" aria-hidden /> {t("page.topUsers.certified")}
                       </span>
                     )}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
                     <span>{u.role ?? "auditeur"}</span>
                     <span>·</span>
-                    <span>Niveau {u.level ?? 1}</span>
+                    <span>{t("page.topUsers.level")} {u.level ?? 1}</span>
                   </div>
                   {u.badges && u.badges.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">

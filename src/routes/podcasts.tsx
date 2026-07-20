@@ -8,6 +8,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
 import { useT } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 
@@ -46,7 +47,7 @@ function PodcastsPage() {
     <div className="space-y-4">
       <h1 className="section-title">{t("page.podcasts.title")}</h1>
       {podcasts.length === 0 && (
-        <div className="card-brut p-4 text-center text-sm text-muted-foreground">Aucun podcast pour l'instant.</div>
+        <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.podcasts.empty")}</div>
       )}
       <div className="grid grid-cols-2 gap-3">
         {podcasts.map((p) => (
@@ -70,8 +71,10 @@ function PodcastsPage() {
               )}
             </div>
             <div className="p-2">
-              <div className="truncate text-sm font-semibold">{p.title}</div>
-              {p.description && <div className="line-clamp-2 text-xs text-muted-foreground">{p.description}</div>}
+              <TranslatedText as="div" className="truncate text-sm font-semibold" entityType="podcast" entityKey={p.id} field="title" text={p.title} />
+              {p.description && (
+                <TranslatedText as="div" className="line-clamp-2 text-xs text-muted-foreground" entityType="podcast" entityKey={p.id} field="description" text={p.description} />
+              )}
               {p.duration_seconds ? (
                 <div className="mt-0.5 text-[10px] font-medium uppercase tracking-widest text-primary">
                   {Math.round(p.duration_seconds / 60)} min
@@ -107,12 +110,12 @@ function PodcastEpisodes({ podcastId }: { podcastId: string }) {
         </div>
         <ContentRatingSection contentType="podcast" contentId={podcastId} />
         <div className="border-t pt-3">
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Commentaires</h3>
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("page.podcasts.commentsTitle")}</h3>
           <ContentCommentsSection contentType="podcast" contentId={podcastId} />
         </div>
       </div>
       <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.podcasts.episodes")}</h2>
-      {episodes.length === 0 && <div className="card-brut p-3 text-sm text-muted-foreground">Aucun épisode.</div>}
+      {episodes.length === 0 && <div className="card-brut p-3 text-sm text-muted-foreground">{t("page.podcasts.noEpisode")}</div>}
       {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
     </section>
   );

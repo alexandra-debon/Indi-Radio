@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { BookOpen, Pencil, Plus, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS } from "date-fns/locale";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
@@ -75,10 +76,7 @@ function MagazinesPage() {
           <BookOpen className="size-5 text-primary" />
           <h1 className="section-title">{t("page.magazines.title")}</h1>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Articles interactifs issus du magazine innovant <em>Indi Art Culture</em>. Cliquez sur l'aperçu A4
-          pour feuilleter le magazine, ou ouvrez-le dans un nouvel onglet.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("page.magazines.subtitle")}</p>
       </header>
 
       <section className="space-y-3">
@@ -86,7 +84,7 @@ function MagazinesPage() {
           <h2 className="section-title text-lg">{t("page.magazines.articles")}</h2>
           {isAdmin && !creating && (
             <Button size="sm" onClick={() => setCreating(true)}>
-              <Plus className="size-3.5" /> Nouvel article
+              <Plus className="size-3.5" /> {t("page.clips.newEntry")}
             </Button>
           )}
         </div>
@@ -95,7 +93,7 @@ function MagazinesPage() {
 
         {entries.length === 0 && !creating && (
           <div className="card-brut p-4 text-center text-sm text-muted-foreground">
-            Aucun article pour l'instant.
+            {t("page.magazines.empty")}
           </div>
         )}
 
@@ -111,6 +109,8 @@ function MagazinesPage() {
 
 function MagazineCard({ entry }: { entry: MagazineRow }) {
   const { isAdmin } = useAuth();
+  const t = useT();
+  const { lang } = useLang();
   const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
 
@@ -140,10 +140,10 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
   return (
     <li id={`mag-${entry.id}`} className="card-brut scroll-mt-24 space-y-3 p-3">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-lg font-bold leading-tight">{entry.title}</h3>
+        <TranslatedText as="h3" className="text-lg font-bold leading-tight" entityType="magazine_entry" entityKey={entry.id} field="title" text={entry.title} />
         <div className="flex shrink-0 items-center gap-1">
           <span className="text-[10px] text-muted-foreground">
-            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: lang === "en" ? enUS : fr })}
           </span>
           <ShareButton
             target={{
@@ -156,7 +156,7 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
       </div>
 
       {entry.body && (
-        <p className="whitespace-pre-wrap text-sm text-foreground">{entry.body}</p>
+        <TranslatedText as="p" className="whitespace-pre-wrap text-sm text-foreground" entityType="magazine_entry" entityKey={entry.id} field="body" text={entry.body} />
       )}
       {entry.body && <UrlEmbeds text={entry.body} />}
 
@@ -167,14 +167,14 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
           <button
             onClick={() => setEditing(true)}
             className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-            aria-label="Modifier"
+            aria-label={t("action.edit")}
           >
             <Pencil className="size-3.5" />
           </button>
           <button
             onClick={() => { if (confirm("Supprimer cet article ?")) del.mutate(); }}
             className="rounded p-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
-            aria-label="Supprimer"
+            aria-label={t("action.delete")}
           >
             <Trash2 className="size-3.5" />
           </button>

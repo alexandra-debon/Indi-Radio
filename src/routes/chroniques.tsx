@@ -6,6 +6,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 import { useT } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
@@ -47,16 +48,14 @@ function ChroniquesPage() {
     <div className="space-y-4">
       <header className="space-y-1">
         <h1 className="section-title">{t("page.reviews.title")}</h1>
-        <p className="text-sm text-muted-foreground">
-          Découverte musicale — nos chroniques d'albums de la scène indépendante française. Résumés, notes et liens pour écouter.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("page.reviews.subtitle")}</p>
       </header>
 
-      {isLoading && <div className="card-brut p-4 text-sm text-muted-foreground">Chargement…</div>}
+      {isLoading && <div className="card-brut p-4 text-sm text-muted-foreground">{t("common.loading")}</div>}
 
       {!isLoading && reviews.length === 0 && (
         <div className="card-brut p-4 text-center text-sm text-muted-foreground">
-          Aucune chronique publiée pour le moment. Reviens bientôt.
+          {t("page.reviews.empty")}
         </div>
       )}
 
@@ -89,7 +88,7 @@ function ChroniquesPage() {
                 )}
               </div>
               <div className="flex min-w-0 flex-1 flex-col">
-                <div className="truncate text-sm font-bold">{r.title}</div>
+                <TranslatedText as="div" className="truncate text-sm font-bold" entityType="album_review" entityKey={r.id} field="title" text={r.title} />
                 <div className="truncate text-xs text-muted-foreground">
                   {r.artist}{r.label ? ` · ${r.label}` : ""}
                 </div>
@@ -100,7 +99,7 @@ function ChroniquesPage() {
                   </div>
                 )}
                 {r.excerpt && (
-                  <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{r.excerpt}</p>
+                  <TranslatedText as="p" className="mt-1 line-clamp-3 text-xs text-muted-foreground" entityType="album_review" entityKey={r.id} field="excerpt" text={r.excerpt} />
                 )}
               </div>
             </Link>
