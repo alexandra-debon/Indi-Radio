@@ -65,6 +65,7 @@ function NewsDetailPage() {
   const { postId } = Route.useParams();
   const url = `${BASE_URL}/actus/${postId}`;
   const body = stripMediaUrls(post.content ?? "");
+  const author = post.author?.pseudo ?? "La rédaction";
   return (
     <div className="space-y-4">
       <Link to="/actus" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
@@ -74,8 +75,27 @@ function NewsDetailPage() {
         {post.image_url && <img src={post.image_url} alt="" className="h-56 w-full object-cover" />}
         <div className="space-y-3 p-4">
           <h1 className="text-2xl font-bold">{post.title}</h1>
+          <div className="flex items-center justify-between gap-2">
+            <UserBadge profile={post.author} className="text-xs" />
+            <span className="text-[10px] text-muted-foreground">Publié par {author}</span>
+          </div>
           {body && <p className="whitespace-pre-wrap text-sm">{body}</p>}
           <UrlEmbeds text={post.content ?? ""} />
+          {post.author?.pseudo && (
+            <div className="flex justify-end">
+              <Link
+                to="/u/$pseudo"
+                params={{ pseudo: post.author.pseudo }}
+                title={`Voir le profil public de @${post.author.pseudo}`}
+                className="group inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:underline"
+              >
+                <span className="inline-flex size-5 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[1.5px_1.5px_0_0_#000] transition-transform group-hover:-translate-y-0.5">
+                  <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                </span>
+                Profil public
+              </Link>
+            </div>
+          )}
           <div className="pt-2">
             <ShareButton
               variant="chip"
