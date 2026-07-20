@@ -3,6 +3,7 @@ import { RADIO_CONFIG } from "@/config/radio";
 import sacemLogo from "@/assets/sacem-logo.png.asset.json";
 import tuneinLogo from "@/assets/tunein-logo.webp.asset.json";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -27,11 +28,12 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const t = useT();
   return (
     <div className="space-y-6">
       <IndiLinksBar />
       <section className="space-y-3">
-        <h1 className="section-title">À propos d'InDi ArT CulTuRe — Hub des arts indépendants</h1>
+        <h1 className="section-title">{t("page.about.title")}</h1>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
           <p>
             <strong>InDi ArT CulTuRe</strong> est composé d’une radio internationale 100% musique
@@ -60,7 +62,7 @@ function AboutPage() {
         </div>
       </section>
       <section className="space-y-3">
-        <h2 className="section-title">Indi Radio</h2>
+        <h2 className="section-title">{t("page.about.radio")}</h2>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
           <p>
             <strong>{RADIO_CONFIG.stationName}</strong> est la radio de{" "}
