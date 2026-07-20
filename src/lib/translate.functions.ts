@@ -59,6 +59,7 @@ export const translateContent = createServerFn({ method: "POST" })
     const sourceHash = hashText(text);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { logTranslation, BACKOFF_MINUTES } = await import("@/lib/translate.server");
 
     const existing = await supabaseAdmin
       .from("content_translations")
@@ -70,6 +71,10 @@ export const translateContent = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (existing.data && existing.data.source_hash === sourceHash) {
+      void logTranslation({
+        entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang,
+        source_hash: sourceHash, status: "cache_hit", duration_ms: 0, text_length: text.length,
+      });
       return { text: existing.data.translated_text as string, cached: true };
     }
 
@@ -83,9 +88,43 @@ export const translateContent = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
 
-    const translated = shared.data?.translated_text
-      ? (shared.data.translated_text as string)
-      : await callGateway(text, targetLang, sourceLang);
+    let translated: string;
+    const started = Date.now();
+    if (shared.data?.translated_text) {
+      translated = shared.data.translated_text as string;
+      void logTranslation({
+        entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang,
+        source_hash: sourceHash, status: "shared_hit",
+        duration_ms: Date.now() - started, text_length: text.length,
+      });
+    } else {
+      try {
+        translated = await callGateway(text, targetLang, sourceLang);
+        void logTranslation({
+          entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang,
+          source_hash: sourceHash, status: "success",
+          duration_ms: Date.now() - started, text_length: text.length,
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        void logTranslation({
+          entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang,
+          source_hash: sourceHash, status: "failed",
+          duration_ms: Date.now() - started, error: msg, text_length: text.length,
+        });
+        const nextAt = new Date(Date.now() + BACKOFF_MINUTES[0] * 60_000).toISOString();
+        await supabaseAdmin.from("translation_retry_queue").upsert(
+          {
+            entity_type: entityType, entity_key: entityKey, field,
+            target_lang: targetLang, source_text: text, source_hash: sourceHash,
+            attempts: 0, next_attempt_at: nextAt, last_error: msg.slice(0, 500),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "entity_type,entity_key,field,target_lang" },
+        );
+        throw err;
+      }
+    }
 
     await supabaseAdmin
       .from("content_translations")
@@ -101,6 +140,14 @@ export const translateContent = createServerFn({ method: "POST" })
         },
         { onConflict: "entity_type,entity_key,field,lang" }
       );
+
+    await supabaseAdmin
+      .from("translation_retry_queue")
+      .delete()
+      .eq("entity_type", entityType)
+      .eq("entity_key", entityKey)
+      .eq("field", field)
+      .eq("target_lang", targetLang);
 
     return { text: translated, cached: !!shared.data };
   });

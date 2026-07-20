@@ -45,6 +45,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
@@ -240,6 +241,12 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicProcessTranslationRetriesRoute =
+  ApiPublicProcessTranslationRetriesRouteImport.update({
+    id: '/api/public/process-translation-retries',
+    path: '/api/public/process-translation-retries',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPrewarmTranslationRoute =
   ApiPublicPrewarmTranslationRouteImport.update({
     id: '/api/public/prewarm-translation',
@@ -354,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
+  '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -404,6 +412,7 @@ export interface FileRoutesByTo {
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
+  '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -456,6 +465,7 @@ export interface FileRoutesById {
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
+  '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -508,6 +518,7 @@ export interface FileRouteTypes {
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
+    | '/api/public/process-translation-retries'
     | '/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
+    | '/api/public/process-translation-retries'
     | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -609,6 +621,7 @@ export interface FileRouteTypes {
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
+    | '/api/public/process-translation-retries'
     | '/_authenticated/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -649,6 +662,7 @@ export interface RootRouteChildren {
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
+  ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -910,6 +924,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/process-translation-retries': {
+      id: '/api/public/process-translation-retries'
+      path: '/api/public/process-translation-retries'
+      fullPath: '/api/public/process-translation-retries'
+      preLoaderRoute: typeof ApiPublicProcessTranslationRetriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/prewarm-translation': {
       id: '/api/public/prewarm-translation'
       path: '/api/public/prewarm-translation'
@@ -1136,6 +1157,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
+  ApiPublicProcessTranslationRetriesRoute:
+    ApiPublicProcessTranslationRetriesRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

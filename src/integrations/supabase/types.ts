@@ -1263,6 +1263,96 @@ export type Database = {
           },
         ]
       }
+      translation_logs: {
+        Row: {
+          attempt: number
+          created_at: string
+          duration_ms: number | null
+          entity_key: string
+          entity_type: string
+          error: string | null
+          field: string
+          id: string
+          source_hash: string | null
+          status: string
+          target_lang: string
+          text_length: number | null
+        }
+        Insert: {
+          attempt?: number
+          created_at?: string
+          duration_ms?: number | null
+          entity_key: string
+          entity_type: string
+          error?: string | null
+          field: string
+          id?: string
+          source_hash?: string | null
+          status: string
+          target_lang: string
+          text_length?: number | null
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          duration_ms?: number | null
+          entity_key?: string
+          entity_type?: string
+          error?: string | null
+          field?: string
+          id?: string
+          source_hash?: string | null
+          status?: string
+          target_lang?: string
+          text_length?: number | null
+        }
+        Relationships: []
+      }
+      translation_retry_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          entity_key: string
+          entity_type: string
+          field: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          source_hash: string
+          source_text: string
+          target_lang: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          entity_key: string
+          entity_type: string
+          field: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          source_hash: string
+          source_text: string
+          target_lang: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          entity_key?: string
+          entity_type?: string
+          field?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          source_hash?: string
+          source_text?: string
+          target_lang?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       chart_all_time: {
