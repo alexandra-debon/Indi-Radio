@@ -135,7 +135,7 @@ function LivePage() {
             src={indiRadioWordmark.url}
             alt="InDi RaDio"
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-2 right-2 h-8 w-auto rotate-[3deg] rounded-sm opacity-90 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:bottom-auto sm:right-4 sm:top-4 sm:h-14 sm:opacity-95 md:h-20"
+            className="pointer-events-none absolute -top-1 -right-1 h-14 w-auto max-w-[45%] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:top-2 sm:right-2 sm:h-16 md:h-20 lg:h-24"
           />
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
