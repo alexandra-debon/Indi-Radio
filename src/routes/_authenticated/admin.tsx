@@ -1362,17 +1362,17 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
   );
 }
 function ReportsAdmin() {
-  const [kind, setKind] = useState<"comments" | "images">("comments");
+  const [kind, setKind] = useState<"comments" | "images" | "albums">("comments");
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        {(["comments", "images"] as const).map((k) => (
+        {(["comments", "images", "albums"] as const).map((k) => (
           <Button key={k} size="sm" variant={kind === k ? "default" : "outline"} onClick={() => setKind(k)}>
-            {k === "comments" ? "Commentaires" : "Photos"}
+            {k === "comments" ? "Commentaires" : k === "images" ? "Photos" : "Albums"}
           </Button>
         ))}
       </div>
-      {kind === "comments" ? <CommentReportsAdmin /> : <ImageReportsAdmin />}
+      {kind === "comments" ? <CommentReportsAdmin /> : kind === "images" ? <ImageReportsAdmin /> : <AlbumReportsAdmin />}
     </div>
   );
 }
@@ -1636,6 +1636,146 @@ function ImageReportsAdmin() {
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="destructive" onClick={() => { if (confirm("Retirer cette photo de la publication ?")) { removeImage.mutate({ post_id: r.post_id, image_url: r.image_url }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
                   <Trash2 className="mr-1 size-3" /> Retirer & résoudre
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
+                <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "dismissed" })}>Rejeter</Button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function AlbumReportsAdmin() {
+  const qc = useQueryClient();
+  const { session } = useAuth();
+  const [status, setStatus] = useState<"pending" | "resolved" | "dismissed">("pending");
+
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ["admin-album-reports", status],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("album_reports")
+        .select("*")
+        .eq("status", status)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: enriched = [] } = useQuery({
+    queryKey: ["admin-album-reports-enriched", reports.map((r: any) => r.id).join("|")],
+    enabled: reports.length > 0,
+    queryFn: async () => {
+      const albumIds = Array.from(new Set(reports.map((r: any) => r.album_id)));
+      const uids = Array.from(new Set(reports.map((r: any) => r.reporter_id)));
+      const [albumsRes, profRes] = await Promise.all([
+        albumIds.length
+          ? supabase.from("photo_albums").select("id, owner_id, title, description, cover_url").in("id", albumIds)
+          : Promise.resolve({ data: [] as any[] }),
+        uids.length
+          ? supabase.from("profiles").select("id, pseudo").in("id", uids)
+          : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const albums = new Map<string, any>((albumsRes.data ?? []).map((a: any) => [a.id, a]));
+      const ownerIds = Array.from(new Set(Array.from(albums.values()).map((a: any) => a.owner_id))).filter(Boolean);
+      let ownerMap: Record<string, string> = {};
+      if (ownerIds.length) {
+        const { data: o } = await supabase.from("profiles").select("id, pseudo").in("id", ownerIds);
+        ownerMap = Object.fromEntries((o ?? []).map((x: any) => [x.id, x.pseudo]));
+      }
+      const profs = Object.fromEntries((profRes.data ?? []).map((x: any) => [x.id, x.pseudo]));
+      return reports.map((r: any) => {
+        const a = albums.get(r.album_id);
+        return {
+          ...r,
+          album_title: a?.title ?? "(album supprimé)",
+          album_description: a?.description ?? "",
+          album_cover: a?.cover_url ?? null,
+          owner_pseudo: a?.owner_id ? ownerMap[a.owner_id] ?? "auditeur" : null,
+          reporter_pseudo: profs[r.reporter_id] ?? "auditeur",
+        };
+      });
+    },
+  });
+
+  const setStatusMut = useMutation({
+    mutationFn: async ({ id, next }: { id: string; next: "resolved" | "dismissed" }) => {
+      const { error } = await supabase
+        .from("album_reports")
+        .update({ status: next, resolved_at: new Date().toISOString(), resolved_by: session?.user.id ?? null })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Signalement traité");
+      qc.invalidateQueries({ queryKey: ["admin-album-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const deleteAlbum = useMutation({
+    mutationFn: async ({ album_id }: { album_id: string }) => {
+      const { error } = await supabase.from("photo_albums").delete().eq("id", album_id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Album supprimé");
+      qc.invalidateQueries({ queryKey: ["admin-album-reports"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {(["pending", "resolved", "dismissed"] as const).map((s) => (
+          <Button key={s} size="sm" variant={status === s ? "default" : "outline"} onClick={() => setStatus(s)}>
+            {s === "pending" ? "En attente" : s === "resolved" ? "Résolus" : "Rejetés"}
+          </Button>
+        ))}
+      </div>
+      {isLoading && <div className="card-brut p-3 text-sm text-muted-foreground">Chargement…</div>}
+      {!isLoading && enriched.length === 0 && (
+        <div className="card-brut p-4 text-sm text-muted-foreground">Aucun signalement.</div>
+      )}
+      <ul className="space-y-2">
+        {enriched.map((r: any) => (
+          <li key={r.id} className="card-brut space-y-2 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">album/{r.album_id.slice(0, 8)}</span>
+              <span className="text-muted-foreground">
+                Signalé par <b>{r.reporter_pseudo}</b> · {new Date(r.created_at).toLocaleString("fr-FR")}
+              </span>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="relative overflow-hidden rounded border border-border bg-muted sm:w-64" style={{ aspectRatio: "16/9" }}>
+                {r.album_cover ? (
+                  <img src={r.album_cover} alt="" loading="lazy" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">Pas de couverture</div>
+                )}
+              </div>
+              <div className="flex-1 space-y-1 text-sm">
+                <div className="font-bold">{r.album_title}</div>
+                <div className="text-[11px] text-muted-foreground">Auteur : {r.owner_pseudo ?? "—"}</div>
+                {r.album_description && <p className="whitespace-pre-wrap text-muted-foreground">{r.album_description}</p>}
+                <div className="text-xs"><span className="font-semibold">Motif :</span> {r.reason}</div>
+                {r.owner_pseudo && (
+                  <a href={`/u/${r.owner_pseudo}/albums/${r.album_id}`} target="_blank" rel="noreferrer" className="inline-block text-[11px] underline">
+                    Ouvrir l'album
+                  </a>
+                )}
+              </div>
+            </div>
+            {status === "pending" && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="destructive" onClick={() => { if (confirm("Supprimer définitivement l'album ?")) { deleteAlbum.mutate({ album_id: r.album_id }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
+                  <Trash2 className="mr-1 size-3" /> Supprimer l'album & résoudre
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
                 <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "dismissed" })}>Rejeter</Button>

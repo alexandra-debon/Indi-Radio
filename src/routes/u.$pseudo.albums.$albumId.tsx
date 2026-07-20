@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { ReportAlbumButton } from "@/components/moderation/ReportAlbumButton";
 
 export const Route = createFileRoute("/u/$pseudo/albums/$albumId")({
   head: ({ params }) => ({
@@ -89,10 +90,15 @@ function AlbumGallery() {
       </Link>
 
       <header className="card-brut p-4">
-        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Album</div>
-        <h1 className="text-2xl font-black">{data.album.title}</h1>
-        {data.album.description && <p className="mt-1 text-sm text-muted-foreground">{data.album.description}</p>}
-        <div className="mt-1 text-[11px] text-muted-foreground">{photos.length} photo{photos.length > 1 ? "s" : ""}</div>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Album</div>
+            <h1 className="text-2xl font-black">{data.album.title}</h1>
+            {data.album.description && <p className="mt-1 text-sm text-muted-foreground">{data.album.description}</p>}
+            <div className="mt-1 text-[11px] text-muted-foreground">{photos.length} photo{photos.length > 1 ? "s" : ""}</div>
+          </div>
+          <ReportAlbumButton albumId={albumId} />
+        </div>
       </header>
 
       {photos.length === 0 ? (

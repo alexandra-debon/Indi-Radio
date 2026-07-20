@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      album_reports: {
+        Row: {
+          album_id: string
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          album_id: string
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          album_id?: string
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "album_reports_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "photo_albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       album_reviews: {
         Row: {
           apple_music_url: string | null
