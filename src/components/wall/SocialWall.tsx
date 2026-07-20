@@ -23,7 +23,7 @@ import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
-import { renderRich, extractHashtags } from "@/lib/rich-text";
+import { renderRich } from "@/lib/rich-text";
 
 interface PostRow {
   id: string;
