@@ -25,12 +25,13 @@ type UserRow = {
   level: number | null;
   role: string | null;
   is_certified: boolean | null;
+  badges: string[] | null;
 };
 
 async function fetchTopUsers(): Promise<UserRow[]> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, badges")
     .is("quarantined_at", null)
     .neq("role", "admin")
     .not("pseudo", "ilike", "Team Moderation")
@@ -84,13 +85,29 @@ function TopUsersPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="truncate text-sm font-semibold">@{pseudo}</span>
-                    {u.is_certified && <BadgeCheck className="size-4 shrink-0 text-primary" aria-label="Certifié" />}
+                    {u.is_certified && (
+                      <span className="inline-flex items-center gap-0.5 rounded-md border-2 border-border bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-foreground">
+                        <BadgeCheck className="size-3" aria-hidden /> Certifié
+                      </span>
+                    )}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
                     <span>{u.role ?? "auditeur"}</span>
                     <span>·</span>
                     <span>Niveau {u.level ?? 1}</span>
                   </div>
+                  {u.badges && u.badges.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {u.badges.map((b) => (
+                        <span
+                          key={b}
+                          className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                        >
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-lg font-black tabular-nums text-primary">{u.points ?? 0}</span>
