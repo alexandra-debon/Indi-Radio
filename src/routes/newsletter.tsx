@@ -28,6 +28,12 @@ export const Route = createFileRoute("/newsletter")({
 });
 
 function NewsletterPage() {
+  const search = useSearch({ from: "/newsletter" });
+  const source = useMemo(
+    () => (typeof search.source === "string" ? search.source : "newsletter-page"),
+    [search.source]
+  );
+
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,7 +60,7 @@ function NewsletterPage() {
       .from("newsletter_subscribers")
       .insert({
         email: parsed.data,
-        source: "newsletter-page",
+        source,
         gdpr_consent_at: new Date().toISOString(),
       });
     setLoading(false);
