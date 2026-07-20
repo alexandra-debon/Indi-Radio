@@ -34,7 +34,7 @@ export function EmailStatusPanel() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("newsletter_subscribers")
-        .select("email, subscribed_at")
+        .select("email, subscribed_at, source, gdpr_consent_at")
         .order("subscribed_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
