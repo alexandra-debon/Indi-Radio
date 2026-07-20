@@ -7,6 +7,7 @@ import { fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { Hash } from "lucide-react";
+import { normalizeHashtag } from "@/lib/hashtag";
 
 type Row = {
   id: string;
@@ -65,7 +66,8 @@ export const Route = createFileRoute("/tag/$tag")({
 });
 
 function TagPage() {
-  const { tag } = Route.useParams();
+  const { tag: rawTag } = Route.useParams();
+  const tag = normalizeHashtag(rawTag);
   const needle = `%#${tag}%`;
 
   const { data: posts = [], isLoading } = useQuery<Row[]>({
