@@ -38,7 +38,7 @@ interface PostRow {
   title: string | null;
   image_captions: string[] | null;
   album_id: string | null;
-  album: { id: string; title: string } | null;
+  album: { id: string; title: string; cover_url: string | null } | null;
   author: {
     id: string;
     pseudo: string;
@@ -105,7 +105,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
@@ -136,6 +136,35 @@ export function SocialWall() {
       const { data, error } = await supabase.from("post_likes").select("post_id, user_id");
       if (error) throw error;
       return data ?? [];
+    },
+  });
+
+  const albumIdsKey = Array.from(new Set(posts.map((p) => p.album_id).filter((x): x is string => !!x))).sort().join(",");
+  const { data: albumStats = {} } = useQuery<Record<string, { count: number; firstImage: string | null }>>({
+    queryKey: ["wall-album-stats", albumIdsKey],
+    enabled: albumIdsKey.length > 0,
+    queryFn: async () => {
+      const ids = albumIdsKey.split(",").filter(Boolean);
+      const { data, error } = await supabase
+        .from("posts")
+        .select("album_id, image_url, image_urls, created_at")
+        .in("album_id", ids)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const out: Record<string, { count: number; firstImage: string | null }> = {};
+      for (const row of (data ?? []) as any[]) {
+        const aid = row.album_id as string;
+        if (!out[aid]) out[aid] = { count: 0, firstImage: null };
+        out[aid].count += 1;
+        const img = row.image_url || (Array.isArray(row.image_urls) ? row.image_urls[0] : null);
+        if (img) out[aid].firstImage = img; // last assignment = oldest (desc order) — but we want the most recent, so only set if null
+      }
+      // Recompute firstImage as most recent (desc order): iterate again and pick first with image
+      for (const aid of ids) {
+        const first = (data ?? []).find((r: any) => r.album_id === aid && (r.image_url || (Array.isArray(r.image_urls) && r.image_urls[0])));
+        if (first) out[aid].firstImage = (first as any).image_url || (first as any).image_urls?.[0] || null;
+      }
+      return out;
     },
   });
 
@@ -552,19 +581,33 @@ export function SocialWall() {
                       </div>
                     );
                   })()}
-                  {p.album && p.author?.pseudo && (
-                    <div className="mt-2">
-                      <Link
-                        to="/u/$pseudo/albums/$albumId"
-                        params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
-                        title={`Voir l'album « ${p.album.title} »`}
-                        className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground"
-                      >
-                        <ImageIcon className="size-3.5" />
-                        Album : {p.album.title}
-                      </Link>
-                    </div>
-                  )}
+                  {p.album && p.author?.pseudo && (() => {
+                    const stats = albumStats[p.album.id];
+                    const cover = p.album.cover_url || stats?.firstImage || p.image_url || (Array.isArray(p.image_urls) ? p.image_urls[0] : null);
+                    const count = stats?.count ?? 0;
+                    return (
+                      <div className="mt-2">
+                        <Link
+                          to="/u/$pseudo/albums/$albumId"
+                          params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
+                          title={`Voir l'album « ${p.album.title} » (${count} photo${count > 1 ? "s" : ""})`}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-primary/10 pr-2.5 py-1 pl-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          {cover ? (
+                            <img src={cover} alt="" className="size-6 rounded-full object-cover border border-black" loading="lazy" />
+                          ) : (
+                            <span className="inline-flex size-6 items-center justify-center rounded-full border border-black bg-background">
+                              <ImageIcon className="size-3.5" />
+                            </span>
+                          )}
+                          <span>Album : {p.album.title}</span>
+                          {count > 0 && (
+                            <span className="rounded-full bg-black px-1.5 py-0.5 text-[10px] text-primary">{count} photo{count > 1 ? "s" : ""}</span>
+                          )}
+                        </Link>
+                      </div>
+                    );
+                  })()}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
