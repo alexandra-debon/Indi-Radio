@@ -236,6 +236,20 @@ function NotificationsCenter() {
             ))}
           </div>
           <button
+            onClick={() => toggleMentions.mutate(!mentionsEnabled)}
+            disabled={toggleMentions.isPending}
+            title={mentionsEnabled ? "Couper les notifications @mentions" : "Activer les notifications @mentions"}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-md border-2 px-2.5 py-1.5 text-xs font-bold uppercase transition-colors disabled:opacity-40",
+              mentionsEnabled
+                ? "border-primary bg-primary/10 text-primary hover:bg-primary/20"
+                : "border-border bg-muted text-muted-foreground hover:bg-muted/70",
+            )}
+          >
+            {mentionsEnabled ? <AtSign className="size-3.5" /> : <BellOff className="size-3.5" />}
+            @Mentions {mentionsEnabled ? "activées" : "coupées"}
+          </button>
+          <button
             onClick={() => markAll.mutate()}
             disabled={unreadTotal === 0 || markAll.isPending}
             className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-40"
