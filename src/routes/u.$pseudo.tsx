@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe } from "lucide-react";
+import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 
 export const Route = createFileRoute("/u/$pseudo")({
   head: ({ params }) => ({
@@ -30,6 +31,7 @@ type Profile = {
   created_at: string;
   bio: string | null;
   website: string | null;
+  social_links: SocialLinks | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
@@ -37,7 +39,7 @@ type Stats = { posts: number; comments: number; likesGiven: number };
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -126,7 +128,7 @@ function UserProfilePage() {
         <LevelBar points={profile.points} level={profile.level} />
       </div>
 
-      {(profile.bio || profile.website) && (
+      {(profile.bio || profile.website || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
         <div className="card-brut space-y-2 p-4">
           {profile.bio && <p className="whitespace-pre-wrap text-sm">{profile.bio}</p>}
           {profile.website && (
@@ -139,6 +141,7 @@ function UserProfilePage() {
               <Globe className="size-3.5" /> {profile.website.replace(/^https?:\/\//, "")}
             </a>
           )}
+          {profile.social_links && <SocialLinksBar links={profile.social_links} />}
         </div>
       )}
 

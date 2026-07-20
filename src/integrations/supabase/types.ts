@@ -890,6 +890,7 @@ export type Database = {
           quarantine_reason: string | null
           quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
+          social_links: Json
           website: string | null
         }
         Insert: {
@@ -906,6 +907,7 @@ export type Database = {
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          social_links?: Json
           website?: string | null
         }
         Update: {
@@ -922,6 +924,7 @@ export type Database = {
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          social_links?: Json
           website?: string | null
         }
         Relationships: []
