@@ -333,6 +333,47 @@ function EditProfilePage() {
         </p>
       </aside>
       </div>
+
+      <AlertDialog open={showOverwriteDialog} onOpenChange={setShowOverwriteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remplacer l'avatar actuel ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tu as déjà un avatar enregistré. Le téléversement d'une nouvelle image l'écrasera dans ton profil public. Tu peux d'abord annuler et vérifier ton visuel actuel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setPendingFile(null); }}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingFile) void uploadAvatar(pendingFile);
+              }}
+            >
+              Remplacer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Retirer ton avatar ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cela supprimera définitivement l'image actuelle et remettra l'avatar par défaut. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => void handleRemoveAvatar()}
+            >
+              Retirer l'avatar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
