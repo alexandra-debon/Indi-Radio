@@ -866,36 +866,42 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_captions: string[]
           image_url: string | null
           image_urls: string[]
           mentions: string[] | null
           pin_label: string | null
           pinned_at: string | null
           social_links: Json
+          title: string | null
         }
         Insert: {
           author_id: string
           content: string
           created_at?: string
           id?: string
+          image_captions?: string[]
           image_url?: string | null
           image_urls?: string[]
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
           social_links?: Json
+          title?: string | null
         }
         Update: {
           author_id?: string
           content?: string
           created_at?: string
           id?: string
+          image_captions?: string[]
           image_url?: string | null
           image_urls?: string[]
           mentions?: string[] | null
           pin_label?: string | null
           pinned_at?: string | null
           social_links?: Json
+          title?: string | null
         }
         Relationships: [
           {
