@@ -24,6 +24,8 @@ import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
+import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
+import { Hash, X as XIcon } from "lucide-react";
 
 interface PostRow {
   id: string;
@@ -78,6 +80,7 @@ export function SocialWall() {
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [socialDraft, setSocialDraft] = useState<SocialLinks>({});
   const [editSocial, setEditSocial] = useState<SocialLinks>({});
@@ -101,17 +104,28 @@ export function SocialWall() {
   }, [hash]);
 
   const { data: posts = [] } = useQuery<PostRow[]>({
-    queryKey: ["wall-posts"],
+    queryKey: ["wall-posts", activeTag],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let req = supabase
         .from("posts")
         .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
+      if (activeTag) {
+        const needle = `%#${activeTag}%`;
+        req = req.or(`content.ilike.${needle},title.ilike.${needle}`);
+      }
+      const { data, error } = await req;
       if (error) throw error;
       return (data ?? []) as unknown as PostRow[];
     },
+  });
+
+  const { data: popularTags = [] } = useQuery<HashtagSuggestion[]>({
+    queryKey: ["wall-popular-tags"],
+    queryFn: () => suggestHashtags("", { limit: 12 }),
+    staleTime: 60_000,
   });
 
   useEffect(() => {
