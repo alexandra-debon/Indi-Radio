@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 export const Route = createFileRoute("/u/$pseudo")({
   head: ({ params }) => ({
@@ -165,7 +166,17 @@ function UserProfilePage() {
 
       {(profile.bio || profile.website || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
         <div className="card-brut space-y-2 p-4">
-          {profile.bio && <p className="whitespace-pre-wrap text-sm">{profile.bio}</p>}
+          {profile.bio && (
+            <TranslatedText
+              as="p"
+              className="whitespace-pre-wrap text-sm"
+              entityType="profile"
+              entityKey={profile.id}
+              field="bio"
+              text={profile.bio}
+              manual={false}
+            />
+          )}
           {profile.website && (
             <a
               href={profile.website}
