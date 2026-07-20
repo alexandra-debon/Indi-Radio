@@ -581,19 +581,33 @@ export function SocialWall() {
                       </div>
                     );
                   })()}
-                  {p.album && p.author?.pseudo && (
-                    <div className="mt-2">
-                      <Link
-                        to="/u/$pseudo/albums/$albumId"
-                        params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
-                        title={`Voir l'album « ${p.album.title} »`}
-                        className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground"
-                      >
-                        <ImageIcon className="size-3.5" />
-                        Album : {p.album.title}
-                      </Link>
-                    </div>
-                  )}
+                  {p.album && p.author?.pseudo && (() => {
+                    const stats = albumStats[p.album.id];
+                    const cover = p.album.cover_url || stats?.firstImage || p.image_url || (Array.isArray(p.image_urls) ? p.image_urls[0] : null);
+                    const count = stats?.count ?? 0;
+                    return (
+                      <div className="mt-2">
+                        <Link
+                          to="/u/$pseudo/albums/$albumId"
+                          params={{ pseudo: p.author.pseudo, albumId: p.album.id }}
+                          title={`Voir l'album « ${p.album.title} » (${count} photo${count > 1 ? "s" : ""})`}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-primary/10 pr-2.5 py-1 pl-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          {cover ? (
+                            <img src={cover} alt="" className="size-6 rounded-full object-cover border border-black" loading="lazy" />
+                          ) : (
+                            <span className="inline-flex size-6 items-center justify-center rounded-full border border-black bg-background">
+                              <ImageIcon className="size-3.5" />
+                            </span>
+                          )}
+                          <span>Album : {p.album.title}</span>
+                          {count > 0 && (
+                            <span className="rounded-full bg-black px-1.5 py-0.5 text-[10px] text-primary">{count} photo{count > 1 ? "s" : ""}</span>
+                          )}
+                        </Link>
+                      </div>
+                    );
+                  })()}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
