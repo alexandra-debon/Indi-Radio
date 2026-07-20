@@ -74,6 +74,27 @@ export function EmailStatusPanel() {
     toast.success(`${rows.length} abonné(s) exporté(s)`);
   };
 
+  const exportSubscribersXlsx = async () => {
+    const rows = subsQuery.data ?? [];
+    if (rows.length === 0) {
+      toast.error("Aucun abonné à exporter");
+      return;
+    }
+    const XLSX = await import("xlsx");
+    const data = rows.map((r: any) => ({
+      email: r.email,
+      subscribed_at: r.subscribed_at ?? "",
+      source: r.source ?? "",
+      consent_rgpd: r.gdpr_consent_at ?? "",
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Abonnés");
+    const stamp = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `newsletter-subscribers-${stamp}.xlsx`);
+    toast.success(`${rows.length} abonné(s) exporté(s)`);
+  };
+
   const dnsQuery = useQuery({
     queryKey: ["admin-email-dns"],
     queryFn: () => runDnsCheck(),
