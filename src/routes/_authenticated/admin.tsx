@@ -1704,12 +1704,14 @@ function AlbumReportsAdmin() {
   });
 
   const setStatusMut = useMutation({
-    mutationFn: async ({ id, next }: { id: string; next: "resolved" | "dismissed" }) => {
+    mutationFn: async ({ id, next, actionTaken }: { id: string; next: "resolved" | "dismissed"; actionTaken?: string }) => {
       const { error } = await supabase
         .from("album_reports")
         .update({ status: next, resolved_at: new Date().toISOString(), resolved_by: session?.user.id ?? null })
         .eq("id", id);
       if (error) throw error;
+      const { notifyAdminAlbumReportResolved } = await import("@/lib/album-report-email.functions");
+      notifyAdminAlbumReportResolved({ data: { reportId: id, outcome: next, actionTaken } }).catch(() => {});
     },
     onSuccess: () => {
       toast.success("Signalement traité");
@@ -1774,7 +1776,7 @@ function AlbumReportsAdmin() {
             </div>
             {status === "pending" && (
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="destructive" onClick={() => { if (confirm("Supprimer définitivement l'album ?")) { deleteAlbum.mutate({ album_id: r.album_id }); setStatusMut.mutate({ id: r.id, next: "resolved" }); } }}>
+                <Button size="sm" variant="destructive" onClick={() => { if (confirm("Supprimer définitivement l'album ?")) { deleteAlbum.mutate({ album_id: r.album_id }); setStatusMut.mutate({ id: r.id, next: "resolved", actionTaken: "Album supprimé." }); } }}>
                   <Trash2 className="mr-1 size-3" /> Supprimer l'album & résoudre
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "resolved" })}>Marquer résolu</Button>
