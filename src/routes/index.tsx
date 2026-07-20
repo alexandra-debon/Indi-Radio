@@ -20,6 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
+import { useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_HOME = `${BASE_URL}${ogHome}`;
@@ -69,6 +70,7 @@ function UserCountBadge() {
 
 function LivePage() {
   const { playing, loading, toggle, currentTrack, durationKnown } = useRadio();
+  const t = useT();
   const { data: heroArtwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   useHashHighlight();
 
@@ -111,7 +113,7 @@ function LivePage() {
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
         <div className="flex items-start gap-2">
-          <h1 className="section-title">Musique en cours</h1>
+          <h1 className="section-title">{t("page.live.now")}</h1>
           <div className="flex shrink-0 flex-col items-center gap-1">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
               <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
@@ -216,7 +218,7 @@ function LivePage() {
       {/* Recent history */}
       <section className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="section-title">Historique</h2>
+          <h2 className="section-title">{t("page.live.history")}</h2>
           <Link
             to="/chart"
             className="group flex items-center justify-between gap-3 rounded-lg border border-primary bg-primary/10 p-3 transition hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(255,215,0,0.18)] sm:min-w-[18rem]"
