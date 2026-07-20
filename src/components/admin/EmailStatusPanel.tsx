@@ -26,7 +26,7 @@ export function EmailStatusPanel() {
 
   const eventsQuery = useQuery({
     queryKey: ["admin-email-events"],
-    queryFn: () => fetchEvents({ data: {} }),
+    queryFn: () => fetchEvents(),
     refetchOnWindowFocus: false,
   });
 
