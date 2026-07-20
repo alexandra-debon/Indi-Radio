@@ -28,6 +28,7 @@ export const Route = createFileRoute("/newsletter")({
 
 function NewsletterPage() {
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -42,11 +43,19 @@ function NewsletterPage() {
       setError(parsed.error.issues[0]?.message ?? "Email invalide.");
       return;
     }
+    if (!consent) {
+      setError("Tu dois accepter la politique de confidentialité pour t'inscrire.");
+      return;
+    }
 
     setLoading(true);
     const { error: dbError } = await supabase
       .from("newsletter_subscribers")
-      .insert({ email: parsed.data });
+      .insert({
+        email: parsed.data,
+        source: "newsletter-page",
+        gdpr_consent_at: new Date().toISOString(),
+      });
     setLoading(false);
 
     if (dbError) {
@@ -61,6 +70,7 @@ function NewsletterPage() {
     }
 
     setEmail("");
+    setConsent(false);
     setSuccess(true);
     toast.success("Merci ! Tu es inscrit.");
   }
