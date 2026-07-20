@@ -34,7 +34,7 @@ export function EmailStatusPanel() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("newsletter_subscribers")
-        .select("email, subscribed_at")
+        .select("email, subscribed_at, source, gdpr_consent_at")
         .order("subscribed_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
@@ -48,10 +48,18 @@ export function EmailStatusPanel() {
       toast.error("Aucun abonné à exporter");
       return;
     }
-    const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+    const escape = (v: string | null | undefined) =>
+      v == null ? "" : `"${String(v).replace(/"/g, '""')}"`;
     const csv = [
-      "email,subscribed_at",
-      ...rows.map((r: any) => `${escape(r.email)},${escape(r.subscribed_at ?? "")}`),
+      "email,subscribed_at,source,consent_rgpd",
+      ...rows.map((r: any) =>
+        [
+          escape(r.email),
+          escape(r.subscribed_at ?? ""),
+          escape(r.source ?? ""),
+          escape(r.gdpr_consent_at ?? ""),
+        ].join(",")
+      ),
     ].join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -304,7 +312,7 @@ export function EmailStatusPanel() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Le fichier CSV contient l'email et la date d'inscription. Compatible Excel / Google Sheets.
+            Le fichier CSV contient : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
           </p>
         </CardContent>
       </Card>

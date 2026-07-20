@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
 import { CheckCircle2, AlertCircle, Mail } from "lucide-react";
@@ -15,6 +16,9 @@ const emailSchema = z
   .max(255, { message: "Email trop long (255 caractères max)." });
 
 export const Route = createFileRoute("/newsletter")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    source: typeof search.source === "string" ? search.source : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Newsletter — Indi Radio" },
@@ -27,7 +31,14 @@ export const Route = createFileRoute("/newsletter")({
 });
 
 function NewsletterPage() {
+  const search = useSearch({ from: "/newsletter" });
+  const source = useMemo(
+    () => (typeof search.source === "string" ? search.source : "newsletter-page"),
+    [search.source]
+  );
+
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -42,11 +53,19 @@ function NewsletterPage() {
       setError(parsed.error.issues[0]?.message ?? "Email invalide.");
       return;
     }
+    if (!consent) {
+      setError("Tu dois accepter la politique de confidentialité pour t'inscrire.");
+      return;
+    }
 
     setLoading(true);
     const { error: dbError } = await supabase
       .from("newsletter_subscribers")
-      .insert({ email: parsed.data });
+      .insert({
+        email: parsed.data,
+        source,
+        gdpr_consent_at: new Date().toISOString(),
+      });
     setLoading(false);
 
     if (dbError) {
@@ -61,6 +80,7 @@ function NewsletterPage() {
     }
 
     setEmail("");
+    setConsent(false);
     setSuccess(true);
     toast.success("Merci ! Tu es inscrit.");
   }
@@ -119,6 +139,21 @@ function NewsletterPage() {
                 <AlertCircle className="size-3.5" /> {error}
               </p>
             )}
+          </div>
+          <div className="flex items-start gap-2">
+            <Checkbox
+              id="consent"
+              checked={consent}
+              onCheckedChange={(v) => setConsent(v === true)}
+              aria-describedby="consent-desc"
+            />
+            <label htmlFor="consent" id="consent-desc" className="text-xs text-muted-foreground leading-5">
+              J'accepte que mon email soit utilisé pour recevoir la newsletter.{" "}
+              <Link to="/privacy" className="underline hover:text-primary">
+                Voir la politique de confidentialité
+              </Link>
+              .
+            </label>
           </div>
           <Button className="w-full" disabled={loading}>
             {loading ? "Inscription…" : "S'inscrire"}
