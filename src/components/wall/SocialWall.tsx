@@ -139,6 +139,35 @@ export function SocialWall() {
     },
   });
 
+  const albumIdsKey = Array.from(new Set(posts.map((p) => p.album_id).filter((x): x is string => !!x))).sort().join(",");
+  const { data: albumStats = {} } = useQuery<Record<string, { count: number; firstImage: string | null }>>({
+    queryKey: ["wall-album-stats", albumIdsKey],
+    enabled: albumIdsKey.length > 0,
+    queryFn: async () => {
+      const ids = albumIdsKey.split(",").filter(Boolean);
+      const { data, error } = await supabase
+        .from("posts")
+        .select("album_id, image_url, image_urls, created_at")
+        .in("album_id", ids)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const out: Record<string, { count: number; firstImage: string | null }> = {};
+      for (const row of (data ?? []) as any[]) {
+        const aid = row.album_id as string;
+        if (!out[aid]) out[aid] = { count: 0, firstImage: null };
+        out[aid].count += 1;
+        const img = row.image_url || (Array.isArray(row.image_urls) ? row.image_urls[0] : null);
+        if (img) out[aid].firstImage = img; // last assignment = oldest (desc order) — but we want the most recent, so only set if null
+      }
+      // Recompute firstImage as most recent (desc order): iterate again and pick first with image
+      for (const aid of ids) {
+        const first = (data ?? []).find((r: any) => r.album_id === aid && (r.image_url || (Array.isArray(r.image_urls) && r.image_urls[0])));
+        if (first) out[aid].firstImage = (first as any).image_url || (first as any).image_urls?.[0] || null;
+      }
+      return out;
+    },
+  });
+
   const { data: comments = [] } = useQuery<CommentRow[]>({
     queryKey: ["wall-comments"],
     queryFn: async () => {
