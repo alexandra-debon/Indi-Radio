@@ -78,7 +78,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       <EmailVerificationBanner />
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-56 pt-4">{children}</main>
 
-      <div className="safe-bottom fixed inset-x-0 bottom-0 z-40">
+      <div
+        className="safe-bottom fixed inset-x-0 bottom-0 z-40 will-change-auto"
+        style={{ transform: "translateZ(0)", contain: "layout paint" }}
+      >
         <MiniPlayer />
         <footer className="border-t border-black/60 bg-black py-2 text-neutral-300">
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-3 text-center text-[11px] sm:flex-row sm:justify-between sm:text-left">
