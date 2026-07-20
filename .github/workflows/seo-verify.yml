@@ -1,0 +1,46 @@
+name: SEO sync verification
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Install Playwright chromium
+        run: bunx playwright install --with-deps chromium
+      - name: Build
+        run: bun run build
+      - name: Start preview
+        run: |
+          bun run preview --host 0.0.0.0 --port 8080 > /tmp/preview.log 2>&1 &
+          echo $! > /tmp/preview.pid
+          for i in {1..60}; do
+            curl -sfo /dev/null http://localhost:8080/ && exit 0
+            sleep 1
+          done
+          echo "preview did not start" && cat /tmp/preview.log && exit 1
+      - name: verify:i18n
+        run: bun run verify:i18n
+      - name: verify:hreflang
+        env:
+          BASE_URL: http://localhost:8080
+        run: bun run verify:hreflang
+      - name: verify:seo (content vs meta sync)
+        env:
+          BASE_URL: http://localhost:8080
+        run: bun run verify:seo
+      - name: Stop preview
+        if: always()
+        run: kill "$(cat /tmp/preview.pid)" || true
