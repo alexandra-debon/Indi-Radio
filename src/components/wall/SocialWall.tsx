@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
