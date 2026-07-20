@@ -20,7 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import indiRadioWordmark from "@/assets/indi-radio-wordmark-hero.jpeg.asset.json";
+import indiRadioWordmark from "@/assets/indi-radio-wordmark-live.png.asset.json";
 import { useLang, useT } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -125,12 +125,6 @@ function LivePage() {
             {t("live.noAdsNoNews")}
           </span>
           <UserCountBadge />
-          <img
-            src={indiRadioWordmark.url}
-            alt="InDi RaDio"
-            aria-hidden="true"
-            className="pointer-events-none ml-auto h-10 w-auto max-w-[6rem] rotate-[4deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-14 sm:max-w-[9rem] md:h-16 md:max-w-[11rem] lg:h-20 lg:max-w-[13rem]"
-          />
         </div>
         <div className="card-brut relative overflow-hidden p-4">
           <div className="flex items-center gap-4">
@@ -163,9 +157,17 @@ function LivePage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
-                <span className="animate-heartbeat">{t("live.onAir")}</span>
-                <AudioBars />
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
+                  <span className="animate-heartbeat">{t("live.onAir")}</span>
+                  <AudioBars />
+                </div>
+                <img
+                  src={indiRadioWordmark.url}
+                  alt="InDi RaDio"
+                  aria-hidden="true"
+                  className="pointer-events-none h-8 w-auto max-w-[7rem] shrink-0 object-contain opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:h-10 sm:max-w-[9rem] lg:h-12 lg:max-w-[11rem]"
+                />
               </div>
               <div className="mt-1 truncate text-xl font-bold">
                 {currentTrack?.title ?? t("live.defaultTitle")}
