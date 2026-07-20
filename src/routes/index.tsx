@@ -115,28 +115,30 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="flex items-start gap-2">
-          <h1 className="section-title">{t("page.live.now")}</h1>
-          <div className="flex shrink-0 flex-col items-center gap-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
-              <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
-              {t("live.indieNoAds")}
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-1">
-              <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
-                {t("live.noAdsNoNews")}
+        <div className="flex flex-wrap items-start gap-2">
+          <h1 className="section-title w-full sm:w-auto">{t("page.live.now")}</h1>
+          <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
+            <div className="flex shrink-0 flex-col items-start gap-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
+                <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
+                {t("live.indieNoAds")}
               </span>
-              <UserCountBadge />
+              <div className="flex flex-wrap items-center justify-start gap-1">
+                <span className="rounded-full border border-yellow-400/70 bg-yellow-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-yellow-400">
+                  {t("live.noAdsNoNews")}
+                </span>
+                <UserCountBadge />
+              </div>
             </div>
+            <img
+              src={indiRadioWordmark.url}
+              alt="InDi RaDio"
+              aria-hidden="true"
+              className="pointer-events-none h-12 w-auto max-w-[5rem] rotate-[3deg] rounded-sm opacity-95 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:max-w-[7rem] md:max-w-[8rem] sm:h-14 md:h-16 lg:h-20"
+            />
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
-          <img
-            src={indiRadioWordmark.url}
-            alt="InDi RaDio"
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-2 right-2 h-8 w-auto rotate-[3deg] rounded-sm opacity-90 drop-shadow-[2px_2px_0_rgba(0,0,0,0.6)] sm:bottom-auto sm:right-4 sm:top-4 sm:h-14 sm:opacity-95 md:h-20"
-          />
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
               {heroArtwork ? (
@@ -166,7 +168,7 @@ function LivePage() {
                 <RadioIcon className="size-10" />
               )}
             </div>
-            <div className="min-w-0 flex-1 sm:pr-24 md:pr-32">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
                 <span className="animate-heartbeat">{t("live.onAir")}</span>
                 <AudioBars />
