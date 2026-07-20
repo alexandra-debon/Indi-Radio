@@ -349,7 +349,7 @@ export function SocialWall() {
         )}
         {isAdmin && (
           <div className="mt-2">
-            <ImageUploader value={imageDraft} onChange={setImageDraft} folder="wall" label="Image (optionnel)" />
+            <MultiImageUploader values={imagesDraft} onChange={setImagesDraft} folder="wall" />
           </div>
         )}
         <div className="mt-2 flex justify-end">
@@ -411,7 +411,7 @@ export function SocialWall() {
                     <SocialLinksEditor value={editSocial} onChange={setEditSocial} />
                   )}
                   {isAdmin && (
-                    <ImageUploader value={editImage} onChange={setEditImage} folder="wall" label="Image (optionnel)" />
+                    <MultiImageUploader values={editImages} onChange={setEditImages} folder="wall" />
                   )}
                   <div className="flex justify-end gap-2">
                     <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
@@ -419,7 +419,7 @@ export function SocialWall() {
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: isAdmin ? (editImage.trim() || null) : undefined })}
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: isAdmin ? (editImages[0] || null) : undefined, image_urls: isAdmin ? editImages : undefined })}
                       disabled={!editContent.trim() || updatePost.isPending}
                     >
                       <Check className="size-3.5" /> Enregistrer
@@ -431,11 +431,26 @@ export function SocialWall() {
                   {stripMediaUrls(p.content) && (
                     <p className="whitespace-pre-wrap text-sm">{renderMentions(stripMediaUrls(p.content))}</p>
                   )}
-                  {p.image_url && (
-                    <div className="mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
-                      <img src={p.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                  {(() => {
+                    const imgs = (p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : []);
+                    if (imgs.length === 0) return null;
+                    if (imgs.length === 1) {
+                      return (
+                        <div className="mt-2 w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                          <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className={`mt-2 grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
+                        {imgs.map((u, i) => (
+                          <div key={i} className="overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
+                            <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                   <UrlEmbeds text={p.content} />
                   <SocialLinksBar links={p.social_links} className="mt-2" />
                   {(canEdit || canDelete || isAdmin) && (
@@ -462,7 +477,7 @@ export function SocialWall() {
                       )}
                       {canEdit && (
                         <button
-                          onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); }}
+                        onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); setEditImages((p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : [])); }}
                           className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           aria-label="Modifier"
                         >
