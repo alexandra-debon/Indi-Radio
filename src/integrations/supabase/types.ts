@@ -1264,6 +1264,15 @@ export type Database = {
         Args: { _actor_id: string; _content: string; _url: string }
         Returns: undefined
       }
+      notify_new_mentions_from_text: {
+        Args: {
+          _actor_id: string
+          _new_text: string
+          _old_text: string
+          _url: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "auditeur" | "artiste" | "animateur" | "admin"
