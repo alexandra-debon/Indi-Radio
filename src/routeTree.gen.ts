@@ -37,10 +37,10 @@ import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
 import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
@@ -189,11 +189,6 @@ const ActusPostIdRoute = ActusPostIdRouteImport.update({
   path: '/$postId',
   getParentRoute: () => ActusRoute,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedNotificationsRoute =
   AuthenticatedNotificationsRouteImport.update({
     id: '/notifications',
@@ -210,6 +205,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileIndexRoute =
+  AuthenticatedProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
   path: '/api/public/health',
@@ -217,15 +218,15 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
 } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
-    id: '/edit',
-    path: '/edit',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/edit',
+    path: '/profile/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedProfileBadgesRoute =
   AuthenticatedProfileBadgesRouteImport.update({
-    id: '/badges',
-    path: '/badges',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/badges',
+    path: '/profile/badges',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
@@ -278,7 +279,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
@@ -289,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -319,7 +320,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
@@ -330,6 +330,7 @@ export interface FileRoutesByTo {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -362,7 +363,6 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
@@ -373,6 +373,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -405,7 +406,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/notif-test'
     | '/notifications'
-    | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
@@ -416,6 +416,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
+    | '/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -446,7 +447,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/notif-test'
     | '/notifications'
-    | '/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
@@ -457,6 +457,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/api/public/health'
+    | '/profile'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -488,7 +489,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
-    | '/_authenticated/profile'
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
@@ -499,6 +499,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
     | '/api/public/health'
+    | '/_authenticated/profile/'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -736,13 +737,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActusPostIdRouteImport
       parentRoute: typeof ActusRoute
     }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
       path: '/notifications'
@@ -764,6 +758,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile/': {
+      id: '/_authenticated/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/health': {
       id: '/api/public/health'
       path: '/api/public/health'
@@ -773,17 +774,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
-      path: '/edit'
+      path: '/profile/edit'
       fullPath: '/profile/edit'
       preLoaderRoute: typeof AuthenticatedProfileEditRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile/badges': {
       id: '/_authenticated/profile/badges'
-      path: '/badges'
+      path: '/profile/badges'
       fullPath: '/profile/badges'
       preLoaderRoute: typeof AuthenticatedProfileBadgesRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
@@ -823,31 +824,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedProfileRouteChildren {
-  AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
-  AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
-}
-
-const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
-  AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
-  AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
-}
-
-const AuthenticatedProfileRouteWithChildren =
-  AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
+  AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
+  AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
+  AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
+  AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
+  AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
+  AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
