@@ -56,6 +56,21 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
+function UserCountBadge() {
+  const fetchCount = useServerFn(getUserCount);
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-count"],
+    queryFn: () => fetchCount(),
+    staleTime: 60_000,
+  });
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
+      <Users className="size-3" />
+      {isLoading ? "…" : `${data?.count ?? 0} inscrits`}
+    </span>
+  );
+}
+
 function AdminPage() {
   const { isAdmin } = useAuth();
   const { tab } = Route.useSearch();
