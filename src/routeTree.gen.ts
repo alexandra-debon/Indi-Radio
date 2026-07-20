@@ -30,6 +30,7 @@ import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UPseudoRouteImport } from './routes/u.$pseudo'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
@@ -151,6 +152,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UPseudoRoute = UPseudoRouteImport.update({
+  id: '/u/$pseudo',
+  path: '/u/$pseudo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
   id: '/$magazineId',
   path: '/$magazineId',
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
+  '/u/$pseudo': typeof UPseudoRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByTo {
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
+  '/u/$pseudo': typeof UPseudoRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
+  '/u/$pseudo': typeof UPseudoRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -383,6 +392,7 @@ export interface FileRouteTypes {
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
+    | '/u/$pseudo'
     | '/api/public/health'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
+    | '/u/$pseudo'
     | '/api/public/health'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
+    | '/u/$pseudo'
     | '/api/public/health'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -491,6 +503,7 @@ export interface RootRouteChildren {
   TopRoute: typeof TopRoute
   TopUsersRoute: typeof TopUsersRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
+  UPseudoRoute: typeof UPseudoRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
@@ -646,6 +659,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$pseudo': {
+      id: '/u/$pseudo'
+      path: '/u/$pseudo'
+      fullPath: '/u/$pseudo'
+      preLoaderRoute: typeof UPseudoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magazines/$magazineId': {
@@ -859,6 +879,7 @@ const rootRouteChildren: RootRouteChildren = {
   TopRoute: TopRoute,
   TopUsersRoute: TopUsersRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
+  UPseudoRoute: UPseudoRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
