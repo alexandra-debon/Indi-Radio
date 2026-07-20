@@ -2,14 +2,17 @@ import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
-import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload } from "lucide-react";
+import { ImagePlus, X, Loader2, Check, AlertTriangle, Upload, Sparkles } from "lucide-react";
+import {
+  optimizeImageSmart,
+  USAGE_PRESETS,
+  USAGE_LABEL,
+  type ImageUsage,
+} from "@/lib/image-optimize";
 
 const MAX_BYTES = 20 * 1024 * 1024;
 const BUCKET = "content-images";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
-const MAX_DIMENSION = 1600;
-const QUALITY = 0.82;
-const TARGET_RATIO = 16 / 9;
 const MAX_FILES = 6;
 
 type Status = "pending" | "uploading" | "done" | "error";
@@ -29,32 +32,8 @@ interface Props {
   folder?: string;
   disabled?: boolean;
   max?: number;
-}
-
-async function optimize(file: File): Promise<{ blob: Blob; ext: string; type: string }> {
-  if (file.type === "image/svg+xml" || file.type === "image/gif") {
-    return { blob: file, ext: file.type === "image/svg+xml" ? "svg" : "gif", type: file.type };
-  }
-  const bitmap = await createImageBitmap(file).catch(() => null);
-  if (!bitmap) return { blob: file, ext: (file.name.split(".").pop() || "jpg").toLowerCase(), type: file.type };
-  const { width: w0, height: h0 } = bitmap;
-  let sx = 0, sy = 0, sw = w0, sh = h0;
-  const currentRatio = w0 / h0;
-  if (currentRatio > TARGET_RATIO) {
-    sw = Math.round(h0 * TARGET_RATIO); sx = Math.round((w0 - sw) / 2);
-  } else if (currentRatio < TARGET_RATIO) {
-    sh = Math.round(w0 / TARGET_RATIO); sy = Math.round((h0 - sh) / 2);
-  }
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(sw, sh));
-  const w = Math.round(sw * scale); const h = Math.round(sh * scale);
-  const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, w, h);
-  bitmap.close?.();
-  const blob: Blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b!), "image/webp", QUALITY));
-  if (!blob) return { blob: file, ext: (file.name.split(".").pop() || "jpg").toLowerCase(), type: file.type };
-  return { blob, ext: "webp", type: "image/webp" };
+  /** Usage cible par défaut pour l'auto-optimisation. */
+  usage?: ImageUsage;
 }
 
 function validate(file: File): string | null {
@@ -63,10 +42,12 @@ function validate(file: File): string | null {
   return null;
 }
 
-export function MultiImageUploader({ values, onChange, folder = "misc", disabled, max = MAX_FILES }: Props) {
+export function MultiImageUploader({ values, onChange, folder = "misc", disabled, max = MAX_FILES, usage = "banner" }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [busy, setBusy] = useState(false);
+  const [auto, setAuto] = useState(true);
+  const [usageChoice, setUsageChoice] = useState<ImageUsage>(usage);
 
   function addFiles(list: FileList | File[]) {
     const remaining = max - values.length - queue.length;
@@ -108,7 +89,9 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
     for (const item of pending) {
       setQueue((q) => q.map((x) => x.id === item.id ? { ...x, status: "uploading" } : x));
       try {
-        const { blob, ext, type } = await optimize(item.file);
+        const { blob, ext, type } = await optimizeImageSmart(item.file, auto
+          ? { auto: true, usage: usageChoice }
+          : { auto: false, ratio: 16 / 9, maxDim: 1600 });
         const path = `${folder}/${uid}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, blob, {
           cacheControl: "3600", upsert: false, contentType: type,
@@ -172,6 +155,33 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
             Envoyer {pendingCount}
           </Button>
         )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Button
+          type="button"
+          size="sm"
+          variant={auto ? "default" : "outline"}
+          onClick={() => setAuto((a) => !a)}
+          disabled={busy}
+          className="h-7 px-2 text-xs"
+        >
+          <Sparkles className="mr-1 size-3.5" />
+          Auto-optimiser {auto ? "· ON" : "· OFF"}
+        </Button>
+        {auto && (Object.keys(USAGE_PRESETS) as ImageUsage[]).map((u) => (
+          <Button
+            key={u}
+            type="button"
+            size="sm"
+            variant={usageChoice === u ? "default" : "outline"}
+            onClick={() => setUsageChoice(u)}
+            disabled={busy}
+            className="h-7 px-2 text-xs"
+          >
+            {USAGE_LABEL[u]}
+          </Button>
+        ))}
       </div>
 
       {(queue.length > 0 || values.length > 0) && (
