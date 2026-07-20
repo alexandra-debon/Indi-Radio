@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, Trash2, BadgeCheck, Globe, Eye } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -160,6 +160,7 @@ function EditProfilePage() {
       </Link>
       <h1 className="section-title">Modifier mon profil</h1>
 
+      <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
       <form onSubmit={handleSubmit} className="card-brut space-y-5 p-4">
         <div className="flex items-center gap-4">
           <div className="size-20 shrink-0 overflow-hidden rounded-full border-2 border-border bg-muted">
@@ -245,6 +246,47 @@ function EditProfilePage() {
           </Button>
         </div>
       </form>
+
+      <aside className="space-y-2 lg:sticky lg:top-4 lg:self-start">
+        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+          <Eye className="size-3.5" /> Aperçu public
+        </div>
+        <div className="card-brut space-y-3 p-4">
+          <div className="flex items-center gap-3">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="" className="size-16 rounded-full border-2 border-border object-cover" />
+            ) : (
+              <div className="grid size-16 place-items-center rounded-full border-2 border-border bg-muted text-base font-black uppercase">
+                {(pseudo.slice(0, 2) || "?").toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <h2 className="truncate text-lg font-black">@{pseudo || "pseudo"}</h2>
+                {profile.is_certified && <BadgeCheck className="size-4 text-primary" aria-label="Certifié" />}
+              </div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                {profile.role}
+              </div>
+            </div>
+          </div>
+          {bio && <p className="whitespace-pre-wrap text-sm">{bio}</p>}
+          {website && /^https?:\/\/.+\..+/.test(website) && (
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary underline break-all">
+              <Globe className="size-3.5 shrink-0" /> {website.replace(/^https?:\/\//, "")}
+            </div>
+          )}
+          {!bio && !website && (
+            <p className="text-[11px] italic text-muted-foreground">
+              Ajoute une bio et un lien pour enrichir ton profil.
+            </p>
+          )}
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          Aperçu en direct — visible par les autres après enregistrement.
+        </p>
+      </aside>
+      </div>
     </div>
   );
 }
