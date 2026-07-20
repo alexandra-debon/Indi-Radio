@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteMyAccount } from "@/lib/account.functions";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -193,7 +194,15 @@ function ProfilePage() {
         ) : (
           <>
             {profile.bio ? (
-              <p className="whitespace-pre-wrap text-sm text-foreground">{profile.bio}</p>
+              <TranslatedText
+                as="p"
+                className="whitespace-pre-wrap text-sm text-foreground"
+                entityType="profile"
+                entityKey={profile.id}
+                field="bio"
+                text={profile.bio}
+                manual={false}
+              />
             ) : (
               <p className="text-xs text-muted-foreground">
                 Tu n'as pas encore rédigé de présentation. Ajoute quelques lignes pour te
