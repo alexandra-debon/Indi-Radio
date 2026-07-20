@@ -21,7 +21,8 @@
     "test:routes": "vitest run tests/routes-availability.test.ts",
     "publish:verify": "node scripts/publish-verify.mjs"
     ,
-    "verify:hreflang": "node scripts/verify-hreflang.mjs"
+    "verify:hreflang": "node scripts/verify-hreflang.mjs",
+    "verify:i18n": "node scripts/verify-i18n.mjs"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
