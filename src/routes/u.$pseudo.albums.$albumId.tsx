@@ -156,6 +156,8 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }: {
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const swipeRef = useRef<{ startX: number; startY: number; startT: number; pointerId: number } | null>(null);
+  const [swipeDx, setSwipeDx] = useState(0);
 
   const reset = useCallback(() => { setZoom(1); setPan({ x: 0, y: 0 }); }, []);
   useEffect(() => { reset(); }, [index, reset]);
@@ -184,15 +186,42 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }: {
   };
   const onDoubleClick = () => setZoom((z) => (z > 1 ? 1 : 2));
   const onPointerDown = (e: React.PointerEvent) => {
-    if (zoom <= 1) return;
+    if (zoom > 1) {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: pan.x, baseY: pan.y };
+      return;
+    }
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: pan.x, baseY: pan.y };
+    swipeRef.current = { startX: e.clientX, startY: e.clientY, startT: Date.now(), pointerId: e.pointerId };
   };
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragRef.current) return;
-    setPan({ x: dragRef.current.baseX + (e.clientX - dragRef.current.startX), y: dragRef.current.baseY + (e.clientY - dragRef.current.startY) });
+    if (dragRef.current) {
+      setPan({ x: dragRef.current.baseX + (e.clientX - dragRef.current.startX), y: dragRef.current.baseY + (e.clientY - dragRef.current.startY) });
+      return;
+    }
+    if (swipeRef.current) {
+      const dx = e.clientX - swipeRef.current.startX;
+      const dy = e.clientY - swipeRef.current.startY;
+      if (Math.abs(dx) > Math.abs(dy)) setSwipeDx(dx);
+    }
   };
-  const onPointerUp = () => { dragRef.current = null; };
+  const onPointerUp = (e: React.PointerEvent) => {
+    dragRef.current = null;
+    if (swipeRef.current) {
+      const dx = e.clientX - swipeRef.current.startX;
+      const dy = e.clientY - swipeRef.current.startY;
+      const dt = Date.now() - swipeRef.current.startT;
+      swipeRef.current = null;
+      setSwipeDx(0);
+      const horizontal = Math.abs(dx) > Math.abs(dy);
+      const fast = dt < 400 && Math.abs(dx) > 40;
+      const long = Math.abs(dx) > 80;
+      if (horizontal && (fast || long) && photos.length > 1) {
+        if (dx < 0) onNext();
+        else onPrev();
+      }
+    }
+  };
 
   return (
     <div
