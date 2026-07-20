@@ -91,7 +91,7 @@ function PostDetailPage() {
       <article className="card-brut overflow-hidden">
         {images.length > 0 && (
           <div className={`grid gap-1 ${images.length === 1 ? "grid-cols-1" : images.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
-            {images.map((src, i) => (
+            {images.map((src: string, i: number) => (
               <div key={i} className="overflow-hidden bg-muted" style={{ aspectRatio: images.length === 1 ? "16/9" : "1/1" }}>
                 <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
               </div>
