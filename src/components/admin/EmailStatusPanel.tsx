@@ -74,6 +74,27 @@ export function EmailStatusPanel() {
     toast.success(`${rows.length} abonné(s) exporté(s)`);
   };
 
+  const exportSubscribersXlsx = async () => {
+    const rows = subsQuery.data ?? [];
+    if (rows.length === 0) {
+      toast.error("Aucun abonné à exporter");
+      return;
+    }
+    const XLSX = await import("xlsx");
+    const data = rows.map((r: any) => ({
+      email: r.email,
+      subscribed_at: r.subscribed_at ?? "",
+      source: r.source ?? "",
+      consent_rgpd: r.gdpr_consent_at ?? "",
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Abonnés");
+    const stamp = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `newsletter-subscribers-${stamp}.xlsx`);
+    toast.success(`${rows.length} abonné(s) exporté(s)`);
+  };
+
   const dnsQuery = useQuery({
     queryKey: ["admin-email-dns"],
     queryFn: () => runDnsCheck(),
@@ -300,19 +321,26 @@ export function EmailStatusPanel() {
               ? "Chargement…"
               : `${subsQuery.data?.length ?? 0} abonné(s) inscrit(s).`}
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               onClick={exportSubscribersCsv}
               disabled={subsQuery.isLoading || (subsQuery.data?.length ?? 0) === 0}
             >
               <Download className="h-4 w-4 mr-2" /> Exporter en CSV
             </Button>
+            <Button
+              variant="outline"
+              onClick={exportSubscribersXlsx}
+              disabled={subsQuery.isLoading || (subsQuery.data?.length ?? 0) === 0}
+            >
+              <Download className="h-4 w-4 mr-2" /> Exporter en XLSX
+            </Button>
             <Button variant="outline" onClick={() => subsQuery.refetch()}>
               Rafraîchir
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Le fichier CSV contient : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
+            Le fichier contient les colonnes : email, date d'inscription, source d'inscription, date de consentement RGPD. Compatible Excel / Google Sheets.
           </p>
         </CardContent>
       </Card>
