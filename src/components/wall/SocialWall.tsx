@@ -74,7 +74,8 @@ function renderMentions(content: string) {
 
 export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
-  const canUploadImages = isAdmin || isArtiste;
+  // Ouvert à toute la communauté : tout utilisateur connecté peut uploader des photos.
+  const canUploadImages = !!session;
   const qc = useQueryClient();
   const [content, setContent] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
