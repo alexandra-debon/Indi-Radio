@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteMyAccount } from "@/lib/account.functions";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 import {
   AlertDialog,
   AlertDialogAction,
