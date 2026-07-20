@@ -82,7 +82,10 @@ function AdminPage() {
   ];
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Panneau admin</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="section-title">Panneau admin</h1>
+        <UserCountBadge />
+      </div>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {sections.map((s) => {
           const Icon = s.icon;
