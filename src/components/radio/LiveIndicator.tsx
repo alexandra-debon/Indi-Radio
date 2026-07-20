@@ -1,4 +1,5 @@
 import { useRadio } from "./RadioPlayerProvider";
+import { useT } from "@/lib/i18n";
 
 /**
  * Simple "live" listening indicator: pulsing dot + text.
@@ -8,6 +9,7 @@ import { useRadio } from "./RadioPlayerProvider";
  */
 export function LiveIndicator({ className = "" }: { className?: string }) {
   const { durationKnown } = useRadio();
+  const t = useT();
   return (
     <span className={`inline-flex items-center gap-2 ${className}`} aria-live="polite">
       <span className="relative flex size-2.5">
@@ -15,7 +17,7 @@ export function LiveIndicator({ className = "" }: { className?: string }) {
         <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
       </span>
       <span className="text-sm font-bold uppercase tracking-wide">
-        {durationKnown ? "Lecture en cours" : "En direct"}
+        {durationKnown ? t("live.playing") : t("nav.live")}
       </span>
     </span>
   );

@@ -3,11 +3,13 @@ import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useT } from "@/lib/i18n";
 
 type Kind = "post" | "news";
 
 export function CommentLikeButton({ commentId, kind }: { commentId: string; kind: Kind }) {
   const { session, openAuth } = useAuth();
+  const t = useT();
   const qc = useQueryClient();
   const table = kind === "post" ? "post_comment_likes" : "news_comment_likes";
   const uid = session?.user.id ?? null;
@@ -77,13 +79,13 @@ export function CommentLikeButton({ commentId, kind }: { commentId: string; kind
       <button
         onClick={(e) => { e.stopPropagation(); uid ? toggle.mutate() : openAuth(); }}
         className={`inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] ${data?.liked ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}
-        aria-label="J'aime ce commentaire"
+        aria-label={t("comment.like")}
       >
         <Heart className={`size-3 ${data?.liked ? "fill-current" : ""}`} /> {count}
       </button>
       {summary && (
         <span className="text-[10px] text-muted-foreground truncate max-w-[220px]" title={likers.map((l) => l.pseudo).join(", ")}>
-          Aimé par {summary}
+          {t("comment.likedBy")} {summary}
         </span>
       )}
     </span>
