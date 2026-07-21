@@ -18,7 +18,7 @@ function formatElapsed(sec: number): string {
 export function FullscreenPlayerTrigger() {
   const [open, setOpen] = useState(false);
   const t = useT();
-  const label = t("live.fullscreen") || "Plein écran";
+  const label = "Plein écran";
   return (
     <>
       <button
@@ -66,7 +66,7 @@ function FullscreenPlayer({ onClose }: { onClose: () => void }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={t("live.fullscreen") || "Lecteur plein écran"}
+      aria-label="Lecteur plein écran"
       className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-md"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
