@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useId } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/use-auth";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
@@ -130,6 +131,10 @@ export function OnboardingTour() {
   const [rating, setRating] = useState<"up" | "down" | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const feedbackHeadingRef = useRef<HTMLHeadingElement>(null);
+  const feedbackMsgId = useId();
+  const stepDescId = useId();
 
   useEffect(() => {
     if (loading) return;
@@ -195,6 +200,27 @@ export function OnboardingTour() {
   const current = STEPS[step];
   const l = lang as Lang;
   const isLast = step === total - 1;
+
+  // Move focus to the new step's heading so screen readers announce it,
+  // and so keyboard users land in the updated content region.
+  useEffect(() => {
+    if (phase === "tour") {
+      stepHeadingRef.current?.focus();
+    } else if (phase === "feedback") {
+      feedbackHeadingRef.current?.focus();
+    }
+  }, [phase, step]);
+
+  function onTourKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (isLast) setPhase("feedback");
+      else setStep((s) => s + 1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      setStep((s) => Math.max(0, s - 1));
+    }
+  }
 
   const nextLabel = useMemo(
     () => (isLast ? (l === "fr" ? "Terminer" : "Finish") : l === "fr" ? "Suivant" : "Next"),
@@ -264,9 +290,13 @@ export function OnboardingTour() {
         )}
 
         {phase === "tour" && current && (
-          <>
+          <div onKeyDown={onTourKeyDown}>
             <DialogHeader>
-              <div className="mb-1 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              <div
+                className="mb-1 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 <span>
                   {l === "fr" ? "Étape" : "Step"} {step + 1} / {total}
                 </span>
@@ -280,13 +310,33 @@ export function OnboardingTour() {
                       : `${total - step - 1} step${total - step - 1 > 1 ? "s" : ""} left`}
                 </span>
               </div>
-              <DialogTitle className="text-xl">{current.title[l]}</DialogTitle>
-              <DialogDescription className="text-base leading-relaxed text-foreground/80">
+              <DialogTitle
+                ref={stepHeadingRef}
+                tabIndex={-1}
+                className="text-xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+              >
+                {current.title[l]}
+              </DialogTitle>
+              <DialogDescription
+                id={stepDescId}
+                className="text-base leading-relaxed text-foreground/80"
+              >
                 {current.body[l]}
               </DialogDescription>
             </DialogHeader>
 
-            <div className="my-2 space-y-1">
+            <div
+              className="my-2 space-y-1"
+              role="progressbar"
+              aria-valuemin={1}
+              aria-valuemax={total}
+              aria-valuenow={step + 1}
+              aria-valuetext={
+                l === "fr"
+                  ? `Étape ${step + 1} sur ${total}`
+                  : `Step ${step + 1} of ${total}`
+              }
+            >
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-primary transition-all duration-300"
@@ -310,8 +360,11 @@ export function OnboardingTour() {
               </div>
             )}
 
-            <DialogFooter className="mt-2 flex-row items-center justify-between gap-2 sm:justify-between">
-              <Button variant="ghost" size="sm" onClick={finish}>
+            <DialogFooter
+              className="mt-2 flex-row items-center justify-between gap-2 sm:justify-between"
+              aria-label={l === "fr" ? "Navigation du tour" : "Tour navigation"}
+            >
+              <Button variant="ghost" size="sm" onClick={finish} aria-label={skipLabel}>
                 {skipLabel}
               </Button>
               <div className="flex gap-2">
@@ -320,6 +373,7 @@ export function OnboardingTour() {
                   size="sm"
                   onClick={() => setStep((s) => Math.max(0, s - 1))}
                   disabled={step === 0}
+                  aria-label={prevLabel}
                 >
                   ← {prevLabel}
                 </Button>
@@ -329,18 +383,23 @@ export function OnboardingTour() {
                     if (isLast) setPhase("feedback");
                     else setStep((s) => s + 1);
                   }}
+                  aria-label={nextLabel}
                 >
                   {nextLabel} {!isLast && "→"}
                 </Button>
               </div>
             </DialogFooter>
-          </>
+          </div>
         )}
 
         {phase === "feedback" && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl">
+              <DialogTitle
+                ref={feedbackHeadingRef}
+                tabIndex={-1}
+                className="text-xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+              >
                 {l === "fr" ? "Ton avis sur le tour ?" : "How was the tour?"}
               </DialogTitle>
               <DialogDescription>
@@ -349,16 +408,22 @@ export function OnboardingTour() {
                   : "Help us improve the next steps (optional)."}
               </DialogDescription>
             </DialogHeader>
-            <div className="flex justify-center gap-4 py-3">
+            <div
+              className="flex justify-center gap-4 py-3"
+              role="radiogroup"
+              aria-label={l === "fr" ? "Note ton expérience" : "Rate your experience"}
+            >
               <Button
                 type="button"
                 variant={rating === "up" ? "default" : "outline"}
                 size="lg"
                 onClick={() => setRating("up")}
                 className="h-16 w-24"
+                role="radio"
+                aria-checked={rating === "up"}
                 aria-label={l === "fr" ? "J'ai aimé" : "I liked it"}
               >
-                <ThumbsUp className="size-6" />
+                <ThumbsUp className="size-6" aria-hidden="true" />
               </Button>
               <Button
                 type="button"
@@ -366,28 +431,44 @@ export function OnboardingTour() {
                 size="lg"
                 onClick={() => setRating("down")}
                 className="h-16 w-24"
+                role="radio"
+                aria-checked={rating === "down"}
                 aria-label={l === "fr" ? "Peut mieux faire" : "Could be better"}
               >
-                <ThumbsDown className="size-6" />
+                <ThumbsDown className="size-6" aria-hidden="true" />
               </Button>
             </div>
-            <Textarea
-              value={feedbackMsg}
-              onChange={(e) => setFeedbackMsg(e.target.value)}
-              maxLength={500}
-              placeholder={
-                l === "fr"
-                  ? "Un mot pour nous aider à améliorer (facultatif)…"
-                  : "A quick word to help us improve (optional)…"
-              }
-              className="min-h-[80px]"
-            />
+            <div className="space-y-1">
+              <Label htmlFor={feedbackMsgId} className="text-sm">
+                {l === "fr" ? "Un mot pour nous (facultatif)" : "A quick note (optional)"}
+              </Label>
+              <Textarea
+                id={feedbackMsgId}
+                value={feedbackMsg}
+                onChange={(e) => setFeedbackMsg(e.target.value)}
+                maxLength={500}
+                placeholder={
+                  l === "fr"
+                    ? "Un mot pour nous aider à améliorer (facultatif)…"
+                    : "A quick word to help us improve (optional)…"
+                }
+                className="min-h-[80px]"
+                aria-describedby={`${feedbackMsgId}-count`}
+              />
+              <div
+                id={`${feedbackMsgId}-count`}
+                className="text-right text-[10px] text-muted-foreground"
+                aria-live="polite"
+              >
+                {feedbackMsg.length} / 500
+              </div>
+            </div>
             <DialogFooter className="mt-2 flex-row justify-between gap-2 sm:justify-between">
               <Button variant="ghost" onClick={finish} disabled={submitting}>
                 {l === "fr" ? "Passer" : "Skip"}
               </Button>
               <Button onClick={() => submitFeedback(true)} disabled={submitting || !rating}>
-                {submitting && <Loader2 className="size-4 animate-spin" />}
+                {submitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
                 {l === "fr" ? "Envoyer" : "Send"}
               </Button>
             </DialogFooter>
