@@ -338,6 +338,59 @@ export function OnboardingTour() {
               </DialogFooter>
             </>
           )}
+          {phase === "summary" && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-xl">
+                  <ListChecks className="size-5 text-primary" />
+                  {l === "fr" ? "Résumé du tour" : "Tour summary"}
+                </DialogTitle>
+                <DialogDescription>
+                  {l === "fr"
+                    ? "Toutes les sections que tu viens de voir. Clique pour revenir sur l'une d'elles."
+                    : "Everything you just saw. Click any section to revisit it."}
+                </DialogDescription>
+              </DialogHeader>
+              <ol className="max-h-[55vh] space-y-2 overflow-auto pr-1">
+                {TOUR_STEPS.map((s, i) => (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      onClick={() => { setStep(i); setPhase("tour"); }}
+                      className="group flex w-full items-start gap-3 rounded-md border-2 border-black bg-background px-3 py-2 text-left shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-primary/10 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <span className="grid size-7 shrink-0 place-items-center rounded-full border-2 border-black bg-primary text-xs font-black text-black">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-bold">{s.title[l]}</span>
+                        <span className="mt-0.5 line-clamp-2 block text-xs text-muted-foreground">{s.body[l]}</span>
+                      </span>
+                      <ArrowRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              <div className="mb-1 flex items-center gap-2">
+                <Checkbox
+                  id="summary-dont-show"
+                  checked={dontShowAgain}
+                  onCheckedChange={(c) => setDontShowAgain(c === true)}
+                />
+                <Label htmlFor="summary-dont-show" className="cursor-pointer text-sm font-semibold">
+                  {dontShowLabel}
+                </Label>
+              </div>
+              <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+                <Button variant="ghost" onClick={finish}>
+                  {t("tour.close")}
+                </Button>
+                <Button onClick={() => setPhase("feedback")}>
+                  {l === "fr" ? "Donner mon avis" : "Give feedback"} →
+                </Button>
+              </DialogFooter>
+            </>
+          )}
           {phase === "feedback" && (
             <>
               <DialogHeader>
@@ -435,7 +488,7 @@ export function OnboardingTour() {
           onNext={() => {
             if (isLast) {
               savePreference();
-              setPhase("feedback");
+              setPhase("summary");
             } else {
               setStep((s) => s + 1);
             }
@@ -444,7 +497,7 @@ export function OnboardingTour() {
           onSkip={() => finish()}
           onFinish={() => {
             savePreference();
-            setPhase("feedback");
+            setPhase("summary");
           }}
         />
       )}
