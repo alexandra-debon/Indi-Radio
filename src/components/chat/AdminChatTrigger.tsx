@@ -48,9 +48,11 @@ export function AdminChatTrigger({ className }: { className?: string }) {
     return () => { supabase.removeChannel(ch); };
   }, [isAdmin]);
 
-  if (!session) return null;
-
   const onClick = () => {
+    if (!session) {
+      window.dispatchEvent(new Event("indi:open-auth"));
+      return;
+    }
     if (isAdmin) navigate({ to: "/admin/messages" });
     else window.dispatchEvent(new Event("indi:open-admin-chat"));
   };
@@ -58,12 +60,12 @@ export function AdminChatTrigger({ className }: { className?: string }) {
   return (
     <button
       onClick={onClick}
-      aria-label="Tchat Team Indi"
-      title="Tchat Team Indi"
+      aria-label="Chat Team Indi"
+      title="Chat Team Indi"
       className={cn("flex shrink-0 flex-col items-center gap-0.5", className)}
     >
       <span className="text-[8px] font-black uppercase leading-[1.05] tracking-wide text-primary text-center">
-        Tchat<br />Team Indi
+        Chat<br />Team Indi
       </span>
       <span className="relative grid size-9 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000]">
         <MessageCircle className="size-4" />
