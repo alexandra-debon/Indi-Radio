@@ -196,7 +196,6 @@ function RootComponent() {
           <AppShell>
             <Outlet />
           </AppShell>
-          <MiniPlayer />
           <AuthDialog />
           <IosInstallHint />
           <Toaster />
