@@ -140,7 +140,7 @@ export function AdminChatWidget() {
         onClick={() => navigate({ to: "/admin/messages" })}
         aria-label={t("chat.openBubble")}
         title={t("chat.openBubble")}
-        className="fixed bottom-40 right-4 z-40 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
+        className="fixed bottom-56 right-4 z-50 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
       >
         <MessageCircle className="size-6" />
       </button>
@@ -153,7 +153,7 @@ export function AdminChatWidget() {
         <button
           onClick={() => setOpen(true)}
           aria-label={t("chat.openBubble")}
-          className="fixed bottom-40 right-4 z-40 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
+          className="fixed bottom-56 right-4 z-50 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
         >
           <MessageCircle className="size-6" />
           {unread > 0 && (
@@ -165,7 +165,7 @@ export function AdminChatWidget() {
       )}
 
       {open && (
-        <div className="fixed bottom-40 right-4 z-40 flex h-[70vh] max-h-[540px] w-[92vw] max-w-sm flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000]">
+        <div className="fixed bottom-56 right-4 z-50 flex h-[70vh] max-h-[540px] w-[92vw] max-w-sm flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000]">
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">
             <div className="min-w-0">
               <div className="truncate text-sm font-bold">{t("chat.title")}</div>
