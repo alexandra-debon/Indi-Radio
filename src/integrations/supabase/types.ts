@@ -616,6 +616,8 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_captions: string[]
+          image_urls: string[]
           news_post_id: string
         }
         Insert: {
@@ -623,6 +625,8 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           news_post_id: string
         }
         Update: {
@@ -630,6 +634,8 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           news_post_id?: string
         }
         Relationships: [
@@ -691,7 +697,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_captions: string[]
           image_url: string | null
+          image_urls: string[]
           social_links: Json
           title: string
         }
@@ -700,7 +708,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_captions?: string[]
           image_url?: string | null
+          image_urls?: string[]
           social_links?: Json
           title: string
         }
@@ -709,7 +719,9 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_captions?: string[]
           image_url?: string | null
+          image_urls?: string[]
           social_links?: Json
           title?: string
         }
@@ -970,6 +982,8 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_captions: string[]
+          image_urls: string[]
           post_id: string
         }
         Insert: {
@@ -977,6 +991,8 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           post_id: string
         }
         Update: {
@@ -984,6 +1000,8 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           post_id?: string
         }
         Relationships: [
