@@ -312,11 +312,29 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
 
   return (
     <li id={`news-${post.id}`} className="card-brut scroll-mt-24 overflow-hidden">
-      {!editing && post.image_url && (
-        <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
-          <img src={post.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
-        </div>
-      )}
+      {!editing && (() => {
+        const imgs = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
+        if (imgs.length === 0) return null;
+        if (imgs.length === 1) {
+          return (
+            <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
+              <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          );
+        }
+        return (
+          <div className={`grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
+            {imgs.map((u, i) => (
+              <div key={i} className="relative overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
+                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                {sessionUserId && sessionUserId !== post.author_id && (
+                  <ReportImageButton postId={post.id} imageUrl={u} />
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      })()}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
@@ -327,7 +345,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         {editing ? (
           <div className="space-y-2">
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
-            <ImageUploader value={editForm.image_url} onChange={(v) => setEditForm({ ...editForm, image_url: v })} folder="news" label="Image de couverture" />
+            <MultiImageUploader values={editForm.images} onChange={(v) => setEditForm({ ...editForm, images: v })} folder="news" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
