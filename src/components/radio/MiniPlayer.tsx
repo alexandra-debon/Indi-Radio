@@ -17,6 +17,7 @@ function formatElapsed(sec: number): string {
 
 export function MiniPlayer() {
   const { playing, toggle, currentTrack, elapsedSeconds } = useRadio();
+  const t = useT();
   const { data: artwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   const [imgError, setImgError] = useState(false);
   useEffect(() => {
