@@ -320,16 +320,6 @@ export function OnboardingTour() {
               </DialogFooter>
             </>
           )}
-
-          {phase === "tour" && current && (
-            <div className="sr-only">
-              <h2 ref={stepHeadingRef} tabIndex={-1} id={stepDescId}>
-                {current.title[l]}
-              </h2>
-              <p>{current.body[l]}</p>
-            </div>
-          )}
-
           {phase === "feedback" && (
             <>
               <DialogHeader>
