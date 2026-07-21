@@ -138,6 +138,8 @@ export const dict = {
     "share.copy": "Copier le lien",
     "share.copied": "Lien copié !",
     "share.copyError": "Impossible de copier le lien",
+    "live.shareTrack": "Partager ce morceau",
+    "live.shareText": "Écoute {title} en direct sur InDi RaDio",
     "live.indieNoAds": "musique 100% indé",
     "live.noAdsNoNews": "Sans Pubbs sans infos",
     "live.registered": "inscrits",
