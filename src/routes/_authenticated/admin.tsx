@@ -497,6 +497,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     comment: row.comment,
     discovery_story: row.discovery_story ?? "",
     published: row.published,
+    editorial_rating: row.editorial_rating ?? null,
   });
   const [social, setSocial] = useState<SocialLinks>(
     (row.social_links as SocialLinks | null) ?? {},
@@ -515,6 +516,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
           discovery_story: f.discovery_story || null,
           social_links: sanitizeLinks(social),
           published: f.published,
+          editorial_rating: f.editorial_rating,
         })
         .eq("id", row.id);
       if (error) throw error;
@@ -548,6 +550,15 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
       <Textarea rows={6} value={f.comment} onChange={(e) => setF({ ...f, comment: e.target.value })} />
       <Textarea rows={4} placeholder="Comment on a découvert…" value={f.discovery_story} onChange={(e) => setF({ ...f, discovery_story: e.target.value })} />
       <SocialLinksEditor value={social} onChange={setSocial} />
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Note rédaction
+        </span>
+        <StarRating
+          value={f.editorial_rating}
+          onChange={(v) => setF({ ...f, editorial_rating: v })}
+        />
+      </div>
       <div className="flex items-center gap-3">
         <label className="flex items-center gap-2 text-xs">
           <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
