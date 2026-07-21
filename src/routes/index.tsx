@@ -35,13 +35,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +",
+          "Écoute Indi Radio en direct. Plus qu’une radio. Découvre les artistes indé, participe au mur social, retrouve l'historique des titres passés à l'antenne et +.",
       },
       { property: "og:title", content: "InDi RaDio — Live 24/7 musique  indépendante" },
       {
         property: "og:description",
         content:
-          "Écoute Indi Radio en direct. Plus qu’une radiao. Découvre  les artistes indé, participe au mur social , retrouve l'historique des titres passés à l'antenne et +",
+          "Écoute Indi Radio en direct. Plus qu’une radio. Découvre les artistes indé, participe au mur social, retrouve l'historique des titres passés à l'antenne et +.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
