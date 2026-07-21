@@ -4,7 +4,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass, Heart } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
