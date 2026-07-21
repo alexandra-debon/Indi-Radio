@@ -266,8 +266,19 @@ export function OnboardingTour() {
         {phase === "tour" && current && (
           <>
             <DialogHeader>
-              <div className="mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                {l === "fr" ? "Étape" : "Step"} {step + 1} / {total}
+              <div className="mb-1 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <span>
+                  {l === "fr" ? "Étape" : "Step"} {step + 1} / {total}
+                </span>
+                <span className="text-primary">
+                  {isLast
+                    ? l === "fr"
+                      ? "Dernière étape"
+                      : "Last step"
+                    : l === "fr"
+                      ? `Encore ${total - step - 1} étape${total - step - 1 > 1 ? "s" : ""}`
+                      : `${total - step - 1} step${total - step - 1 > 1 ? "s" : ""} left`}
+                </span>
               </div>
               <DialogTitle className="text-xl">{current.title[l]}</DialogTitle>
               <DialogDescription className="text-base leading-relaxed text-foreground/80">
@@ -275,11 +286,16 @@ export function OnboardingTour() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="my-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full bg-primary transition-all"
-                style={{ width: `${((step + 1) / total) * 100}%` }}
-              />
+            <div className="my-2 space-y-1">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${((step + 1) / total) * 100}%` }}
+                />
+              </div>
+              <div className="text-right text-[10px] font-semibold tabular-nums text-muted-foreground">
+                {Math.round(((step + 1) / total) * 100)}%
+              </div>
             </div>
 
             {current.cta && (
