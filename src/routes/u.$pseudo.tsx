@@ -1,5 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
@@ -40,6 +45,7 @@ type Stats = { posts: number; comments: number; likesGiven: number };
 type AchievementDef = {
   key: string;
   label: string;
+  description: string;
   action: "post" | "comment" | "dedicace" | "like_received" | "presence";
   threshold: number;
   icon: React.ComponentType<{ className?: string }>;
@@ -47,18 +53,18 @@ type AchievementDef = {
 };
 
 const ACHIEVEMENTS: AchievementDef[] = [
-  { key: "post_1", label: "Première publication", action: "post", threshold: 1, icon: FileText },
-  { key: "post_10", label: "Plume active", action: "post", threshold: 10, icon: FileText },
-  { key: "post_50", label: "Voix de la commu", action: "post", threshold: 50, icon: FileText },
-  { key: "comment_1", label: "Premier commentaire", action: "comment", threshold: 1, icon: MessageSquare },
-  { key: "comment_25", label: "Bavard·e", action: "comment", threshold: 25, icon: MessageSquare },
-  { key: "comment_100", label: "Pilier des échanges", action: "comment", threshold: 100, icon: MessageSquare },
-  { key: "dedicace_1", label: "Première dédicace", action: "dedicace", threshold: 1, icon: Mic2 },
-  { key: "dedicace_10", label: "Fan de l'antenne", action: "dedicace", threshold: 10, icon: Mic2 },
-  { key: "like_10", label: "Apprécié·e", action: "like_received", threshold: 10, icon: Heart },
-  { key: "like_50", label: "Adoré·e", action: "like_received", threshold: 50, icon: Heart },
-  { key: "presence_7", label: "Régulier·e", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
-  { key: "presence_30", label: "Pilier de la station", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
+  { key: "post_1", label: "Première publication", description: "Publier son premier message sur le mur.", action: "post", threshold: 1, icon: FileText },
+  { key: "post_10", label: "Plume active", description: "Publier 10 messages.", action: "post", threshold: 10, icon: FileText },
+  { key: "post_50", label: "Voix de la commu", description: "Publier 50 messages.", action: "post", threshold: 50, icon: FileText },
+  { key: "comment_1", label: "Premier commentaire", description: "Commenter pour la première fois.", action: "comment", threshold: 1, icon: MessageSquare },
+  { key: "comment_25", label: "Bavard·e", description: "Poster 25 commentaires.", action: "comment", threshold: 25, icon: MessageSquare },
+  { key: "comment_100", label: "Pilier des échanges", description: "Poster 100 commentaires.", action: "comment", threshold: 100, icon: MessageSquare },
+  { key: "dedicace_1", label: "Première dédicace", description: "Envoyer une première dédicace à l'antenne.", action: "dedicace", threshold: 1, icon: Mic2 },
+  { key: "dedicace_10", label: "Fan de l'antenne", description: "Envoyer 10 dédicaces.", action: "dedicace", threshold: 10, icon: Mic2 },
+  { key: "like_10", label: "Apprécié·e", description: "Recevoir 10 likes sur ses publications.", action: "like_received", threshold: 10, icon: Heart },
+  { key: "like_50", label: "Adoré·e", description: "Recevoir 50 likes sur ses publications.", action: "like_received", threshold: 50, icon: Heart },
+  { key: "presence_7", label: "Régulier·e", description: "Se connecter 7 jours différents.", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
+  { key: "presence_30", label: "Pilier de la station", description: "Se connecter 30 jours différents.", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
 ];
 
 async function fetchAchievements(userId: string) {
@@ -73,9 +79,11 @@ async function fetchAchievements(userId: string) {
   return ACHIEVEMENTS.map((a) => {
     const evts = byAction[a.action] ?? [];
     const counted = a.unique_days
-      ? Array.from(new Set(evts.map((e) => e.created_at.slice(0, 10))))
+      ? Array.from(new Set(evts.map((e) => e.created_at.slice(0, 10)))).sort()
       : evts.map((e) => e.created_at);
-    return { ...a, progress: counted.length, unlocked: counted.length >= a.threshold };
+    const unlocked = counted.length >= a.threshold;
+    const obtainedAt = unlocked ? counted[a.threshold - 1] : null;
+    return { ...a, progress: counted.length, unlocked, obtainedAt };
   });
 }
 
@@ -171,6 +179,8 @@ function UserProfilePage() {
     enabled: !!data?.profile.id,
     queryFn: () => fetchAchievements(data!.profile.id),
   });
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const selected = achievements.find((a) => a.key === openKey) ?? null;
 
   if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
   if (error || !data) return <div className="p-4">Utilisateur introuvable. <Link to="/top-users" className="underline">Retour</Link></div>;
@@ -270,9 +280,11 @@ function UserProfilePage() {
             const Icon = a.icon;
             const pct = Math.min(100, Math.round((a.progress / a.threshold) * 100));
             return (
-              <li
-                key={a.key}
-                className={"card-brut space-y-1.5 p-3 " + (a.unlocked ? "border-primary bg-primary/5" : "opacity-80")}
+              <li key={a.key}>
+              <button
+                type="button"
+                onClick={() => setOpenKey(a.key)}
+                className={"card-brut w-full space-y-1.5 p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary " + (a.unlocked ? "border-primary bg-primary/5" : "opacity-80")}
               >
                 <div className="flex items-center gap-2">
                   <div className={"grid size-8 place-items-center rounded-md border-2 border-border " + (a.unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
@@ -286,11 +298,72 @@ function UserProfilePage() {
                 <div className="h-1.5 w-full border border-border bg-radio-surface">
                   <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                 </div>
+              </button>
               </li>
             );
           })}
         </ul>
       </div>
+
+      <Dialog open={!!selected} onOpenChange={(v) => !v && setOpenKey(null)}>
+        <DialogContent className="max-w-md">
+          {selected && (() => {
+            const Icon = selected.icon;
+            const pct = Math.min(100, Math.round((selected.progress / selected.threshold) * 100));
+            const remaining = Math.max(0, selected.threshold - selected.progress);
+            const obtained = selected.obtainedAt
+              ? (() => {
+                  const d = new Date(selected.obtainedAt);
+                  const utc = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
+                  return format(utc, "d MMM yyyy", { locale: fr });
+                })()
+              : null;
+            return (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-3">
+                    <div className={"grid size-12 place-items-center rounded-md border-2 border-border " + (selected.unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                      {selected.unlocked ? <Icon className="size-6" /> : <Lock className="size-6" />}
+                    </div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <DialogTitle className="text-base font-black">{selected.label}</DialogTitle>
+                      <DialogDescription className="text-xs">{selected.description}</DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground">Statut</span>
+                    <span className={selected.unlocked ? "text-primary" : "text-muted-foreground"}>
+                      {selected.unlocked ? "Débloqué" : "Verrouillé"}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-baseline justify-between text-xs">
+                      <span className="font-bold">Progression</span>
+                      <span className="text-muted-foreground">{Math.min(selected.progress, selected.threshold)} / {selected.threshold}</span>
+                    </div>
+                    <div className="h-2 w-full border-2 border-border bg-radio-surface">
+                      <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                    </div>
+                    {!selected.unlocked && (
+                      <div className="text-[11px] text-muted-foreground">Reste : {remaining}</div>
+                    )}
+                  </div>
+                  {obtained && (
+                    <div className="rounded-md border-2 border-primary bg-primary/5 p-2 text-xs font-semibold">
+                      Débloqué le {obtained}
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setOpenKey(null)}>Fermer</Button>
+                </DialogFooter>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
 
       <div className="card-brut p-4">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
