@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Trophy, Award, MessageSquare, FileText, Heart, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS } from "date-fns/locale";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/profile/badges")({
   head: () => ({ meta: [{ title: "Mes badges — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -25,22 +26,24 @@ type Achievement = {
 };
 
 const ACHIEVEMENTS: Achievement[] = [
-  { key: "post_1", label: "Première publication", description: "Publier ton premier message sur le mur.", action: "post", threshold: 1, icon: FileText },
-  { key: "post_10", label: "Plume active", description: "Publier 10 messages.", action: "post", threshold: 10, icon: FileText },
-  { key: "post_50", label: "Voix de la commu", description: "Publier 50 messages.", action: "post", threshold: 50, icon: FileText },
-  { key: "comment_1", label: "Premier commentaire", description: "Commenter pour la première fois.", action: "comment", threshold: 1, icon: MessageSquare },
-  { key: "comment_25", label: "Bavard·e", description: "Poster 25 commentaires.", action: "comment", threshold: 25, icon: MessageSquare },
-  { key: "comment_100", label: "Animateur·rice", description: "Poster 100 commentaires.", action: "comment", threshold: 100, icon: MessageSquare },
-  { key: "dedicace_1", label: "Première dédicace", description: "Envoyer une dédicace à l'antenne.", action: "dedicace", threshold: 1, icon: Mic2 },
-  { key: "dedicace_10", label: "Fidèle des ondes", description: "Envoyer 10 dédicaces.", action: "dedicace", threshold: 10, icon: Mic2 },
-  { key: "like_10", label: "Apprécié·e", description: "Recevoir 10 likes.", action: "like_received", threshold: 10, icon: Heart },
-  { key: "like_50", label: "Populaire", description: "Recevoir 50 likes.", action: "like_received", threshold: 50, icon: Heart },
-  { key: "presence_7", label: "Auditeur·rice régulier·ère", description: "Se connecter 7 jours différents.", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
-  { key: "presence_30", label: "Pilier de la station", description: "Se connecter 30 jours différents.", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
+  { key: "post_1", label: "Première publication", description: "", action: "post", threshold: 1, icon: FileText },
+  { key: "post_10", label: "", description: "", action: "post", threshold: 10, icon: FileText },
+  { key: "post_50", label: "", description: "", action: "post", threshold: 50, icon: FileText },
+  { key: "comment_1", label: "", description: "", action: "comment", threshold: 1, icon: MessageSquare },
+  { key: "comment_25", label: "", description: "", action: "comment", threshold: 25, icon: MessageSquare },
+  { key: "comment_100", label: "", description: "", action: "comment", threshold: 100, icon: MessageSquare },
+  { key: "dedicace_1", label: "", description: "", action: "dedicace", threshold: 1, icon: Mic2 },
+  { key: "dedicace_10", label: "", description: "", action: "dedicace", threshold: 10, icon: Mic2 },
+  { key: "like_10", label: "", description: "", action: "like_received", threshold: 10, icon: Heart },
+  { key: "like_50", label: "", description: "", action: "like_received", threshold: 50, icon: Heart },
+  { key: "presence_7", label: "", description: "", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
+  { key: "presence_30", label: "", description: "", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
 ];
 
 function BadgesPage() {
   const { profile, session } = useAuth();
+  const { lang, t } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
 
   const { data: events = [] } = useQuery({
     queryKey: ["my-point-events", session?.user.id],
@@ -55,7 +58,7 @@ function BadgesPage() {
     },
   });
 
-  if (!profile) return <div className="p-4">Chargement…</div>;
+  if (!profile) return <div className="p-4">{t("badges.loading")}</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
   const prev = LEVEL_THRESHOLDS[profile.level - 1] ?? 0;
@@ -70,21 +73,21 @@ function BadgesPage() {
   return (
     <div className="space-y-4">
       <Link to="/profile" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-3" /> Retour au profil
+        <ArrowLeft className="size-3" /> {t("badges.back")}
       </Link>
-      <h1 className="section-title">Mes badges</h1>
+      <h1 className="section-title">{t("badges.title")}</h1>
 
       <section className="card-brut space-y-2 p-4">
         <div className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
-          <Trophy className="size-4 text-primary" /> Niveau {profile.level} / 5
+          <Trophy className="size-4 text-primary" /> {t("badges.levelLine")} {profile.level} / 5
         </div>
         <div className="flex items-baseline justify-between text-xs">
-          <span className="text-muted-foreground">{profile.points} pts au total</span>
-          {profile.level < 5 && <span className="font-bold">Palier suivant : {nextThreshold} pts</span>}
+          <span className="text-muted-foreground">{profile.points} {t("badges.totalPts")}</span>
+          {profile.level < 5 && <span className="font-bold">{t("badges.nextTier")} : {nextThreshold} {t("profile.pts")}</span>}
         </div>
         <Progress value={levelProgress} />
         <div className="flex flex-wrap gap-1 pt-1">
-          {LEVEL_THRESHOLDS.map((t, i) => (
+          {LEVEL_THRESHOLDS.map((thr, i) => (
             <span
               key={i}
               className={
@@ -92,14 +95,14 @@ function BadgesPage() {
                 (profile.level >= i + 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")
               }
             >
-              Nv {i + 1} · {t} pts
+              {t("badges.lvlShort")} {i + 1} · {thr} {t("profile.pts")}
             </span>
           ))}
         </div>
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-black uppercase tracking-widest">Succès</h2>
+        <h2 className="text-sm font-black uppercase tracking-widest">{t("badges.achievementsTitle")}</h2>
         <div className="grid gap-2 sm:grid-cols-2">
           {ACHIEVEMENTS.map((a) => {
             const evts = byAction[a.action] ?? [];
@@ -123,8 +126,8 @@ function BadgesPage() {
                     {unlocked ? <Icon className="size-4" /> : <Lock className="size-4" />}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-black">{a.label}</div>
-                    <div className="text-[11px] text-muted-foreground">{a.description}</div>
+                    <div className="text-sm font-black">{t(`ach.${a.key}.label` as never)}</div>
+                    <div className="text-[11px] text-muted-foreground">{t(`ach.${a.key}.desc` as never)}</div>
                   </div>
                 </div>
                 <div className="flex items-baseline justify-between text-[11px]">
@@ -133,7 +136,7 @@ function BadgesPage() {
                   </span>
                   {obtainedAt && (
                     <span className="font-semibold">
-                      Obtenu le {format(new Date(obtainedAt), "d MMM yyyy", { locale: fr })}
+                      {t("badges.obtainedOn")} {format(new Date(obtainedAt), "d MMM yyyy", { locale: dateLocale })}
                     </span>
                   )}
                 </div>
@@ -146,7 +149,7 @@ function BadgesPage() {
 
       <section className="card-brut space-y-2 p-4">
         <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
-          <Award className="size-4 text-primary" /> Badges attribués par l'équipe
+          <Award className="size-4 text-primary" /> {t("badges.teamBadges")}
         </h2>
         {profile.badges && profile.badges.length > 0 ? (
           <div className="flex flex-wrap gap-2">
@@ -157,9 +160,7 @@ function BadgesPage() {
             ))}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Aucun badge personnalisé pour le moment. Les badges honorifiques sont attribués par l'équipe InDi.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("badges.teamEmpty")}</p>
         )}
       </section>
     </div>
