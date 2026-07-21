@@ -448,6 +448,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           discovery_story: string | null
+          editorial_rating: number | null
           featured_date: string
           id: string
           kind: string
@@ -463,6 +464,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           discovery_story?: string | null
+          editorial_rating?: number | null
           featured_date?: string
           id?: string
           kind?: string
@@ -478,6 +480,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           discovery_story?: string | null
+          editorial_rating?: number | null
           featured_date?: string
           id?: string
           kind?: string

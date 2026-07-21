@@ -14,6 +14,7 @@ import { toast } from "@/lib/toast";
 import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
+import { StarRating } from "@/components/rating/StarRating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
@@ -279,6 +280,7 @@ type FavoriteRow = {
   discovery_story: string | null;
   social_links: SocialLinks | null;
   published: boolean;
+  editorial_rating: number | null;
 };
 
 const EMPTY_FAV = {
@@ -290,6 +292,7 @@ const EMPTY_FAV = {
   comment: "",
   discovery_story: "",
   published: true,
+  editorial_rating: null as number | null,
 };
 
 function FavoritesAdmin() {
@@ -326,6 +329,7 @@ function FavoritesAdmin() {
         discovery_story: form.discovery_story || null,
         social_links: sanitizeLinks(social),
         published: form.published,
+        editorial_rating: form.editorial_rating,
         author_id: session.user.id,
       });
       if (error) throw error;
@@ -404,6 +408,15 @@ function FavoritesAdmin() {
           onChange={(e) => setForm({ ...form, discovery_story: e.target.value })}
         />
         <SocialLinksEditor value={social} onChange={setSocial} />
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Note rédaction
+          </span>
+          <StarRating
+            value={form.editorial_rating}
+            onChange={(v) => setForm({ ...form, editorial_rating: v })}
+          />
+        </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
             <Switch
@@ -484,6 +497,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     comment: row.comment,
     discovery_story: row.discovery_story ?? "",
     published: row.published,
+    editorial_rating: row.editorial_rating ?? null,
   });
   const [social, setSocial] = useState<SocialLinks>(
     (row.social_links as SocialLinks | null) ?? {},
@@ -502,6 +516,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
           discovery_story: f.discovery_story || null,
           social_links: sanitizeLinks(social),
           published: f.published,
+          editorial_rating: f.editorial_rating,
         })
         .eq("id", row.id);
       if (error) throw error;
@@ -535,6 +550,15 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
       <Textarea rows={6} value={f.comment} onChange={(e) => setF({ ...f, comment: e.target.value })} />
       <Textarea rows={4} placeholder="Comment on a découvert…" value={f.discovery_story} onChange={(e) => setF({ ...f, discovery_story: e.target.value })} />
       <SocialLinksEditor value={social} onChange={setSocial} />
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Note rédaction
+        </span>
+        <StarRating
+          value={f.editorial_rating}
+          onChange={(v) => setF({ ...f, editorial_rating: v })}
+        />
+      </div>
       <div className="flex items-center gap-3">
         <label className="flex items-center gap-2 text-xs">
           <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
