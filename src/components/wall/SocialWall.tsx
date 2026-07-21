@@ -901,7 +901,6 @@ export function SocialWall() {
                             max={4}
                           />
                         )}
-                        {postComments.map((c) => null)}
                       </div>
                     )}
                   </div>
