@@ -5,6 +5,8 @@ import { LikeButton } from "./LikeButton";
 import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
 import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
+import { ShareButton } from "@/components/share/ShareButton";
+import { useT } from "@/lib/i18n";
 
 function formatElapsed(sec: number): string {
   if (!Number.isFinite(sec) || sec < 0) return "0:00";
