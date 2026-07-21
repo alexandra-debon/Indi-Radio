@@ -329,6 +329,7 @@ function FavoritesAdmin() {
         discovery_story: form.discovery_story || null,
         social_links: sanitizeLinks(social),
         published: form.published,
+        editorial_rating: form.editorial_rating,
         author_id: session.user.id,
       });
       if (error) throw error;
@@ -407,6 +408,15 @@ function FavoritesAdmin() {
           onChange={(e) => setForm({ ...form, discovery_story: e.target.value })}
         />
         <SocialLinksEditor value={social} onChange={setSocial} />
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Note rédaction
+          </span>
+          <StarRating
+            value={form.editorial_rating}
+            onChange={(v) => setForm({ ...form, editorial_rating: v })}
+          />
+        </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
             <Switch
