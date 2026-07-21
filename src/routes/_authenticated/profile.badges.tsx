@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Trophy, Award, MessageSquare, FileText, Heart, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { format } from "date-fns";
@@ -10,6 +10,7 @@ import { fr, enUS } from "date-fns/locale";
 import { useLang } from "@/lib/i18n";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/profile/badges")({
   head: () => ({ meta: [{ title: "Mes badges — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -115,6 +116,41 @@ function BadgesPage() {
     const recent = [...counted].slice(-5).reverse();
     return { progress, unlocked, obtainedAt, recent };
   })();
+
+  // Toast on newly unlocked achievements + level up
+  const unlockedKeysRef = useRef<Set<string> | null>(null);
+  const lastLevelRef = useRef<number | null>(null);
+  useEffect(() => {
+    const currentUnlocked = new Set<string>();
+    for (const a of ACHIEVEMENTS) {
+      const evts = byAction[a.action] ?? [];
+      const counted = a.unique_days
+        ? new Set(evts.map((e) => e.created_at.slice(0, 10))).size
+        : evts.length;
+      if (counted >= a.threshold) currentUnlocked.add(a.key);
+    }
+    if (unlockedKeysRef.current !== null) {
+      for (const key of currentUnlocked) {
+        if (!unlockedKeysRef.current.has(key)) {
+          toast.success(t("badges.toast.unlocked"), {
+            description: t(`ach.${key}.label` as never),
+            icon: "🏆",
+          });
+        }
+      }
+    }
+    unlockedKeysRef.current = currentUnlocked;
+  }, [events, t]);
+
+  useEffect(() => {
+    if (lastLevelRef.current !== null && profile.level > lastLevelRef.current) {
+      toast.success(t("badges.toast.levelUp"), {
+        description: `${t("badges.toast.levelReached")} ${profile.level} / 5`,
+        icon: "⭐",
+      });
+    }
+    lastLevelRef.current = profile.level;
+  }, [profile.level, t]);
 
   return (
     <div className="space-y-4">
