@@ -86,24 +86,6 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
   const queryClient = useQueryClient();
 
-  // Increment the elapsed-time counter every second while the radio is playing.
-  // The counter is seeded from the track's `played_at` timestamp so it
-  // reflects the real broadcast progress of the current song, not just the
-  // user's listening session.
-  useEffect(() => {
-    if (!playing || !currentTrack?.played_at) {
-      setElapsedSeconds(0);
-      return;
-    }
-    const startedAt = new Date(currentTrack.played_at).getTime();
-    const update = () => {
-      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
-    };
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, [playing, currentTrack?.id, currentTrack?.played_at]);
-
   // Web Audio graph for the analyser (built lazily on first play)
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
