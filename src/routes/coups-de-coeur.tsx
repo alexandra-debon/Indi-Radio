@@ -173,6 +173,26 @@ function CoupsDeCoeurPage() {
         </p>
       </header>
 
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Trier par
+        </span>
+        <Button
+          size="sm"
+          variant={sortBy === "date" ? "default" : "outline"}
+          onClick={() => setSortBy("date")}
+        >
+          Récents
+        </Button>
+        <Button
+          size="sm"
+          variant={sortBy === "likes" ? "default" : "outline"}
+          onClick={() => setSortBy("likes")}
+        >
+          Populaires
+        </Button>
+      </div>
+
       {isLoading && (
         <div className="card-brut p-4 text-sm text-muted-foreground">
           Chargement…
@@ -186,9 +206,23 @@ function CoupsDeCoeurPage() {
       )}
 
       <ul className="space-y-4">
-        {items.map((c) => (
+        {sortedItems.map((c) => {
+          const count = likeStats.counts.get(c.id) ?? 0;
+          const liked = likeStats.mine.has(c.id);
+          return (
           <li key={c.id} className="card-brut relative p-4">
-            <div className="absolute right-3 top-3 z-10">
+            <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={liked ? "default" : "outline"}
+                onClick={() => toggleLike(c.id)}
+                aria-label={liked ? "Retirer le like" : "Aimer"}
+                aria-pressed={liked}
+                className="h-9 gap-1.5 bg-background/80 backdrop-blur"
+              >
+                <Heart className={`size-4 ${liked ? "fill-current" : ""}`} />
+                <span className="tabular-nums">{count}</span>
+              </Button>
               <ShareButton
                 target={{
                   url: "/coups-de-coeur",
@@ -259,7 +293,8 @@ function CoupsDeCoeurPage() {
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </div>
   );
