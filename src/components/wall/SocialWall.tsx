@@ -854,6 +854,15 @@ export function SocialWall() {
                                   </TranslatedText>
                                 </p>
                               )}
+                              {Array.isArray(c.image_urls) && c.image_urls.length > 0 && (
+                                <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                                  {c.image_urls.map((u, i) => (
+                                    <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
+                                      <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                               <UrlEmbeds text={c.content} compact />
                               <div className="mt-1 flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-3">
