@@ -47,6 +47,11 @@ interface RadioContextValue {
    * with a known length). For the live radio stream this is always false.
    */
   durationKnown: boolean;
+  /**
+   * Elapsed seconds since the current track started broadcasting.
+   * Only advances while the radio is playing and a current track exists.
+   */
+  elapsedSeconds: number;
 }
 
 const RadioContext = createContext<RadioContextValue | null>(null);
@@ -62,6 +67,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // hydration mismatches on the volume slider label / fill.
   const [volume, setVolumeState] = useState<number>(0.8);
   const [muted, setMuted] = useState<boolean>(false);
+  // Elapsed time for the current track, shown next to the title in the mini-player.
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -295,6 +302,23 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     },
     refetchInterval: 30_000,
   });
+
+  // Increment the elapsed-time counter every second while the radio is playing.
+  // The counter is seeded from the track's `played_at` timestamp so it reflects
+  // the real broadcast progress of the current song, not just the user's session.
+  useEffect(() => {
+    if (!playing || !currentTrack?.played_at) {
+      setElapsedSeconds(0);
+      return;
+    }
+    const startedAt = new Date(currentTrack.played_at).getTime();
+    const update = () => {
+      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [playing, currentTrack?.id, currentTrack?.played_at]);
 
   // Pochette du morceau en cours (best-effort) pour l'affichage sur les
   // autoradios, écrans Bluetooth et écrans de verrouillage via Media Session.
@@ -628,6 +652,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         subscribeLevel,
         duration,
         durationKnown,
+        elapsedSeconds,
       }}
     >
       {/* Persistent audio element — never re-mounts across route changes.
