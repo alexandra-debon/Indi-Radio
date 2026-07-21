@@ -60,6 +60,8 @@ interface CommentRow {
   author_id: string;
   content: string;
   created_at: string;
+  image_urls: string[] | null;
+  image_captions: string[] | null;
   author: {
     id: string;
     pseudo: string;
@@ -95,6 +97,7 @@ export function SocialWall() {
   const [editImages, setEditImages] = useState<string[]>([]);
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
+  const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const hash = useRouterState({ select: (s) => s.location.hash });
@@ -192,7 +195,7 @@ export function SocialWall() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("post_comments")
-        .select("id, post_id, author_id, content, created_at, author:profiles!post_comments_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, post_id, author_id, content, created_at, image_urls, image_captions, author:profiles!post_comments_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as unknown as CommentRow[];
@@ -217,17 +220,20 @@ export function SocialWall() {
   });
 
   const addComment = useMutation({
-    mutationFn: async ({ postId, text }: { postId: string; text: string }) => {
-      if (!session || !text.trim()) return;
+    mutationFn: async ({ postId, text, images }: { postId: string; text: string; images: string[] }) => {
+      if (!session) return;
+      if (!text.trim() && images.length === 0) return;
       const { error } = await supabase.from("post_comments").insert({
         post_id: postId,
         author_id: session.user.id,
         content: text.trim(),
-      });
+        image_urls: images,
+      } as any);
       if (error) throw error;
     },
     onSuccess: (_d, v) => {
       setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
+      setReplyImages((r) => ({ ...r, [v.postId]: [] }));
       qc.invalidateQueries({ queryKey: ["wall-comments"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
@@ -848,6 +854,15 @@ export function SocialWall() {
                                   </TranslatedText>
                                 </p>
                               )}
+                              {Array.isArray(c.image_urls) && c.image_urls.length > 0 && (
+                                <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                                  {c.image_urls.map((u, i) => (
+                                    <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
+                                      <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                               <UrlEmbeds text={c.content} compact />
                               <div className="mt-1 flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-3">
@@ -881,12 +896,20 @@ export function SocialWall() {
                           />
                           <Button
                             size="sm"
-                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "" }))}
-                            disabled={!(replyDraft[p.id] ?? "").trim() || addComment.isPending}
+                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [] }))}
+                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0) || addComment.isPending}
                           >
                             {t("comment.send")}
                           </Button>
                         </div>
+                        {session && (
+                          <MultiImageUploader
+                            values={replyImages[p.id] ?? []}
+                            onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
+                            folder="wall-comments"
+                            max={4}
+                          />
+                        )}
                       </div>
                     )}
                   </div>

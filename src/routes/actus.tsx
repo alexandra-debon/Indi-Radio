@@ -22,6 +22,8 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { MultiImageUploader } from "@/components/media/MultiImageUploader";
+import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
 
@@ -68,6 +70,8 @@ interface NewsPost {
   title: string;
   content: string;
   image_url: string | null;
+  image_urls: string[] | null;
+  image_captions: string[] | null;
   created_at: string;
   social_links: SocialLinks | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
@@ -90,7 +94,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -100,7 +104,7 @@ function ActusPage() {
   const canPublish = isAdmin || isAnimateur;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
 
@@ -118,14 +122,15 @@ function ActusPage() {
         author_id: session.user.id,
         title,
         content: finalContent,
-        image_url: imageUrl || null,
+        image_url: images[0] ?? null,
+        image_urls: images,
         social_links: sanitizeLinks(socialLinks),
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Publié !");
-      setTitle(""); setContent(""); setImageUrl(""); setVideoUrl(""); setSocialLinks({});
+      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({});
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -140,7 +145,7 @@ function ActusPage() {
         <div className="card-brut space-y-2 p-3">
           <div className="text-[10px] uppercase tracking-widest text-primary">Nouveau post — {profile?.role}</div>
           <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <ImageUploader value={imageUrl} onChange={setImageUrl} folder="news" label="Image de couverture" />
+          <MultiImageUploader values={images} onChange={setImages} folder="news" />
           <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
           <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
           <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
@@ -182,9 +187,11 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   }, [autoOpenComments]);
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "", social_links: (post.social_links ?? {}) as SocialLinks });
+  const initialImages = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
+  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, images: initialImages, social_links: (post.social_links ?? {}) as SocialLinks });
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
+  const [commentImages, setCommentImages] = useState<string[]>([]);
 
   const isOwner = sessionUserId === post.author_id;
   const canEditPost = isOwner;
@@ -209,7 +216,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, author_id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id, author_id, content, created_at, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
@@ -247,11 +254,17 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
 
   const addComment = useMutation({
     mutationFn: async () => {
-      if (!sessionUserId || !comment.trim()) return;
-      const { error } = await supabase.from("news_comments").insert({ news_post_id: post.id, author_id: sessionUserId, content: comment.trim() });
+      if (!sessionUserId) return;
+      if (!comment.trim() && commentImages.length === 0) return;
+      const { error } = await supabase.from("news_comments").insert({
+        news_post_id: post.id,
+        author_id: sessionUserId,
+        content: comment.trim(),
+        image_urls: commentImages,
+      } as any);
       if (error) throw error;
     },
-    onSuccess: () => { setComment(""); qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
+    onSuccess: () => { setComment(""); setCommentImages([]); qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -260,9 +273,10 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
       const { error } = await supabase.from("news_posts").update({
         title: editForm.title,
         content: editForm.content,
-        image_url: editForm.image_url || null,
+        image_url: editForm.images[0] ?? null,
+        image_urls: editForm.images,
         social_links: sanitizeLinks(editForm.social_links),
-      }).eq("id", post.id);
+      } as any).eq("id", post.id);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
@@ -298,11 +312,29 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
 
   return (
     <li id={`news-${post.id}`} className="card-brut scroll-mt-24 overflow-hidden">
-      {!editing && post.image_url && (
-        <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
-          <img src={post.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
-        </div>
-      )}
+      {!editing && (() => {
+        const imgs = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
+        if (imgs.length === 0) return null;
+        if (imgs.length === 1) {
+          return (
+            <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
+              <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          );
+        }
+        return (
+          <div className={`grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
+            {imgs.map((u, i) => (
+              <div key={i} className="relative overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
+                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                {sessionUserId && sessionUserId !== post.author_id && (
+                  <ReportImageButton postId={post.id} imageUrl={u} />
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      })()}
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
@@ -313,7 +345,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         {editing ? (
           <div className="space-y-2">
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
-            <ImageUploader value={editForm.image_url} onChange={(v) => setEditForm({ ...editForm, image_url: v })} folder="news" label="Image de couverture" />
+            <MultiImageUploader values={editForm.images} onChange={(v) => setEditForm({ ...editForm, images: v })} folder="news" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
@@ -431,6 +463,15 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                             <TranslatedText entityType="news_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)} />
                           </p>
                         )}
+                        {Array.isArray(c.image_urls) && c.image_urls.length > 0 && (
+                          <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                            {c.image_urls.map((u: string, i: number) => (
+                              <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
+                                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         <UrlEmbeds text={c.content} compact />
                       </div>
                       {(canEditC || canDelC) && (
@@ -457,9 +498,12 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               );
             })}
             {sessionUserId ? (
-              <div className="flex gap-2">
-                <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
-                <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim()}>{t("comment.send")}</Button>
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
+                  <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim() && commentImages.length === 0}>{t("comment.send")}</Button>
+                </div>
+                <MultiImageUploader values={commentImages} onChange={setCommentImages} folder="news-comments" max={4} />
               </div>
             ) : (
               <Button size="sm" variant="outline" onClick={onSignIn}>{t("comment.signInToComment")}</Button>
