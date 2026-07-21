@@ -20,6 +20,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as MagazinesRouteImport } from './routes/magazines'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
@@ -113,6 +114,11 @@ const PodcastsRoute = PodcastsRouteImport.update({
 const NewsletterRoute = NewsletterRouteImport.update({
   id: '/newsletter',
   path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModerationRoute = ModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazinesRoute = MagazinesRouteImport.update({
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
@@ -382,6 +389,7 @@ export interface FileRoutesByTo {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
@@ -435,6 +443,7 @@ export interface FileRoutesById {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
@@ -488,6 +497,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/moderation'
     | '/newsletter'
     | '/podcasts'
     | '/privacy'
@@ -539,6 +549,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/moderation'
     | '/newsletter'
     | '/podcasts'
     | '/privacy'
@@ -591,6 +602,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/moderation'
     | '/newsletter'
     | '/podcasts'
     | '/privacy'
@@ -644,6 +656,7 @@ export interface RootRouteChildren {
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
   MagazinesRoute: typeof MagazinesRouteWithChildren
+  ModerationRoute: typeof ModerationRoute
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -747,6 +760,13 @@ declare module '@tanstack/react-router' {
       path: '/newsletter'
       fullPath: '/newsletter'
       preLoaderRoute: typeof NewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moderation': {
+      id: '/moderation'
+      path: '/moderation'
+      fullPath: '/moderation'
+      preLoaderRoute: typeof ModerationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magazines': {
@@ -1139,6 +1159,7 @@ const rootRouteChildren: RootRouteChildren = {
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
   MagazinesRoute: MagazinesRouteWithChildren,
+  ModerationRoute: ModerationRoute,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
