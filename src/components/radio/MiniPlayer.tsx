@@ -6,7 +6,6 @@ import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
 import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
 import { ShareButton } from "@/components/share/ShareButton";
-import { FullscreenPlayerTrigger } from "./FullscreenPlayer";
 import { useT } from "@/lib/i18n";
 
 function formatElapsed(sec: number): string {
@@ -98,7 +97,6 @@ export function MiniPlayer() {
               <LikeButton trackId={currentTrack.id} />
             </>
           )}
-          <FullscreenPlayerTrigger />
         </div>
         <AdminChatTrigger />
       </div>
