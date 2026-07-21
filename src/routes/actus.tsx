@@ -153,7 +153,7 @@ function ActusPage() {
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             <Newspaper className="mx-auto mb-2 size-6" />
-            Aucune actu pour l'instant.
+            {t("page.actus.empty")}
           </li>
         )}
         {posts.map((p) => (
