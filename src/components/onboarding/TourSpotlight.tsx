@@ -209,6 +209,22 @@ export function TourSpotlight({
       >
         <X className="size-5" />
       </button>
+
+      {/* Sticky bottom fallback — always reachable even if the tooltip
+          scrolls or overflows the viewport. */}
+      <div className="fixed inset-x-0 bottom-0 z-[110] flex items-center justify-between gap-2 border-t-2 border-black bg-background/95 px-3 py-2 shadow-[0_-2px_0_0_#000] backdrop-blur">
+        <Button variant="outline" size="sm" onClick={onPrev} disabled={isFirst}>
+          <ChevronLeft className="mr-1 size-4" />
+          {backLabel}
+        </Button>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          {step + 1} / {total}
+        </span>
+        <Button size="sm" onClick={onNext}>
+          {nextLabel}
+          {!isLast && <ChevronRight className="ml-1 size-4" />}
+        </Button>
+      </div>
     </div>
   );
 }
