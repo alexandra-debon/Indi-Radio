@@ -20,7 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import liveWordmarkAsset from "@/assets/indi-radio-wordmark-cutout.jpeg.asset.json";
+import liveWordmarkAsset from "@/assets/indi-radio-wordmark-frame.jpeg.asset.json";
 
 import { useLang, useT } from "@/lib/i18n";
 
@@ -116,11 +116,11 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="section-title shrink-0 text-[1.25rem] sm:text-[1.35rem]">
+        <div className="grid grid-cols-[minmax(0,10.3rem)_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
+          <h1 className="section-title w-full shrink-0 text-[1.1rem] leading-none sm:text-[1.35rem]">
             {t("page.live.now")}
           </h1>
-          <div className="flex min-w-0 flex-wrap items-center gap-1.5 sm:justify-end">
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
               <span className="size-2 rounded-full bg-yellow-950 animate-pulse-dot" />
               {t("live.indieNoAds")}
@@ -135,7 +135,7 @@ function LivePage() {
           <img
             src={liveWordmarkAsset.url}
             alt="InDi RaDio"
-            className="pointer-events-none absolute right-4 top-4 h-6 w-auto max-w-[5.75rem] object-contain sm:h-7 sm:max-w-[6.5rem]"
+            className="pointer-events-none absolute left-[65%] top-4 h-[25px] w-[89px] -translate-x-1/2 object-contain sm:left-[70%] sm:h-[29px] sm:w-[104px]"
             loading="eager"
             decoding="async"
           />
