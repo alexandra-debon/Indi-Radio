@@ -6,6 +6,7 @@ import { Heart, Disc3, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { Button } from "@/components/ui/button";
+import { StarRating } from "@/components/rating/StarRating";
 import { toast } from "sonner";
 
 type CoupRow = {
@@ -18,6 +19,7 @@ type CoupRow = {
   comment: string;
   discovery_story: string | null;
   social_links: SocialLinks | null;
+  editorial_rating: number | null;
 };
 
 type LikeRow = { coup_id: string; user_id: string };
@@ -83,7 +85,7 @@ function CoupsDeCoeurPage() {
       const { data, error } = await supabase
         .from("coups_de_coeur" as any)
         .select(
-          "id, featured_date, cover_url, artist, title, kind, comment, discovery_story, social_links",
+          "id, featured_date, cover_url, artist, title, kind, comment, discovery_story, social_links, editorial_rating",
         )
         .eq("published", true)
         .order("featured_date", { ascending: false });
