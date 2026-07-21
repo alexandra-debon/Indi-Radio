@@ -12,7 +12,10 @@ export const Route = createFileRoute("/chart")({
       { name: "description", content: "Les titres les plus likés de la semaine et de tous les temps sur Indi Radio." },
       { property: "og:title", content: "Chart des auditeurs — Indi Radio" },
       { property: "og:description", content: "Top 10 des titres likés par les auditeurs d'Indi Radio." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/chart" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chart" }],
   }),
   component: ChartPage,
 });

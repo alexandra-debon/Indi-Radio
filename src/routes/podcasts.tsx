@@ -16,9 +16,9 @@ export const Route = createFileRoute("/podcasts")({
   head: () => ({
     meta: [
       { title: "Podcasts — Indi Radio" },
-      { name: "description", content: "Écoute et note les podcasts d'Indi Radio." },
+      { name: "description", content: "Découvre, écoute et note les podcasts de la rédaction Indi Radio : interviews, chroniques et sessions exclusives." },
       { property: "og:title", content: "Podcasts — Indi Radio" },
-      { property: "og:description", content: "La bibliothèque de podcasts d'Indi Radio." },
+      { property: "og:description", content: "Découvre, écoute et note les podcasts de la rédaction Indi Radio : interviews, chroniques et sessions exclusives." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/podcasts" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_PODCASTS },
