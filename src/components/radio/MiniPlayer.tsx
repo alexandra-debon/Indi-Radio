@@ -52,7 +52,15 @@ export function MiniPlayer() {
         </div>
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
+            <div className="flex items-center gap-1.5 min-w-0">
+              {playing && (
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-sm border border-red-600 bg-red-600/10 px-1 py-[1px] text-[9px] font-black uppercase tracking-wider text-red-600 animate-pulse">
+                  <span className="size-1.5 rounded-full bg-red-600 animate-pulse" />
+                  ON AIR
+                </span>
+              )}
+              <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
+            </div>
             <div className="truncate text-xs text-muted-foreground">
               {currentTrack?.artist ?? "Indi Radio · live"}
             </div>
