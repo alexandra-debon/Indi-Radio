@@ -146,7 +146,7 @@ export function TourSpotlight({
       {/* Tooltip */}
       <div
         className={cn(
-          "absolute max-w-xs rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
+          "absolute max-h-[85vh] w-[calc(100vw-2rem)] max-w-xs overflow-auto rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
           !tooltipPos && "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
         )}
         style={
@@ -239,31 +239,37 @@ function computePlacement(
 function positionTooltip(target: DOMRect, placement: NonNullable<TourStep["placement"]>) {
   const margin = 16;
   const tooltipWidth = 320;
+  const tooltipHeight = 260;
+  const maxLeft = Math.max(margin, window.innerWidth - tooltipWidth - margin);
+  const maxTop = Math.max(margin, window.innerHeight - tooltipHeight - margin);
+  const centerLeft = Math.min(
+    Math.max(target.left + target.width / 2 - tooltipWidth / 2, margin),
+    maxLeft,
+  );
 
+  let left: number;
+  let top: number;
   switch (placement) {
     case "top":
-      return {
-        left: Math.min(Math.max(target.left + target.width / 2 - tooltipWidth / 2, margin), window.innerWidth - tooltipWidth - margin),
-        top: Math.max(target.top - 240 - margin, margin),
-        placement,
-      };
+      left = centerLeft;
+      top = target.top - tooltipHeight - margin;
+      break;
     case "bottom":
-      return {
-        left: Math.min(Math.max(target.left + target.width / 2 - tooltipWidth / 2, margin), window.innerWidth - tooltipWidth - margin),
-        top: target.bottom + margin,
-        placement,
-      };
+      left = centerLeft;
+      top = target.bottom + margin;
+      break;
     case "left":
-      return {
-        left: Math.max(target.left - tooltipWidth - margin, margin),
-        top: Math.max(target.top, margin),
-        placement,
-      };
+      left = target.left - tooltipWidth - margin;
+      top = target.top;
+      break;
     case "right":
-      return {
-        left: target.right + margin,
-        top: Math.max(target.top, margin),
-        placement,
-      };
+      left = target.right + margin;
+      top = target.top;
+      break;
   }
+  // Clamp within viewport so the Next/Back buttons stay reachable even
+  // when the target is huge (e.g. a full-height wall) or off-screen.
+  left = Math.min(Math.max(left, margin), maxLeft);
+  top = Math.min(Math.max(top, margin), maxTop);
+  return { left, top, placement };
 }
