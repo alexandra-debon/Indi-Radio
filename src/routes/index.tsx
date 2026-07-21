@@ -117,7 +117,7 @@ function LivePage() {
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
         <div className="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[19rem_minmax(0,1fr)]">
-          <h1 className="section-title w-[10rem] shrink-0 whitespace-normal text-[1.05rem] leading-none sm:w-[18.5rem] sm:text-[1.35rem]">
+          <h1 className="w-[10rem] shrink-0 rotate-[-1.5deg] bg-yellow-400 px-2.5 py-1.5 font-display text-[1.18rem] font-black uppercase leading-[0.95] tracking-[0.08em] text-yellow-950 shadow-[4px_4px_0_0_oklch(0_0_0)] sm:w-[18.5rem] sm:text-[1.7rem]">
             <span className="block">Musique</span>
             <span className="block">en cours</span>
           </h1>
