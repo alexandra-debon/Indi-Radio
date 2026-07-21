@@ -136,10 +136,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onClick={openAuth}
                 aria-label={t("action.login")}
                 data-tour="login-button"
-                className="inline-flex shrink-0 items-center gap-1 rounded-md border-2 border-black bg-primary px-2 py-1.5 text-xs font-bold text-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] sm:px-2.5"
+                className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground sm:text-xs"
               >
-                <LogIn className="size-3.5" />
-                <span className="hidden sm:inline">{t("action.login")}</span>
+                {t("action.connect")}
               </button>
             )}
           </div>
