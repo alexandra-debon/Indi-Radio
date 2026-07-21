@@ -103,8 +103,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </div>
               </div>
             ) : (
-              <button onClick={openAuth} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
-                <LogIn className="size-3.5" /> {t("action.login")}
+              <button
+                onClick={openAuth}
+                aria-label={t("action.login")}
+                className="inline-flex shrink-0 items-center gap-1 rounded-md border-2 border-black bg-primary px-2 py-1.5 text-xs font-bold text-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] sm:px-2.5"
+              >
+                <LogIn className="size-3.5" />
+                <span className="hidden sm:inline">{t("action.login")}</span>
               </button>
             )}
           </div>
