@@ -411,6 +411,35 @@ export type Database = {
         }
         Relationships: []
       }
+      coup_de_coeur_likes: {
+        Row: {
+          coup_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          coup_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          coup_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coup_de_coeur_likes_coup_id_fkey"
+            columns: ["coup_id"]
+            isOneToOne: false
+            referencedRelation: "coups_de_coeur"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coups_de_coeur: {
         Row: {
           artist: string
