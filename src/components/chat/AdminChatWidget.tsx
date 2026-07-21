@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, ImagePlus, Loader2 } from "lucide-react";
+import { X, Send, ImagePlus, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "@tanstack/react-router";
 
 type Msg = {
   id: string;
@@ -21,14 +20,13 @@ type Msg = {
 const BUCKET = "content-images";
 
 export function AdminChatWidget() {
-  const { session, profile, isAdmin } = useAuth();
+  const { session, isAdmin } = useAuth();
   const t = useT();
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const [unread, setUnread] = useState(0);
+  const [, setUnread] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const uid = session?.user.id ?? null;
@@ -133,37 +131,11 @@ export function AdminChatWidget() {
 
   if (!session) return null;
 
-  // Admins get a bubble that jumps to their moderation inbox.
-  if (isAdmin) {
-    return (
-      <button
-        onClick={() => navigate({ to: "/admin/messages" })}
-        aria-label={t("chat.openBubble")}
-        title={t("chat.openBubble")}
-        className="fixed bottom-56 right-4 z-50 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
-      >
-        <MessageCircle className="size-6" />
-      </button>
-    );
-  }
+  // Admins have no user-facing panel; the trigger in MiniPlayer navigates them to /admin/messages.
+  if (isAdmin) return null;
 
   return (
     <>
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          aria-label={t("chat.openBubble")}
-          className="fixed bottom-56 right-4 z-50 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
-        >
-          <MessageCircle className="size-6" />
-          {unread > 0 && (
-            <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border-2 border-black bg-destructive text-[10px] font-bold text-destructive-foreground">
-              {unread > 9 ? "9+" : unread}
-            </span>
-          )}
-        </button>
-      )}
-
       {open && (
         <div className="fixed bottom-56 right-4 z-50 flex h-[70vh] max-h-[540px] w-[92vw] max-w-sm flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000]">
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">

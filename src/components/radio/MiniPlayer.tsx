@@ -4,6 +4,7 @@ import { useRadio } from "./RadioPlayerProvider";
 import { LikeButton } from "./LikeButton";
 import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
+import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
 
 export function MiniPlayer() {
   const { playing, toggle, currentTrack } = useRadio();
@@ -49,16 +50,19 @@ export function MiniPlayer() {
             <Radio className="size-5 text-primary" />
           )}
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
-          <div className="truncate text-xs text-muted-foreground">
-            {currentTrack?.artist ?? "Indi Radio · live"}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
+            <div className="truncate text-xs text-muted-foreground">
+              {currentTrack?.artist ?? "Indi Radio · live"}
+            </div>
+            <div className="mt-1.5 h-3">
+              {playing && <LiveIndicator />}
+            </div>
           </div>
-          <div className="mt-1.5 h-3">
-            {playing && <LiveIndicator />}
-          </div>
+          {currentTrack && <LikeButton trackId={currentTrack.id} />}
         </div>
-        {currentTrack && <LikeButton trackId={currentTrack.id} />}
+        <AdminChatTrigger />
       </div>
     </div>
   );

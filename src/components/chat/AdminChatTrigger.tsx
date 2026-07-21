@@ -1,0 +1,78 @@
+import { useEffect, useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
+
+export function AdminChatTrigger({ className }: { className?: string }) {
+  const { session, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const [unread, setUnread] = useState(0);
+  const uid = session?.user.id ?? null;
+
+  useEffect(() => {
+    if (!uid || isAdmin) return;
+    const load = async () => {
+      const { count } = await (supabase as any)
+        .from("admin_messages")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", uid)
+        .eq("is_from_admin", true)
+        .is("read_at", null);
+      setUnread(count ?? 0);
+    };
+    load();
+    const ch = supabase
+      .channel(`chat_trigger_${uid}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages", filter: `user_id=eq.${uid}` }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [uid, isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const load = async () => {
+      const { count } = await (supabase as any)
+        .from("admin_messages")
+        .select("*", { count: "exact", head: true })
+        .eq("is_from_admin", false)
+        .is("read_at", null);
+      setUnread(count ?? 0);
+    };
+    load();
+    const ch = supabase
+      .channel(`chat_trigger_admin_all`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [isAdmin]);
+
+  if (!session) return null;
+
+  const onClick = () => {
+    if (isAdmin) navigate({ to: "/admin/messages" });
+    else window.dispatchEvent(new Event("indi:open-admin-chat"));
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Tchat InDi Team"
+      title="Tchat InDi Team"
+      className={cn("flex shrink-0 flex-col items-center gap-0.5", className)}
+    >
+      <span className="text-[8px] font-black uppercase leading-[1.05] tracking-wide text-primary text-center">
+        Tchat<br />InDi Team
+      </span>
+      <span className="relative grid size-9 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000]">
+        <MessageCircle className="size-4" />
+        {unread > 0 && (
+          <span className="absolute -right-1 -top-1 grid size-4 min-w-4 place-items-center rounded-full border border-black bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+            {unread > 9 ? "9+" : unread}
+          </span>
+        )}
+      </span>
+    </button>
+  );
+}
