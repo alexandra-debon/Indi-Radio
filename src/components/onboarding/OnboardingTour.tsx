@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ThumbsUp, ThumbsDown, Loader2, ListChecks, ArrowRight } from "lucide-react";
+import { ShareButton } from "@/components/share/ShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
 import { TourSpotlight, type TourStep } from "./TourSpotlight";
@@ -177,20 +178,47 @@ export function OnboardingTour() {
 
   useEffect(() => {
     if (loading) return;
-    try {
-      const seen = localStorage.getItem(STORAGE_KEY);
-      if (!seen) setOpen(true);
-    } catch {
-      /* noop */
+    // Deep-link support: /?tour=summary&lang=fr opens the tour directly
+    // on the summary screen for a friend receiving a shared recap link.
+    let autoDeepLink = false;
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const tourParam = params.get("tour");
+        const langParam = params.get("lang");
+        if (langParam === "fr" || langParam === "en") setLang(langParam);
+        if (tourParam === "summary" || tourParam === "start") {
+          autoDeepLink = true;
+          setPhase(tourParam === "summary" ? "summary" : "welcome");
+          setStep(0);
+          setOpen(true);
+          // Clean the URL so a refresh doesn't reopen the tour.
+          params.delete("tour");
+          params.delete("lang");
+          const qs = params.toString();
+          const clean = window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash;
+          window.history.replaceState(null, "", clean);
+        }
+      } catch {
+        /* noop */
+      }
+    }
+    if (!autoDeepLink) {
+      try {
+        const seen = localStorage.getItem(STORAGE_KEY);
+        if (!seen) setOpen(true);
+      } catch {
+        /* noop */
+      }
     }
     if (typeof window !== "undefined") {
       const handler = (e: Event) => {
-        const detail = (e as CustomEvent<{ lang?: Lang }>).detail;
+        const detail = (e as CustomEvent<{ lang?: Lang; phase?: "summary" | "welcome" }>).detail;
         if (detail?.lang === "fr" || detail?.lang === "en") {
           setLang(detail.lang);
-          setPhase("welcome");
+          setPhase(detail.phase === "summary" ? "summary" : "welcome");
         } else {
-          setPhase("lang");
+          setPhase(detail?.phase === "summary" ? "summary" : "lang");
         }
         setStep(0);
         setRating(null);
@@ -381,13 +409,30 @@ export function OnboardingTour() {
                   {dontShowLabel}
                 </Label>
               </div>
-              <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+              <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                 <Button variant="ghost" onClick={finish}>
                   {t("tour.close")}
                 </Button>
-                <Button onClick={() => setPhase("feedback")}>
-                  {l === "fr" ? "Donner mon avis" : "Give feedback"} →
-                </Button>
+                <div className="flex items-center gap-2">
+                  <ShareButton
+                    variant="chip"
+                    label={l === "fr" ? "Partager le tour" : "Share the tour"}
+                    target={{
+                      url: buildShareUrl(l),
+                      title:
+                        l === "fr"
+                          ? "Découvre InDi RaDio en 2 minutes"
+                          : "Discover InDi RaDio in 2 minutes",
+                      text:
+                        l === "fr"
+                          ? "Fais le tour guidé d'InDi RaDio (résumé + étapes)."
+                          : "Take the guided tour of InDi RaDio (summary + steps).",
+                    }}
+                  />
+                  <Button onClick={() => setPhase("feedback")}>
+                    {l === "fr" ? "Donner mon avis" : "Give feedback"} →
+                  </Button>
+                </div>
               </DialogFooter>
             </>
           )}
