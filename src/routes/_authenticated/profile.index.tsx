@@ -16,6 +16,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { openOnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { useLang } from "@/lib/i18n";
+import { enUS } from "date-fns/locale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +40,7 @@ const LEVEL_THRESHOLDS = [0, 20, 60, 150, 300];
 
 function ProfilePage() {
   const { profile, signOut, isAdmin, session } = useAuth();
+  const { lang, t } = useLang();
   const qc = useQueryClient();
   const deleteFn = useServerFn(deleteMyAccount);
   const [confirmText, setConfirmText] = useState("");
@@ -83,7 +86,7 @@ function ProfilePage() {
   const saveBio = useMutation({
     mutationFn: async (newBio: string) => {
       const trimmed = newBio.trim();
-      if (trimmed.length > 500) throw new Error("500 caractères max");
+      if (trimmed.length > 500) throw new Error(lang === "fr" ? "500 caractères max" : "500 characters max");
       const { error } = await supabase
         .from("profiles")
         .update({ bio: trimmed || null } as any)
@@ -92,34 +95,36 @@ function ProfilePage() {
     },
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["profile", session?.user.id] });
-      toast.success("Bio enregistrée");
+      toast.success(lang === "fr" ? "Bio enregistrée" : "Bio saved");
       setEditingBio(false);
     },
     onError: (err: any) => {
-      toast.error(err?.message ?? "Erreur lors de la sauvegarde");
+      toast.error(err?.message ?? (lang === "fr" ? "Erreur lors de la sauvegarde" : "Save failed"));
     },
   });
 
-  if (!profile) return <div className="p-4">Chargement…</div>;
+  if (!profile) return <div className="p-4">{t("profile.loading")}</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
   const prev = LEVEL_THRESHOLDS[profile.level - 1] ?? 0;
   const progress = profile.level >= 5 ? 100 : Math.min(100, ((profile.points - prev) / (nextThreshold - prev)) * 100);
+  const dateLocale = lang === "fr" ? fr : enUS;
+  const deleteKeyword = t("profile.deleteKeyword");
 
   return (
     <div className="space-y-4">
-      <h1 className="section-title">Mon profil</h1>
+      <h1 className="section-title">{t("profile.title")}</h1>
       <div className="card-brut space-y-3 p-4">
         <UserBadge profile={profile} className="text-base" />
         <div>
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Niveau {profile.level}</span>
-            <span className="text-sm font-bold">{profile.points} pts</span>
+            <span className="text-sm text-muted-foreground">{t("profile.level")} {profile.level}</span>
+            <span className="text-sm font-bold">{profile.points} {t("profile.pts")}</span>
           </div>
           <Progress value={progress} className="mt-1" />
           {profile.level < 5 && (
             <div className="mt-1 text-[10px] text-muted-foreground">
-              Prochain palier : {nextThreshold} pts
+              {t("profile.nextTier")} : {nextThreshold} {t("profile.pts")}
             </div>
           )}
         </div>
@@ -127,7 +132,7 @@ function ProfilePage() {
           to="/profile/edit"
           className="mt-2 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
         >
-          <Pencil className="size-4" /> Modifier mon profil
+          <Pencil className="size-4" /> {t("profile.edit")}
         </Link>
         {profile.pseudo && (
           <Link
@@ -135,26 +140,26 @@ function ProfilePage() {
             params={{ pseudo: profile.pseudo }}
             className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
           >
-            <Eye className="size-4" /> Voir mon profil public
+            <Eye className="size-4" /> {t("profile.viewPublic")}
           </Link>
         )}
         <Link
           to="/profile/badges"
           className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-primary px-3 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground hover:opacity-90"
         >
-          <Trophy className="size-4" /> Mes badges & succès
+          <Trophy className="size-4" /> {t("profile.badges")}
         </Link>
         <Link
           to="/profile/albums"
           className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
         >
-          <Pencil className="size-4" /> Mes albums photos
+          <Pencil className="size-4" /> {t("profile.albums")}
         </Link>
       </div>
 
       <section className="card-brut p-4">
         <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
-          <UserCircle2 className="size-4" /> Ma présentation
+          <UserCircle2 className="size-4" /> {t("profile.presentation")}
         </h2>
         {editingBio ? (
           <div className="space-y-2">
@@ -163,7 +168,7 @@ function ProfilePage() {
               onChange={(e) => setBioDraft(e.target.value)}
               maxLength={500}
               rows={4}
-              placeholder="Quelques mots sur toi…"
+              placeholder={t("profile.bioPlaceholder")}
               disabled={saveBio.isPending}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground">
@@ -177,7 +182,7 @@ function ProfilePage() {
                 className="flex-1"
               >
                 {saveBio.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                Enregistrer
+                {t("profile.save")}
               </Button>
               <Button
                 size="sm"
@@ -188,7 +193,7 @@ function ProfilePage() {
                   setBioDraft(profile.bio ?? "");
                 }}
               >
-                Annuler
+                {t("profile.cancel")}
               </Button>
             </div>
           </div>
@@ -206,8 +211,7 @@ function ProfilePage() {
               />
             ) : (
               <p className="text-xs text-muted-foreground">
-                Tu n'as pas encore rédigé de présentation. Ajoute quelques lignes pour te
-                présenter à la communauté — elles apparaîtront sur ton profil public.
+                {t("profile.bioEmpty")}
               </p>
             )}
             <Button
@@ -219,7 +223,7 @@ function ProfilePage() {
                 setEditingBio(true);
               }}
             >
-              <Pencil className="size-3.5" /> {profile.bio ? "Modifier" : "Rédiger ma présentation"}
+              <Pencil className="size-3.5" /> {profile.bio ? t("profile.editBio") : t("profile.writeBio")}
             </Button>
           </>
         )}
@@ -227,13 +231,13 @@ function ProfilePage() {
 
       {isAdmin && (
         <Link to="/admin" className="card-brut block p-3 text-center text-sm font-semibold text-destructive">
-          → Panneau admin
+          {t("profile.adminPanel")}
         </Link>
       )}
 
       <section className="card-brut p-4">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
-          <AtSign className="size-4" /> Mentions
+          <AtSign className="size-4" /> {t("profile.mentions")}
           {mentions.some((m) => !m.read_at) && (
             <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
               {mentions.filter((m) => !m.read_at).length}
@@ -241,23 +245,23 @@ function ProfilePage() {
           )}
         </h2>
         {mentions.length === 0 ? (
-          <p className="text-xs text-muted-foreground">Aucune mention pour l'instant.</p>
+          <p className="text-xs text-muted-foreground">{t("profile.mentionsEmpty")}</p>
         ) : (
           <ul className="space-y-2">
             {mentions.map((m) => {
-              const t = parseNotifUrl(m.url);
+              const nt = parseNotifUrl(m.url);
               const content = (
                 <>
                   <span className="font-semibold">{m.message}</span>
                   <span className="ml-2 text-[10px] text-muted-foreground">
-                    {formatDistanceToNow(new Date(m.created_at), { addSuffix: true, locale: fr })}
+                    {formatDistanceToNow(new Date(m.created_at), { addSuffix: true, locale: dateLocale })}
                   </span>
                 </>
               );
               return (
                 <li key={m.id} className={cn("rounded-md border border-border p-2 text-xs", !m.read_at && "border-primary/50 bg-primary/5")}>
-                  {t ? (
-                    <Link to={t.to} hash={t.hash} onClick={() => markRead.mutate(m.id)} className="block hover:underline">
+                  {nt ? (
+                    <Link to={nt.to} hash={nt.hash} onClick={() => markRead.mutate(m.id)} className="block hover:underline">
                       {content}
                     </Link>
                   ) : (
@@ -272,70 +276,68 @@ function ProfilePage() {
 
       <div className="space-y-2">
         <div className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-          <Compass className="mr-1 inline size-3.5" /> Refaire le tour / Replay the tour
+          <Compass className="mr-1 inline size-3.5" /> {t("profile.replayTour")}
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" onClick={() => openOnboardingTour("fr")}>
-            🇫🇷 En français
+            {t("profile.replayFr")}
           </Button>
           <Button variant="outline" onClick={() => openOnboardingTour("en")}>
-            🇬🇧 In English
+            {t("profile.replayEn")}
           </Button>
         </div>
       </div>
 
       <Button variant="outline" className="w-full" onClick={signOut}>
-        <LogOut className="size-4" /> Déconnexion
+        <LogOut className="size-4" /> {t("action.logout")}
       </Button>
 
       <section className="card-brut border-destructive/40 p-4">
         <h2 className="mb-2 text-sm font-black uppercase tracking-widest text-destructive">
-          Zone dangereuse
+          {t("profile.dangerZone")}
         </h2>
         <p className="mb-3 text-xs text-muted-foreground">
-          Supprimer ton compte efface définitivement ton profil, tes commentaires,
-          tes likes, tes notes et tes notifications. Cette action est irréversible.
+          {t("profile.deleteDesc")}
         </p>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" className="w-full">
-              <Trash2 className="size-4" /> Supprimer mon compte
+              <Trash2 className="size-4" /> {t("profile.deleteAccount")}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Suppression définitive du compte</AlertDialogTitle>
+              <AlertDialogTitle>{t("profile.deleteTitle")}</AlertDialogTitle>
               <AlertDialogDescription>
-                Toutes tes données seront supprimées et ne pourront pas être récupérées.
-                Tape <strong>SUPPRIMER</strong> ci-dessous pour confirmer.
+                {t("profile.deleteConfirm")} <strong>{deleteKeyword}</strong> {t("profile.deleteConfirm2")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <input
               autoFocus
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder="SUPPRIMER"
+              placeholder={deleteKeyword}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setConfirmText("")}>Annuler</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => setConfirmText("")}>{t("profile.cancel")}</AlertDialogCancel>
               <AlertDialogAction
-                disabled={confirmText !== "SUPPRIMER" || deleting}
+                disabled={confirmText !== deleteKeyword || deleting}
                 onClick={async (e) => {
                   e.preventDefault();
                   setDeleting(true);
                   try {
                     await deleteFn();
-                    toast.success("Compte supprimé.");
+                    toast.success(lang === "fr" ? "Compte supprimé." : "Account deleted.");
                     await signOut();
                     window.location.href = "/";
                   } catch (err: any) {
-                    toast.error(err?.message ?? "Erreur lors de la suppression.");
+                    toast.error(err?.message ?? (lang === "fr" ? "Erreur lors de la suppression." : "Deletion failed."));
                     setDeleting(false);
                   }
                 }}
               >
-                {deleting ? "Suppression…" : "Supprimer définitivement"}
+                {deleting ? t("profile.deleting") : t("profile.deleteForever")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
