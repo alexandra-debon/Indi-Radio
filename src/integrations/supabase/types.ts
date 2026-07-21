@@ -780,6 +780,33 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          lang: string | null
+          message: string | null
+          rating: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lang?: string | null
+          message?: string | null
+          rating: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lang?: string | null
+          message?: string | null
+          rating?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       photo_albums: {
         Row: {
           cover_url: string | null
