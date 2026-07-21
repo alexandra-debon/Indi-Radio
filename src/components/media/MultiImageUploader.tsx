@@ -285,6 +285,58 @@ export function MultiImageUploader({ values, onChange, folder = "misc", disabled
       </div>
 
       {(queue.length > 0 || values.length > 0) && (
+        <div className="rounded-md border border-dashed border-border/70 bg-muted/30 p-2">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              Aperçu galerie (rendu final)
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {values.length + queue.length} image{values.length + queue.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          {(() => {
+            const combined = [
+              ...values.map((u) => ({ src: u, uploaded: true, pending: false, uploading: false, error: false })),
+              ...queue.map((it) => ({
+                src: it.previewUrl,
+                uploaded: it.status === "done",
+                pending: it.status === "pending",
+                uploading: it.status === "uploading",
+                error: it.status === "error",
+              })),
+            ];
+            const count = combined.length;
+            if (count === 0) return null;
+            const cols = count === 1 ? "grid-cols-1" : count === 2 ? "grid-cols-2" : "grid-cols-3";
+            return (
+              <div className={`grid gap-1 ${cols}`}>
+                {combined.map((it, i) => (
+                  <div key={`${it.src}-${i}`} className="relative overflow-hidden rounded border border-border/50 bg-background">
+                    <img src={it.src} alt="" className="w-full h-auto object-cover" />
+                    {it.uploading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <Loader2 className="size-4 animate-spin text-white" />
+                      </div>
+                    )}
+                    {it.pending && (
+                      <span className="absolute left-1 top-1 rounded bg-background/85 px-1 py-0.5 text-[9px] font-semibold">
+                        En file
+                      </span>
+                    )}
+                    {it.error && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-destructive/70">
+                        <AlertTriangle className="size-4 text-destructive-foreground" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {(queue.length > 0 || values.length > 0) && (
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {values.map((url, i) => (
             <div
