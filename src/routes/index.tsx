@@ -21,7 +21,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import liveWordmarkAsset from "@/assets/indi-radio-wordmark-v3.jpeg.asset.json";
+
 
 import { useLang, useT } from "@/lib/i18n";
 
