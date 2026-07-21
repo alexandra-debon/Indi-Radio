@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <TooltipProvider delayDuration={200}>
     <div className="flex min-h-screen flex-col">
       <header className="safe-top sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:gap-3">
+        <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 px-2 py-2.5 sm:gap-3 sm:px-3">
           <button
             onClick={() => setOpen(true)}
             aria-label={t("action.menu")}
@@ -51,14 +51,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="size-5" />
           </button>
           <Link to="/" className="flex min-w-0 items-center overflow-hidden">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-9 sm:size-10 md:size-11 lg:size-12 shrink-0 rounded-sm object-contain" />
+            <img src={logoAsset.url} alt="Indi Radio" className="size-8 shrink-0 rounded-sm object-contain sm:size-10 md:size-11 lg:size-12" />
           </Link>
-          <div className="flex items-center justify-end gap-0.5 sm:gap-1">
+          <div className="flex min-w-0 shrink-0 items-center justify-end gap-0.5 sm:gap-1">
             <LanguageToggle className="inline-flex origin-right scale-[0.88] sm:scale-100" />
-            <ShareButton target={{}} label={t("action.share")} />
             <NotificationsBell />
+            <ShareButton target={{}} label={t("action.share")} />
             {session && profile ? (
-              <div className="flex items-center gap-1">
+              <div className="flex min-w-0 items-center gap-1">
                 {isAdmin && (
                   <Link
                     to="/admin"
@@ -72,9 +72,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     to="/profile"
                     aria-label={t("profile.mySpace")}
-                    className="flex min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden lg:max-w-[10rem]"
+                    className="hidden min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden sm:flex lg:max-w-[10rem]"
                   >
                     <UserBadge profile={profile} compact className="text-xs" />
+                  </Link>
+                  <Link
+                    to="/profile"
+                    aria-label={t("profile.mySpace")}
+                    className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted sm:hidden"
+                  >
+                    <UserIcon className="size-4" />
                   </Link>
                   {profile?.pseudo && (
                     <Tooltip>

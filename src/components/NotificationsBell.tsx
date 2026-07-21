@@ -19,7 +19,7 @@ interface Notif {
 }
 
 export function NotificationsBell() {
-  const { session } = useAuth();
+  const { session, openAuth } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -116,15 +116,30 @@ export function NotificationsBell() {
     return Array.from(map.values());
   }, [notifs]);
 
-  if (!session) return null;
   const unread = notifs.filter((n) => !n.read_at).length;
 
+  if (!session) {
+    return (
+      <div className="relative shrink-0">
+        <button
+          type="button"
+          onClick={openAuth}
+          aria-label="Notifications — connexion requise"
+          title="Notifications"
+          className="relative grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
+        >
+          <Bell className="size-4" />
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={`Notifications${unread ? ` (${unread} non lues)` : ""}`}
-        className="relative grid size-9 place-items-center rounded-md border border-border hover:bg-muted"
+        className="relative grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
       >
         <Bell className="size-4" />
         {unread > 0 && (
