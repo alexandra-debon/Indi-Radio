@@ -2,12 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Trophy, Award, MessageSquare, FileText, Heart, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { useLang } from "@/lib/i18n";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/profile/badges")({
   head: () => ({ meta: [{ title: "Mes badges — Indi Radio" }, { name: "robots", content: "noindex" }] }),
@@ -46,6 +48,7 @@ function BadgesPage() {
   const { lang, t } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
   const qc = useQueryClient();
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session) return;
@@ -98,6 +101,20 @@ function BadgesPage() {
     (byAction[e.action] ??= []).push(e);
   }
 
+  const selected = ACHIEVEMENTS.find((a) => a.key === openKey) ?? null;
+  const selectedData = (() => {
+    if (!selected) return null;
+    const evts = byAction[selected.action] ?? [];
+    const counted = selected.unique_days
+      ? Array.from(new Set(evts.map((e) => e.created_at.slice(0, 10)))).sort()
+      : evts.map((e) => e.created_at);
+    const progress = counted.length;
+    const unlocked = progress >= selected.threshold;
+    const obtainedAt = unlocked ? counted[selected.threshold - 1] : null;
+    const recent = [...counted].slice(-5).reverse();
+    return { progress, unlocked, obtainedAt, recent };
+  })();
+
   return (
     <div className="space-y-4">
       <Link to="/profile" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
@@ -142,10 +159,12 @@ function BadgesPage() {
             const obtainedAt = unlocked ? counted[a.threshold - 1] : null;
             const Icon = a.icon;
             return (
-              <div
+              <button
+                type="button"
                 key={a.key}
+                onClick={() => setOpenKey(a.key)}
                 className={
-                  "card-brut space-y-1.5 p-3 " +
+                  "card-brut space-y-1.5 p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary " +
                   (unlocked ? "border-primary bg-primary/5" : "opacity-80")
                 }
               >
@@ -169,7 +188,7 @@ function BadgesPage() {
                   )}
                 </div>
                 <Progress value={Math.min(100, (progress / a.threshold) * 100)} />
-              </div>
+              </button>
             );
           })}
         </div>
@@ -191,6 +210,84 @@ function BadgesPage() {
           <p className="text-xs text-muted-foreground">{t("badges.teamEmpty")}</p>
         )}
       </section>
+
+      <Dialog open={!!selected} onOpenChange={(v) => !v && setOpenKey(null)}>
+        <DialogContent className="max-w-md">
+          {selected && selectedData && (() => {
+            const Icon = selected.icon;
+            const pct = Math.min(100, (selectedData.progress / selected.threshold) * 100);
+            const remaining = Math.max(0, selected.threshold - selectedData.progress);
+            return (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-3">
+                    <div className={"grid size-12 place-items-center rounded-md border-2 border-border " + (selectedData.unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                      {selectedData.unlocked ? <Icon className="size-6" /> : <Lock className="size-6" />}
+                    </div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <DialogTitle className="text-base font-black">{t(`ach.${selected.key}.label` as never)}</DialogTitle>
+                      <DialogDescription className="text-xs">{t(`ach.${selected.key}.desc` as never)}</DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground">{t("badges.status")}</span>
+                    <span className={selectedData.unlocked ? "text-primary" : "text-muted-foreground"}>
+                      {selectedData.unlocked ? t("badges.statusUnlocked") : t("badges.statusLocked")}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-baseline justify-between text-xs">
+                      <span className="font-bold">{t("badges.progress")}</span>
+                      <span className="text-muted-foreground">{Math.min(selectedData.progress, selected.threshold)} / {selected.threshold}</span>
+                    </div>
+                    <Progress value={pct} />
+                    <div className="text-[11px] text-muted-foreground">
+                      {selectedData.unlocked
+                        ? t("badges.completed")
+                        : `${t("badges.remaining")} : ${remaining} ${t(`badges.action.${selected.action}` as never)}`}
+                    </div>
+                  </div>
+
+                  {selectedData.obtainedAt && (
+                    <div className="rounded-md border-2 border-primary bg-primary/5 p-2 text-xs font-semibold">
+                      {t("badges.obtainedOn")} {format(new Date(selectedData.obtainedAt), "d MMM yyyy", { locale: dateLocale })}
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <div className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{t("badges.howTo")}</div>
+                    <p className="text-xs">{t(`ach.${selected.key}.desc` as never)}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{t("badges.recentActivity")}</div>
+                    {selectedData.recent.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">{t("badges.noActivity")}</p>
+                    ) : (
+                      <ul className="space-y-0.5 text-xs">
+                        {selectedData.recent.map((d, i) => (
+                          <li key={i} className="flex items-center justify-between">
+                            <span>#{selectedData.progress - i}</span>
+                            <span className="text-muted-foreground">{format(new Date(d), "d MMM yyyy", { locale: dateLocale })}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setOpenKey(null)}>{t("badges.close")}</Button>
+                </DialogFooter>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
