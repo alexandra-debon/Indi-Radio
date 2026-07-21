@@ -174,7 +174,7 @@ function LivePage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 pr-28 text-[11px] uppercase tracking-widest text-primary sm:pr-32">
+              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-primary">
                 <span className="animate-heartbeat">{t("live.onAir")}</span>
                 <AudioBars />
               </div>
