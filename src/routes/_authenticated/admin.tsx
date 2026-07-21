@@ -93,6 +93,7 @@ function AdminPage() {
     { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
+    { key: "favorites" as const, label: "Coups de cœur", icon: Heart, desc: "Nos artistes chouchous" },
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
@@ -124,13 +125,14 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-10">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-11">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
           <TabsTrigger value="podcasts">Podcasts</TabsTrigger>
           <TabsTrigger value="shows">Émissions</TabsTrigger>
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
+          <TabsTrigger value="favorites">Coups de cœur</TabsTrigger>
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
@@ -142,6 +144,7 @@ function AdminPage() {
         <TabsContent value="podcasts" className="mt-4"><PodcastsAdmin /></TabsContent>
         <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
+        <TabsContent value="favorites" className="mt-4"><FavoritesAdmin /></TabsContent>
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
