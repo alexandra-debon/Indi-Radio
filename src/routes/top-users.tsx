@@ -79,9 +79,14 @@ function TopUsersPage() {
                 >
                 <div className="grid size-8 place-items-center"><RankBadge rank={rank} /></div>
                 {u.avatar_url ? (
-                  <img src={u.avatar_url} alt="" loading="lazy" className="size-12 rounded-full object-cover border-2 border-border" />
+                  <img
+                    src={u.avatar_url}
+                    alt={`Avatar de ${pseudo}`}
+                    loading="lazy"
+                    className="size-14 shrink-0 rounded-full object-cover border-2 border-primary shadow-[2px_2px_0_0_hsl(var(--border))]"
+                  />
                 ) : (
-                  <div className="grid size-12 place-items-center rounded-full bg-muted text-sm font-black uppercase">
+                  <div className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-border bg-muted text-sm font-black uppercase text-muted-foreground">
                     {pseudo.slice(0, 2)}
                   </div>
                 )}
@@ -100,13 +105,13 @@ function TopUsersPage() {
                     <span>{t("page.topUsers.level")} {u.level ?? 1}</span>
                   </div>
                   {u.badges && u.badges.length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1">
+                    <div className="mt-1.5 flex flex-wrap gap-1">
                       {u.badges.map((b) => (
                         <span
                           key={b}
-                          className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                          className="inline-flex items-center gap-0.5 rounded-md border-2 border-border bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-foreground"
                         >
-                          {b}
+                          <Award className="size-2.5" aria-hidden /> {b}
                         </span>
                       ))}
                     </div>
