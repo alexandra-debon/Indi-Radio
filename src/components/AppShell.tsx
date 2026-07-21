@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
+import wordmarkHeaderAsset from "@/assets/indi-radio-wordmark-header.jpeg.asset.json";
 import { useT } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import type { DictKey } from "@/lib/i18n/dict";
@@ -55,8 +56,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="size-5" />
           </button>
-          <Link to="/" className="flex min-w-0 items-center overflow-hidden">
-            <img src={logoAsset.url} alt="Indi Radio" className="size-8 shrink-0 rounded-sm object-contain sm:size-10 md:size-11 lg:size-12" />
+          <Link to="/" aria-label="Indi Radio" className="flex min-w-0 items-center justify-center overflow-hidden">
+            <img
+              src={wordmarkHeaderAsset.url}
+              alt="Indi Radio"
+              className="h-8 w-auto max-w-full shrink object-contain sm:h-10 md:h-11 lg:h-12"
+            />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-0.5 sm:gap-1">
             <div data-tour="language-toggle">
