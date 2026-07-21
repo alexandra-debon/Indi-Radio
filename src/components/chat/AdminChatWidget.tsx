@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "@tanstack/react-router";
 
 type Msg = {
   id: string;
@@ -22,6 +23,7 @@ const BUCKET = "content-images";
 export function AdminChatWidget() {
   const { session, profile, isAdmin } = useAuth();
   const t = useT();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
@@ -129,8 +131,21 @@ export function AdminChatWidget() {
     }
   }
 
-  // Don't show bubble to admins (they use /admin/messages)
-  if (!session || isAdmin) return null;
+  if (!session) return null;
+
+  // Admins get a bubble that jumps to their moderation inbox.
+  if (isAdmin) {
+    return (
+      <button
+        onClick={() => navigate({ to: "/admin/messages" })}
+        aria-label={t("chat.openBubble")}
+        title={t("chat.openBubble")}
+        className="fixed bottom-40 right-4 z-40 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
+      >
+        <MessageCircle className="size-6" />
+      </button>
+    );
+  }
 
   return (
     <>
