@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
     iosScheme: "https",
   },
   ios: {
-    contentInset: "always",
+    contentInset: "never",
     backgroundColor: "#0a0a0a",
     limitsNavigationsToAppBoundDomains: true,
   },
