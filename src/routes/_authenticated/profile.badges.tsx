@@ -67,7 +67,7 @@ function BadgesPage() {
     const idx = ((i % len) + len) % len;
     btnRefs.current[idx]?.focus();
   };
-  const onGridKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, i: number) => {
+  const onGridKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     // Grid is 1 col on mobile, 2 cols from sm: — treat Left/Right as ±1, Up/Down as ±cols.
     const cols = typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches ? 2 : 1;
     switch (e.key) {
