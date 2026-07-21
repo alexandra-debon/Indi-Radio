@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Heart, ShieldCheck, Music, Gift, Users } from "lucide-react";
 import ogSoumission from "@/assets/og-soumission-artistes.jpg";
 import { useT } from "@/lib/i18n";
+import type { DictKey } from "@/lib/i18n/dict";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
@@ -34,32 +35,12 @@ export const Route = createFileRoute("/soumission-artistes")({
   component: ArtistSubmissionPage,
 });
 
-const SECTIONS = [
-  {
-    icon: Gift,
-    title: "Gratuité totale",
-    body: "InDi RaDio explore le monde en quête de nouveaux talents. Si nous envisageons de collaborer avec des plateformes de mise en relation de qualité comme Groover à l'avenir, notre priorité absolue est de garantir la gratuité totale de la soumission. Pour nous, la création doit rester accessible à tous.",
-  },
-  {
-    icon: Mail,
-    title: "Comment nous soumettre vos musiques ?",
-    body: "Rien de plus simple : contactez-nous directement à l'adresse radio@indi-art-culture.com.",
-  },
-  {
-    icon: Users,
-    title: "Une relation privilégiée avec les créateurs",
-    body: "Si votre musique résonne avec notre identité, nous vous offrirons un accès certifié à notre plateforme. C'est l'occasion pour vous de tisser un lien direct, authentique et durable avec nos auditeurs.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Transparence et respect des droits",
-    body: "InDi RaDio s'engage pour une webradio responsable. Le respect des droits d'auteur et des artistes est au cœur de notre démarche. C'est pourquoi, tout comme nous envoyons les relevés à la SACEM et SoundExchange, nous vous fournirons un récapitulatif précis de la diffusion de vos œuvres.",
-  },
-  {
-    icon: Heart,
-    title: "Notre ligne éditoriale : l'émotion avant tout",
-    body: "InDi RaDio porte une identité forte. Une réponse négative ne remet jamais en question votre talent. Nos choix sont avant tout une question d'émotion et de sensibilité — des critères profondément subjectifs. Comme les plus belles maisons, les nôtres demeurent terriblement personnelles. Soyez assurés que, dans tous les cas, nous prendrons le temps de vous expliquer les raisons de notre décision.",
-  },
+const SECTIONS: Array<{ icon: typeof Gift; titleKey: DictKey; bodyKey: DictKey }> = [
+  { icon: Gift, titleKey: "page.submissions.s1.title", bodyKey: "page.submissions.s1.body" },
+  { icon: Mail, titleKey: "page.submissions.s2.title", bodyKey: "page.submissions.s2.body" },
+  { icon: Users, titleKey: "page.submissions.s3.title", bodyKey: "page.submissions.s3.body" },
+  { icon: ShieldCheck, titleKey: "page.submissions.s4.title", bodyKey: "page.submissions.s4.body" },
+  { icon: Heart, titleKey: "page.submissions.s5.title", bodyKey: "page.submissions.s5.body" },
 ];
 
 function ArtistSubmissionPage() {
@@ -72,19 +53,19 @@ function ArtistSubmissionPage() {
           <h1 className="section-title">{t("page.submissions.title")}</h1>
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Vous êtes artiste indépendant ? Faites découvrir votre musique à la communauté InDi RaDio.
+          {t("page.submissions.subtitle")}
         </p>
       </section>
 
       {SECTIONS.map((section) => {
         const Icon = section.icon;
         return (
-          <section key={section.title} className="card-brut space-y-3 p-4">
+          <section key={section.titleKey} className="card-brut space-y-3 p-4">
             <div className="flex items-center gap-2">
               <Icon className="size-5 text-radio-yellow" />
-              <h2 className="font-display text-base uppercase tracking-wide">{section.title}</h2>
+              <h2 className="font-display text-base uppercase tracking-wide">{t(section.titleKey)}</h2>
             </div>
-            <p className="text-sm leading-relaxed">{section.body}</p>
+            <p className="text-sm leading-relaxed">{t(section.bodyKey)}</p>
           </section>
         );
       })}
@@ -92,7 +73,7 @@ function ArtistSubmissionPage() {
       <section className="card-brut space-y-3 p-4 text-center">
         <h2 className="font-display text-base uppercase tracking-wide">{t("page.submissions.readyWrite")}</h2>
         <p className="text-sm leading-relaxed">
-          Envoyez-nous un email à{" "}
+          {t("page.submissions.emailIntro")}{" "}
           <a
             href="mailto:radio@indi-art-culture.com"
             className="font-semibold text-radio-yellow underline"
