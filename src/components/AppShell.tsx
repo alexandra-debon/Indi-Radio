@@ -224,6 +224,26 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Shield className="size-4" /> {t("nav.admin")}
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/admin/messages"
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
+                  pathname === "/admin/messages" && "bg-destructive text-destructive-foreground",
+                )}
+              >
+                <MessageCircle className="size-4" /> Messages auditeurs
+              </Link>
+            )}
+            {session && !isAdmin && (
+              <button
+                onClick={() => { setOpen(false); openAdminChat(); }}
+                className="mt-2 flex w-full items-center gap-3 rounded-md border border-border px-3 py-2.5 text-sm hover:bg-muted"
+              >
+                <MessageCircle className="size-4" /> {t("chat.menuItem")}
+              </button>
+            )}
           </nav>
           <div className="border-t border-border p-3">
             {session ? (
