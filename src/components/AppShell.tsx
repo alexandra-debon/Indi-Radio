@@ -54,8 +54,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <img src={logoAsset.url} alt="Indi Radio" className="size-9 sm:size-10 md:size-11 lg:size-12 shrink-0 rounded-sm object-contain" />
           </Link>
           <div className="flex items-center justify-end gap-1">
-            <LanguageToggle className="mr-1" />
-            <ShareButton target={{}} label={t("action.share")} className="mr-1" />
+            <LanguageToggle className="hidden sm:inline-flex" />
+            <ShareButton target={{}} label={t("action.share")} />
             <NotificationsBell />
             {session && profile ? (
               <div className="flex items-center gap-1">
