@@ -373,6 +373,8 @@ export const dict = {
     "badges.toast.unlocked": "Achievement unlocked!",
     "badges.toast.levelUp": "Level up!",
     "badges.toast.levelReached": "You just reached level",
+    "badges.a11y.gridLabel": "Achievements grid. Use arrow keys to navigate, Enter to open.",
+    "badges.a11y.announcer": "Achievements and level announcements",
     "ach.post_1.label": "First post",
     "ach.post_1.desc": "Publish your first message on the wall.",
     "ach.post_10.label": "Active writer",
