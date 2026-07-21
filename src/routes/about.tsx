@@ -35,21 +35,10 @@ function AboutPage() {
       <section className="space-y-3">
         <h1 className="section-title">{t("page.about.title")}</h1>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
+          <p>{t("page.about.p1")}</p>
+          <p>{t("page.about.p2")}</p>
           <p>
-            <strong>InDi ArT CulTuRe</strong> est composé d’une radio internationale 100% musique
-            indé et émissions originales sans pub ni infos, d’un magazine interactif innovant et un
-            hub communautaire dédié aux arts indépendants. Un espace où artistes, chroniqueurs,
-            auditeurs et passeurs de culture se croisent, s'écoutent, et font vivre la scène indé
-            déjà présent gratuitement sur l’application radio.
-          </p>
-          <p>
-            Issue de la société à mission fondée par Alexandra Debon (Melody Alex. Patrick) «
-            Whisper and Map », le droit d’auteur et la promotion de la culture indépendante ainsi
-            qu’une rémunération plus juste des artistes sont parmi les fondements des statuts de
-            cette dernière.
-          </p>
-          <p>
-            Plus d’infos :{" "}
+            {t("page.about.moreInfo")}{" "}
             <a
               href="https://www.indi-art-culture.com"
               target="_blank"
@@ -65,29 +54,16 @@ function AboutPage() {
         <h2 className="section-title">{t("page.about.radio")}</h2>
         <div className="card-brut space-y-3 p-4 text-sm leading-relaxed">
           <p>
-            <strong>{RADIO_CONFIG.stationName}</strong> est la radio de{" "}
-            {RADIO_CONFIG.parentStructure} : un flux 24/7, la voix de la structure, ouverte à tous
-            sans barrière à l'écoute. Pas besoin de compte pour écouter. Créer un compte débloque le
-            mur social, les likes, les votes et les dédicaces.
+            <strong>{RADIO_CONFIG.stationName}</strong>{" "}
+            {t("page.about.radio.p1").replace("{parent}", RADIO_CONFIG.parentStructure)}
           </p>
-          <p>
-            Nous tenons à respecter les droits d’auteurs conformément à nos statuts.{" "}
-            <strong>{RADIO_CONFIG.stationName}</strong> est titulaire d’une licence SACEM concernant
-            la radio et les podcasts et cotisera à la SPRE chaque fin d’année pour respecter comme
-            il se doit les artistes et leurs productions.
-          </p>
-          <p>
-            <strong>{RADIO_CONFIG.stationName}</strong> est une radio non-commerciale, sans
-            publicité et sans informations généralistes hors culture. Elle demeure sous statut
-            particulier durant ses premiers mois d’existence au nom de sa fondatrice Alexandra Debon
-            (Melody Alex. Patrick) avant de rejoindre définitivement la société à mission à la fin
-            de cette année 2026.
-          </p>
+          <p>{t("page.about.radio.p2").replace("{station}", RADIO_CONFIG.stationName)}</p>
+          <p>{t("page.about.radio.p3").replace("{station}", RADIO_CONFIG.stationName)}</p>
           <div className="flex flex-wrap items-start justify-center gap-8 pt-4">
             <img src={sacemLogo.url} alt="Logo SACEM" className="h-20 w-20 object-contain" />
             <div className="flex flex-col items-center gap-1">
               <img src={tuneinLogo.url} alt="Logo TuneIn" className="h-20 w-20 object-contain" />
-              <span className="text-xs text-muted-foreground">Diffusion internationale</span>
+              <span className="text-xs text-muted-foreground">{t("page.about.tunein.caption")}</span>
             </div>
           </div>
         </div>
