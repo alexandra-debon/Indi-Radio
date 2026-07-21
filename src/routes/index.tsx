@@ -135,6 +135,7 @@ function LivePage() {
               type="button"
               onClick={() => openOnboardingTour(lang)}
               aria-label={t("tour.aria")}
+              data-tour="tour-button"
               className="inline-flex items-center gap-1 rounded-full border border-primary/70 bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary transition hover:-translate-y-0.5 hover:bg-primary/20"
             >
               <Map className="size-3" aria-hidden="true" />
@@ -142,7 +143,7 @@ function LivePage() {
             </button>
           </div>
         </div>
-        <div className="card-brut relative overflow-hidden p-4">
+        <div className="card-brut relative overflow-hidden p-4" data-tour="radio-player">
           <img
             src={liveWordmarkAsset.url}
             alt="InDi RaDio"
@@ -223,7 +224,7 @@ function LivePage() {
                 )}
                 {currentTrack && <LikeButton trackId={currentTrack.id} />}
               </div>
-              <div className="mt-2">
+              <div className="mt-2" data-tour="volume-control">
                 <VolumeControl />
               </div>
             </div>
@@ -232,7 +233,9 @@ function LivePage() {
       </section>
 
       {/* Social wall */}
-      <SocialWall />
+      <div data-tour="social-wall">
+        <SocialWall />
+      </div>
 
       {/* Newsletter banner */}
       <NewsletterBanner />
@@ -243,6 +246,7 @@ function LivePage() {
           <h2 className="section-title">{t("page.live.history")}</h2>
           <Link
             to="/chart"
+            data-tour="chart-link"
             className="group flex items-center justify-between gap-3 rounded-lg border border-primary bg-primary/10 p-3 transition hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(255,215,0,0.18)] sm:min-w-[18rem]"
           >
             <div className="flex items-center gap-3">

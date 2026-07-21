@@ -46,6 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             onClick={() => setOpen(true)}
             aria-label={t("action.menu")}
+            data-tour="menu-button"
             className="grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
           >
             <Menu className="size-5" />
@@ -54,9 +55,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <img src={logoAsset.url} alt="Indi Radio" className="size-8 shrink-0 rounded-sm object-contain sm:size-10 md:size-11 lg:size-12" />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-0.5 sm:gap-1">
-            <LanguageToggle className="inline-flex origin-right scale-[0.88] sm:scale-100" />
-            <NotificationsBell />
-            <ShareButton target={{}} label={t("action.share")} />
+            <div data-tour="language-toggle">
+              <LanguageToggle className="inline-flex origin-right scale-[0.88] sm:scale-100" />
+            </div>
+            <div data-tour="notifications-bell">
+              <NotificationsBell />
+            </div>
+            <div data-tour="share-button">
+              <ShareButton target={{}} label={t("action.share")} />
+            </div>
             {session && profile ? (
               <div className="flex min-w-0 items-center gap-1">
                 {isAdmin && (
@@ -80,6 +87,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     to="/profile"
                     aria-label={t("profile.mySpace")}
                     className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted sm:hidden"
+                    data-tour="login-button"
                   >
                     <UserIcon className="size-4" />
                   </Link>
@@ -106,6 +114,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <button
                 onClick={openAuth}
                 aria-label={t("action.login")}
+                data-tour="login-button"
                 className="inline-flex shrink-0 items-center gap-1 rounded-md border-2 border-black bg-primary px-2 py-1.5 text-xs font-bold text-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] sm:px-2.5"
               >
                 <LogIn className="size-3.5" />
