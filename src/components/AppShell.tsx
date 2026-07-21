@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { ShareButton } from "@/components/share/ShareButton";
+import { GlobalSearchButton } from "@/components/search/GlobalSearch";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
@@ -71,6 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
+            <GlobalSearchButton />
             <ShareButton target={{}} />
             <div data-tour="notifications-bell">
               <NotificationsBell />
