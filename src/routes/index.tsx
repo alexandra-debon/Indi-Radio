@@ -20,7 +20,7 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import ogHome from "@/assets/og-home.jpg";
-import liveWordmarkAsset from "@/assets/indi-radio-wordmark-frame.jpeg.asset.json";
+import liveWordmarkAsset from "@/assets/indi-radio-wordmark-v3.jpeg.asset.json";
 
 import { useLang, useT } from "@/lib/i18n";
 
@@ -136,7 +136,7 @@ function LivePage() {
           <img
             src={liveWordmarkAsset.url}
             alt="InDi RaDio"
-            className="pointer-events-none absolute left-[72%] top-4 h-[25px] w-[90px] -translate-x-1/2 object-contain sm:left-[72%] sm:h-[29px] sm:w-[104px]"
+            className="pointer-events-none absolute left-[72%] top-4 h-[28px] w-[100px] -translate-x-1/2 object-contain sm:left-[72%] sm:h-[32px] sm:w-[114px]"
             loading="eager"
             decoding="async"
           />
@@ -170,7 +170,7 @@ function LivePage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 pr-24 text-[11px] uppercase tracking-widest text-primary sm:pr-28">
+              <div className="flex items-center gap-1.5 pr-28 text-[11px] uppercase tracking-widest text-primary sm:pr-32">
                 <span className="animate-heartbeat">{t("live.onAir")}</span>
                 <AudioBars />
               </div>
