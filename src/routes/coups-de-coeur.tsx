@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, Disc3, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 type CoupRow = {
   id: string;
@@ -16,6 +19,8 @@ type CoupRow = {
   discovery_story: string | null;
   social_links: SocialLinks | null;
 };
+
+type LikeRow = { coup_id: string; user_id: string };
 
 export const Route = createFileRoute("/coups-de-coeur")({
   head: () => ({
@@ -60,6 +65,18 @@ function formatDate(d: string): string {
 }
 
 function CoupsDeCoeurPage() {
+  const queryClient = useQueryClient();
+  const [sortBy, setSortBy] = useState<"date" | "likes">("date");
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["coups-de-coeur"],
     queryFn: async () => {
@@ -75,6 +92,75 @@ function CoupsDeCoeurPage() {
     },
   });
 
+  const { data: likes = [] } = useQuery({
+    queryKey: ["coup-de-coeur-likes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .select("coup_id, user_id");
+      if (error) throw error;
+      return (data ?? []) as unknown as LikeRow[];
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel("coup-likes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "coup_de_coeur_likes" },
+        () => queryClient.invalidateQueries({ queryKey: ["coup-de-coeur-likes"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [queryClient]);
+
+  const likeStats = useMemo(() => {
+    const counts = new Map<string, number>();
+    const mine = new Set<string>();
+    for (const l of likes) {
+      counts.set(l.coup_id, (counts.get(l.coup_id) ?? 0) + 1);
+      if (userId && l.user_id === userId) mine.add(l.coup_id);
+    }
+    return { counts, mine };
+  }, [likes, userId]);
+
+  const sortedItems = useMemo(() => {
+    const arr = [...items];
+    if (sortBy === "likes") {
+      arr.sort((a, b) => {
+        const diff = (likeStats.counts.get(b.id) ?? 0) - (likeStats.counts.get(a.id) ?? 0);
+        if (diff !== 0) return diff;
+        return b.featured_date.localeCompare(a.featured_date);
+      });
+    }
+    return arr;
+  }, [items, sortBy, likeStats]);
+
+  async function toggleLike(coupId: string) {
+    if (!userId) {
+      toast.error("Connecte-toi pour aimer ce coup de cœur");
+      return;
+    }
+    const liked = likeStats.mine.has(coupId);
+    if (liked) {
+      const { error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .delete()
+        .eq("coup_id", coupId)
+        .eq("user_id", userId);
+      if (error) toast.error(error.message);
+    } else {
+      const { error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .insert({ coup_id: coupId, user_id: userId });
+      if (error) toast.error(error.message);
+    }
+    queryClient.invalidateQueries({ queryKey: ["coup-de-coeur-likes"] });
+  }
+
   return (
     <div className="space-y-4">
       <header className="space-y-1">
@@ -86,6 +172,26 @@ function CoupsDeCoeurPage() {
           Nos découvertes, nos histoires de rencontre avec des artistes indépendants.
         </p>
       </header>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Trier par
+        </span>
+        <Button
+          size="sm"
+          variant={sortBy === "date" ? "default" : "outline"}
+          onClick={() => setSortBy("date")}
+        >
+          Récents
+        </Button>
+        <Button
+          size="sm"
+          variant={sortBy === "likes" ? "default" : "outline"}
+          onClick={() => setSortBy("likes")}
+        >
+          Populaires
+        </Button>
+      </div>
 
       {isLoading && (
         <div className="card-brut p-4 text-sm text-muted-foreground">
@@ -100,9 +206,23 @@ function CoupsDeCoeurPage() {
       )}
 
       <ul className="space-y-4">
-        {items.map((c) => (
+        {sortedItems.map((c) => {
+          const count = likeStats.counts.get(c.id) ?? 0;
+          const liked = likeStats.mine.has(c.id);
+          return (
           <li key={c.id} className="card-brut relative p-4">
-            <div className="absolute right-3 top-3 z-10">
+            <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={liked ? "default" : "outline"}
+                onClick={() => toggleLike(c.id)}
+                aria-label={liked ? "Retirer le like" : "Aimer"}
+                aria-pressed={liked}
+                className="h-9 gap-1.5 bg-background/80 backdrop-blur"
+              >
+                <Heart className={`size-4 ${liked ? "fill-current" : ""}`} />
+                <span className="tabular-nums">{count}</span>
+              </Button>
               <ShareButton
                 target={{
                   url: "/coups-de-coeur",
@@ -173,7 +293,8 @@ function CoupsDeCoeurPage() {
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </div>
   );
