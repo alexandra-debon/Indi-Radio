@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { useT } from "@/lib/i18n";
 
 type Props = { contentType: string; contentId: string };
@@ -74,8 +75,10 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   const t = useT();
   const qc = useQueryClient();
   const [text, setText] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [replyImages, setReplyImages] = useState<string[]>([]);
   const key = ["content-comments", contentType, contentId];
 
   useEffect(() => {
@@ -93,7 +96,7 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("content_comments")
-        .select("id, body, author_id, created_at, parent_id")
+        .select("id, body, author_id, created_at, parent_id, image_urls")
         .eq("content_type", contentType)
         .eq("content_id", contentId)
         .order("created_at", { ascending: true })
@@ -110,20 +113,22 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   });
 
   const add = useMutation({
-    mutationFn: async (opts: { body: string; parentId: string | null }) => {
-      if (!session || !opts.body.trim()) return;
+    mutationFn: async (opts: { body: string; parentId: string | null; images: string[] }) => {
+      if (!session) return;
+      if (!opts.body.trim() && opts.images.length === 0) return;
       const { error } = await supabase.from("content_comments").insert({
         content_type: contentType,
         content_id: contentId,
         author_id: session.user.id,
         body: opts.body.trim(),
         parent_id: opts.parentId,
-      });
+        image_urls: opts.images,
+      } as any);
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {
-      if (vars?.parentId) { setReplyText(""); setReplyTo(null); }
-      else { setText(""); }
+      if (vars?.parentId) { setReplyText(""); setReplyImages([]); setReplyTo(null); }
+      else { setText(""); setImages([]); }
       qc.invalidateQueries({ queryKey: key });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -149,6 +154,15 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       <p className="mt-1 whitespace-pre-wrap text-foreground/90">
         <TranslatedText entityType="content_comment" entityKey={c.id} field="body" text={c.body} />
       </p>
+      {Array.isArray((c as any).image_urls) && (c as any).image_urls.length > 0 && (
+        <div className={cn("mt-1 grid gap-1", (c as any).image_urls.length === 1 ? "grid-cols-1" : (c as any).image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
+          {(c as any).image_urls.map((u: string, i: number) => (
+            <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
+              <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          ))}
+        </div>
+      )}
       <div className="mt-1 flex items-center gap-3">
         {session && (
           <button
@@ -170,8 +184,9 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       {replyTo === c.id && session && (
         <div className="mt-2 space-y-1">
           <Textarea rows={2} placeholder={t("comment.replyPlaceholder")} value={replyText} onChange={(e) => setReplyText(e.target.value)} />
+          <MultiImageUploader values={replyImages} onChange={setReplyImages} folder="content-comments" max={4} />
           <div className="flex gap-2">
-            <Button size="sm" disabled={add.isPending || !replyText.trim()} onClick={() => add.mutate({ body: replyText, parentId: c.id })}>{t("comment.reply")}</Button>
+            <Button size="sm" disabled={add.isPending || (!replyText.trim() && replyImages.length === 0)} onClick={() => add.mutate({ body: replyText, parentId: c.id, images: replyImages })}>{t("comment.reply")}</Button>
             <Button size="sm" variant="ghost" onClick={() => { setReplyTo(null); setReplyText(""); }}>{t("comment.cancel")}</Button>
           </div>
         </div>
@@ -189,7 +204,8 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       {session ? (
         <div className="space-y-2">
           <Textarea rows={2} placeholder={t("comment.placeholder")} value={text} onChange={(e) => setText(e.target.value)} />
-          <Button size="sm" disabled={add.isPending || !text.trim()} onClick={() => add.mutate({ body: text, parentId: null })}>{t("comment.publish")}</Button>
+          <MultiImageUploader values={images} onChange={setImages} folder="content-comments" max={4} />
+          <Button size="sm" disabled={add.isPending || (!text.trim() && images.length === 0)} onClick={() => add.mutate({ body: text, parentId: null, images })}>{t("comment.publish")}</Button>
         </div>
       ) : (
         <button onClick={() => requireAuth(() => {})} className="text-xs text-primary underline">
