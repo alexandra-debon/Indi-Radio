@@ -146,7 +146,7 @@ export function TourSpotlight({
       {/* Tooltip */}
       <div
         className={cn(
-          "absolute max-w-xs rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
+          "absolute max-h-[85vh] w-[calc(100vw-2rem)] max-w-xs overflow-auto rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
           !tooltipPos && "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
         )}
         style={
