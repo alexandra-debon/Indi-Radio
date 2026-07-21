@@ -155,6 +155,12 @@ function ProfilePage() {
         >
           <Pencil className="size-4" /> {t("profile.albums")}
         </Link>
+        <Link
+          to="/profile/likes"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+        >
+          <Heart className="size-4" /> Mes likes
+        </Link>
       </div>
 
       <section className="card-brut p-4">
