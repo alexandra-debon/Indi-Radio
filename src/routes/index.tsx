@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users, Map } from "lucide-react";
 import { Mail } from "lucide-react";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
