@@ -83,7 +83,20 @@ export function MiniPlayer() {
               {playing && <LiveIndicator />}
             </div>
           </div>
-          {currentTrack && <LikeButton trackId={currentTrack.id} />}
+          {currentTrack && (
+            <>
+              <ShareButton
+                target={{
+                  url: "/",
+                  title: `${currentTrack.artist} — ${currentTrack.title}`,
+                  text: t("live.shareText").replace("{title}", currentTrack.title),
+                }}
+                label={t("live.shareTrack")}
+                variant="icon"
+              />
+              <LikeButton trackId={currentTrack.id} />
+            </>
+          )}
         </div>
         <AdminChatTrigger />
       </div>
