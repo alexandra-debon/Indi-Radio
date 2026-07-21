@@ -1,10 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, ArrowUpRight, MessageCircle } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
-import { ShareButton } from "@/components/share/ShareButton";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
@@ -47,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <TooltipProvider delayDuration={200}>
     <div className="flex min-h-screen flex-col">
       <header className="safe-top sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 px-2 py-2.5 sm:gap-3 sm:px-3">
+        <div className="mx-auto grid max-w-3xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 px-2 py-2.5 sm:gap-2 sm:px-3">
           <button
             onClick={() => setOpen(true)}
             aria-label={t("action.menu")}
@@ -56,22 +55,22 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="size-5" />
           </button>
-          <Link to="/" aria-label="Indi Radio" className="flex min-w-0 items-center justify-center overflow-hidden">
+          <Link to="/" aria-label="Indi Radio" className="flex min-w-0 items-center justify-center gap-2 overflow-hidden">
+            <img
+              src={logoAsset.url}
+              alt=""
+              aria-hidden="true"
+              className="size-8 shrink-0 rounded-sm object-contain sm:size-9"
+            />
             <img
               src={wordmarkHeaderAsset.url}
               alt="Indi Radio"
-              className="h-8 w-auto max-w-full shrink object-contain sm:h-10 md:h-11 lg:h-12"
+              className="h-7 w-auto max-w-full shrink object-contain sm:h-9 md:h-10"
             />
           </Link>
-          <div className="flex min-w-0 shrink-0 items-center justify-end gap-0.5 sm:gap-1">
-            <div data-tour="language-toggle">
-              <LanguageToggle className="inline-flex origin-right scale-[0.88] sm:scale-100" />
-            </div>
+          <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
             <div data-tour="notifications-bell">
               <NotificationsBell />
-            </div>
-            <div data-tour="share-button">
-              <ShareButton target={{}} label={t("action.share")} />
             </div>
             {showDemoUser ? (
               <div className="flex min-w-0 items-center gap-1" aria-label="Tour demo user">
@@ -102,38 +101,39 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </Link>
                 )}
                 <div className="flex min-w-0 items-center gap-1">
-                  <Link
-                    to="/profile"
-                    aria-label={t("profile.mySpace")}
-                    className="hidden min-w-0 max-w-[7rem] items-center gap-2 overflow-hidden sm:flex lg:max-w-[10rem]"
-                  >
-                    <UserBadge profile={profile} compact className="text-xs" />
-                  </Link>
-                  <Link
-                    to="/profile"
-                    aria-label={t("profile.mySpace")}
-                    className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted sm:hidden"
-                    data-tour="login-button"
-                  >
-                    <UserIcon className="size-4" />
-                  </Link>
-                  {profile?.pseudo && (
+                  {profile?.pseudo ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
                           to="/u/$pseudo"
                           params={{ pseudo: profile.pseudo }}
                           aria-label={t("profile.viewPublic")}
-                          className="group inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+                          data-tour="login-button"
+                          className="hidden min-w-0 max-w-[6rem] items-center gap-2 overflow-hidden rounded-md px-1.5 py-1 hover:bg-muted sm:flex lg:max-w-[10rem]"
                         >
-                          <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={3} />
+                          <UserBadge profile={profile} compact className="text-xs" />
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" sideOffset={6} className="border-2 border-black font-semibold shadow-[2px_2px_0_0_#000]">
                         {t("profile.viewPublic")}
                       </TooltipContent>
                     </Tooltip>
-                  )}
+                  ) : null}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to="/profile/edit"
+                        aria-label={t("profile.mySpace")}
+                        data-tour="login-button"
+                        className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
+                      >
+                        <UserCog className="size-4" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" sideOffset={6} className="border-2 border-black font-semibold shadow-[2px_2px_0_0_#000]">
+                      {t("profile.mySpace")}
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             ) : (
@@ -198,6 +198,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
           </div>
           <nav className="flex-1 overflow-auto p-2">
+            <div data-tour="language-toggle" className="mb-2 flex justify-end px-1">
+              <LanguageToggle />
+            </div>
             {NAV.map((item) => {
               const active = pathname === item.to;
               const Icon = item.icon;
