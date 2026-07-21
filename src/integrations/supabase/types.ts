@@ -411,6 +411,54 @@ export type Database = {
         }
         Relationships: []
       }
+      coups_de_coeur: {
+        Row: {
+          artist: string
+          author_id: string | null
+          comment: string
+          cover_url: string | null
+          created_at: string
+          discovery_story: string | null
+          featured_date: string
+          id: string
+          kind: string
+          published: boolean
+          social_links: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist: string
+          author_id?: string | null
+          comment: string
+          cover_url?: string | null
+          created_at?: string
+          discovery_story?: string | null
+          featured_date?: string
+          id?: string
+          kind?: string
+          published?: boolean
+          social_links?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist?: string
+          author_id?: string | null
+          comment?: string
+          cover_url?: string | null
+          created_at?: string
+          discovery_story?: string | null
+          featured_date?: string
+          id?: string
+          kind?: string
+          published?: boolean
+          social_links?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       episode_ratings: {
         Row: {
           comment: string | null
