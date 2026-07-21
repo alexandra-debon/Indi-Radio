@@ -187,9 +187,11 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   }, [autoOpenComments]);
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, image_url: post.image_url ?? "", social_links: (post.social_links ?? {}) as SocialLinks });
+  const initialImages = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
+  const [editForm, setEditForm] = useState({ title: post.title, content: post.content, images: initialImages, social_links: (post.social_links ?? {}) as SocialLinks });
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
+  const [commentImages, setCommentImages] = useState<string[]>([]);
 
   const isOwner = sessionUserId === post.author_id;
   const canEditPost = isOwner;
@@ -214,7 +216,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, author_id, content, created_at, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id, author_id, content, created_at, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
@@ -252,11 +254,17 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
 
   const addComment = useMutation({
     mutationFn: async () => {
-      if (!sessionUserId || !comment.trim()) return;
-      const { error } = await supabase.from("news_comments").insert({ news_post_id: post.id, author_id: sessionUserId, content: comment.trim() });
+      if (!sessionUserId) return;
+      if (!comment.trim() && commentImages.length === 0) return;
+      const { error } = await supabase.from("news_comments").insert({
+        news_post_id: post.id,
+        author_id: sessionUserId,
+        content: comment.trim(),
+        image_urls: commentImages,
+      } as any);
       if (error) throw error;
     },
-    onSuccess: () => { setComment(""); qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
+    onSuccess: () => { setComment(""); setCommentImages([]); qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -265,9 +273,10 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
       const { error } = await supabase.from("news_posts").update({
         title: editForm.title,
         content: editForm.content,
-        image_url: editForm.image_url || null,
+        image_url: editForm.images[0] ?? null,
+        image_urls: editForm.images,
         social_links: sanitizeLinks(editForm.social_links),
-      }).eq("id", post.id);
+      } as any).eq("id", post.id);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
