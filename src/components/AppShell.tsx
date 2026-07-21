@@ -70,7 +70,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
-            <ShareButton target={{}} label={t("action.share" as DictKey) || "Partager"} />
+            <ShareButton target={{}} />
             <div data-tour="notifications-bell">
               <NotificationsBell />
             </div>
