@@ -144,13 +144,6 @@ function LivePage() {
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4" data-tour="radio-player">
-          <img
-            src={liveWordmarkAsset.url}
-            alt="InDi RaDio"
-            className="pointer-events-none absolute left-[72%] top-4 h-[28px] w-[100px] -translate-x-1/2 object-contain sm:left-[72%] sm:h-[32px] sm:w-[114px]"
-            loading="eager"
-            decoding="async"
-          />
           <div className="flex items-center gap-4">
             <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-md bg-primary text-primary-foreground">
               {heroArtwork ? (
