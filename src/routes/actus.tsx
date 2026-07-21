@@ -134,7 +134,7 @@ function ActusPage() {
   return (
     <div className="space-y-4">
       <h1 className="section-title">{t("page.actus.title")}</h1>
-      <p className="text-sm text-muted-foreground">Le fil des actus artistes, orchestré par la rédaction. Et l'actu InDi RaDio...</p>
+      <p className="text-sm text-muted-foreground">{t("page.actus.subtitle")}</p>
 
       {canPublish && (
         <div className="card-brut space-y-2 p-3">
@@ -153,7 +153,7 @@ function ActusPage() {
         {posts.length === 0 && (
           <li className="card-brut p-4 text-center text-sm text-muted-foreground">
             <Newspaper className="mx-auto mb-2 size-6" />
-            Aucune actu pour l'instant.
+            {t("page.actus.empty")}
           </li>
         )}
         {posts.map((p) => (
