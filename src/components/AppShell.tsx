@@ -4,6 +4,7 @@ import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shi
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { ShareButton } from "@/components/share/ShareButton";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
@@ -69,6 +70,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
+            <ShareButton target={{}} label={t("action.share" as DictKey) || "Partager"} />
             <div data-tour="notifications-bell">
               <NotificationsBell />
             </div>
