@@ -279,6 +279,7 @@ type FavoriteRow = {
   discovery_story: string | null;
   social_links: SocialLinks | null;
   published: boolean;
+  editorial_rating: number | null;
 };
 
 const EMPTY_FAV = {
@@ -290,6 +291,7 @@ const EMPTY_FAV = {
   comment: "",
   discovery_story: "",
   published: true,
+  editorial_rating: null as number | null,
 };
 
 function FavoritesAdmin() {
