@@ -47,6 +47,25 @@ export const Route = createFileRoute("/actus/$postId")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: loaderData.title,
+            description: desc,
+            image: image,
+            url,
+            datePublished: loaderData.created_at,
+            author: {
+              "@type": "Person",
+              name: loaderData.author?.pseudo ?? "La rédaction",
+            },
+            publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (
