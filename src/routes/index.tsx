@@ -130,6 +130,17 @@ function LivePage() {
               {t("live.noAdsNoNews")}
             </span>
             <UserCountBadge />
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("indi:open-tour", { detail: { lang } }))
+              }
+              aria-label={t("tour.aria")}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/70 bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary transition hover:-translate-y-0.5 hover:bg-primary/20"
+            >
+              <Map className="size-3" aria-hidden="true" />
+              {t("tour.open")}
+            </button>
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
