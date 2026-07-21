@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLang } from "@/lib/i18n";
-import { Coffee, Handshake, ShieldCheck, MessageSquare, Flag, Pause, Sparkles, AlertTriangle } from "lucide-react";
+import { Coffee, Handshake, ShieldCheck, MessageSquare, Flag, Pause, Sparkles, AlertTriangle, Award, Mic, PenLine, Star } from "lucide-react";
 
 export const Route = createFileRoute("/moderation")({
   head: () => ({
@@ -44,6 +44,10 @@ const COPY: Record<Lang, {
   contactTitle: string;
   contactBody: string;
   contactCta: string;
+  rewardsTitle: string;
+  rewardsIntro: string;
+  rewards: { icon: "award" | "star" | "mic" | "pen"; title: string; body: string }[];
+  rewardsFoot: string;
 }> = {
   fr: {
     title: "Modération, valeurs & dialogue",
@@ -125,6 +129,33 @@ const COPY: Record<Lang, {
     contactBody:
       "Pour toute question sur la modération, un désaccord sur une décision, ou pour signaler une situation grave hors de la plateforme, écris-nous directement.",
     contactCta: "Aller à la page Contact",
+    rewardsTitle: "Récompenses & progression",
+    rewardsIntro:
+      "InDi RaDio n'est pas qu'une communauté à modérer : c'est une communauté qu'on encourage. Plus tu participes avec bienveillance, plus tu débloques de badges — et certains ouvrent de véritables portes.",
+    rewards: [
+      {
+        icon: "award",
+        title: "Badges & niveaux",
+        body: "Écoutes, likes, commentaires constructifs, découvertes partagées : chaque geste rapporte des points et fait progresser ton niveau. Les badges apparaissent sur ton profil public.",
+      },
+      {
+        icon: "star",
+        title: "Contenus & émissions exclusifs",
+        body: "Certains badges donnent accès à des émissions, playlists et coulisses réservés — invitations, previews, sessions inédites de nos artistes.",
+      },
+      {
+        icon: "pen",
+        title: "Galons de critique musicale certifié·e",
+        body: "En gravissant les niveaux, tu peux obtenir un galon officiel « Critique musicale certifié·e InDi ArT CulTuRe » et publier de véritables articles / chroniques sur l'application.",
+      },
+      {
+        icon: "mic",
+        title: "Interviews de tes artistes préférés",
+        body: "Les membres les plus engagés peuvent mener leurs propres interviews d'artistes indépendants, diffusées sur InDi RaDio et relayées par le magazine InDi ArT CulTuRe.",
+      },
+    ],
+    rewardsFoot:
+      "La progression est ouverte à tous : elle ne récompense pas le bruit, mais la qualité de la présence — l'écoute, la curiosité, le respect.",
   },
   en: {
     title: "Moderation, values & dialogue",
@@ -206,6 +237,33 @@ const COPY: Record<Lang, {
     contactBody:
       "For any moderation question, a disagreement with a decision, or to report a serious situation outside the platform, write to us directly.",
     contactCta: "Go to Contact page",
+    rewardsTitle: "Rewards & progression",
+    rewardsIntro:
+      "InDi RaDio isn't only a community to moderate — it's a community we lift up. The more you take part with care, the more badges you unlock, and some open real doors.",
+    rewards: [
+      {
+        icon: "award",
+        title: "Badges & levels",
+        body: "Listens, likes, thoughtful comments, shared discoveries: every gesture earns points and raises your level. Badges show on your public profile.",
+      },
+      {
+        icon: "star",
+        title: "Exclusive shows & content",
+        body: "Some badges unlock members-only shows, playlists and behind-the-scenes — invites, previews, unreleased sessions from our artists.",
+      },
+      {
+        icon: "pen",
+        title: "Certified music-critic stripes",
+        body: "As you level up, you can earn an official « Certified InDi ArT CulTuRe Music Critic » stripe and publish real articles / reviews on the app.",
+      },
+      {
+        icon: "mic",
+        title: "Interview your favorite artists",
+        body: "The most engaged members can run their own interviews with independent artists, aired on InDi RaDio and relayed by the InDi ArT CulTuRe magazine.",
+      },
+    ],
+    rewardsFoot:
+      "Progression is open to everyone: it doesn't reward noise, but the quality of your presence — listening, curiosity, respect.",
   },
 };
 
@@ -214,6 +272,13 @@ const ICONS = {
   sparkles: Sparkles,
   shield: ShieldCheck,
   message: MessageSquare,
+} as const;
+
+const REWARD_ICONS = {
+  award: Award,
+  star: Star,
+  mic: Mic,
+  pen: PenLine,
 } as const;
 
 function ModerationPage() {
@@ -308,6 +373,29 @@ function ModerationPage() {
             {c.contactCta} →
           </a>
         </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="section-title flex items-center gap-2">
+          <Award className="size-6 text-primary" />
+          {c.rewardsTitle}
+        </h2>
+        <p className="text-sm text-foreground/80">{c.rewardsIntro}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {c.rewards.map((r) => {
+            const Icon = REWARD_ICONS[r.icon];
+            return (
+              <div key={r.title} className="card-brut space-y-2 p-4">
+                <div className="flex items-center gap-2">
+                  <Icon className="size-5 text-primary" />
+                  <h3 className="font-black">{r.title}</h3>
+                </div>
+                <p className="text-sm leading-relaxed text-foreground/80">{r.body}</p>
+              </div>
+            );
+          })}
+        </div>
+        <p className="text-xs italic text-foreground/70">{c.rewardsFoot}</p>
       </section>
     </div>
   );
