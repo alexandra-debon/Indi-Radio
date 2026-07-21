@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, Disc3, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 type CoupRow = {
   id: string;
@@ -16,6 +19,8 @@ type CoupRow = {
   discovery_story: string | null;
   social_links: SocialLinks | null;
 };
+
+type LikeRow = { coup_id: string; user_id: string };
 
 export const Route = createFileRoute("/coups-de-coeur")({
   head: () => ({
