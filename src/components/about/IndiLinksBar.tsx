@@ -10,11 +10,13 @@ import {
   type SocialLinks,
 } from "@/components/social/SocialLinksBar";
 import { toast } from "@/lib/toast";
+import { useT } from "@/lib/i18n";
 
 const KEY = "indi_links";
 
 export function IndiLinksBar() {
   const { isAdmin } = useAuth();
+  const t = useT();
   const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<SocialLinks>({});
@@ -59,7 +61,7 @@ export function IndiLinksBar() {
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-primary" aria-hidden />
-          <h2 className="text-sm font-black uppercase tracking-widest">Les liens Indi</h2>
+          <h2 className="text-sm font-black uppercase tracking-widest">{t("about.indiLinks.title")}</h2>
         </div>
         {isAdmin && !editing && (
           <button
