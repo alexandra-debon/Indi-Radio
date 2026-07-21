@@ -586,6 +586,15 @@ export const dict = {
     "footer.contact": "Contact",
     "footer.terms": "Terms",
     "footer.privacy": "Privacy",
+    "chat.title": "Message to InDi RaDio",
+    "chat.subtitle": "Private conversation with the team",
+    "chat.placeholder": "Type your message…",
+    "chat.send": "Send",
+    "chat.empty": "No messages yet. Say hi!",
+    "chat.openBubble": "Chat with the team",
+    "chat.menuItem": "Message the team",
+    "chat.image": "Attach an image",
+    "chat.loginRequired": "Sign in to chat with the team.",
   },
 } as const;
 
