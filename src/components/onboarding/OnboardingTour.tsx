@@ -23,6 +23,14 @@ import { setTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
 const STORAGE_KEY = "indi.onboarding.v1";
 
+function buildShareUrl(lang: "fr" | "en"): string {
+  if (typeof window === "undefined") return `/?tour=summary&lang=${lang}`;
+  const u = new URL("/", window.location.origin);
+  u.searchParams.set("tour", "summary");
+  u.searchParams.set("lang", lang);
+  return u.toString();
+}
+
 export type Lang = "fr" | "en";
 
 export type Step = {
