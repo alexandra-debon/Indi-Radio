@@ -22,6 +22,8 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import ogActus from "@/assets/og-actus.jpg";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { MultiImageUploader } from "@/components/media/MultiImageUploader";
+import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
 
@@ -68,6 +70,8 @@ interface NewsPost {
   title: string;
   content: string;
   image_url: string | null;
+  image_urls: string[] | null;
+  image_captions: string[] | null;
   created_at: string;
   social_links: SocialLinks | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
@@ -90,7 +94,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -100,7 +104,7 @@ function ActusPage() {
   const canPublish = isAdmin || isAnimateur;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
 
@@ -118,14 +122,15 @@ function ActusPage() {
         author_id: session.user.id,
         title,
         content: finalContent,
-        image_url: imageUrl || null,
+        image_url: images[0] ?? null,
+        image_urls: images,
         social_links: sanitizeLinks(socialLinks),
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Publié !");
-      setTitle(""); setContent(""); setImageUrl(""); setVideoUrl(""); setSocialLinks({});
+      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({});
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -140,7 +145,7 @@ function ActusPage() {
         <div className="card-brut space-y-2 p-3">
           <div className="text-[10px] uppercase tracking-widest text-primary">Nouveau post — {profile?.role}</div>
           <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <ImageUploader value={imageUrl} onChange={setImageUrl} folder="news" label="Image de couverture" />
+          <MultiImageUploader values={images} onChange={setImages} folder="news" />
           <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
           <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
           <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
