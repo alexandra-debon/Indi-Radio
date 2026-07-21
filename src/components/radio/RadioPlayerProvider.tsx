@@ -652,6 +652,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         subscribeLevel,
         duration,
         durationKnown,
+        elapsedSeconds,
       }}
     >
       {/* Persistent audio element — never re-mounts across route changes.
