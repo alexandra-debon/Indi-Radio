@@ -49,6 +49,14 @@ function BadgesPage() {
   const { lang, t } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
   const dateFmt = lang === "en" ? "MMM d, yyyy" : "d MMM yyyy";
+  // Format a timestamp using its UTC calendar date so the displayed day
+  // never drifts when the viewer changes timezone (also matches the UTC
+  // slicing used for `unique_days` counting).
+  const fmtDate = (iso: string) => {
+    const d = new Date(iso);
+    const utc = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
+    return format(utc, dateFmt, { locale: dateLocale });
+  };
   const qc = useQueryClient();
   const [openKey, setOpenKey] = useState<string | null>(null);
 
@@ -220,7 +228,7 @@ function BadgesPage() {
                   </span>
                   {obtainedAt && (
                     <span className="font-semibold">
-                      {t("badges.obtainedOn")} {format(new Date(obtainedAt), dateFmt, { locale: dateLocale })}
+                      {t("badges.obtainedOn")} {fmtDate(obtainedAt)}
                     </span>
                   )}
                 </div>
@@ -291,7 +299,7 @@ function BadgesPage() {
 
                   {selectedData.obtainedAt && (
                     <div className="rounded-md border-2 border-primary bg-primary/5 p-2 text-xs font-semibold">
-                      {t("badges.obtainedOn")} {format(new Date(selectedData.obtainedAt), dateFmt, { locale: dateLocale })}
+                      {t("badges.obtainedOn")} {fmtDate(selectedData.obtainedAt)}
                     </div>
                   )}
 
@@ -309,7 +317,7 @@ function BadgesPage() {
                         {selectedData.recent.map((d, i) => (
                           <li key={i} className="flex items-center justify-between">
                             <span>#{selectedData.progress - i}</span>
-                            <span className="text-muted-foreground">{format(new Date(d), dateFmt, { locale: dateLocale })}</span>
+                            <span className="text-muted-foreground">{fmtDate(d)}</span>
                           </li>
                         ))}
                       </ul>
