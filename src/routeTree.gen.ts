@@ -52,6 +52,7 @@ import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/pu
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
+import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
@@ -283,6 +284,12 @@ const ApiPublicAdminMessageEmailRoute =
     path: '/api/public/admin-message-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedProfileLikesRoute =
+  AuthenticatedProfileLikesRouteImport.update({
+    id: '/profile/likes',
+    path: '/profile/likes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/profile/edit',
@@ -387,6 +394,7 @@ export interface FileRoutesByFullPath {
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
@@ -442,6 +450,7 @@ export interface FileRoutesByTo {
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
@@ -499,6 +508,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/_authenticated/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
@@ -611,6 +622,7 @@ export interface FileRouteTypes {
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
@@ -667,6 +679,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
+    | '/_authenticated/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
@@ -1026,6 +1039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile/likes': {
+      id: '/_authenticated/profile/likes'
+      path: '/profile/likes'
+      fullPath: '/profile/likes'
+      preLoaderRoute: typeof AuthenticatedProfileLikesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/profile/edit'
@@ -1126,6 +1146,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileAlbumsRoute: typeof AuthenticatedProfileAlbumsRoute
   AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
   AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
+  AuthenticatedProfileLikesRoute: typeof AuthenticatedProfileLikesRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
 }
 
@@ -1136,6 +1157,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileAlbumsRoute: AuthenticatedProfileAlbumsRoute,
   AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
   AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
+  AuthenticatedProfileLikesRoute: AuthenticatedProfileLikesRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
 }
 
