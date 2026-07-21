@@ -887,12 +887,21 @@ export function SocialWall() {
                           />
                           <Button
                             size="sm"
-                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "" }))}
-                            disabled={!(replyDraft[p.id] ?? "").trim() || addComment.isPending}
+                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [] }))}
+                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0) || addComment.isPending}
                           >
                             {t("comment.send")}
                           </Button>
                         </div>
+                        {session && (
+                          <MultiImageUploader
+                            values={replyImages[p.id] ?? []}
+                            onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
+                            folder="wall-comments"
+                            max={4}
+                          />
+                        )}
+                        {postComments.map((c) => null)}
                       </div>
                     )}
                   </div>
