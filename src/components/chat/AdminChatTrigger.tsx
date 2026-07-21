@@ -58,12 +58,12 @@ export function AdminChatTrigger({ className }: { className?: string }) {
   return (
     <button
       onClick={onClick}
-      aria-label="Tchat InDi Team"
-      title="Tchat InDi Team"
+      aria-label="Tchat Team Indi"
+      title="Tchat Team Indi"
       className={cn("flex shrink-0 flex-col items-center gap-0.5", className)}
     >
       <span className="text-[8px] font-black uppercase leading-[1.05] tracking-wide text-primary text-center">
-        Tchat<br />InDi Team
+        Tchat<br />Team Indi
       </span>
       <span className="relative grid size-9 place-items-center rounded-full border-2 border-black bg-primary text-black shadow-[2px_2px_0_0_#000]">
         <MessageCircle className="size-4" />
