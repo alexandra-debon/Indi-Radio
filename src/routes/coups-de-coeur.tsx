@@ -272,6 +272,14 @@ function CoupsDeCoeurPage() {
                   <div className="text-sm text-muted-foreground">
                     par <span className="font-medium text-foreground">{c.artist}</span>
                   </div>
+                  {c.editorial_rating != null && c.editorial_rating > 0 && (
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                        Note rédaction
+                      </span>
+                      <StarRating value={c.editorial_rating} size={16} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="whitespace-pre-wrap text-sm leading-relaxed">
