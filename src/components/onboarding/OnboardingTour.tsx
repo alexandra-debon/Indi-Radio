@@ -18,6 +18,7 @@ import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
 import { TourSpotlight, type TourStep } from "./TourSpotlight";
+import { setTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
 const STORAGE_KEY = "indi.onboarding.v1";
 
@@ -47,6 +48,16 @@ const WELCOME: Record<Lang, { title: string; body: string; go: string; skip: str
 };
 
 const TOUR_STEPS: TourStep[] = [
+  {
+    id: "demo-user",
+    target: "[data-tour='login-button']",
+    title: { fr: "👋 Compte de démo", en: "👋 Demo account" },
+    body: {
+      fr: `Pendant ce tour, on t'accompagne avec un utilisateur imaginaire, @${DEMO_PSEUDO}, pour te montrer à quoi ressemble l'expérience une fois connecté. Rien n'est enregistré — c'est juste pour la visite.`,
+      en: `During this tour, we walk you through with an imaginary user, @${DEMO_PSEUDO}, to show what the experience looks like once signed in. Nothing is saved — it's just for the visit.`,
+    },
+    placement: "bottom",
+  },
   {
     id: "radio-player",
     target: "[data-tour='radio-player']",
@@ -191,6 +202,11 @@ export function OnboardingTour() {
       return () => window.removeEventListener("indi:open-tour", handler);
     }
   }, [loading, setLang]);
+
+  useEffect(() => {
+    setTourDemoActive((phase === "welcome" || phase === "tour" || phase === "feedback") && open);
+    return () => setTourDemoActive(false);
+  }, [phase, open]);
 
   function savePreference() {
     try {

@@ -14,6 +14,7 @@ import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
 import { useT } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import type { DictKey } from "@/lib/i18n/dict";
+import { useTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
 const NAV: { to: string; key: DictKey; icon: any }[] = [
   { to: "/", key: "nav.live", icon: Radio },
@@ -37,6 +38,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { profile, isAdmin, session, openAuth, signOut } = useAuth();
   const t = useT();
+  const tourDemo = useTourDemoActive();
+  const showDemoUser = tourDemo && !session;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -64,7 +67,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div data-tour="share-button">
               <ShareButton target={{}} label={t("action.share")} />
             </div>
-            {session && profile ? (
+            {showDemoUser ? (
+              <div className="flex min-w-0 items-center gap-1" aria-label="Tour demo user">
+                <div className="hidden sm:flex min-w-0 max-w-[10rem] items-center gap-2 overflow-hidden rounded-md border-2 border-dashed border-primary/70 bg-primary/10 px-2 py-1">
+                  <UserIcon className="size-3.5 text-primary" />
+                  <span className="truncate text-xs font-bold text-primary">@{DEMO_PSEUDO}</span>
+                </div>
+                <span
+                  className="grid size-8 shrink-0 place-items-center rounded-md border-2 border-dashed border-primary/70 bg-primary/10 sm:hidden"
+                  data-tour="login-button"
+                  aria-label={`Tour demo ${DEMO_PSEUDO}`}
+                >
+                  <UserIcon className="size-4 text-primary" />
+                </span>
+                <span className="hidden lg:inline rounded-full border border-dashed border-primary/70 bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">
+                  Demo
+                </span>
+              </div>
+            ) : session && profile ? (
               <div className="flex min-w-0 items-center gap-1">
                 {isAdmin && (
                   <Link
