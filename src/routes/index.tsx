@@ -12,6 +12,7 @@ import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
 import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
+import { ShareButton } from "@/components/share/ShareButton";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
@@ -215,7 +216,20 @@ function LivePage() {
                     {loading ? t("live.connecting") : t("live.listen")}
                   </span>
                 )}
-                {currentTrack && <LikeButton trackId={currentTrack.id} />}
+                {currentTrack && (
+                  <div className="flex items-center gap-1">
+                    <ShareButton
+                      target={{
+                        url: "/",
+                        title: `${currentTrack.artist} — ${currentTrack.title}`,
+                        text: t("live.shareText").replace("{title}", currentTrack.title),
+                      }}
+                      label={t("live.shareTrack")}
+                      variant="icon"
+                    />
+                    <LikeButton trackId={currentTrack.id} />
+                  </div>
+                )}
               </div>
               <div className="mt-2" data-tour="volume-control">
                 <VolumeControl />
