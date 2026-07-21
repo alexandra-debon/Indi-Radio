@@ -133,15 +133,21 @@ export function OnboardingTour() {
       /* noop */
     }
     if (typeof window !== "undefined") {
-      const handler = () => {
-        setPhase("welcome");
+      const handler = (e: Event) => {
+        const detail = (e as CustomEvent<{ lang?: Lang }>).detail;
+        if (detail?.lang === "fr" || detail?.lang === "en") {
+          setLang(detail.lang);
+          setPhase("welcome");
+        } else {
+          setPhase("lang");
+        }
         setStep(0);
         setOpen(true);
       };
       window.addEventListener("indi:open-tour", handler);
       return () => window.removeEventListener("indi:open-tour", handler);
     }
-  }, [loading]);
+  }, [loading, setLang]);
 
   function finish() {
     try {
@@ -287,12 +293,12 @@ export function OnboardingTour() {
   );
 }
 
-export function openOnboardingTour() {
+export function openOnboardingTour(lang?: "fr" | "en") {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch {
     /* noop */
   }
-  window.dispatchEvent(new Event("indi:open-tour"));
+  window.dispatchEvent(new CustomEvent("indi:open-tour", { detail: { lang } }));
 }

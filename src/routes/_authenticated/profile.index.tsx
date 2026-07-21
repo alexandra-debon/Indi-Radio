@@ -270,13 +270,19 @@ function ProfilePage() {
         )}
       </section>
 
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={() => openOnboardingTour()}
-      >
-        <Compass className="size-4" /> Refaire le tour de l'application
-      </Button>
+      <div className="space-y-2">
+        <div className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+          <Compass className="mr-1 inline size-3.5" /> Refaire le tour / Replay the tour
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" onClick={() => openOnboardingTour("fr")}>
+            🇫🇷 En français
+          </Button>
+          <Button variant="outline" onClick={() => openOnboardingTour("en")}>
+            🇬🇧 In English
+          </Button>
+        </div>
+      </div>
 
       <Button variant="outline" className="w-full" onClick={signOut}>
         <LogOut className="size-4" /> Déconnexion
