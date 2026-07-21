@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images } from "lucide-react";
+import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
@@ -36,6 +36,48 @@ type Profile = {
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
+
+type AchievementDef = {
+  key: string;
+  label: string;
+  action: "post" | "comment" | "dedicace" | "like_received" | "presence";
+  threshold: number;
+  icon: React.ComponentType<{ className?: string }>;
+  unique_days?: boolean;
+};
+
+const ACHIEVEMENTS: AchievementDef[] = [
+  { key: "post_1", label: "Première publication", action: "post", threshold: 1, icon: FileText },
+  { key: "post_10", label: "Plume active", action: "post", threshold: 10, icon: FileText },
+  { key: "post_50", label: "Voix de la commu", action: "post", threshold: 50, icon: FileText },
+  { key: "comment_1", label: "Premier commentaire", action: "comment", threshold: 1, icon: MessageSquare },
+  { key: "comment_25", label: "Bavard·e", action: "comment", threshold: 25, icon: MessageSquare },
+  { key: "comment_100", label: "Pilier des échanges", action: "comment", threshold: 100, icon: MessageSquare },
+  { key: "dedicace_1", label: "Première dédicace", action: "dedicace", threshold: 1, icon: Mic2 },
+  { key: "dedicace_10", label: "Fan de l'antenne", action: "dedicace", threshold: 10, icon: Mic2 },
+  { key: "like_10", label: "Apprécié·e", action: "like_received", threshold: 10, icon: Heart },
+  { key: "like_50", label: "Adoré·e", action: "like_received", threshold: 50, icon: Heart },
+  { key: "presence_7", label: "Régulier·e", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
+  { key: "presence_30", label: "Pilier de la station", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
+];
+
+async function fetchAchievements(userId: string) {
+  const { data } = await supabase
+    .from("point_events")
+    .select("action, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
+  const events = data ?? [];
+  const byAction: Record<string, { created_at: string }[]> = {};
+  for (const e of events) (byAction[e.action] ??= []).push(e);
+  return ACHIEVEMENTS.map((a) => {
+    const evts = byAction[a.action] ?? [];
+    const counted = a.unique_days
+      ? Array.from(new Set(evts.map((e) => e.created_at.slice(0, 10))))
+      : evts.map((e) => e.created_at);
+    return { ...a, progress: counted.length, unlocked: counted.length >= a.threshold };
+  });
+}
 
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
@@ -123,6 +165,11 @@ function UserProfilePage() {
     queryKey: ["profile-albums", data?.profile.id],
     enabled: !!data?.profile.id,
     queryFn: () => fetchAlbums(data!.profile.id),
+  });
+  const { data: achievements = [] } = useQuery({
+    queryKey: ["profile-achievements", data?.profile.id],
+    enabled: !!data?.profile.id,
+    queryFn: () => fetchAchievements(data!.profile.id),
   });
 
   if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
@@ -212,6 +259,37 @@ function UserProfilePage() {
             ))}
           </ul>
         )}
+      </div>
+
+      <div className="card-brut p-4">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
+          <Award className="size-4 text-primary" /> Succès
+        </h2>
+        <ul className="grid gap-2 sm:grid-cols-2">
+          {achievements.map((a) => {
+            const Icon = a.icon;
+            const pct = Math.min(100, Math.round((a.progress / a.threshold) * 100));
+            return (
+              <li
+                key={a.key}
+                className={"card-brut space-y-1.5 p-3 " + (a.unlocked ? "border-primary bg-primary/5" : "opacity-80")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={"grid size-8 place-items-center rounded-md border-2 border-border " + (a.unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                    {a.unlocked ? <Icon className="size-4" /> : <Lock className="size-4" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-black">{a.label}</div>
+                    <div className="text-[11px] text-muted-foreground">{Math.min(a.progress, a.threshold)} / {a.threshold}</div>
+                  </div>
+                </div>
+                <div className="h-1.5 w-full border border-border bg-radio-surface">
+                  <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <div className="card-brut p-4">
