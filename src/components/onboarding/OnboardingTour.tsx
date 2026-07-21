@@ -412,8 +412,9 @@ export function OnboardingTour() {
               </DialogFooter>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {phase === "tour" && open && (
         <TourSpotlight
