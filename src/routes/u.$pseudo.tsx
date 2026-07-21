@@ -263,7 +263,7 @@ function UserProfilePage() {
         ) : (
           <ul className="flex flex-wrap gap-2">
             {profile.badges.map((b) => (
-              <li key={b} className="flex items-center gap-1 border-2 border-border bg-primary px-2 py-1 text-xs font-bold text-foreground">
+              <li key={b} className="flex items-center gap-1 border-2 border-border bg-primary px-2 py-1 text-xs font-black uppercase tracking-wider text-black">
                 <Star className="size-3" /> {b}
               </li>
             ))}
