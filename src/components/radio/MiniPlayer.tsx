@@ -6,8 +6,15 @@ import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
 import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
 
+function formatElapsed(sec: number): string {
+  if (!Number.isFinite(sec) || sec < 0) return "0:00";
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 export function MiniPlayer() {
-  const { playing, toggle, currentTrack } = useRadio();
+  const { playing, toggle, currentTrack, elapsedSeconds } = useRadio();
   const { data: artwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   const [imgError, setImgError] = useState(false);
   useEffect(() => {
