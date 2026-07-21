@@ -463,6 +463,15 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                             <TranslatedText entityType="news_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)} />
                           </p>
                         )}
+                        {Array.isArray(c.image_urls) && c.image_urls.length > 0 && (
+                          <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                            {c.image_urls.map((u: string, i: number) => (
+                              <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
+                                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         <UrlEmbeds text={c.content} compact />
                       </div>
                       {(canEditC || canDelC) && (
@@ -489,9 +498,12 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               );
             })}
             {sessionUserId ? (
-              <div className="flex gap-2">
-                <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
-                <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim()}>{t("comment.send")}</Button>
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
+                  <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim() && commentImages.length === 0}>{t("comment.send")}</Button>
+                </div>
+                <MultiImageUploader values={commentImages} onChange={setCommentImages} folder="news-comments" max={4} />
               </div>
             ) : (
               <Button size="sm" variant="outline" onClick={onSignIn}>{t("comment.signInToComment")}</Button>
