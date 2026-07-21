@@ -47,6 +47,11 @@ interface RadioContextValue {
    * with a known length). For the live radio stream this is always false.
    */
   durationKnown: boolean;
+  /**
+   * Elapsed seconds since the current track started broadcasting.
+   * Only advances while the radio is playing and a current track exists.
+   */
+  elapsedSeconds: number;
 }
 
 const RadioContext = createContext<RadioContextValue | null>(null);
