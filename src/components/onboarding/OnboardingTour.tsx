@@ -11,6 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/use-auth";
+import { Textarea } from "@/components/ui/textarea";
+import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/lib/toast";
 
 const STORAGE_KEY = "indi.onboarding.v1";
 
@@ -119,10 +123,13 @@ const STEPS: Step[] = [
 
 export function OnboardingTour() {
   const { lang, setLang } = useLang();
-  const { loading } = useAuth();
+  const { loading, session } = useAuth();
   const [open, setOpen] = useState(false);
-  const [phase, setPhase] = useState<"lang" | "welcome" | "tour" | "done">("lang");
+  const [phase, setPhase] = useState<"lang" | "welcome" | "tour" | "feedback" | "done">("lang");
   const [step, setStep] = useState(0);
+  const [rating, setRating] = useState<"up" | "down" | null>(null);
+  const [feedbackMsg, setFeedbackMsg] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -142,6 +149,8 @@ export function OnboardingTour() {
           setPhase("lang");
         }
         setStep(0);
+        setRating(null);
+        setFeedbackMsg("");
         setOpen(true);
       };
       window.addEventListener("indi:open-tour", handler);
@@ -157,6 +166,29 @@ export function OnboardingTour() {
     }
     setOpen(false);
     setPhase("done");
+  }
+
+  async function submitFeedback(closeAfter: boolean) {
+    if (!rating) {
+      if (closeAfter) finish();
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("onboarding_feedback").insert({
+        user_id: session?.user.id ?? null,
+        rating,
+        message: feedbackMsg.trim() || null,
+        lang: l,
+      });
+      if (error) throw error;
+      toast.success(l === "fr" ? "Merci pour ton avis !" : "Thanks for your feedback!");
+    } catch {
+      toast.error(l === "fr" ? "Envoi impossible" : "Could not send");
+    } finally {
+      setSubmitting(false);
+      finish();
+    }
   }
 
   const total = STEPS.length;
@@ -278,13 +310,70 @@ export function OnboardingTour() {
                 <Button
                   size="sm"
                   onClick={() => {
-                    if (isLast) finish();
+                    if (isLast) setPhase("feedback");
                     else setStep((s) => s + 1);
                   }}
                 >
                   {nextLabel} {!isLast && "→"}
                 </Button>
               </div>
+            </DialogFooter>
+          </>
+        )}
+
+        {phase === "feedback" && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">
+                {l === "fr" ? "Ton avis sur le tour ?" : "How was the tour?"}
+              </DialogTitle>
+              <DialogDescription>
+                {l === "fr"
+                  ? "Aide-nous à améliorer les prochaines étapes (facultatif)."
+                  : "Help us improve the next steps (optional)."}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center gap-4 py-3">
+              <Button
+                type="button"
+                variant={rating === "up" ? "default" : "outline"}
+                size="lg"
+                onClick={() => setRating("up")}
+                className="h-16 w-24"
+                aria-label={l === "fr" ? "J'ai aimé" : "I liked it"}
+              >
+                <ThumbsUp className="size-6" />
+              </Button>
+              <Button
+                type="button"
+                variant={rating === "down" ? "default" : "outline"}
+                size="lg"
+                onClick={() => setRating("down")}
+                className="h-16 w-24"
+                aria-label={l === "fr" ? "Peut mieux faire" : "Could be better"}
+              >
+                <ThumbsDown className="size-6" />
+              </Button>
+            </div>
+            <Textarea
+              value={feedbackMsg}
+              onChange={(e) => setFeedbackMsg(e.target.value)}
+              maxLength={500}
+              placeholder={
+                l === "fr"
+                  ? "Un mot pour nous aider à améliorer (facultatif)…"
+                  : "A quick word to help us improve (optional)…"
+              }
+              className="min-h-[80px]"
+            />
+            <DialogFooter className="mt-2 flex-row justify-between gap-2 sm:justify-between">
+              <Button variant="ghost" onClick={finish} disabled={submitting}>
+                {l === "fr" ? "Passer" : "Skip"}
+              </Button>
+              <Button onClick={() => submitFeedback(true)} disabled={submitting || !rating}>
+                {submitting && <Loader2 className="size-4 animate-spin" />}
+                {l === "fr" ? "Envoyer" : "Send"}
+              </Button>
             </DialogFooter>
           </>
         )}
