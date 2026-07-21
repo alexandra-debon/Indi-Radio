@@ -6,6 +6,7 @@ import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
 import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users, Map } from "lucide-react";
 import { Mail } from "lucide-react";
+import { openOnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";

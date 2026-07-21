@@ -147,7 +147,6 @@ export function OnboardingTour() {
     if (typeof window !== "undefined") {
       const handler = (e: Event) => {
         const detail = (e as CustomEvent<{ lang?: Lang }>).detail;
-        console.log("[indi:open-tour] received detail:", detail);
         if (detail?.lang === "fr" || detail?.lang === "en") {
           setLang(detail.lang);
           setPhase("welcome");
