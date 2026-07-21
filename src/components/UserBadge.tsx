@@ -55,7 +55,7 @@ export function UserBadge({ profile, className, compact }: { profile: BadgeProfi
       {profile.badges?.map((b) => (
         <span
           key={b}
-          className="inline-flex items-center rounded-sm border border-primary/60 bg-primary/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-primary"
+          className="inline-flex items-center rounded-sm border border-primary bg-primary px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-black"
         >
           {b}
         </span>
