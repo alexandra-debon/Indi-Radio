@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Trophy, Award, MessageSquare, FileText, Heart, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { format } from "date-fns";
@@ -44,6 +45,33 @@ function BadgesPage() {
   const { profile, session } = useAuth();
   const { lang, t } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    if (!session) return;
+    const userId = session.user.id;
+    const channel = supabase
+      .channel(`badges-${userId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "point_events", filter: `user_id=eq.${userId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["my-point-events", userId] });
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["auth-profile"] });
+          qc.invalidateQueries({ queryKey: ["profile", userId] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session, qc]);
 
   const { data: events = [] } = useQuery({
     queryKey: ["my-point-events", session?.user.id],
