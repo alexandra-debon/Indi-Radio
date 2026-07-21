@@ -12,6 +12,7 @@ import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
 import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
+import { ShareButton } from "@/components/share/ShareButton";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
