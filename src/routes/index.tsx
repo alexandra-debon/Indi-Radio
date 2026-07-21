@@ -119,8 +119,8 @@ function LivePage() {
       <section className="space-y-3">
         <div className="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[19rem_minmax(0,1fr)]">
           <h1 className="w-[10rem] shrink-0 rotate-[-1.5deg] bg-yellow-400 px-2.5 py-1.5 font-display text-[1.18rem] font-black uppercase leading-[0.95] tracking-[0.08em] text-yellow-950 shadow-[4px_4px_0_0_oklch(0_0_0)] sm:w-[18.5rem] sm:text-[1.7rem]">
-            <span className="block">Musique</span>
-            <span className="block">en cours</span>
+            <span className="block">{t("page.live.now.line1")}</span>
+            <span className="block">{t("page.live.now.line2")}</span>
           </h1>
           <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
