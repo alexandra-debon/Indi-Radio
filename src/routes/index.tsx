@@ -117,7 +117,7 @@ function LivePage() {
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
         <div className="grid grid-cols-[minmax(0,10.3rem)_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
-          <h1 className="section-title w-full shrink-0 text-[1.1rem] leading-none sm:text-[1.35rem]">
+          <h1 className="section-title max-w-[10rem] shrink-0 text-[1.1rem] leading-none sm:max-w-[18.5rem] sm:text-[1.35rem]">
             {t("page.live.now")}
           </h1>
           <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
@@ -135,7 +135,7 @@ function LivePage() {
           <img
             src={liveWordmarkAsset.url}
             alt="InDi RaDio"
-            className="pointer-events-none absolute left-[65%] top-4 h-[25px] w-[89px] -translate-x-1/2 object-contain sm:left-[70%] sm:h-[29px] sm:w-[104px]"
+            className="pointer-events-none absolute left-[72%] top-4 h-[25px] w-[90px] -translate-x-1/2 object-contain sm:left-[72%] sm:h-[29px] sm:w-[104px]"
             loading="eager"
             decoding="async"
           />
