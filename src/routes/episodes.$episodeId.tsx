@@ -53,6 +53,38 @@ export const Route = createFileRoute("/episodes/$episodeId")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "PodcastEpisode",
+            name: ep.title,
+            description: ep.description || ep.title,
+            image,
+            url,
+            datePublished: ep.published_at,
+            ...(ep.audio_url
+              ? {
+                  associatedMedia: {
+                    "@type": "AudioObject",
+                    contentUrl: ep.audio_url,
+                    name: ep.title,
+                  },
+                }
+              : {}),
+            ...(parentTitle
+              ? {
+                  partOfSeries: {
+                    "@type": "PodcastSeries",
+                    name: parentTitle,
+                  },
+                }
+              : {}),
+            publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (
