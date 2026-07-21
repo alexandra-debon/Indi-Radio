@@ -50,6 +50,7 @@ import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
@@ -269,6 +270,12 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAdminMessageEmailRoute =
+  ApiPublicAdminMessageEmailRouteImport.update({
+    id: '/api/public/admin-message-email',
+    path: '/api/public/admin-message-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/profile/edit',
@@ -365,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -417,6 +425,7 @@ export interface FileRoutesByTo {
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -471,6 +480,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -525,6 +535,7 @@ export interface FileRouteTypes {
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -630,6 +642,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -672,6 +685,7 @@ export interface RootRouteChildren {
   PPostIdRoute: typeof PPostIdRoute
   TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
+  ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
@@ -972,6 +986,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/admin-message-email': {
+      id: '/api/public/admin-message-email'
+      path: '/api/public/admin-message-email'
+      fullPath: '/api/public/admin-message-email'
+      preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/profile/edit'
@@ -1175,6 +1196,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPostIdRoute: PPostIdRoute,
   TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
+  ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
