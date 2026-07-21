@@ -59,6 +59,26 @@ function BadgesPage() {
   };
   const qc = useQueryClient();
   const [openKey, setOpenKey] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState("");
+  const btnRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const focusIndex = (i: number) => {
+    const len = ACHIEVEMENTS.length;
+    const idx = ((i % len) + len) % len;
+    btnRefs.current[idx]?.focus();
+  };
+  const onGridKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
+    // Grid is 1 col on mobile, 2 cols from sm: — treat Left/Right as ±1, Up/Down as ±cols.
+    const cols = typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches ? 2 : 1;
+    switch (e.key) {
+      case "ArrowRight": e.preventDefault(); focusIndex(i + 1); break;
+      case "ArrowLeft": e.preventDefault(); focusIndex(i - 1); break;
+      case "ArrowDown": e.preventDefault(); focusIndex(i + cols); break;
+      case "ArrowUp": e.preventDefault(); focusIndex(i - cols); break;
+      case "Home": e.preventDefault(); focusIndex(0); break;
+      case "End": e.preventDefault(); focusIndex(ACHIEVEMENTS.length - 1); break;
+    }
+  };
 
   useEffect(() => {
     if (!session) return;
@@ -140,10 +160,9 @@ function BadgesPage() {
     if (unlockedKeysRef.current !== null) {
       for (const key of currentUnlocked) {
         if (!unlockedKeysRef.current.has(key)) {
-          toast.success(t("badges.toast.unlocked"), {
-            description: t(`ach.${key}.label` as never),
-            icon: "🏆",
-          });
+          const label = t(`ach.${key}.label` as never);
+          toast.success(t("badges.toast.unlocked"), { description: label, icon: "🏆" });
+          setAnnouncement(`${t("badges.toast.unlocked")} ${label}`);
         }
       }
     }
@@ -152,16 +171,24 @@ function BadgesPage() {
 
   useEffect(() => {
     if (lastLevelRef.current !== null && profile.level > lastLevelRef.current) {
-      toast.success(t("badges.toast.levelUp"), {
-        description: `${t("badges.toast.levelReached")} ${profile.level} / 5`,
-        icon: "⭐",
-      });
+      const desc = `${t("badges.toast.levelReached")} ${profile.level} / 5`;
+      toast.success(t("badges.toast.levelUp"), { description: desc, icon: "⭐" });
+      setAnnouncement(`${t("badges.toast.levelUp")} ${desc}`);
     }
     lastLevelRef.current = profile.level;
   }, [profile.level, t]);
 
   return (
     <div className="space-y-4">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label={t("badges.a11y.announcer")}
+        className="sr-only"
+      >
+        {announcement}
+      </div>
       <Link to="/profile" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-3" /> {t("badges.back")}
       </Link>
@@ -193,8 +220,12 @@ function BadgesPage() {
 
       <section className="space-y-2">
         <h2 className="text-sm font-black uppercase tracking-widest">{t("badges.achievementsTitle")}</h2>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {ACHIEVEMENTS.map((a) => {
+        <div
+          role="grid"
+          aria-label={t("badges.a11y.gridLabel")}
+          className="grid gap-2 sm:grid-cols-2"
+        >
+          {ACHIEVEMENTS.map((a, i) => {
             const evts = byAction[a.action] ?? [];
             const counted = a.unique_days
               ? Array.from(new Set(evts.map((e) => e.created_at.slice(0, 10)))).sort()
@@ -207,6 +238,10 @@ function BadgesPage() {
               <button
                 type="button"
                 key={a.key}
+                ref={(el) => { btnRefs.current[i] = el; }}
+                role="gridcell"
+                aria-label={`${t(`ach.${a.key}.label` as never)} — ${Math.min(progress, a.threshold)} / ${a.threshold}${unlocked ? ` — ${t("badges.statusUnlocked")}` : ""}`}
+                onKeyDown={(e) => onGridKeyDown(e, i)}
                 onClick={() => setOpenKey(a.key)}
                 className={
                   "card-brut space-y-1.5 p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary " +
