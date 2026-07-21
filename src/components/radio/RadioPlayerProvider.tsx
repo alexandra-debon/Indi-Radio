@@ -67,6 +67,8 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // hydration mismatches on the volume slider label / fill.
   const [volume, setVolumeState] = useState<number>(0.8);
   const [muted, setMuted] = useState<boolean>(false);
+  // Elapsed time for the current track, shown next to the title in the mini-player.
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
