@@ -4,7 +4,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2 } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { openOnboardingTour } from "@/components/onboarding/OnboardingTour";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -268,6 +269,14 @@ function ProfilePage() {
           </ul>
         )}
       </section>
+
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={() => openOnboardingTour()}
+      >
+        <Compass className="size-4" /> Refaire le tour de l'application
+      </Button>
 
       <Button variant="outline" className="w-full" onClick={signOut}>
         <LogOut className="size-4" /> Déconnexion
