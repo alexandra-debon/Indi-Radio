@@ -1,49 +1,41 @@
-# Embeds média & page Clip Addict
+## Objectif
+Refondre la barre d'en-tête (`src/components/AppShell.tsx`) pour qu'elle corresponde à la capture fournie et regroupe : menu · logo carré + wordmark « iNDi RaDiO » · cloche de notifications · bloc utilisateur (Connexion → pseudo cliquable + bouton « modifier profil »).
 
-## 1. Système d'embed universel
+## Changements dans le header
 
-**Nouveau composant `src/components/media/UrlEmbeds.tsx`** — scanne un texte, extrait toutes les URLs et rend :
-- **YouTube** (`youtube.com/watch`, `youtu.be`, `youtube.com/shorts`, `youtube.com/playlist`) → lecteur inline
-- **Vimeo** (`vimeo.com/{id}`) → lecteur inline
-- **Autres URLs** → carte d'aperçu (image + titre + description via Open Graph)
+Ordre final des cellules (grid 3 colonnes : `auto | 1fr | auto`) :
 
-**Composant `VideoPlayer`** :
-- Lecteur inline responsive (ratio 16/9, `iframe` YouTube/Vimeo avec `allowfullscreen`)
-- Bouton "Agrandir" en overlay → ouvre un **modal shadcn Dialog** plein écran (95vw / 95vh)
-- Fullscreen natif via l'iframe (permet la rotation paysage sur mobile — l'API Fullscreen de l'iframe s'adapte à l'orientation du device)
+```text
+[☰ Menu]   [🟨 logo carré + iNDi RaDiO wordmark → /]   [🔔 cloche] [pseudo / bonhomme]
+```
 
-**Serveur `src/lib/link-preview.functions.ts`** — `createServerFn` qui fetch une URL, parse les balises `<meta og:*>` / `<meta twitter:*>` et renvoie `{ title, description, image, siteName }`. Cache mémoire simple + timeout 5s + fallback silencieux.
+1. **Colonne centrale** — lien vers `/` contenant côte à côte :
+   - le petit logo carré (`indi-radio-logo.png.asset.json`, `size-8 sm:size-9`)
+   - le wordmark (`indi-radio-wordmark-header.jpeg.asset.json`, `h-7 sm:h-9`)
+   - un `gap-2`, centré, `shrink` pour rester dans la largeur dispo.
 
-**Intégration dans les zones de publication existantes** :
-- `SocialWall.tsx` (posts + commentaires) — juste après `renderMentions(content)`
-- `src/routes/actus.tsx` (news_posts + commentaires)
-- `src/routes/chroniques.$slug.tsx` (corps d'article)
+2. **Colonne droite** :
+   - **Retirer** le `ShareButton` du header (le partage reste disponible sur chaque publication/podcast/émission, conforme au souhait).
+   - **Retirer** le `LanguageToggle` du header pour libérer de la place (à confirmer — voir question ci-dessous). Sinon on le déplace dans le drawer menu.
+   - Conserver `NotificationsBell` (cloche avec pastille).
+   - Bloc auth :
+     - **Déconnecté** : bouton texte `Connexion` (inchangé).
+     - **Connecté** : 
+       - `UserBadge` compact (pseudo + éventuel rôle) → lien vers `/u/$pseudo` (profil **public**), tronqué à `max-w-[7rem] sm:max-w-[10rem]`.
+       - Petit bouton icône bonhomme (`UserIcon`, `size-8` bordé) → lien vers `/profile/edit` (modifier le profil), avec tooltip « Modifier mon profil ».
+       - Sur mobile (< sm) : masquer le pseudo texte et n'afficher que le bouton bonhomme (qui pointe alors vers `/profile` pour rester utile) + garder un petit avatar rond cliquable vers le profil public si la place le permet.
+     - Admin : garder le badge Admin `lg:inline-flex` inchangé.
 
-## 2. Page Clip Addict `/clips`
+3. **Suppression de la flèche ↗** actuelle (remplacée par le pseudo lui-même qui est déjà le lien vers le profil public → plus lisible).
 
-**Nouvelle table `clip_entries`** :
-- `id`, `section` (`clips_actu` | `playlists_clips`), `title`, `body` (texte/article markdown), `video_url` (nullable), `playlist_url` (nullable), `video_urls` (text[] nullable — pour liste manuelle), `author_id`, `pinned_at`, `created_at`, `updated_at`
-- RLS : SELECT public (anon+authenticated), INSERT/UPDATE/DELETE `has_role(uid,'admin')` uniquement
-- GRANTs : SELECT anon + authenticated, ALL service_role, INSERT/UPDATE/DELETE authenticated
+## Fichier modifié
+- `src/components/AppShell.tsx` uniquement (imports : retirer `ShareButton`, `ArrowUpRight` ; garder `UserIcon`, `NotificationsBell`, `UserBadge`, `Tooltip*`).
 
-**Route `src/routes/clips.tsx`** :
-- Head SEO (title/description/og) — page publique
-- Deux sections empilées : "Clips Actu" puis "Playlists Clips"
-- Chaque carte = titre + corps + lecteur(s) vidéo intégré(s) via `UrlEmbeds` / `VideoPlayer`
-- Bouton admin "Nouvelle entrée" dans chaque section (visible si `isAdmin`)
-- Édition/suppression inline (Pencil/Trash) comme sur le mur social
+## Vérification
+- Playwright screenshots à 360 px, 390 px, 768 px, 1280 px pour confirmer :
+  - centrage du bloc logo+wordmark,
+  - non-débordement du pseudo long (troncature),
+  - cloche + bouton bonhomme toujours visibles sur iPhone SE (360 px).
 
-**Composant `src/components/clips/ClipEntryEditor.tsx`** :
-- Champs : titre, corps (textarea), URL vidéo principale, ou URL playlist, ou liste manuelle d'URLs (radio "Vidéo unique / Playlist / Liste manuelle")
-- Zod validation URL YouTube/Vimeo
-- Mutation Supabase + toast
-
-**Ajout au menu** `AppShell.tsx` : entrée "Clip Addict" avec l'icône `Film`.
-
-## 3. Technique
-
-- `youtube-embed-utils` : parseur maison (regex) qui renvoie `{ provider: 'youtube'|'vimeo', embedUrl, id, type: 'video'|'playlist' }`.
-- Aucune dépendance externe ajoutée (iframe natif, pas de `react-player`).
-- `link-preview` : parsing HTML léger avec regex ciblée sur `<meta property="og:*">` — pas de dépendance HTML parser.
-- Migration + GRANTs + RLS admin-only en un seul batch.
-- Types Supabase régénérés automatiquement après migration.
+## Question rapide avant build
+Le sélecteur de langue FR/EN : je le déplace dans le menu latéral (drawer) pour libérer la place dans le header, OK ? Sinon je le garde dans le header en le réduisant.
