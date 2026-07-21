@@ -249,8 +249,9 @@ export function OnboardingTour() {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={(o) => (!o ? finish() : setOpen(true))}>
-        <DialogContent className="sm:max-w-lg">
+      {phase !== "tour" && (
+        <Dialog open={open} onOpenChange={(o) => (!o ? finish() : setOpen(true))}>
+          <DialogContent className="sm:max-w-lg">
           {phase === "lang" && (
             <>
               <DialogHeader>
