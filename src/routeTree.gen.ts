@@ -24,6 +24,7 @@ import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as MagazinesRouteImport } from './routes/magazines'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
+import { Route as CoupsDeCoeurRouteImport } from './routes/coups-de-coeur'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ClipsRouteImport } from './routes/clips'
 import { Route as ChroniquesRouteImport } from './routes/chroniques'
@@ -136,6 +137,11 @@ const EmissionsRoute = EmissionsRouteImport.update({
 const DedicacesRoute = DedicacesRouteImport.update({
   id: '/dedicaces',
   path: '/dedicaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoupsDeCoeurRoute = CoupsDeCoeurRouteImport.update({
+  id: '/coups-de-coeur',
+  path: '/coups-de-coeur',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
+  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
+  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -458,6 +466,7 @@ export interface FileRoutesById {
   '/chroniques': typeof ChroniquesRouteWithChildren
   '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
+  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
@@ -514,6 +523,7 @@ export interface FileRouteTypes {
     | '/chroniques'
     | '/clips'
     | '/contact'
+    | '/coups-de-coeur'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -568,6 +578,7 @@ export interface FileRouteTypes {
     | '/chroniques'
     | '/clips'
     | '/contact'
+    | '/coups-de-coeur'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -623,6 +634,7 @@ export interface FileRouteTypes {
     | '/chroniques'
     | '/clips'
     | '/contact'
+    | '/coups-de-coeur'
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
@@ -679,6 +691,7 @@ export interface RootRouteChildren {
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
   ClipsRoute: typeof ClipsRouteWithChildren
   ContactRoute: typeof ContactRoute
+  CoupsDeCoeurRoute: typeof CoupsDeCoeurRoute
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
   MagazinesRoute: typeof MagazinesRouteWithChildren
@@ -815,6 +828,13 @@ declare module '@tanstack/react-router' {
       path: '/dedicaces'
       fullPath: '/dedicaces'
       preLoaderRoute: typeof DedicacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coups-de-coeur': {
+      id: '/coups-de-coeur'
+      path: '/coups-de-coeur'
+      fullPath: '/coups-de-coeur'
+      preLoaderRoute: typeof CoupsDeCoeurRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -1199,6 +1219,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChroniquesRoute: ChroniquesRouteWithChildren,
   ClipsRoute: ClipsRouteWithChildren,
   ContactRoute: ContactRoute,
+  CoupsDeCoeurRoute: CoupsDeCoeurRoute,
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
   MagazinesRoute: MagazinesRouteWithChildren,

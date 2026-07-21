@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -27,6 +27,7 @@ const NAV: { to: string; key: DictKey; icon: any }[] = [
   { to: "/top-users", key: "nav.topUsers", icon: Trophy },
   { to: "/podcasts", key: "nav.podcasts", icon: Headphones },
   { to: "/chroniques", key: "nav.reviews", icon: Disc3 },
+  { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart },
   { to: "/clips", key: "nav.clips", icon: Film },
   { to: "/magazines", key: "nav.magazines", icon: BookOpen },
   { to: "/dedicaces", key: "nav.dedications", icon: Send },

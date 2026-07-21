@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -49,7 +49,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "magazines", "reports", "deploy", "emails"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -93,6 +93,7 @@ function AdminPage() {
     { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
+    { key: "favorites" as const, label: "Coups de cœur", icon: Heart, desc: "Nos artistes chouchous" },
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
@@ -124,13 +125,14 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
-        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-10">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-11">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
           <TabsTrigger value="podcasts">Podcasts</TabsTrigger>
           <TabsTrigger value="shows">Émissions</TabsTrigger>
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
+          <TabsTrigger value="favorites">Coups de cœur</TabsTrigger>
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
@@ -142,6 +144,7 @@ function AdminPage() {
         <TabsContent value="podcasts" className="mt-4"><PodcastsAdmin /></TabsContent>
         <TabsContent value="shows" className="mt-4"><ShowsAdmin /></TabsContent>
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
+        <TabsContent value="favorites" className="mt-4"><FavoritesAdmin /></TabsContent>
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
@@ -259,6 +262,289 @@ function MagazinesAdmin() {
           );
         })}
       </ul>
+    </div>
+  );
+}
+
+// ---------- Coups de cœur ----------
+
+type FavoriteRow = {
+  id: string;
+  featured_date: string;
+  cover_url: string | null;
+  artist: string;
+  title: string;
+  kind: string;
+  comment: string;
+  discovery_story: string | null;
+  social_links: SocialLinks | null;
+  published: boolean;
+};
+
+const EMPTY_FAV = {
+  featured_date: new Date().toISOString().slice(0, 10),
+  cover_url: "",
+  artist: "",
+  title: "",
+  kind: "album",
+  comment: "",
+  discovery_story: "",
+  published: true,
+};
+
+function FavoritesAdmin() {
+  const qc = useQueryClient();
+  const { session } = useAuth();
+  const [form, setForm] = useState(EMPTY_FAV);
+  const [social, setSocial] = useState<SocialLinks>({});
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const { data: items = [] } = useQuery({
+    queryKey: ["admin-coups-de-coeur"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("coups_de_coeur" as any)
+        .select("*")
+        .order("featured_date", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as FavoriteRow[];
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async () => {
+      if (!session) throw new Error("Non authentifié");
+      if (!form.artist || !form.title || !form.comment)
+        throw new Error("Artiste, titre et commentaire requis");
+      const { error } = await supabase.from("coups_de_coeur" as any).insert({
+        featured_date: form.featured_date,
+        cover_url: form.cover_url || null,
+        artist: form.artist,
+        title: form.title,
+        kind: form.kind,
+        comment: form.comment,
+        discovery_story: form.discovery_story || null,
+        social_links: sanitizeLinks(social),
+        published: form.published,
+        author_id: session.user.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Coup de cœur publié");
+      setForm(EMPTY_FAV);
+      setSocial({});
+      qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
+      qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("coups_de_coeur" as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Supprimé");
+      qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
+      qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
+    },
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="card-brut space-y-2 p-3">
+        <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
+          Nouveau coup de cœur
+        </h3>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <Input
+            type="date"
+            value={form.featured_date}
+            onChange={(e) => setForm({ ...form, featured_date: e.target.value })}
+          />
+          <Select value={form.kind} onValueChange={(v) => setForm({ ...form, kind: v })}>
+            <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="album">Album</SelectItem>
+              <SelectItem value="ep">EP</SelectItem>
+              <SelectItem value="single">Chanson / Single</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Artiste *"
+            value={form.artist}
+            onChange={(e) => setForm({ ...form, artist: e.target.value })}
+          />
+          <Input
+            placeholder="Titre de l'album ou de la chanson *"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <div className="sm:col-span-2">
+            <ImageUploader
+              value={form.cover_url}
+              onChange={(v) => setForm({ ...form, cover_url: v })}
+              folder="covers"
+              label="Pochette"
+            />
+          </div>
+        </div>
+        <Textarea
+          rows={6}
+          placeholder="Notre coup de cœur — pourquoi on aime *"
+          value={form.comment}
+          onChange={(e) => setForm({ ...form, comment: e.target.value })}
+        />
+        <Textarea
+          rows={4}
+          placeholder="Comment on a découvert cet·te artiste (optionnel)"
+          value={form.discovery_story}
+          onChange={(e) => setForm({ ...form, discovery_story: e.target.value })}
+        />
+        <SocialLinksEditor value={social} onChange={setSocial} />
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-xs">
+            <Switch
+              checked={form.published}
+              onCheckedChange={(v) => setForm({ ...form, published: v })}
+            />
+            Publier immédiatement
+          </label>
+          <Button
+            size="sm"
+            onClick={() => create.mutate()}
+            disabled={!form.artist || !form.title || !form.comment || create.isPending}
+          >
+            {create.isPending ? "Publication…" : "Publier le coup de cœur"}
+          </Button>
+        </div>
+      </div>
+
+      <ul className="space-y-2">
+        {items.map((r) => (
+          <li key={r.id} className="card-brut p-3">
+            <div className="flex items-center gap-3">
+              <div className="size-14 shrink-0 overflow-hidden rounded bg-muted">
+                {r.cover_url ? (
+                  <img src={r.cover_url} alt={r.title} className="size-full object-cover" />
+                ) : (
+                  <div className="grid size-full place-items-center">
+                    <Heart className="size-5 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-bold">
+                  {r.title}{" "}
+                  <span className="font-normal text-muted-foreground">— {r.artist}</span>
+                </div>
+                <div className="truncate text-xs text-muted-foreground">
+                  {r.featured_date} · {r.published ? "publié" : "brouillon"}
+                </div>
+              </div>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => setEditId(editId === r.id ? null : r.id)}
+                aria-label="Modifier"
+              >
+                <Pencil className="size-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="destructive"
+                onClick={() => {
+                  if (confirm("Supprimer ce coup de cœur ?")) remove.mutate(r.id);
+                }}
+                aria-label="Supprimer"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+            {editId === r.id && (
+              <FavoriteEdit row={r} onDone={() => setEditId(null)} />
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({
+    featured_date: row.featured_date,
+    cover_url: row.cover_url ?? "",
+    artist: row.artist,
+    title: row.title,
+    kind: row.kind,
+    comment: row.comment,
+    discovery_story: row.discovery_story ?? "",
+    published: row.published,
+  });
+  const [social, setSocial] = useState<SocialLinks>(
+    (row.social_links as SocialLinks | null) ?? {},
+  );
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("coups_de_coeur" as any)
+        .update({
+          featured_date: f.featured_date,
+          cover_url: f.cover_url || null,
+          artist: f.artist,
+          title: f.title,
+          kind: f.kind,
+          comment: f.comment,
+          discovery_story: f.discovery_story || null,
+          social_links: sanitizeLinks(social),
+          published: f.published,
+        })
+        .eq("id", row.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Mis à jour");
+      qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
+      qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
+      onDone();
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <Input type="date" value={f.featured_date} onChange={(e) => setF({ ...f, featured_date: e.target.value })} />
+        <Select value={f.kind} onValueChange={(v) => setF({ ...f, kind: v })}>
+          <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="album">Album</SelectItem>
+            <SelectItem value="ep">EP</SelectItem>
+            <SelectItem value="single">Chanson / Single</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input placeholder="Artiste" value={f.artist} onChange={(e) => setF({ ...f, artist: e.target.value })} />
+        <Input placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+        <div className="sm:col-span-2">
+          <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
+        </div>
+      </div>
+      <Textarea rows={6} value={f.comment} onChange={(e) => setF({ ...f, comment: e.target.value })} />
+      <Textarea rows={4} placeholder="Comment on a découvert…" value={f.discovery_story} onChange={(e) => setF({ ...f, discovery_story: e.target.value })} />
+      <SocialLinksEditor value={social} onChange={setSocial} />
+      <div className="flex items-center gap-3">
+        <label className="flex items-center gap-2 text-xs">
+          <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
+          Publié
+        </label>
+        <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
+          {save.isPending ? "Enregistrement…" : "Enregistrer"}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onDone}>Annuler</Button>
+      </div>
     </div>
   );
 }
