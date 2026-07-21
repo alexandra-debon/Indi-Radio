@@ -14,7 +14,7 @@ import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/use-auth";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Loader2, ListChecks, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/lib/toast";
 import { TourSpotlight, type TourStep } from "./TourSpotlight";
@@ -164,7 +164,7 @@ export function OnboardingTour() {
   const { lang, setLang, t } = useLang();
   const { loading, session } = useAuth();
   const [open, setOpen] = useState(false);
-  const [phase, setPhase] = useState<"lang" | "welcome" | "tour" | "feedback" | "done">("lang");
+  const [phase, setPhase] = useState<"lang" | "welcome" | "tour" | "summary" | "feedback" | "done">("lang");
   const [step, setStep] = useState(0);
   const [rating, setRating] = useState<"up" | "down" | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState("");
@@ -204,7 +204,9 @@ export function OnboardingTour() {
   }, [loading, setLang]);
 
   useEffect(() => {
-    setTourDemoActive((phase === "welcome" || phase === "tour" || phase === "feedback") && open);
+    setTourDemoActive(
+      (phase === "welcome" || phase === "tour" || phase === "summary" || phase === "feedback") && open,
+    );
     return () => setTourDemoActive(false);
   }, [phase, open]);
 
