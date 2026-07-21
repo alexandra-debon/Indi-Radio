@@ -7,28 +7,6 @@ import { useT } from "@/lib/i18n";
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CONTACT = `${BASE_URL}${ogContact}`;
 
-const CONTACTS = [
-  {
-    icon: Users,
-    label: "Contact auditeurs & artistes",
-    email: "radio@indi-art-culture.com",
-    description: "Programmation, soumissions, diffusion et échanges",
-  },
-  {
-    icon: HelpCircle,
-    label: "En cas de difficulté",
-    email: "help@indi-art-culture.com",
-    description: "Assistance technique ou questions pratiques",
-  },
-  {
-    icon: Phone,
-    label: "Standard téléphonique",
-    href: "tel:+33481095152",
-    value: "+33 4 81 09 51 52",
-    description: "Du lundi au vendredi, de 10h à 18h",
-  },
-];
-
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
@@ -59,6 +37,27 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const t = useT();
+  const CONTACTS = [
+    {
+      icon: Users,
+      label: t("page.contact.listeners.label"),
+      email: "radio@indi-art-culture.com",
+      description: t("page.contact.listeners.desc"),
+    },
+    {
+      icon: HelpCircle,
+      label: t("page.contact.help.label"),
+      email: "help@indi-art-culture.com",
+      description: t("page.contact.help.desc"),
+    },
+    {
+      icon: Phone,
+      label: t("page.contact.phone.label"),
+      href: "tel:+33481095152",
+      value: "+33 4 81 09 51 52",
+      description: t("page.contact.phone.desc"),
+    },
+  ];
   return (
     <div className="space-y-6">
       <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-radio-yellow/15 via-background to-background p-5 shadow-lg">
@@ -70,7 +69,7 @@ function ContactPage() {
           <div>
             <h1 className="section-title">{t("page.contact.title")}</h1>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Une question, une suggestion, une soumission artiste ? On vous répond.
+              {t("page.contact.subtitle")}
             </p>
           </div>
         </div>
