@@ -47,6 +47,7 @@ function BadgesPage() {
   const { profile, session } = useAuth();
   const { lang, t } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
+  const dateFmt = lang === "en" ? "MMM d, yyyy" : "d MMM yyyy";
   const qc = useQueryClient();
   const [openKey, setOpenKey] = useState<string | null>(null);
 
@@ -183,7 +184,7 @@ function BadgesPage() {
                   </span>
                   {obtainedAt && (
                     <span className="font-semibold">
-                      {t("badges.obtainedOn")} {format(new Date(obtainedAt), "d MMM yyyy", { locale: dateLocale })}
+                      {t("badges.obtainedOn")} {format(new Date(obtainedAt), dateFmt, { locale: dateLocale })}
                     </span>
                   )}
                 </div>
@@ -254,7 +255,7 @@ function BadgesPage() {
 
                   {selectedData.obtainedAt && (
                     <div className="rounded-md border-2 border-primary bg-primary/5 p-2 text-xs font-semibold">
-                      {t("badges.obtainedOn")} {format(new Date(selectedData.obtainedAt), "d MMM yyyy", { locale: dateLocale })}
+                      {t("badges.obtainedOn")} {format(new Date(selectedData.obtainedAt), dateFmt, { locale: dateLocale })}
                     </div>
                   )}
 
@@ -272,7 +273,7 @@ function BadgesPage() {
                         {selectedData.recent.map((d, i) => (
                           <li key={i} className="flex items-center justify-between">
                             <span>#{selectedData.progress - i}</span>
-                            <span className="text-muted-foreground">{format(new Date(d), "d MMM yyyy", { locale: dateLocale })}</span>
+                            <span className="text-muted-foreground">{format(new Date(d), dateFmt, { locale: dateLocale })}</span>
                           </li>
                         ))}
                       </ul>
