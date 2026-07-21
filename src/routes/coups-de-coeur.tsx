@@ -65,6 +65,18 @@ function formatDate(d: string): string {
 }
 
 function CoupsDeCoeurPage() {
+  const queryClient = useQueryClient();
+  const [sortBy, setSortBy] = useState<"date" | "likes">("date");
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["coups-de-coeur"],
     queryFn: async () => {
@@ -79,6 +91,75 @@ function CoupsDeCoeurPage() {
       return (data ?? []) as unknown as CoupRow[];
     },
   });
+
+  const { data: likes = [] } = useQuery({
+    queryKey: ["coup-de-coeur-likes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .select("coup_id, user_id");
+      if (error) throw error;
+      return (data ?? []) as unknown as LikeRow[];
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel("coup-likes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "coup_de_coeur_likes" },
+        () => queryClient.invalidateQueries({ queryKey: ["coup-de-coeur-likes"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [queryClient]);
+
+  const likeStats = useMemo(() => {
+    const counts = new Map<string, number>();
+    const mine = new Set<string>();
+    for (const l of likes) {
+      counts.set(l.coup_id, (counts.get(l.coup_id) ?? 0) + 1);
+      if (userId && l.user_id === userId) mine.add(l.coup_id);
+    }
+    return { counts, mine };
+  }, [likes, userId]);
+
+  const sortedItems = useMemo(() => {
+    const arr = [...items];
+    if (sortBy === "likes") {
+      arr.sort((a, b) => {
+        const diff = (likeStats.counts.get(b.id) ?? 0) - (likeStats.counts.get(a.id) ?? 0);
+        if (diff !== 0) return diff;
+        return b.featured_date.localeCompare(a.featured_date);
+      });
+    }
+    return arr;
+  }, [items, sortBy, likeStats]);
+
+  async function toggleLike(coupId: string) {
+    if (!userId) {
+      toast.error("Connecte-toi pour aimer ce coup de cœur");
+      return;
+    }
+    const liked = likeStats.mine.has(coupId);
+    if (liked) {
+      const { error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .delete()
+        .eq("coup_id", coupId)
+        .eq("user_id", userId);
+      if (error) toast.error(error.message);
+    } else {
+      const { error } = await supabase
+        .from("coup_de_coeur_likes" as any)
+        .insert({ coup_id: coupId, user_id: userId });
+      if (error) toast.error(error.message);
+    }
+    queryClient.invalidateQueries({ queryKey: ["coup-de-coeur-likes"] });
+  }
 
   return (
     <div className="space-y-4">
