@@ -50,10 +50,12 @@ import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
+import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -269,6 +271,12 @@ const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAdminMessageEmailRoute =
+  ApiPublicAdminMessageEmailRouteImport.update({
+    id: '/api/public/admin-message-email',
+    path: '/api/public/admin-message-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedProfileEditRoute =
   AuthenticatedProfileEditRouteImport.update({
     id: '/profile/edit',
@@ -291,6 +299,12 @@ const AuthenticatedAdminSeoPreviewRoute =
   AuthenticatedAdminSeoPreviewRouteImport.update({
     id: '/seo-preview',
     path: '/seo-preview',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMessagesRoute =
+  AuthenticatedAdminMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
@@ -361,10 +375,12 @@ export interface FileRoutesByFullPath {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -413,10 +429,12 @@ export interface FileRoutesByTo {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -467,10 +485,12 @@ export interface FileRoutesById {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
+  '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
@@ -521,10 +541,12 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -573,10 +595,12 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/badges'
     | '/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -626,10 +650,12 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/_authenticated/admin/messages'
     | '/_authenticated/admin/seo-preview'
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
+    | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
@@ -672,6 +698,7 @@ export interface RootRouteChildren {
   PPostIdRoute: typeof PPostIdRoute
   TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
+  ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
@@ -972,6 +999,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/admin-message-email': {
+      id: '/api/public/admin-message-email'
+      path: '/api/public/admin-message-email'
+      fullPath: '/api/public/admin-message-email'
+      preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile/edit': {
       id: '/_authenticated/profile/edit'
       path: '/profile/edit'
@@ -998,6 +1032,13 @@ declare module '@tanstack/react-router' {
       path: '/seo-preview'
       fullPath: '/admin/seo-preview'
       preLoaderRoute: typeof AuthenticatedAdminSeoPreviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/messages': {
+      id: '/_authenticated/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/u/$pseudo/albums/$albumId': {
@@ -1046,10 +1087,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
 }
 
@@ -1175,6 +1218,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPostIdRoute: PPostIdRoute,
   TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
+  ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,

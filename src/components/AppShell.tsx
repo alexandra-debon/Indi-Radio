@@ -1,12 +1,13 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, ArrowUpRight } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, ArrowUpRight, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { ShareButton } from "@/components/share/ShareButton";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
+import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
@@ -223,6 +224,26 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Shield className="size-4" /> {t("nav.admin")}
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/admin/messages"
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
+                  pathname === "/admin/messages" && "bg-destructive text-destructive-foreground",
+                )}
+              >
+                <MessageCircle className="size-4" /> Messages auditeurs
+              </Link>
+            )}
+            {session && !isAdmin && (
+              <button
+                onClick={() => { setOpen(false); openAdminChat(); }}
+                className="mt-2 flex w-full items-center gap-3 rounded-md border border-border px-3 py-2.5 text-sm hover:bg-muted"
+              >
+                <MessageCircle className="size-4" /> {t("chat.menuItem")}
+              </button>
+            )}
           </nav>
           <div className="border-t border-border p-3">
             {session ? (
@@ -250,6 +271,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
       </div>
+      <AdminChatWidget />
     </div>
     </TooltipProvider>
   );
