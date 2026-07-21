@@ -4,7 +4,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass, Heart } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -154,6 +154,12 @@ function ProfilePage() {
           className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
         >
           <Pencil className="size-4" /> {t("profile.albums")}
+        </Link>
+        <Link
+          to="/profile/likes"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-md border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest hover:bg-muted"
+        >
+          <Heart className="size-4" /> Mes likes
         </Link>
       </div>
 
