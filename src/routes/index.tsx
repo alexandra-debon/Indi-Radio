@@ -4,8 +4,9 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
-import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users } from "lucide-react";
+import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users, Map } from "lucide-react";
 import { Mail } from "lucide-react";
+import { openOnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { LikeButton } from "@/components/radio/LikeButton";
 import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
@@ -130,6 +131,15 @@ function LivePage() {
               {t("live.noAdsNoNews")}
             </span>
             <UserCountBadge />
+            <button
+              type="button"
+              onClick={() => openOnboardingTour(lang)}
+              aria-label={t("tour.aria")}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/70 bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary transition hover:-translate-y-0.5 hover:bg-primary/20"
+            >
+              <Map className="size-3" aria-hidden="true" />
+              {t("tour.open")}
+            </button>
           </div>
         </div>
         <div className="card-brut relative overflow-hidden p-4">
