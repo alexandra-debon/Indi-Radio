@@ -444,6 +444,8 @@ export const dict = {
     "share.copy": "Copy link",
     "share.copied": "Link copied!",
     "share.copyError": "Unable to copy the link",
+    "live.shareTrack": "Share this track",
+    "live.shareText": "Listen to {title} live on InDi RaDio",
     "live.indieNoAds": "100% indie music radio",
     "live.noAdsNoNews": "No ads, no news",
     "live.registered": "registered",
