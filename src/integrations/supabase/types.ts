@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_messages: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_from_admin: boolean
+          read_at: string | null
+          sender_id: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_from_admin?: boolean
+          read_at?: string | null
+          sender_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_from_admin?: boolean
+          read_at?: string | null
+          sender_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       album_reports: {
         Row: {
           album_id: string
