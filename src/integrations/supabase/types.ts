@@ -279,6 +279,8 @@ export type Database = {
           content_type: string
           created_at: string
           id: string
+          image_captions: string[]
+          image_urls: string[]
           parent_id: string | null
           updated_at: string
         }
@@ -289,6 +291,8 @@ export type Database = {
           content_type: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           parent_id?: string | null
           updated_at?: string
         }
@@ -299,6 +303,8 @@ export type Database = {
           content_type?: string
           created_at?: string
           id?: string
+          image_captions?: string[]
+          image_urls?: string[]
           parent_id?: string | null
           updated_at?: string
         }
