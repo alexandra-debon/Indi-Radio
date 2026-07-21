@@ -281,7 +281,7 @@ function BadgesPage() {
         {profile.badges && profile.badges.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {profile.badges.map((b) => (
-              <span key={b} className="rounded-md border-2 border-border bg-primary px-2 py-1 text-[11px] font-black uppercase tracking-widest text-primary-foreground">
+              <span key={b} className="rounded-md border-2 border-border bg-primary px-2 py-1 text-[11px] font-black uppercase tracking-widest text-black">
                 {b}
               </span>
             ))}
