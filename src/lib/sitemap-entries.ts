@@ -35,13 +35,59 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       process.env.SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
-    const { data } = await sb
+    // Chroniques (album reviews, published)
+    const { data: reviews } = await sb
       .from("album_reviews")
-      .select("slug, updated_at")
+      .select("slug")
       .eq("published", true)
       .order("updated_at", { ascending: false });
-    for (const r of data ?? []) {
+    for (const r of reviews ?? []) {
       entries.push({ path: `/chroniques/${r.slug}`, changefreq: "monthly", priority: "0.6" });
+    }
+    // News posts (Indi Rézo)
+    const { data: news } = await sb
+      .from("news_posts")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    for (const r of news ?? []) {
+      entries.push({ path: `/actus/${r.id}`, changefreq: "weekly", priority: "0.6" });
+    }
+    // Shows (emissions, podcasts, chroniques hosts, animateurs)
+    const { data: shows } = await sb
+      .from("shows")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    for (const r of shows ?? []) {
+      entries.push({ path: `/emissions/${r.id}`, changefreq: "weekly", priority: "0.6" });
+    }
+    // Episodes
+    const { data: episodes } = await sb
+      .from("episodes")
+      .select("id")
+      .order("published_at", { ascending: false })
+      .limit(5000);
+    for (const r of episodes ?? []) {
+      entries.push({ path: `/episodes/${r.id}`, changefreq: "monthly", priority: "0.5" });
+    }
+    // Magazines
+    const { data: mags } = await sb
+      .from("magazine_entries")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    for (const r of mags ?? []) {
+      entries.push({ path: `/magazines/${r.id}`, changefreq: "monthly", priority: "0.5" });
+    }
+    // Clips
+    const { data: clips } = await sb
+      .from("clip_entries")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    for (const r of clips ?? []) {
+      entries.push({ path: `/clips/${r.id}`, changefreq: "monthly", priority: "0.5" });
     }
   } catch {
     /* fail-soft */
