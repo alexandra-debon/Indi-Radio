@@ -8,6 +8,7 @@ import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLink
 import { Button } from "@/components/ui/button";
 import { StarRating } from "@/components/rating/StarRating";
 import { toast } from "sonner";
+import { CoupComments } from "@/components/coups/CoupComments";
 
 type CoupRow = {
   id: string;
@@ -300,6 +301,8 @@ function CoupsDeCoeurPage() {
                 {c.social_links && (
                   <SocialLinksBar links={c.social_links} className="pt-1" />
                 )}
+
+                <CoupComments coupId={c.id} />
               </div>
             </div>
           </li>
