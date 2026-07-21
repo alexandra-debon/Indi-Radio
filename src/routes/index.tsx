@@ -116,9 +116,10 @@ function LivePage() {
 
       {/* NOW PLAYING hero */}
       <section className="space-y-3">
-        <div className="grid grid-cols-[minmax(0,10.3rem)_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
-          <h1 className="section-title max-w-[10rem] shrink-0 text-[1.1rem] leading-none sm:max-w-[18.5rem] sm:text-[1.35rem]">
-            {t("page.live.now")}
+        <div className="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[19rem_minmax(0,1fr)]">
+          <h1 className="section-title w-[10rem] shrink-0 whitespace-normal text-[1.05rem] leading-none sm:w-[18.5rem] sm:text-[1.35rem]">
+            <span className="block">Musique</span>
+            <span className="block">en cours</span>
           </h1>
           <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-950">
