@@ -20,7 +20,7 @@ type Msg = {
 const BUCKET = "content-images";
 
 export function AdminChatWidget() {
-  const { session, profile, isAdmin } = useAuth();
+  const { session, isAdmin } = useAuth();
   const t = useT();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([]);
