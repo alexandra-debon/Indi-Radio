@@ -120,11 +120,11 @@ export function NotificationsBell() {
   const unread = notifs.filter((n) => !n.read_at).length;
 
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={`Notifications${unread ? ` (${unread} non lues)` : ""}`}
-        className="relative grid size-9 place-items-center rounded-md border border-border hover:bg-muted"
+        className="relative grid size-9 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
       >
         <Bell className="size-4" />
         {unread > 0 && (
