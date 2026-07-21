@@ -84,6 +84,8 @@ export const dict = {
     "badges.toast.unlocked": "Succès débloqué !",
     "badges.toast.levelUp": "Niveau supérieur !",
     "badges.toast.levelReached": "Tu viens d'atteindre le niveau",
+    "badges.a11y.gridLabel": "Grille des succès. Utilise les flèches pour naviguer, Entrée pour ouvrir.",
+    "badges.a11y.announcer": "Annonces des succès et niveaux",
     "ach.post_1.label": "Première publication",
     "ach.post_1.desc": "Publier ton premier message sur le mur.",
     "ach.post_10.label": "Plume active",
