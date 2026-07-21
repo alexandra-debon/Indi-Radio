@@ -67,6 +67,11 @@ export function MiniPlayer() {
                 </span>
               )}
               <div className="truncate text-sm font-semibold">{currentTrack?.title ?? "En direct"}</div>
+              {playing && currentTrack && (
+                <span className="shrink-0 text-[11px] font-medium tabular-nums text-muted-foreground">
+                  {formatElapsed(elapsedSeconds)}
+                </span>
+              )}
             </div>
             <div className="truncate text-xs text-muted-foreground">
               {currentTrack?.artist ?? "Indi Radio · live"}
