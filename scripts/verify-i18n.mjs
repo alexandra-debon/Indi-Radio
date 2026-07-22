@@ -21,6 +21,65 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const DICT_PATH = join(ROOT, "src/lib/i18n/dict.ts");
 const SRC_DIR = join(ROOT, "src");
 
+// Files currently allowed to contain raw French JSX text (grandfathered).
+// DO NOT extend this list — translate new UI strings via useT()/dict instead.
+// To remove a file: replace its French text with t("...") lookups.
+const FRENCH_JSX_GRANDFATHERED = new Set([
+  "src/components/AuthDialog.tsx",
+  "src/components/coups/CoupComments.tsx",
+  "src/components/media/MultiImageUploader.tsx",
+  "src/components/onboarding/OnboardingTour.tsx",
+  "src/components/EmailVerificationBanner.tsx",
+  "src/components/IosInstallHint.tsx",
+  "src/components/NotificationPreferences.tsx",
+  "src/components/about/IndiLinksBar.tsx",
+  "src/components/admin/DeployCheckPanel.tsx",
+  "src/components/admin/EmailStatusPanel.tsx",
+  "src/components/clips/ClipEntryEditor.tsx",
+  "src/components/media/ImageUploader.tsx",
+  "src/components/moderation/ReportAlbumButton.tsx",
+  "src/components/moderation/ReportImageButton.tsx",
+  "src/components/social/SocialLinksBar.tsx",
+  "src/components/wall/InlineEditable.tsx",
+  "src/components/wall/SocialWall.tsx",
+  "src/routes/_authenticated/admin.messages.tsx",
+  "src/routes/_authenticated/admin.seo-preview.tsx",
+  "src/routes/_authenticated/admin.tsx",
+  "src/routes/_authenticated/notif-test.tsx",
+  "src/routes/_authenticated/profile.albums.tsx",
+  "src/routes/_authenticated/profile.edit.tsx",
+  "src/routes/_authenticated/profile.likes.tsx",
+  "src/routes/actus.$postId.tsx",
+  "src/routes/chroniques.$slug.tsx",
+  "src/routes/clips.$clipId.tsx",
+  "src/routes/coups-de-coeur.tsx",
+  "src/routes/emissions.$showId.tsx",
+  "src/routes/episodes.$episodeId.tsx",
+  "src/routes/magazines.$magazineId.tsx",
+  "src/routes/newsletter.tsx",
+  "src/routes/p.$postId.tsx",
+  "src/routes/privacy.tsx",
+  "src/routes/tag.$tag.tsx",
+  "src/routes/terms.tsx",
+]);
+
+// Matches JSX text content between tags containing French-only accented chars.
+// Skips {…} expression children (those go through t() or bilingual logic).
+const FRENCH_JSX_RE = />[^<>{}]*[éèêëàâçùûôïîÉÈÊËÀÂÇÙÛÔÏÎœŒ][^<>{}]*</;
+
+function scanFrenchJsx(files) {
+  const offenders = [];
+  const targetPrefixes = [join(ROOT, "src/routes"), join(ROOT, "src/components")];
+  for (const f of files) {
+    if (!targetPrefixes.some((p) => f.startsWith(p))) continue;
+    const rel = f.replace(ROOT, "");
+    if (FRENCH_JSX_GRANDFATHERED.has(rel)) continue;
+    const src = readFileSync(f, "utf8");
+    if (FRENCH_JSX_RE.test(src)) offenders.push(rel);
+  }
+  return offenders;
+}
+
 // Values that are legitimately identical in FR and EN (brand names, tokens,
 // mostly-punctuation strings, universal words). Extend as needed.
 const ALLOWED_IDENTICAL = new Set([
@@ -37,6 +96,12 @@ const ALLOWED_IDENTICAL = new Set([
   "page.contact.title", "page.top.title",
   "page.clips.title", "page.podcasts.title",
   "page.top.kind.podcast",
+  // Proper nouns / short tokens legitimately identical FR/EN.
+  "profile.pts", "profile.mentions",
+  "tour.open",
+  "chat.title", "chat.openBubble", "chat.menuItem",
+  "upub.teamIndi", "upub.points", "upub.max", "upub.badges",
+  "upub.photo", "upub.photos",
 ]);
 
 function parseDict(src) {
@@ -110,6 +175,7 @@ function main() {
   }
 
   const orphans = Object.keys(fr).filter((k) => !referenced.has(k));
+  const frenchJsx = scanFrenchJsx(files);
 
   const report = [];
   report.push(`i18n verify — FR keys: ${Object.keys(fr).length}, EN keys: ${Object.keys(en).length}\n`);
@@ -125,11 +191,16 @@ function main() {
     (k) => `${k}  fr=${JSON.stringify(fr[k])}`);
   section("Keys referenced in code but not in dictionary", missingKeys,
     ({ key, files }) => `${key}  (used in ${files.length} file${files.length > 1 ? "s" : ""}, e.g. ${files[0].replace(ROOT, "")})`);
+  section(
+    "Raw French JSX text in routes/components (wrap in t()/useT())",
+    frenchJsx,
+    (f) => f,
+  );
   section("Orphan keys (defined but not referenced — warning only)", orphans, (k) => k);
 
   console.log(report.join("\n"));
 
-  const hardErrors = missingEn.length + untranslated.length + missingKeys.length;
+  const hardErrors = missingEn.length + untranslated.length + missingKeys.length + frenchJsx.length;
   if (hardErrors > 0) {
     console.error(`\n✗ i18n verify failed: ${hardErrors} issue(s).`);
     process.exit(1);

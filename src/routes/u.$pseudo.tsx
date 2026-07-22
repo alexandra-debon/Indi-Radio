@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useT, useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/u/$pseudo")({
   head: ({ params }) => ({
@@ -21,8 +22,13 @@ export const Route = createFileRoute("/u/$pseudo")({
   }),
   component: UserProfilePage,
   errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,
-  notFoundComponent: () => <div className="p-4">Utilisateur introuvable.</div>,
+  notFoundComponent: () => <UserNotFound />,
 });
+
+function UserNotFound() {
+  const t = useT();
+  return <div className="p-4">{t("upub.notFound")}</div>;
+}
 
 type Profile = {
   id: string;
@@ -44,8 +50,6 @@ type Stats = { posts: number; comments: number; likesGiven: number };
 
 type AchievementDef = {
   key: string;
-  label: string;
-  description: string;
   action: "post" | "comment" | "dedicace" | "like_received" | "presence";
   threshold: number;
   icon: React.ComponentType<{ className?: string }>;
@@ -53,18 +57,18 @@ type AchievementDef = {
 };
 
 const ACHIEVEMENTS: AchievementDef[] = [
-  { key: "post_1", label: "Première publication", description: "Publier son premier message sur le mur.", action: "post", threshold: 1, icon: FileText },
-  { key: "post_10", label: "Plume active", description: "Publier 10 messages.", action: "post", threshold: 10, icon: FileText },
-  { key: "post_50", label: "Voix de la commu", description: "Publier 50 messages.", action: "post", threshold: 50, icon: FileText },
-  { key: "comment_1", label: "Premier commentaire", description: "Commenter pour la première fois.", action: "comment", threshold: 1, icon: MessageSquare },
-  { key: "comment_25", label: "Bavard·e", description: "Poster 25 commentaires.", action: "comment", threshold: 25, icon: MessageSquare },
-  { key: "comment_100", label: "Pilier des échanges", description: "Poster 100 commentaires.", action: "comment", threshold: 100, icon: MessageSquare },
-  { key: "dedicace_1", label: "Première dédicace", description: "Envoyer une première dédicace à l'antenne.", action: "dedicace", threshold: 1, icon: Mic2 },
-  { key: "dedicace_10", label: "Fan de l'antenne", description: "Envoyer 10 dédicaces.", action: "dedicace", threshold: 10, icon: Mic2 },
-  { key: "like_10", label: "Apprécié·e", description: "Recevoir 10 likes sur ses publications.", action: "like_received", threshold: 10, icon: Heart },
-  { key: "like_50", label: "Adoré·e", description: "Recevoir 50 likes sur ses publications.", action: "like_received", threshold: 50, icon: Heart },
-  { key: "presence_7", label: "Régulier·e", description: "Se connecter 7 jours différents.", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
-  { key: "presence_30", label: "Pilier de la station", description: "Se connecter 30 jours différents.", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
+  { key: "post_1", action: "post", threshold: 1, icon: FileText },
+  { key: "post_10", action: "post", threshold: 10, icon: FileText },
+  { key: "post_50", action: "post", threshold: 50, icon: FileText },
+  { key: "comment_1", action: "comment", threshold: 1, icon: MessageSquare },
+  { key: "comment_25", action: "comment", threshold: 25, icon: MessageSquare },
+  { key: "comment_100", action: "comment", threshold: 100, icon: MessageSquare },
+  { key: "dedicace_1", action: "dedicace", threshold: 1, icon: Mic2 },
+  { key: "dedicace_10", action: "dedicace", threshold: 10, icon: Mic2 },
+  { key: "like_10", action: "like_received", threshold: 10, icon: Heart },
+  { key: "like_50", action: "like_received", threshold: 50, icon: Heart },
+  { key: "presence_7", action: "presence", threshold: 7, icon: CalendarCheck, unique_days: true },
+  { key: "presence_30", action: "presence", threshold: 30, icon: CalendarCheck, unique_days: true },
 ];
 
 async function fetchAchievements(userId: string) {
@@ -145,6 +149,7 @@ async function fetchAlbums(ownerId: string): Promise<AlbumSummary[]> {
 }
 
 function LevelBar({ points, level }: { points: number; level: number }) {
+  const t = useT();
   const thresholds = [0, 20, 60, 150, 300];
   const nextIdx = Math.min(level, 4);
   const base = thresholds[nextIdx - 1] ?? 0;
@@ -153,8 +158,8 @@ function LevelBar({ points, level }: { points: number; level: number }) {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-[10px] uppercase tracking-wide text-muted-foreground">
-        <span>Niveau {level}</span>
-        <span>{level >= 5 ? "MAX" : `${points} / ${next} pts`}</span>
+        <span>{t("upub.level")} {level}</span>
+        <span>{level >= 5 ? t("upub.max") : `${points} / ${next} ${t("profile.pts")}`}</span>
       </div>
       <div className="h-3 w-full border-2 border-border bg-radio-surface">
         <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
@@ -165,6 +170,8 @@ function LevelBar({ points, level }: { points: number; level: number }) {
 
 function UserProfilePage() {
   const { pseudo } = Route.useParams();
+  const t = useT();
+  const { lang } = useLang();
   const { data, isLoading, error } = useQuery({
     queryKey: ["profile", pseudo],
     queryFn: () => fetchProfile(pseudo),
@@ -182,15 +189,15 @@ function UserProfilePage() {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const selected = achievements.find((a) => a.key === openKey) ?? null;
 
-  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">Chargement…</div>;
-  if (error || !data) return <div className="p-4">Utilisateur introuvable. <Link to="/top-users" className="underline">Retour</Link></div>;
+  if (isLoading) return <div className="p-4 text-sm text-muted-foreground">{t("upub.loading")}</div>;
+  if (error || !data) return <div className="p-4">{t("upub.notFound")} <Link to="/top-users" className="underline">{t("upub.back")}</Link></div>;
 
   const { profile, stats } = data;
-  const joined = new Date(profile.created_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long" });
+  const joined = new Date(profile.created_at).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { year: "numeric", month: "long" });
 
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-4">
-      <Link to="/top-users" className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground">← Top utilisateurs</Link>
+      <Link to="/top-users" className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground">{t("upub.backTop")}</Link>
 
       <div className="card-brut p-4 space-y-4">
         <div className="flex items-center gap-4">
@@ -204,17 +211,17 @@ function UserProfilePage() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <h1 className="truncate text-2xl font-black">@{profile.pseudo}</h1>
-              {profile.is_certified && <BadgeCheck className="size-5 text-primary" aria-label="Certifié" />}
+              {profile.is_certified && <BadgeCheck className="size-5 text-primary" aria-label={t("upub.certified")} />}
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
               <span>{profile.role}</span>
-              {profile.is_team_indi && <span className="border border-border bg-primary px-1.5 py-0.5 text-foreground">Team InDi</span>}
-              <span>· Membre depuis {joined}</span>
+              {profile.is_team_indi && <span className="border border-border bg-primary px-1.5 py-0.5 text-foreground">{t("upub.teamIndi")}</span>}
+              <span>· {t("upub.memberSince")} {joined}</span>
             </div>
           </div>
           <div className="flex flex-col items-end">
             <span className="text-3xl font-black tabular-nums text-primary">{profile.points}</span>
-            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">points</span>
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("upub.points")}</span>
           </div>
         </div>
 
@@ -249,17 +256,17 @@ function UserProfilePage() {
       )}
 
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={FileText} label="Publications" value={stats.posts} />
-        <StatCard icon={MessageSquare} label="Commentaires" value={stats.comments} />
-        <StatCard icon={Heart} label="Likes donnés" value={stats.likesGiven} />
+        <StatCard icon={FileText} label={t("upub.stats.posts")} value={stats.posts} />
+        <StatCard icon={MessageSquare} label={t("upub.stats.comments")} value={stats.comments} />
+        <StatCard icon={Heart} label={t("upub.stats.likes")} value={stats.likesGiven} />
       </div>
 
       <div className="card-brut p-4">
         <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-          <Trophy className="size-4 text-primary" /> Badges
+          <Trophy className="size-4 text-primary" /> {t("upub.badges")}
         </h2>
         {profile.badges.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucun badge pour le moment.</p>
+          <p className="text-sm text-muted-foreground">{t("upub.badgesEmpty")}</p>
         ) : (
           <ul className="flex flex-wrap gap-2">
             {profile.badges.map((b) => (
@@ -273,7 +280,7 @@ function UserProfilePage() {
 
       <div className="card-brut p-4">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-          <Award className="size-4 text-primary" /> Succès
+          <Award className="size-4 text-primary" /> {t("upub.achievements")}
         </h2>
         <ul className="grid gap-2 sm:grid-cols-2">
           {achievements.map((a) => {
@@ -291,7 +298,7 @@ function UserProfilePage() {
                     {a.unlocked ? <Icon className="size-4" /> : <Lock className="size-4" />}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-black">{a.label}</div>
+                    <div className="text-sm font-black">{t(`ach.${a.key}.label` as never)}</div>
                     <div className="text-[11px] text-muted-foreground">{Math.min(a.progress, a.threshold)} / {a.threshold}</div>
                   </div>
                 </div>
@@ -315,7 +322,7 @@ function UserProfilePage() {
               ? (() => {
                   const d = new Date(selected.obtainedAt);
                   const utc = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
-                  return format(utc, "d MMM yyyy", { locale: fr });
+                  return format(utc, "d MMM yyyy", { locale: lang === "en" ? enUS : fr });
                 })()
               : null;
             return (
@@ -326,38 +333,38 @@ function UserProfilePage() {
                       {selected.unlocked ? <Icon className="size-6" /> : <Lock className="size-6" />}
                     </div>
                     <div className="min-w-0 flex-1 text-left">
-                      <DialogTitle className="text-base font-black">{selected.label}</DialogTitle>
-                      <DialogDescription className="text-xs">{selected.description}</DialogDescription>
+                      <DialogTitle className="text-base font-black">{t(`ach.${selected.key}.label` as never)}</DialogTitle>
+                      <DialogDescription className="text-xs">{t(`ach.${selected.key}.desc` as never)}</DialogDescription>
                     </div>
                   </div>
                 </DialogHeader>
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest">
-                    <span className="text-muted-foreground">Statut</span>
+                    <span className="text-muted-foreground">{t("upub.status")}</span>
                     <span className={selected.unlocked ? "text-primary" : "text-muted-foreground"}>
-                      {selected.unlocked ? "Débloqué" : "Verrouillé"}
+                      {selected.unlocked ? t("upub.unlocked") : t("upub.locked")}
                     </span>
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-baseline justify-between text-xs">
-                      <span className="font-bold">Progression</span>
+                      <span className="font-bold">{t("upub.progress")}</span>
                       <span className="text-muted-foreground">{Math.min(selected.progress, selected.threshold)} / {selected.threshold}</span>
                     </div>
                     <div className="h-2 w-full border-2 border-border bg-radio-surface">
                       <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                     </div>
                     {!selected.unlocked && (
-                      <div className="text-[11px] text-muted-foreground">Reste : {remaining}</div>
+                      <div className="text-[11px] text-muted-foreground">{t("upub.remaining")} : {remaining}</div>
                     )}
                   </div>
                   {obtained && (
                     <div className="rounded-md border-2 border-primary bg-primary/5 p-2 text-xs font-semibold">
-                      Débloqué le {obtained}
+                      {t("upub.unlockedOn")} {obtained}
                     </div>
                   )}
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpenKey(null)}>Fermer</Button>
+                  <Button variant="outline" onClick={() => setOpenKey(null)}>{t("upub.close")}</Button>
                 </DialogFooter>
               </>
             );
@@ -367,10 +374,10 @@ function UserProfilePage() {
 
       <div className="card-brut p-4">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-          <Images className="size-4 text-primary" /> Albums photos
+          <Images className="size-4 text-primary" /> {t("upub.albums")}
         </h2>
         {albums.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucun album partagé pour le moment.</p>
+          <p className="text-sm text-muted-foreground">{t("upub.albumsEmpty")}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {albums.map((a) => (
@@ -389,7 +396,7 @@ function UserProfilePage() {
                 </div>
                 <div className="p-2">
                   <div className="truncate text-sm font-bold">{a.title}</div>
-                  <div className="text-[11px] text-muted-foreground">{a.count} photo{a.count > 1 ? "s" : ""}</div>
+                  <div className="text-[11px] text-muted-foreground">{a.count} {a.count > 1 ? t("upub.photos") : t("upub.photo")}</div>
                 </div>
               </Link>
             ))}
