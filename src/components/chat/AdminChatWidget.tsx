@@ -67,6 +67,11 @@ export function AdminChatWidget() {
   // Set once we've applied the saved offset for the current thread, so
   // subsequent renders don't fight the user's manual scrolling.
   const scrollRestored = useRef(false);
+  // Live browser Notification objects we spawned for unread admin messages.
+  // Kept so we can `close()` them the moment the reader marks the thread as
+  // read (in this tab or another one via Realtime), keeping the OS badge in
+  // sync with the in-app counter.
+  const liveNotifications = useRef<Notification[]>([]);
 
   // Open handler via global event (from profile menu / MiniPlayer trigger).
   // We also listen on `document` because some environments (older WebViews,
@@ -85,6 +90,37 @@ export function AdminChatWidget() {
       if ((window as any).__indiOpenAdminChat) delete (window as any).__indiOpenAdminChat;
     };
   }, []);
+
+  // Ask for browser Notification permission the first time the widget
+  // mounts for a signed-in user. Silently no-ops on unsupported platforms
+  // (iOS Safari non-PWA, older WebViews) and when the user already
+  // decided (granted/denied).
+  useEffect(() => {
+    if (!uid) return;
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (Notification.permission === "default") {
+      try { Notification.requestPermission().catch(() => {}); } catch { /* noop */ }
+    }
+  }, [uid]);
+
+  // Close every system notification we opened. Called when the reader
+  // reaches the bottom, hits "Mark as read", or when another tab updates
+  // `read_at` via Realtime (unread drops to 0).
+  function closeSystemNotifications() {
+    for (const n of liveNotifications.current) {
+      try { n.close(); } catch { /* noop */ }
+    }
+    liveNotifications.current = [];
+  }
+
+  // Whenever the derived unread count returns to zero, tear down any
+  // lingering OS notifications so the badge in the tray matches the app.
+  useEffect(() => {
+    if (unread === 0) closeSystemNotifications();
+  }, [unread]);
+
+  // Close notifications on unmount to avoid stale entries.
+  useEffect(() => () => closeSystemNotifications(), []);
 
   // Load thread + subscribe
   useEffect(() => {
@@ -114,6 +150,31 @@ export function AdminChatWidget() {
             if (isAdminMsg && open && !stickToBottom.current) {
               setShowJump(true);
               setPendingCount(c => c + 1);
+            }
+            // Fire an OS notification when the user isn't actively
+            // reading this thread: chat closed, tab hidden, or scrolled
+            // away from the bottom. The `tag` collapses repeats into a
+            // single tray entry so we don't spam the notification centre.
+            if (isAdminMsg && typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+              const shouldNotify = !open || document.visibilityState === "hidden" || !stickToBottom.current;
+              if (shouldNotify) {
+                try {
+                  const msg = payload.new as Msg;
+                  const body = msg.body?.trim() || (msg.image_url ? "📷" : "…");
+                  const n = new Notification(t("chat.notifTitle"), {
+                    body,
+                    tag: "indi-admin-chat",
+                    icon: "/favicon.ico",
+                    silent: false,
+                  });
+                  n.onclick = () => {
+                    try { window.focus(); } catch { /* noop */ }
+                    setOpen(true);
+                    n.close();
+                  };
+                  liveNotifications.current.push(n);
+                } catch { /* noop */ }
+              }
             }
             return next;
           }
