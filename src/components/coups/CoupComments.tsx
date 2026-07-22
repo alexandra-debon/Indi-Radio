@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 type Props = { coupId: string };
 
@@ -180,7 +181,14 @@ export function CoupComments({ coupId }: Props) {
                       {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
-                  <p className="mt-1 whitespace-pre-wrap text-foreground/90">{c.body}</p>
+                  <TranslatedText
+                    entityType="content_comment"
+                    entityKey={c.id}
+                    field="body"
+                    text={c.body}
+                    as="p"
+                    className="mt-1 whitespace-pre-wrap text-foreground/90"
+                  />
                   <div className="mt-1 flex items-center gap-3">
                     {session && (
                       <button
@@ -236,7 +244,14 @@ export function CoupComments({ coupId }: Props) {
                               {new Date(r.created_at).toLocaleDateString("fr-FR")}
                             </span>
                           </div>
-                          <p className="mt-1 whitespace-pre-wrap text-foreground/90">{r.body}</p>
+                          <TranslatedText
+                            entityType="content_comment"
+                            entityKey={r.id}
+                            field="body"
+                            text={r.body}
+                            as="p"
+                            className="mt-1 whitespace-pre-wrap text-foreground/90"
+                          />
                           <div className="mt-1 flex items-center gap-3">
                             {session?.user.id === r.author_id && (
                               <button
