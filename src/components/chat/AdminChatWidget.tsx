@@ -38,7 +38,11 @@ export function AdminChatWidget() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const [unread, setUnread] = useState(0);
+  // Unread is derived from `msgs` (admin messages with no read_at). Deriving
+  // rather than mirroring keeps the badge in sync across tabs automatically:
+  // whenever any tab marks messages as read, the resulting UPDATE arrives via
+  // Realtime in every other tab, `msgs` refreshes, and the count follows.
+  const unread = msgs.filter(m => m.is_from_admin && !m.read_at).length;
   const fileRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -88,7 +92,6 @@ export function AdminChatWidget() {
         .order("created_at", { ascending: true });
       if (!cancelled) {
         setMsgs((data ?? []) as Msg[]);
-        setUnread(((data ?? []) as Msg[]).filter(m => m.is_from_admin && !m.read_at).length);
       }
     })();
 
@@ -100,15 +103,9 @@ export function AdminChatWidget() {
             if (prev.some(m => m.id === payload.new.id)) return prev;
             const next = [...prev, payload.new as Msg];
             const isAdminMsg = (payload.new as Msg).is_from_admin;
-            // Bump the unread counter whenever an admin message arrives
-            // while the reader can't see the bottom — either the widget
-            // is closed, or it's open but scrolled up.
-            if (isAdminMsg && (!open || !stickToBottom.current)) {
-              setUnread(u => u + 1);
-            }
             // If the widget is open but scrolled up, surface the
             // jump-to-latest pill as well.
-            if (open && !stickToBottom.current) {
+            if (isAdminMsg && open && !stickToBottom.current) {
               setShowJump(true);
               setPendingCount(c => c + 1);
             }
@@ -201,12 +198,17 @@ export function AdminChatWidget() {
   function markVisibleAsRead() {
     if (!uid) return;
     const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
-    if (unreadIds.length === 0) { setUnread(0); return; }
+    if (unreadIds.length === 0) return;
+    const nowIso = new Date().toISOString();
+    // Optimistically flip `read_at` locally so the badge drops immediately
+    // in this tab; the Realtime UPDATE propagates the same change to other
+    // tabs, keeping the derived unread count aligned everywhere.
+    setMsgs(prev => prev.map(m => (unreadIds.includes(m.id) ? { ...m, read_at: nowIso } : m)));
     (supabase as any)
       .from("admin_messages")
-      .update({ read_at: new Date().toISOString() })
+      .update({ read_at: nowIso })
       .in("id", unreadIds)
-      .then(() => setUnread(0));
+      .then(() => {});
   }
 
   // Broadcast unread count so external UI (e.g. the MiniPlayer chat
