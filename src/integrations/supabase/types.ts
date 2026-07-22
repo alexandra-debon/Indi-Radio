@@ -1233,6 +1233,7 @@ export type Database = {
           id: string
           is_certified: boolean
           is_team_indi: boolean
+          lang: string | null
           level: number
           points: number
           pseudo: string
@@ -1250,6 +1251,7 @@ export type Database = {
           id: string
           is_certified?: boolean
           is_team_indi?: boolean
+          lang?: string | null
           level?: number
           points?: number
           pseudo: string
@@ -1267,6 +1269,7 @@ export type Database = {
           id?: string
           is_certified?: boolean
           is_team_indi?: boolean
+          lang?: string | null
           level?: number
           points?: number
           pseudo?: string
