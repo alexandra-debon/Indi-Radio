@@ -19,6 +19,18 @@ type Msg = {
 
 const BUCKET = "content-images";
 
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+
 export function AdminChatWidget() {
   const { session, isAdmin } = useAuth();
   const t = useT();
@@ -39,6 +51,7 @@ export function AdminChatWidget() {
   const [showJump, setShowJump] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
+  const reducedMotion = usePrefersReducedMotion();
 
   // Open handler via global event (from profile menu)
   useEffect(() => {
