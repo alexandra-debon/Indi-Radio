@@ -137,7 +137,19 @@ export function AdminChatWidget() {
   return (
     <>
       {open && (
-        <div className="fixed inset-x-2 top-16 bottom-52 z-50 flex flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000] sm:inset-auto sm:right-4 sm:bottom-56 sm:h-[70vh] sm:max-h-[540px] sm:w-[92vw] sm:max-w-sm">
+        <div
+          className="fixed inset-x-2 top-16 z-50 flex flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000] sm:inset-auto sm:right-4 sm:top-auto sm:w-[92vw] sm:max-w-sm"
+          style={{
+            // Dynamic viewport units (`dvh`) shrink with mobile browser
+            // chrome, so the panel always fits between the header (~4rem)
+            // and the MiniPlayer + legal footer (~13rem on mobile /
+            // ~14rem on desktop). `min()` caps the desktop panel at a
+            // comfortable reading height without ever spilling off-screen.
+            bottom: "13rem",
+            height: "min(calc(100dvh - 4rem - 13rem), 540px)",
+            maxHeight: "calc(100dvh - 4rem - 13rem)",
+          }}
+        >
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">
             <div className="min-w-0">
               <div className="truncate text-sm font-bold">{t("chat.title")}</div>
