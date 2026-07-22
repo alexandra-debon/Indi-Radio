@@ -19,8 +19,7 @@
     "check:deploy": "node scripts/post-publish-check.mjs",
     "test": "vitest run",
     "test:routes": "vitest run tests/routes-availability.test.ts",
-    "publish:verify": "node scripts/publish-verify.mjs"
-    ,
+    "publish:verify": "node scripts/publish-verify.mjs",
     "verify:hreflang": "node scripts/verify-hreflang.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
     "verify:seo": "node scripts/verify-seo-sync.mjs",
@@ -99,7 +98,7 @@
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "2.7.6",
+    "@lovable.dev/vite-tanstack-config": "2.7.7",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
