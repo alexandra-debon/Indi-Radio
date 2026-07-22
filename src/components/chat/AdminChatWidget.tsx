@@ -72,6 +72,12 @@ export function AdminChatWidget() {
   // read (in this tab or another one via Realtime), keeping the OS badge in
   // sync with the in-app counter.
   const liveNotifications = useRef<Notification[]>([]);
+  // IntersectionObserver that watches unread admin bubbles inside the
+  // scroll container. When a bubble is actually revealed in the viewport
+  // (any scroll — wheel, drag, keyboard, programmatic — or a resize that
+  // uncovers it), we mark that specific message as read. This keeps the
+  // badge honest without requiring the reader to reach the very bottom.
+  const visibilityObserver = useRef<IntersectionObserver | null>(null);
 
   // Open handler via global event (from profile menu / MiniPlayer trigger).
   // We also listen on `document` because some environments (older WebViews,
@@ -325,6 +331,50 @@ export function AdminChatWidget() {
       .then(() => {});
   }
 
+  // Mark a specific set of admin message IDs as read (used by the
+  // IntersectionObserver when bubbles enter the viewport).
+  function markIdsAsRead(ids: string[]) {
+    if (!uid || ids.length === 0) return;
+    const nowIso = new Date().toISOString();
+    setMsgs(prev => prev.map(m => (ids.includes(m.id) ? { ...m, read_at: nowIso } : m)));
+    (supabase as any)
+      .from("admin_messages")
+      .update({ read_at: nowIso })
+      .in("id", ids)
+      .then(() => {});
+  }
+
+  // (Re)build the IntersectionObserver whenever the chat opens or the
+  // message list changes, so freshly rendered bubbles are observed too.
+  useEffect(() => {
+    if (!open || !uid) return;
+    const root = scrollRef.current;
+    if (!root || typeof IntersectionObserver === "undefined") return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const seen: string[] = [];
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const id = (e.target as HTMLElement).dataset.msgId;
+          if (id) seen.push(id);
+          obs.unobserve(e.target);
+        }
+        if (seen.length) markIdsAsRead(seen);
+      },
+      { root, threshold: 0.6 },
+    );
+    visibilityObserver.current = obs;
+
+    const nodes = root.querySelectorAll<HTMLElement>('[data-msg-id][data-unread="1"]');
+    nodes.forEach(n => obs.observe(n));
+
+    return () => {
+      obs.disconnect();
+      visibilityObserver.current = null;
+    };
+  }, [open, uid, msgs]);
+
   // Broadcast unread count so external UI (e.g. the MiniPlayer chat
   // trigger) can render its own badge without duplicating state.
   useEffect(() => {
@@ -442,7 +492,12 @@ export function AdminChatWidget() {
             {msgs.length === 0 ? (
               <p className="mt-8 text-center text-sm text-muted-foreground">{t("chat.empty")}</p>
             ) : msgs.map(m => (
-              <div key={m.id} className={cn("flex", m.is_from_admin ? "justify-start" : "justify-end")}>
+              <div
+                key={m.id}
+                data-msg-id={m.id}
+                data-unread={m.is_from_admin && !m.read_at ? "1" : "0"}
+                className={cn("flex", m.is_from_admin ? "justify-start" : "justify-end")}
+              >
                 <div className={cn(
                   "max-w-[80%] rounded-lg border-2 border-black px-3 py-2 text-sm shadow-[2px_2px_0_0_#000]",
                   m.is_from_admin ? "bg-muted text-foreground" : "bg-primary text-black"
