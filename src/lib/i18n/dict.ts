@@ -623,6 +623,8 @@ export const dict = {
     "chat.menuItem": "Chat Team Indi",
     "chat.image": "Attach an image",
     "chat.loginRequired": "Sign in to chat with the team.",
+    "chat.closeMobile": "Close chat — back to player",
+
   },
 } as const;
 
