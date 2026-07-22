@@ -310,6 +310,8 @@ export const dict = {
     "chat.menuItem": "Chat Team Indi",
     "chat.image": "Joindre une image",
     "chat.loginRequired": "Connecte-toi pour discuter avec l'équipe.",
+    "chat.closeMobile": "Fermer le chat — retour à la lecture",
+
   },
   en: {
     "nav.live": "Live",
@@ -621,6 +623,8 @@ export const dict = {
     "chat.menuItem": "Chat Team Indi",
     "chat.image": "Attach an image",
     "chat.loginRequired": "Sign in to chat with the team.",
+    "chat.closeMobile": "Close chat — back to player",
+
   },
 } as const;
 

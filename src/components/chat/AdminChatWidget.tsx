@@ -218,7 +218,21 @@ export function AdminChatWidget() {
             <div ref={bottomRef} aria-hidden="true" />
           </div>
 
+          {/* Mobile close affordance: always visible above the composer so the
+              user can exit the chat and return to the player instantly. */}
+          <div className="sticky bottom-0 z-10 border-t-2 border-black bg-background px-2 py-1.5 sm:hidden">
+            <button
+              onClick={() => setOpen(false)}
+              aria-label={t("action.close")}
+              className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-black bg-primary px-3 py-1.5 text-sm font-semibold text-black shadow-[2px_2px_0_0_#000]"
+            >
+              <X className="size-4" />
+              {t("chat.closeMobile")}
+            </button>
+          </div>
+
           <form
+
             onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
             className="flex items-end gap-1 border-t-2 border-black p-2"
           >
