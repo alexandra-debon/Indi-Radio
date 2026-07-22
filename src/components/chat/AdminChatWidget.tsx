@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send, ImagePlus, Loader2, ArrowDown, Check } from "lucide-react";
+import { X, Send, ImagePlus, Loader2, ArrowDown, Check, Bell, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
@@ -75,12 +75,54 @@ export function AdminChatWidget() {
   // read (in this tab or another one via Realtime), keeping the OS badge in
   // sync with the in-app counter.
   const liveNotifications = useRef<Notification[]>([]);
+  // Per-user preference for OS notifications. Persisted in localStorage
+  // (key: `indi.chat.notif.<uid>`) so each account keeps its own choice
+  // across refreshes and devices sharing the same browser profile.
+  const notifKey = uid ? `indi.chat.notif.${uid}` : null;
+  const [notifEnabled, setNotifEnabled] = useState<boolean>(true);
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission | "unsupported">("default");
+  // Ref mirror so the Realtime INSERT handler (registered once per uid)
+  // always reads the current preference without needing to re-subscribe.
+  const notifEnabledRef = useRef(true);
+  useEffect(() => { notifEnabledRef.current = notifEnabled; }, [notifEnabled]);
   // IntersectionObserver that watches unread admin bubbles inside the
   // scroll container. When a bubble is actually revealed in the viewport
   // (any scroll — wheel, drag, keyboard, programmatic — or a resize that
   // uncovers it), we mark that specific message as read. This keeps the
   // badge honest without requiring the reader to reach the very bottom.
   const visibilityObserver = useRef<IntersectionObserver | null>(null);
+
+  // Load the persisted per-user preference (default: enabled) and the
+  // current browser permission whenever the signed-in user changes.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotifPermission("unsupported");
+      return;
+    }
+    setNotifPermission(Notification.permission);
+    if (!notifKey) return;
+    const saved = localStorage.getItem(notifKey);
+    setNotifEnabled(saved === null ? true : saved === "1");
+  }, [notifKey]);
+
+  async function toggleNotifications() {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (notifEnabled) {
+      setNotifEnabled(false);
+      if (notifKey) localStorage.setItem(notifKey, "0");
+      closeSystemNotifications();
+      return;
+    }
+    // Turning on: request permission if we haven't yet.
+    let perm = Notification.permission;
+    if (perm === "default") {
+      try { perm = await Notification.requestPermission(); } catch { /* noop */ }
+    }
+    setNotifPermission(perm);
+    if (perm !== "granted") return;
+    setNotifEnabled(true);
+    if (notifKey) localStorage.setItem(notifKey, "1");
+  }
 
   // Open handler via global event (from profile menu / MiniPlayer trigger).
   // We also listen on `document` because some environments (older WebViews,
@@ -184,7 +226,7 @@ export function AdminChatWidget() {
             // reading this thread: chat closed, tab hidden, or scrolled
             // away from the bottom. The `tag` collapses repeats into a
             // single tray entry so we don't spam the notification centre.
-            if (isAdminMsg && typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            if (isAdminMsg && notifEnabledRef.current && typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
               const shouldNotify = !open || document.visibilityState === "hidden" || !stickToBottom.current;
               if (shouldNotify) {
                 try {
@@ -499,9 +541,28 @@ export function AdminChatWidget() {
 
               <div className="truncate text-[11px] opacity-80">{t("chat.subtitle")}</div>
             </div>
-            <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
-              <X className="size-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              {notifPermission !== "unsupported" && (
+                <button
+                  onClick={toggleNotifications}
+                  aria-label={notifEnabled ? t("chat.notifDisable") : t("chat.notifEnable")}
+                  title={
+                    notifPermission === "denied"
+                      ? t("chat.notifBlocked")
+                      : notifEnabled ? t("chat.notifOn") : t("chat.notifOff")
+                  }
+                  disabled={notifPermission === "denied"}
+                  className="grid size-8 place-items-center rounded-md hover:bg-black/10 disabled:opacity-50"
+                >
+                  {notifEnabled && notifPermission === "granted"
+                    ? <Bell className="size-4" />
+                    : <BellOff className="size-4" />}
+                </button>
+              )}
+              <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
+                <X className="size-4" />
+              </button>
+            </div>
           </div>
 
           <div

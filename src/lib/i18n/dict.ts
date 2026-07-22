@@ -315,6 +315,11 @@ export const dict = {
     "chat.markRead": "Marquer comme lu",
     "chat.unread": "messages non lus",
     "chat.notifTitle": "Nouveau message Team-Indi",
+   "chat.notifOn": "Notifications activées",
+   "chat.notifOff": "Notifications désactivées",
+   "chat.notifEnable": "Activer les notifications système",
+   "chat.notifDisable": "Désactiver les notifications système",
+   "chat.notifBlocked": "Notifications bloquées par le navigateur",
 
 
   },
@@ -633,6 +638,11 @@ export const dict = {
     "chat.markRead": "Mark as read",
     "chat.unread": "unread messages",
     "chat.notifTitle": "New Team-Indi message",
+   "chat.notifOn": "Notifications on",
+   "chat.notifOff": "Notifications off",
+   "chat.notifEnable": "Enable system notifications",
+   "chat.notifDisable": "Disable system notifications",
+   "chat.notifBlocked": "Notifications blocked by the browser",
 
 
   },
