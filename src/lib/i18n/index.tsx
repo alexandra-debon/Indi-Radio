@@ -73,7 +73,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         const { data } = await supabase.auth.getUser();
         const uid = data.user?.id;
         if (!uid) return;
-        await supabase.from("profiles").update({ lang: l }).eq("id", uid);
+        await (supabase as any).from("profiles").update({ lang: l }).eq("id", uid);
       } catch {}
     })();
   }, []);
@@ -91,7 +91,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     const syncFromProfile = async (uid: string) => {
       try {
-        const { data } = await supabase
+        const { data } = await (supabase as any)
           .from("profiles")
           .select("lang")
           .eq("id", uid)
@@ -105,7 +105,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         } else {
           // No server preference yet — seed it with the current local one.
           try {
-            await supabase.from("profiles").update({ lang }).eq("id", uid);
+            await (supabase as any).from("profiles").update({ lang }).eq("id", uid);
             if (!cancelled) setHydratedFromProfile(true);
           } catch {}
         }
