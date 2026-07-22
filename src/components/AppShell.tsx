@@ -286,6 +286,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
       </div>
       <AdminChatWidget />
+      <AdminChatAdminPanel />
     </div>
     </TooltipProvider>
   );
