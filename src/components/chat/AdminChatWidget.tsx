@@ -168,16 +168,23 @@ export function AdminChatWidget() {
     <>
       {open && (
         <div
-          className="fixed inset-x-2 top-16 z-50 flex flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000] sm:inset-auto sm:right-4 sm:top-auto sm:w-[92vw] sm:max-w-sm"
+          className="fixed inset-x-2 z-50 flex flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000] sm:inset-auto sm:right-4 sm:top-auto sm:w-[92vw] sm:max-w-sm"
           style={{
             // Dynamic viewport units (`dvh`) shrink with mobile browser
             // chrome, so the panel always fits between the header (~4rem)
             // and the MiniPlayer + legal footer (~13rem on mobile /
             // ~14rem on desktop). `min()` caps the desktop panel at a
             // comfortable reading height without ever spilling off-screen.
-            bottom: "13rem",
-            height: "min(calc(100dvh - 4rem - 13rem), 540px)",
-            maxHeight: "calc(100dvh - 4rem - 13rem)",
+            //
+            // iOS safe-area insets (notch / home indicator / status bar)
+            // are added so the panel never slides under system chrome
+            // when the app runs standalone (PWA / Capacitor WebView).
+            top: "calc(4rem + env(safe-area-inset-top, 0px))",
+            bottom: "calc(13rem + env(safe-area-inset-bottom, 0px))",
+            height:
+              "min(calc(100dvh - 4rem - 13rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)), 540px)",
+            maxHeight:
+              "calc(100dvh - 4rem - 13rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))",
           }}
         >
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">
@@ -220,7 +227,10 @@ export function AdminChatWidget() {
 
           {/* Mobile close affordance: always visible above the composer so the
               user can exit the chat and return to the player instantly. */}
-          <div className="sticky bottom-0 z-10 border-t-2 border-black bg-background px-2 py-1.5 sm:hidden">
+          <div
+            className="sticky bottom-0 z-10 border-t-2 border-black bg-background px-2 py-1.5 sm:hidden"
+            style={{ paddingBottom: "calc(0.375rem + env(safe-area-inset-bottom, 0px))" }}
+          >
             <button
               onClick={() => setOpen(false)}
               aria-label={t("action.close")}
@@ -235,6 +245,7 @@ export function AdminChatWidget() {
 
             onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
             className="flex items-end gap-1 border-t-2 border-black p-2"
+            style={{ paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))" }}
           >
             <button
               type="button"
