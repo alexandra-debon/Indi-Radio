@@ -472,9 +472,9 @@ export function AdminChatWidget() {
             >
               <ArrowDown className="size-3.5" />
               {t("chat.jumpToLatest")}
-              {pendingCount > 0 && (
+              {unread > 0 && (
                 <span className="grid min-w-5 place-items-center rounded-full bg-black px-1.5 text-[10px] font-bold text-primary">
-                  {pendingCount > 99 ? "99+" : pendingCount}
+                  {unread > 99 ? "99+" : unread}
                 </span>
               )}
             </button>
