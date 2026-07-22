@@ -55,10 +55,10 @@ export function AdminChatWidget() {
   // enough — the count must persist across refreshes until the user
   // themselves scrolls / taps to the latest message.
   const userInteracted = useRef(false);
-  // Rendered pill state: true when the reader is scrolled up AND at
-  // least one new message has landed since they left the bottom.
+  // Rendered pill state: true whenever the reader is scrolled up.
+  // The button stays visible so the user can always jump back to the
+  // latest message and mark the thread as read in one tap.
   const [showJump, setShowJump] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
   const reducedMotion = usePrefersReducedMotion();
   // localStorage key for the persisted scroll offset. Scoped per-user so
@@ -149,7 +149,6 @@ export function AdminChatWidget() {
             // jump-to-latest pill as well.
             if (isAdminMsg && open && !stickToBottom.current) {
               setShowJump(true);
-              setPendingCount(c => c + 1);
             }
             // Fire an OS notification when the user isn't actively
             // reading this thread: chat closed, tab hidden, or scrolled
@@ -217,7 +216,6 @@ export function AdminChatWidget() {
     // container has real height to work with.
     scrollRestored.current = false;
     setShowJump(false);
-    setPendingCount(0);
     userInteracted.current = false;
     const saved = scrollKey ? Number(localStorage.getItem(scrollKey) ?? "NaN") : NaN;
     const hasSaved = Number.isFinite(saved) && saved >= 0;
@@ -260,9 +258,10 @@ export function AdminChatWidget() {
       if (atBottom) localStorage.removeItem(scrollKey);
       else localStorage.setItem(scrollKey, String(el.scrollTop));
     }
+    if (scrollRestored.current) {
+      setShowJump(!atBottom);
+    }
     if (atBottom && userInteracted.current) {
-      setShowJump(false);
-      setPendingCount(0);
       markVisibleAsRead();
     }
   }
@@ -280,7 +279,6 @@ export function AdminChatWidget() {
     stickToBottom.current = true;
     userInteracted.current = true;
     setShowJump(false);
-    setPendingCount(0);
     if (scrollKey) localStorage.removeItem(scrollKey);
     scrollToBottom();
     markVisibleAsRead();
@@ -295,7 +293,6 @@ export function AdminChatWidget() {
     const nowIso = new Date().toISOString();
     setMsgs(prev => prev.map(m => (unreadIds.includes(m.id) ? { ...m, read_at: nowIso } : m)));
     setShowJump(false);
-    setPendingCount(0);
     if (scrollKey) localStorage.removeItem(scrollKey);
     (supabase as any)
       .from("admin_messages")
@@ -475,9 +472,9 @@ export function AdminChatWidget() {
             >
               <ArrowDown className="size-3.5" />
               {t("chat.jumpToLatest")}
-              {pendingCount > 0 && (
+              {unread > 0 && (
                 <span className="grid min-w-5 place-items-center rounded-full bg-black px-1.5 text-[10px] font-bold text-primary">
-                  {pendingCount > 99 ? "99+" : pendingCount}
+                  {unread > 99 ? "99+" : unread}
                 </span>
               )}
             </button>
