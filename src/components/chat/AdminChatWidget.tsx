@@ -46,6 +46,11 @@ export function AdminChatWidget() {
   // them back down on every new arrival. Track whether we're pinned to the
   // bottom and only auto-scroll then.
   const stickToBottom = useRef(true);
+  // Only clear the unread badge after the reader has actively reached the
+  // bottom. Opening the widget (or a programmatic auto-scroll) is not
+  // enough — the count must persist across refreshes until the user
+  // themselves scrolls / taps to the latest message.
+  const userInteracted = useRef(false);
   // Rendered pill state: true when the reader is scrolled up AND at
   // least one new message has landed since they left the bottom.
   const [showJump, setShowJump] = useState(false);
@@ -132,15 +137,12 @@ export function AdminChatWidget() {
       });
     }
     if (!uid) return;
-    if (!stickToBottom.current) return; // only mark read when the reader sees the bottom
-    const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
-    if (unreadIds.length > 0) {
-      (supabase as any)
-        .from("admin_messages")
-        .update({ read_at: new Date().toISOString() })
-        .in("id", unreadIds)
-        .then(() => setUnread(0));
-    }
+    // Mark as read only when the reader has actively reached the bottom.
+    // On open we auto-scroll for convenience, but the unread count stays
+    // (and survives a page refresh, since it's derived from `read_at`)
+    // until the user scrolls / taps to the latest message themselves.
+    if (!stickToBottom.current || !userInteracted.current) return;
+    markVisibleAsRead();
   }, [open, msgs, uid]);
 
   // Snap to bottom on open, regardless of previous scroll position.
@@ -149,6 +151,7 @@ export function AdminChatWidget() {
     stickToBottom.current = true;
     setShowJump(false);
     setPendingCount(0);
+    userInteracted.current = false;
     requestAnimationFrame(() => {
       scrollToBottom();
     });
@@ -162,10 +165,10 @@ export function AdminChatWidget() {
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     const atBottom = distanceFromBottom < 80;
     stickToBottom.current = atBottom;
-    if (atBottom) {
+    if (atBottom && userInteracted.current) {
       setShowJump(false);
       setPendingCount(0);
-      setUnread(0);
+      markVisibleAsRead();
     }
   }
 
@@ -180,10 +183,30 @@ export function AdminChatWidget() {
 
   function jumpToLatest() {
     stickToBottom.current = true;
+    userInteracted.current = true;
     setShowJump(false);
     setPendingCount(0);
-    setUnread(0);
     scrollToBottom();
+    markVisibleAsRead();
+  }
+
+  // Flip the "user scrolled themselves" flag on any real input gesture
+  // inside the scroll container. Programmatic `scrollIntoView` fires
+  // scroll events too, so we can't rely on `onScroll` alone.
+  function markUserInteracted() {
+    userInteracted.current = true;
+  }
+
+  // Persist read state in DB so the unread badge survives refreshes.
+  function markVisibleAsRead() {
+    if (!uid) return;
+    const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
+    if (unreadIds.length === 0) { setUnread(0); return; }
+    (supabase as any)
+      .from("admin_messages")
+      .update({ read_at: new Date().toISOString() })
+      .in("id", unreadIds)
+      .then(() => setUnread(0));
   }
 
   // Broadcast unread count so external UI (e.g. the MiniPlayer chat
