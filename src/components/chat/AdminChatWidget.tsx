@@ -111,7 +111,7 @@ export function AdminChatWidget() {
       // Defer to the next frame so the newly rendered bubble is measured
       // before we scroll — otherwise `scrollHeight` still reflects the old DOM.
       requestAnimationFrame(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        scrollToBottom();
       });
     }
     if (!uid) return;
@@ -132,7 +132,7 @@ export function AdminChatWidget() {
     setShowJump(false);
     setPendingCount(0);
     requestAnimationFrame(() => {
-      bottomRef.current?.scrollIntoView({ block: "end" });
+      scrollToBottom();
     });
   }, [open]);
 
@@ -150,11 +150,20 @@ export function AdminChatWidget() {
     }
   }
 
+  // Smooth scroll to the latest message, but respect the user's reduced
+  // motion preference so accessibility settings remain honoured.
+  function scrollToBottom() {
+    bottomRef.current?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "end",
+    });
+  }
+
   function jumpToLatest() {
     stickToBottom.current = true;
     setShowJump(false);
     setPendingCount(0);
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    scrollToBottom();
   }
 
   async function sendMessage(imageUrl?: string) {
