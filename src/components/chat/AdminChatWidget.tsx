@@ -67,6 +67,9 @@ export function AdminChatWidget() {
   // Set once we've applied the saved offset for the current thread, so
   // subsequent renders don't fight the user's manual scrolling.
   const scrollRestored = useRef(false);
+  // Track the previous user id so we can wipe per-user local state when the
+  // account changes or the user signs out.
+  const lastUidRef = useRef<string | null>(null);
   // Live browser Notification objects we spawned for unread admin messages.
   // Kept so we can `close()` them the moment the reader marks the thread as
   // read (in this tab or another one via Realtime), keeping the OS badge in
