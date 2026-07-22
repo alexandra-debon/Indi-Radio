@@ -19,6 +19,18 @@ type Msg = {
 
 const BUCKET = "content-images";
 
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+
 export function AdminChatWidget() {
   const { session, isAdmin } = useAuth();
   const t = useT();
@@ -39,6 +51,7 @@ export function AdminChatWidget() {
   const [showJump, setShowJump] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
+  const reducedMotion = usePrefersReducedMotion();
 
   // Open handler via global event (from profile menu)
   useEffect(() => {
@@ -98,7 +111,7 @@ export function AdminChatWidget() {
       // Defer to the next frame so the newly rendered bubble is measured
       // before we scroll — otherwise `scrollHeight` still reflects the old DOM.
       requestAnimationFrame(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        scrollToBottom();
       });
     }
     if (!uid) return;
@@ -119,7 +132,7 @@ export function AdminChatWidget() {
     setShowJump(false);
     setPendingCount(0);
     requestAnimationFrame(() => {
-      bottomRef.current?.scrollIntoView({ block: "end" });
+      scrollToBottom();
     });
   }, [open]);
 
@@ -137,11 +150,20 @@ export function AdminChatWidget() {
     }
   }
 
+  // Smooth scroll to the latest message, but respect the user's reduced
+  // motion preference so accessibility settings remain honoured.
+  function scrollToBottom() {
+    bottomRef.current?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "end",
+    });
+  }
+
   function jumpToLatest() {
     stickToBottom.current = true;
     setShowJump(false);
     setPendingCount(0);
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    scrollToBottom();
   }
 
   async function sendMessage(imageUrl?: string) {
