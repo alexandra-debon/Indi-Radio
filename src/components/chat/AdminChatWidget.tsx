@@ -225,6 +225,24 @@ export function AdminChatWidget() {
     markVisibleAsRead();
   }
 
+  // Explicit "Mark as read" action: immediately mark every unread admin
+  // message as read, reset the badge and clear the persisted scroll key.
+  function forceMarkAsRead() {
+    if (!uid) return;
+    const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
+    if (unreadIds.length === 0) return;
+    const nowIso = new Date().toISOString();
+    setMsgs(prev => prev.map(m => (unreadIds.includes(m.id) ? { ...m, read_at: nowIso } : m)));
+    setShowJump(false);
+    setPendingCount(0);
+    if (scrollKey) localStorage.removeItem(scrollKey);
+    (supabase as any)
+      .from("admin_messages")
+      .update({ read_at: nowIso })
+      .in("id", unreadIds)
+      .then(() => {});
+  }
+
   // Flip the "user scrolled themselves" flag on any real input gesture
   // inside the scroll container. Programmatic `scrollIntoView` fires
   // scroll events too, so we can't rely on `onScroll` alone.
