@@ -67,6 +67,9 @@ export function AdminChatWidget() {
   // Set once we've applied the saved offset for the current thread, so
   // subsequent renders don't fight the user's manual scrolling.
   const scrollRestored = useRef(false);
+  // Track the previous user id so we can wipe per-user local state when the
+  // account changes or the user signs out.
+  const lastUidRef = useRef<string | null>(null);
   // Live browser Notification objects we spawned for unread admin messages.
   // Kept so we can `close()` them the moment the reader marks the thread as
   // read (in this tab or another one via Realtime), keeping the OS badge in
@@ -96,6 +99,27 @@ export function AdminChatWidget() {
       if ((window as any).__indiOpenAdminChat) delete (window as any).__indiOpenAdminChat;
     };
   }, []);
+
+  // When the user signs out or switches accounts, drop the previous account's
+  // scroll position and reset all local UI state so the next user doesn't land
+  // in the wrong conversation.
+  useEffect(() => {
+    const lastUid = lastUidRef.current;
+    if (lastUid && lastUid !== uid) {
+      localStorage.removeItem(`indi.chat.scroll.${lastUid}`);
+      closeSystemNotifications();
+      setOpen(false);
+      setMsgs([]);
+      setText("");
+      setSending(false);
+      setShowJump(false);
+      stickToBottom.current = true;
+      userInteracted.current = false;
+      scrollRestored.current = false;
+      liveNotifications.current = [];
+    }
+    lastUidRef.current = uid;
+  }, [uid]);
 
   // Ask for browser Notification permission the first time the widget
   // mounts for a signed-in user. Silently no-ops on unsupported platforms
