@@ -311,6 +311,7 @@ export const dict = {
     "chat.image": "Joindre une image",
     "chat.loginRequired": "Connecte-toi pour discuter avec l'équipe.",
     "chat.closeMobile": "Fermer le chat — retour à la lecture",
+    "chat.jumpToLatest": "Revenir au dernier message",
 
   },
   en: {
