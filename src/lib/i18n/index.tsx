@@ -3,6 +3,26 @@ import { dict, type DictKey, type Lang } from "./dict";
 
 const STORAGE_KEY = "indi.lang";
 
+/**
+ * Detects the user's preferred language from the browser.
+ * `navigator.languages` is populated from the same source the browser uses
+ * to build its Accept-Language header, so this mirrors server-side detection.
+ * We pick the first tag that maps to a language we support (fr/en).
+ */
+function detectBrowserLang(): Lang {
+  try {
+    const candidates: string[] = [];
+    if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages);
+    if (navigator.language) candidates.push(navigator.language);
+    for (const raw of candidates) {
+      const tag = raw.toLowerCase().split(/[-_]/)[0];
+      if (tag === "fr") return "fr";
+      if (tag === "en") return "en";
+    }
+  } catch {}
+  return "fr";
+}
+
 type Ctx = {
   lang: Lang;
   setLang: (l: Lang) => void;
@@ -24,7 +44,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         return;
       }
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === "en" || stored === "fr") setLangState(stored);
+      if (stored === "en" || stored === "fr") {
+        setLangState(stored);
+        return;
+      }
+      // First visit: honor the browser's preferred language, then persist it
+      // so subsequent visits use the remembered choice instead of re-detecting.
+      const detected = detectBrowserLang();
+      setLangState(detected);
+      try { localStorage.setItem(STORAGE_KEY, detected); } catch {}
     } catch {}
   }, []);
 
