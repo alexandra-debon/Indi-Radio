@@ -74,7 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
             <GlobalSearchButton />
             <ShareButton target={{}} />
-            <LanguageToggle className="hidden xs:inline-flex sm:inline-flex" />
+            <LanguageToggle />
             <div data-tour="notifications-bell">
               <NotificationsBell />
             </div>
