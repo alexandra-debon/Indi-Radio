@@ -305,6 +305,10 @@ export function AdminChatWidget() {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
+            onWheel={markUserInteracted}
+            onTouchStart={markUserInteracted}
+            onPointerDown={markUserInteracted}
+            onKeyDown={markUserInteracted}
             className="flex-1 space-y-2 overflow-y-auto p-3"
           >
             {msgs.length === 0 ? (
