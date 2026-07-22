@@ -314,6 +314,7 @@ export const dict = {
     "chat.jumpToLatest": "Revenir au dernier message",
     "chat.markRead": "Marquer comme lu",
     "chat.unread": "messages non lus",
+    "chat.notifTitle": "Nouveau message Team-Indi",
 
 
   },
@@ -631,6 +632,7 @@ export const dict = {
     "chat.jumpToLatest": "Jump to latest message",
     "chat.markRead": "Mark as read",
     "chat.unread": "unread messages",
+    "chat.notifTitle": "New Team-Indi message",
 
 
   },
