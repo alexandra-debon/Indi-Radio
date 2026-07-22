@@ -293,7 +293,6 @@ export function AdminChatWidget() {
     const nowIso = new Date().toISOString();
     setMsgs(prev => prev.map(m => (unreadIds.includes(m.id) ? { ...m, read_at: nowIso } : m)));
     setShowJump(false);
-    setPendingCount(0);
     if (scrollKey) localStorage.removeItem(scrollKey);
     (supabase as any)
       .from("admin_messages")
