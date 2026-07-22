@@ -4,6 +4,7 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import i18nGuard from "./eslint/i18n-guard.js";
 
 export default tseslint.config(
   { ignores: ["dist", ".output", ".vinxi"] },
@@ -17,9 +18,11 @@ export default tseslint.config(
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      "i18n-guard": i18nGuard,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "i18n-guard/no-raw-french-jsx": "warn",
       "no-restricted-imports": [
         "error",
         {
