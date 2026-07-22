@@ -312,6 +312,7 @@ export const dict = {
     "chat.loginRequired": "Connecte-toi pour discuter avec l'équipe.",
     "chat.closeMobile": "Fermer le chat — retour à la lecture",
     "chat.jumpToLatest": "Revenir au dernier message",
+    "chat.unread": "messages non lus",
 
   },
   en: {
@@ -626,6 +627,7 @@ export const dict = {
     "chat.loginRequired": "Sign in to chat with the team.",
     "chat.closeMobile": "Close chat — back to player",
     "chat.jumpToLatest": "Jump to latest message",
+    "chat.unread": "unread messages",
 
   },
 } as const;
