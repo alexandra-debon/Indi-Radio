@@ -21,6 +21,7 @@
     "test:routes": "vitest run tests/routes-availability.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:i18n": "playwright test tests/e2e/i18n-realtime.spec.ts",
+    "test:e2e:i18n-detect": "playwright test tests/e2e/i18n-detect.spec.ts",
     "publish:verify": "node scripts/publish-verify.mjs",
     "verify:hreflang": "node scripts/verify-hreflang.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
