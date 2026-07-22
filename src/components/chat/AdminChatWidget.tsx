@@ -38,7 +38,7 @@ export function AdminChatWidget() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const [, setUnread] = useState(0);
+  const [unread, setUnread] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -83,10 +83,16 @@ export function AdminChatWidget() {
           if (payload.eventType === "INSERT") {
             if (prev.some(m => m.id === payload.new.id)) return prev;
             const next = [...prev, payload.new as Msg];
-            if ((payload.new as Msg).is_from_admin) setUnread(u => u + 1);
-            // If the reader is scrolled up, surface the jump-to-latest
-            // pill and bump the unread badge count.
-            if (!stickToBottom.current) {
+            const isAdminMsg = (payload.new as Msg).is_from_admin;
+            // Bump the unread counter whenever an admin message arrives
+            // while the reader can't see the bottom — either the widget
+            // is closed, or it's open but scrolled up.
+            if (isAdminMsg && (!open || !stickToBottom.current)) {
+              setUnread(u => u + 1);
+            }
+            // If the widget is open but scrolled up, surface the
+            // jump-to-latest pill as well.
+            if (open && !stickToBottom.current) {
               setShowJump(true);
               setPendingCount(c => c + 1);
             }
@@ -115,6 +121,7 @@ export function AdminChatWidget() {
       });
     }
     if (!uid) return;
+    if (!stickToBottom.current) return; // only mark read when the reader sees the bottom
     const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
     if (unreadIds.length > 0) {
       (supabase as any)
@@ -147,6 +154,7 @@ export function AdminChatWidget() {
     if (atBottom) {
       setShowJump(false);
       setPendingCount(0);
+      setUnread(0);
     }
   }
 
@@ -163,8 +171,15 @@ export function AdminChatWidget() {
     stickToBottom.current = true;
     setShowJump(false);
     setPendingCount(0);
+    setUnread(0);
     scrollToBottom();
   }
+
+  // Broadcast unread count so external UI (e.g. the MiniPlayer chat
+  // trigger) can render its own badge without duplicating state.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("indi:admin-chat-unread", { detail: unread }));
+  }, [unread]);
 
   async function sendMessage(imageUrl?: string) {
     if (!uid) return;
@@ -235,7 +250,17 @@ export function AdminChatWidget() {
         >
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">
             <div className="min-w-0">
-              <div className="truncate text-sm font-bold">{t("chat.title")}</div>
+              <div className="flex items-center gap-2">
+                <div className="truncate text-sm font-bold">{t("chat.title")}</div>
+                {unread > 0 && (
+                  <span
+                    aria-label={`${unread} ${t("chat.unread")}`}
+                    className="grid min-w-5 place-items-center rounded-full bg-black px-1.5 text-[10px] font-bold text-primary"
+                  >
+                    {unread > 99 ? "99+" : unread}
+                  </span>
+                )}
+              </div>
               <div className="truncate text-[11px] opacity-80">{t("chat.subtitle")}</div>
             </div>
             <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
