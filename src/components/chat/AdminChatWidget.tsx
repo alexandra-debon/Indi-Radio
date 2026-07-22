@@ -258,9 +258,10 @@ export function AdminChatWidget() {
       if (atBottom) localStorage.removeItem(scrollKey);
       else localStorage.setItem(scrollKey, String(el.scrollTop));
     }
+    if (scrollRestored.current) {
+      setShowJump(!atBottom);
+    }
     if (atBottom && userInteracted.current) {
-      setShowJump(false);
-      setPendingCount(0);
       markVisibleAsRead();
     }
   }
