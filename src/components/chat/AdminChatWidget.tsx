@@ -55,10 +55,10 @@ export function AdminChatWidget() {
   // enough — the count must persist across refreshes until the user
   // themselves scrolls / taps to the latest message.
   const userInteracted = useRef(false);
-  // Rendered pill state: true when the reader is scrolled up AND at
-  // least one new message has landed since they left the bottom.
+  // Rendered pill state: true whenever the reader is scrolled up.
+  // The button stays visible so the user can always jump back to the
+  // latest message and mark the thread as read in one tap.
   const [showJump, setShowJump] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
   const reducedMotion = usePrefersReducedMotion();
   // localStorage key for the persisted scroll offset. Scoped per-user so
