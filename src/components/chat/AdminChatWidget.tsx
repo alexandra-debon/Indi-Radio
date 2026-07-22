@@ -29,6 +29,11 @@ export function AdminChatWidget() {
   const [, setUnread] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  // When the user scrolls up to read older messages we don't want to yank
+  // them back down on every new arrival. Track whether we're pinned to the
+  // bottom and only auto-scroll then.
+  const stickToBottom = useRef(true);
   const uid = session?.user.id ?? null;
 
   // Open handler via global event (from profile menu)
@@ -75,10 +80,17 @@ export function AdminChatWidget() {
     return () => { cancelled = true; supabase.removeChannel(channel); };
   }, [uid]);
 
-  // Auto-scroll + mark read when open
+  // Auto-scroll to the latest message + mark unread as read when open.
+  // Runs whenever `msgs` changes (initial load, realtime INSERT, own send).
   useEffect(() => {
     if (!open) return;
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    if (stickToBottom.current) {
+      // Defer to the next frame so the newly rendered bubble is measured
+      // before we scroll — otherwise `scrollHeight` still reflects the old DOM.
+      requestAnimationFrame(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      });
+    }
     if (!uid) return;
     const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
     if (unreadIds.length > 0) {
@@ -89,6 +101,24 @@ export function AdminChatWidget() {
         .then(() => setUnread(0));
     }
   }, [open, msgs, uid]);
+
+  // Snap to bottom on open, regardless of previous scroll position.
+  useEffect(() => {
+    if (!open) return;
+    stickToBottom.current = true;
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ block: "end" });
+    });
+  }, [open]);
+
+  // Detect whether the reader is near the bottom; if not, pause auto-scroll
+  // so incoming messages don't interrupt reading older ones.
+  function handleScroll() {
+    const el = scrollRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickToBottom.current = distanceFromBottom < 80;
+  }
 
   async function sendMessage(imageUrl?: string) {
     if (!uid) return;
@@ -160,7 +190,11 @@ export function AdminChatWidget() {
             </button>
           </div>
 
-          <div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto p-3">
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex-1 space-y-2 overflow-y-auto p-3"
+          >
             {msgs.length === 0 ? (
               <p className="mt-8 text-center text-sm text-muted-foreground">{t("chat.empty")}</p>
             ) : msgs.map(m => (
@@ -181,6 +215,7 @@ export function AdminChatWidget() {
                 </div>
               </div>
             ))}
+            <div ref={bottomRef} aria-hidden="true" />
           </div>
 
           <form
