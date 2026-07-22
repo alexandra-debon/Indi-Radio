@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send, ImagePlus, Loader2, ArrowDown } from "lucide-react";
+import { X, Send, ImagePlus, Loader2, ArrowDown, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
@@ -225,6 +225,24 @@ export function AdminChatWidget() {
     markVisibleAsRead();
   }
 
+  // Explicit "Mark as read" action: immediately mark every unread admin
+  // message as read, reset the badge and clear the persisted scroll key.
+  function forceMarkAsRead() {
+    if (!uid) return;
+    const unreadIds = msgs.filter(m => m.is_from_admin && !m.read_at).map(m => m.id);
+    if (unreadIds.length === 0) return;
+    const nowIso = new Date().toISOString();
+    setMsgs(prev => prev.map(m => (unreadIds.includes(m.id) ? { ...m, read_at: nowIso } : m)));
+    setShowJump(false);
+    setPendingCount(0);
+    if (scrollKey) localStorage.removeItem(scrollKey);
+    (supabase as any)
+      .from("admin_messages")
+      .update({ read_at: nowIso })
+      .in("id", unreadIds)
+      .then(() => {});
+  }
+
   // Flip the "user scrolled themselves" flag on any real input gesture
   // inside the scroll container. Programmatic `scrollIntoView` fires
   // scroll events too, so we can't rely on `onScroll` alone.
@@ -335,6 +353,18 @@ export function AdminChatWidget() {
                   </span>
                 )}
               </div>
+              {unread > 0 && (
+                <button
+                  type="button"
+                  onClick={forceMarkAsRead}
+                  aria-label={t("chat.markRead")}
+                  className="mt-0.5 flex w-fit items-center gap-1 rounded border-2 border-black bg-black px-1.5 py-0.5 text-[10px] font-bold text-primary hover:bg-black/80"
+                >
+                  <Check className="size-3" />
+                  {t("chat.markRead")}
+                </button>
+              )}
+
               <div className="truncate text-[11px] opacity-80">{t("chat.subtitle")}</div>
             </div>
             <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
