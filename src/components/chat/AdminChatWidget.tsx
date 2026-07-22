@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send, ImagePlus, Loader2, ArrowDown } from "lucide-react";
+import { X, Send, ImagePlus, Loader2, ArrowDown, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
