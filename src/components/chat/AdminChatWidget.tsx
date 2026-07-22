@@ -100,6 +100,27 @@ export function AdminChatWidget() {
     };
   }, []);
 
+  // When the user signs out or switches accounts, drop the previous account's
+  // scroll position and reset all local UI state so the next user doesn't land
+  // in the wrong conversation.
+  useEffect(() => {
+    const lastUid = lastUidRef.current;
+    if (lastUid && lastUid !== uid) {
+      localStorage.removeItem(`indi.chat.scroll.${lastUid}`);
+      closeSystemNotifications();
+      setOpen(false);
+      setMsgs([]);
+      setText("");
+      setSending(false);
+      setShowJump(false);
+      stickToBottom.current = true;
+      userInteracted.current = false;
+      scrollRestored.current = false;
+      liveNotifications.current = [];
+    }
+    lastUidRef.current = uid;
+  }, [uid]);
+
   // Ask for browser Notification permission the first time the widget
   // mounts for a signed-in user. Silently no-ops on unsupported platforms
   // (iOS Safari non-PWA, older WebViews) and when the user already
