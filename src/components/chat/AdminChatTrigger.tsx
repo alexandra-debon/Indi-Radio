@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 export function AdminChatTrigger({ className }: { className?: string }) {
   const { session, isAdmin } = useAuth();
-  const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
   const uid = session?.user.id ?? null;
 
@@ -51,10 +49,6 @@ export function AdminChatTrigger({ className }: { className?: string }) {
   const onClick = () => {
     if (!session) {
       window.dispatchEvent(new Event("indi:open-auth"));
-      return;
-    }
-    if (isAdmin) {
-      navigate({ to: "/admin/messages" });
       return;
     }
     // Dispatch event AND call imperative fallback so the panel opens even
