@@ -629,7 +629,7 @@ export const dict = {
     "chat.image": "Attach an image",
     "chat.loginRequired": "Sign in to chat with the team.",
     "chat.closeMobile": "Close chat — back to player",
-    "chat.jumpToLatest": "Jump to latest message",
+    "chat.jumpToLatest": "Go to latest message",
     "chat.markRead": "Mark as read",
     "chat.unread": "unread messages",
     "chat.notifTitle": "New Team-Indi message",
