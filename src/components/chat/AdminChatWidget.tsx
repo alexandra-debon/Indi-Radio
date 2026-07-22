@@ -61,6 +61,12 @@ export function AdminChatWidget() {
   const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
   const reducedMotion = usePrefersReducedMotion();
+  // localStorage key for the persisted scroll offset. Scoped per-user so
+  // switching accounts on the same device doesn't leak positions.
+  const scrollKey = uid ? `indi.chat.scroll.${uid}` : null;
+  // Set once we've applied the saved offset for the current thread, so
+  // subsequent renders don't fight the user's manual scrolling.
+  const scrollRestored = useRef(false);
 
   // Open handler via global event (from profile menu / MiniPlayer trigger).
   // We also listen on `document` because some environments (older WebViews,
@@ -126,7 +132,7 @@ export function AdminChatWidget() {
   // Runs whenever `msgs` changes (initial load, realtime INSERT, own send).
   useEffect(() => {
     if (!open) return;
-    if (stickToBottom.current) {
+    if (stickToBottom.current && scrollRestored.current) {
       // Defer to the next frame so the newly rendered bubble is measured
       // before we scroll — otherwise `scrollHeight` still reflects the old DOM.
       requestAnimationFrame(() => {
@@ -145,13 +151,36 @@ export function AdminChatWidget() {
   // Snap to bottom on open, regardless of previous scroll position.
   useEffect(() => {
     if (!open) return;
-    stickToBottom.current = true;
+    // Restore the saved offset if we have one; otherwise fall back to the
+    // bottom. Restoration waits for the first `msgs` batch so the scroll
+    // container has real height to work with.
+    scrollRestored.current = false;
     setShowJump(false);
     setPendingCount(0);
     userInteracted.current = false;
-    requestAnimationFrame(() => {
-      scrollToBottom();
-    });
+    const saved = scrollKey ? Number(localStorage.getItem(scrollKey) ?? "NaN") : NaN;
+    const hasSaved = Number.isFinite(saved) && saved >= 0;
+    stickToBottom.current = !hasSaved;
+    const tryRestore = () => {
+      const el = scrollRef.current;
+      if (!el) return false;
+      if (hasSaved) {
+        el.scrollTop = saved;
+        const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        stickToBottom.current = distanceFromBottom < 80;
+      } else {
+        scrollToBottom();
+      }
+      scrollRestored.current = true;
+      return true;
+    };
+    // Retry across a few frames until the first message batch has mounted.
+    let attempts = 0;
+    const tick = () => {
+      if (tryRestore() || attempts++ > 20) return;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }, [open]);
 
   // Detect whether the reader is near the bottom; if not, pause auto-scroll
@@ -162,6 +191,14 @@ export function AdminChatWidget() {
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     const atBottom = distanceFromBottom < 80;
     stickToBottom.current = atBottom;
+    // Persist the offset so the next visit (even after a hard refresh)
+    // reopens the chat at the same reading point. Skip while we're still
+    // restoring, otherwise the initial programmatic scroll would overwrite
+    // the saved value with the bottom.
+    if (scrollKey && scrollRestored.current) {
+      if (atBottom) localStorage.removeItem(scrollKey);
+      else localStorage.setItem(scrollKey, String(el.scrollTop));
+    }
     if (atBottom && userInteracted.current) {
       setShowJump(false);
       setPendingCount(0);
@@ -183,6 +220,7 @@ export function AdminChatWidget() {
     userInteracted.current = true;
     setShowJump(false);
     setPendingCount(0);
+    if (scrollKey) localStorage.removeItem(scrollKey);
     scrollToBottom();
     markVisibleAsRead();
   }
