@@ -216,7 +216,6 @@ export function AdminChatWidget() {
     // container has real height to work with.
     scrollRestored.current = false;
     setShowJump(false);
-    setPendingCount(0);
     userInteracted.current = false;
     const saved = scrollKey ? Number(localStorage.getItem(scrollKey) ?? "NaN") : NaN;
     const hasSaved = Number.isFinite(saved) && saved >= 0;
