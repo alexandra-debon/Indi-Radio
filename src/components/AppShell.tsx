@@ -9,6 +9,7 @@ import { GlobalSearchButton } from "@/components/search/GlobalSearch";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
+import { AdminChatAdminPanel } from "@/components/chat/AdminChatAdminPanel";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
