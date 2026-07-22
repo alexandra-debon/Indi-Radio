@@ -353,6 +353,18 @@ export function AdminChatWidget() {
                   </span>
                 )}
               </div>
+              {unread > 0 && (
+                <button
+                  type="button"
+                  onClick={forceMarkAsRead}
+                  aria-label={t("chat.markRead")}
+                  className="mt-0.5 flex w-fit items-center gap-1 rounded border-2 border-black bg-black px-1.5 py-0.5 text-[10px] font-bold text-primary hover:bg-black/80"
+                >
+                  <Check className="size-3" />
+                  {t("chat.markRead")}
+                </button>
+              )}
+
               <div className="truncate text-[11px] opacity-80">{t("chat.subtitle")}</div>
             </div>
             <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
