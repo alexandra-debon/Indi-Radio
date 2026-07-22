@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StarRating } from "@/components/rating/StarRating";
 import { toast } from "sonner";
 import { CoupComments } from "@/components/coups/CoupComments";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 type CoupRow = {
   id: string;
@@ -269,7 +270,15 @@ function CoupsDeCoeurPage() {
                         ? "EP"
                         : "Album"}
                   </div>
-                  <h2 className="text-xl font-bold leading-tight">{c.title}</h2>
+                  <h2 className="text-xl font-bold leading-tight">
+                    <TranslatedText
+                      entityType="coup_de_coeur"
+                      entityKey={c.id}
+                      field="title"
+                      text={c.title}
+                      as="span"
+                    />
+                  </h2>
                   <div className="text-sm text-muted-foreground">
                     par <span className="font-medium text-foreground">{c.artist}</span>
                   </div>
@@ -283,18 +292,28 @@ function CoupsDeCoeurPage() {
                   )}
                 </div>
 
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {c.comment}
-                </div>
+                <TranslatedText
+                  entityType="coup_de_coeur"
+                  entityKey={c.id}
+                  field="comment"
+                  text={c.comment}
+                  as="div"
+                  className="whitespace-pre-wrap text-sm leading-relaxed"
+                />
 
                 {c.discovery_story && (
                   <div className="rounded-md border-l-4 border-primary bg-muted/40 p-3">
                     <div className="mb-1 text-[10px] font-bold uppercase tracking-widest text-primary">
                       Comment on l'a découvert·e
                     </div>
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                      {c.discovery_story}
-                    </div>
+                    <TranslatedText
+                      entityType="coup_de_coeur"
+                      entityKey={c.id}
+                      field="discovery_story"
+                      text={c.discovery_story}
+                      as="div"
+                      className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"
+                    />
                   </div>
                 )}
 
