@@ -311,7 +311,7 @@ export const dict = {
     "chat.image": "Joindre une image",
     "chat.loginRequired": "Connecte-toi pour discuter avec l'équipe.",
     "chat.closeMobile": "Fermer le chat — retour à la lecture",
-    "chat.jumpToLatest": "Revenir au dernier message",
+    "chat.jumpToLatest": "Aller au dernier message",
     "chat.markRead": "Marquer comme lu",
     "chat.unread": "messages non lus",
     "chat.notifTitle": "Nouveau message Team-Indi",
