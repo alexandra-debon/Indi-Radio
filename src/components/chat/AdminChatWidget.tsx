@@ -53,11 +53,22 @@ export function AdminChatWidget() {
   const uid = session?.user.id ?? null;
   const reducedMotion = usePrefersReducedMotion();
 
-  // Open handler via global event (from profile menu)
+  // Open handler via global event (from profile menu / MiniPlayer trigger).
+  // We also listen on `document` because some environments (older WebViews,
+  // strict CSP) intermittently drop bubbled window events dispatched from
+  // deeply nested components.
   useEffect(() => {
     const h = () => setOpen(true);
     window.addEventListener("indi:open-admin-chat", h);
-    return () => window.removeEventListener("indi:open-admin-chat", h);
+    document.addEventListener("indi:open-admin-chat", h);
+    // Expose an imperative fallback so the trigger can force-open even if
+    // event dispatch fails (e.g. iframe boundaries, native shell).
+    (window as any).__indiOpenAdminChat = () => setOpen(true);
+    return () => {
+      window.removeEventListener("indi:open-admin-chat", h);
+      document.removeEventListener("indi:open-admin-chat", h);
+      if ((window as any).__indiOpenAdminChat) delete (window as any).__indiOpenAdminChat;
+    };
   }, []);
 
   // Load thread + subscribe

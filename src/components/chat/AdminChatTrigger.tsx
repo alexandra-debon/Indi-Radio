@@ -53,8 +53,16 @@ export function AdminChatTrigger({ className }: { className?: string }) {
       window.dispatchEvent(new Event("indi:open-auth"));
       return;
     }
-    if (isAdmin) navigate({ to: "/admin/messages" });
-    else window.dispatchEvent(new Event("indi:open-admin-chat"));
+    if (isAdmin) {
+      navigate({ to: "/admin/messages" });
+      return;
+    }
+    // Dispatch event AND call imperative fallback so the panel opens even
+    // if the event is missed (race on first mount, WebView quirks, etc.).
+    try { window.dispatchEvent(new Event("indi:open-admin-chat")); } catch {}
+    try { document.dispatchEvent(new Event("indi:open-admin-chat")); } catch {}
+    const fn = (window as any).__indiOpenAdminChat;
+    if (typeof fn === "function") fn();
   };
 
   return (
