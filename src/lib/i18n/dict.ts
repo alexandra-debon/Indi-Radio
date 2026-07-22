@@ -625,6 +625,7 @@ export const dict = {
     "chat.image": "Attach an image",
     "chat.loginRequired": "Sign in to chat with the team.",
     "chat.closeMobile": "Close chat — back to player",
+    "chat.jumpToLatest": "Jump to latest message",
 
   },
 } as const;
