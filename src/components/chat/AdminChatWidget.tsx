@@ -137,7 +137,7 @@ export function AdminChatWidget() {
   return (
     <>
       {open && (
-        <div className="fixed bottom-56 right-4 z-50 flex h-[70vh] max-h-[540px] w-[92vw] max-w-sm flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000]">
+        <div className="fixed inset-x-2 top-16 bottom-52 z-50 flex flex-col rounded-lg border-2 border-black bg-background shadow-[4px_4px_0_0_#000] sm:inset-auto sm:right-4 sm:bottom-56 sm:h-[70vh] sm:max-h-[540px] sm:w-[92vw] sm:max-w-sm">
           <div className="flex items-center justify-between border-b-2 border-black bg-primary px-3 py-2 text-black">
             <div className="min-w-0">
               <div className="truncate text-sm font-bold">{t("chat.title")}</div>
