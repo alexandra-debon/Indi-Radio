@@ -81,6 +81,10 @@ export function AdminChatWidget() {
   const notifKey = uid ? `indi.chat.notif.${uid}` : null;
   const [notifEnabled, setNotifEnabled] = useState<boolean>(true);
   const [notifPermission, setNotifPermission] = useState<NotificationPermission | "unsupported">("default");
+  // Ref mirror so the Realtime INSERT handler (registered once per uid)
+  // always reads the current preference without needing to re-subscribe.
+  const notifEnabledRef = useRef(true);
+  useEffect(() => { notifEnabledRef.current = notifEnabled; }, [notifEnabled]);
   // IntersectionObserver that watches unread admin bubbles inside the
   // scroll container. When a bubble is actually revealed in the viewport
   // (any scroll — wheel, drag, keyboard, programmatic — or a resize that
@@ -222,7 +226,7 @@ export function AdminChatWidget() {
             // reading this thread: chat closed, tab hidden, or scrolled
             // away from the bottom. The `tag` collapses repeats into a
             // single tray entry so we don't spam the notification centre.
-            if (isAdminMsg && notifEnabled && typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            if (isAdminMsg && notifEnabledRef.current && typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
               const shouldNotify = !open || document.visibilityState === "hidden" || !stickToBottom.current;
               if (shouldNotify) {
                 try {
@@ -537,9 +541,28 @@ export function AdminChatWidget() {
 
               <div className="truncate text-[11px] opacity-80">{t("chat.subtitle")}</div>
             </div>
-            <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
-              <X className="size-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              {notifPermission !== "unsupported" && (
+                <button
+                  onClick={toggleNotifications}
+                  aria-label={notifEnabled ? t("chat.notifDisable") : t("chat.notifEnable")}
+                  title={
+                    notifPermission === "denied"
+                      ? t("chat.notifBlocked")
+                      : notifEnabled ? t("chat.notifOn") : t("chat.notifOff")
+                  }
+                  disabled={notifPermission === "denied"}
+                  className="grid size-8 place-items-center rounded-md hover:bg-black/10 disabled:opacity-50"
+                >
+                  {notifEnabled && notifPermission === "granted"
+                    ? <Bell className="size-4" />
+                    : <BellOff className="size-4" />}
+                </button>
+              )}
+              <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-black/10">
+                <X className="size-4" />
+              </button>
+            </div>
           </div>
 
           <div
