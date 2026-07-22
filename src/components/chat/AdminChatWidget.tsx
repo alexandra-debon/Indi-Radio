@@ -279,7 +279,6 @@ export function AdminChatWidget() {
     stickToBottom.current = true;
     userInteracted.current = true;
     setShowJump(false);
-    setPendingCount(0);
     if (scrollKey) localStorage.removeItem(scrollKey);
     scrollToBottom();
     markVisibleAsRead();
