@@ -25,6 +25,10 @@ const SRC_DIR = join(ROOT, "src");
 // DO NOT extend this list — translate new UI strings via useT()/dict instead.
 // To remove a file: replace its French text with t("...") lookups.
 const FRENCH_JSX_GRANDFATHERED = new Set([
+  "src/components/AuthDialog.tsx",
+  "src/components/coups/CoupComments.tsx",
+  "src/components/media/MultiImageUploader.tsx",
+  "src/components/onboarding/OnboardingTour.tsx",
   "src/components/EmailVerificationBanner.tsx",
   "src/components/IosInstallHint.tsx",
   "src/components/NotificationPreferences.tsx",
@@ -48,12 +52,14 @@ const FRENCH_JSX_GRANDFATHERED = new Set([
   "src/routes/actus.$postId.tsx",
   "src/routes/chroniques.$slug.tsx",
   "src/routes/clips.$clipId.tsx",
+  "src/routes/coups-de-coeur.tsx",
   "src/routes/emissions.$showId.tsx",
   "src/routes/episodes.$episodeId.tsx",
   "src/routes/magazines.$magazineId.tsx",
   "src/routes/newsletter.tsx",
   "src/routes/p.$postId.tsx",
   "src/routes/privacy.tsx",
+  "src/routes/tag.$tag.tsx",
   "src/routes/terms.tsx",
 ]);
 
@@ -90,6 +96,12 @@ const ALLOWED_IDENTICAL = new Set([
   "page.contact.title", "page.top.title",
   "page.clips.title", "page.podcasts.title",
   "page.top.kind.podcast",
+  // Proper nouns / short tokens legitimately identical FR/EN.
+  "profile.pts", "profile.mentions",
+  "tour.open",
+  "chat.title", "chat.openBubble", "chat.menuItem",
+  "upub.teamIndi", "upub.points", "upub.max", "upub.badges",
+  "upub.photo", "upub.photos",
 ]);
 
 function parseDict(src) {
