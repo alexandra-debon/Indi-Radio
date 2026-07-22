@@ -311,6 +311,7 @@ export const dict = {
     "chat.image": "Joindre une image",
     "chat.loginRequired": "Connecte-toi pour discuter avec l'équipe.",
     "chat.closeMobile": "Fermer le chat — retour à la lecture",
+    "chat.jumpToLatest": "Revenir au dernier message",
 
   },
   en: {
@@ -624,6 +625,7 @@ export const dict = {
     "chat.image": "Attach an image",
     "chat.loginRequired": "Sign in to chat with the team.",
     "chat.closeMobile": "Close chat — back to player",
+    "chat.jumpToLatest": "Jump to latest message",
 
   },
 } as const;

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send, ImagePlus, Loader2 } from "lucide-react";
+import { X, Send, ImagePlus, Loader2, ArrowDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
@@ -34,6 +34,10 @@ export function AdminChatWidget() {
   // them back down on every new arrival. Track whether we're pinned to the
   // bottom and only auto-scroll then.
   const stickToBottom = useRef(true);
+  // Rendered pill state: true when the reader is scrolled up AND at
+  // least one new message has landed since they left the bottom.
+  const [showJump, setShowJump] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const uid = session?.user.id ?? null;
 
   // Open handler via global event (from profile menu)
@@ -67,6 +71,12 @@ export function AdminChatWidget() {
             if (prev.some(m => m.id === payload.new.id)) return prev;
             const next = [...prev, payload.new as Msg];
             if ((payload.new as Msg).is_from_admin) setUnread(u => u + 1);
+            // If the reader is scrolled up, surface the jump-to-latest
+            // pill and bump the unread badge count.
+            if (!stickToBottom.current) {
+              setShowJump(true);
+              setPendingCount(c => c + 1);
+            }
             return next;
           }
           if (payload.eventType === "UPDATE") {
@@ -106,6 +116,8 @@ export function AdminChatWidget() {
   useEffect(() => {
     if (!open) return;
     stickToBottom.current = true;
+    setShowJump(false);
+    setPendingCount(0);
     requestAnimationFrame(() => {
       bottomRef.current?.scrollIntoView({ block: "end" });
     });
@@ -117,7 +129,19 @@ export function AdminChatWidget() {
     const el = scrollRef.current;
     if (!el) return;
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    stickToBottom.current = distanceFromBottom < 80;
+    const atBottom = distanceFromBottom < 80;
+    stickToBottom.current = atBottom;
+    if (atBottom) {
+      setShowJump(false);
+      setPendingCount(0);
+    }
+  }
+
+  function jumpToLatest() {
+    stickToBottom.current = true;
+    setShowJump(false);
+    setPendingCount(0);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }
 
   async function sendMessage(imageUrl?: string) {
@@ -224,6 +248,24 @@ export function AdminChatWidget() {
             ))}
             <div ref={bottomRef} aria-hidden="true" />
           </div>
+
+          {showJump && (
+            <button
+              type="button"
+              onClick={jumpToLatest}
+              aria-label={t("chat.jumpToLatest")}
+              className="pointer-events-auto absolute left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border-2 border-black bg-primary px-3 py-1.5 text-xs font-semibold text-black shadow-[2px_2px_0_0_#000] hover:bg-primary/90"
+              style={{ bottom: "calc(6.25rem + env(safe-area-inset-bottom, 0px))" }}
+            >
+              <ArrowDown className="size-3.5" />
+              {t("chat.jumpToLatest")}
+              {pendingCount > 0 && (
+                <span className="grid min-w-5 place-items-center rounded-full bg-black px-1.5 text-[10px] font-bold text-primary">
+                  {pendingCount > 99 ? "99+" : pendingCount}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* Mobile close affordance: always visible above the composer so the
               user can exit the chat and return to the player instantly. */}
