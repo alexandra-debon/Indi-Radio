@@ -149,7 +149,6 @@ export function AdminChatWidget() {
             // jump-to-latest pill as well.
             if (isAdminMsg && open && !stickToBottom.current) {
               setShowJump(true);
-              setPendingCount(c => c + 1);
             }
             // Fire an OS notification when the user isn't actively
             // reading this thread: chat closed, tab hidden, or scrolled
