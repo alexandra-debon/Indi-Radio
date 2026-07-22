@@ -96,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "InDi RaDio — Live 24/7 musique  indépendante" },
       { name: "description", content: "Écoute Indi Radio en direct. Plus qu’une radio. Découvre les artistes indé, participe au mur social, retrouve l'historique des titres passés à l'antenne et +." },
       { name: "author", content: "InDi ArT CulTuRe" },
