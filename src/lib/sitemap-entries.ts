@@ -257,5 +257,5 @@ export function renderLocalizedSitemap(entries: SitemapEntry[], lang: "fr" | "en
 }
 
 export function renderSitemapIndex(): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${BASE_URL}/sitemap-fr.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-en.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-images.xml</loc></sitemap>\n</sitemapindex>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${BASE_URL}/sitemap-fr.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-en.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-images.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-video.xml</loc></sitemap>\n</sitemapindex>`;
 }
