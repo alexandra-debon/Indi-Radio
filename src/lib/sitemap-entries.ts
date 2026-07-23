@@ -154,7 +154,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of profiles ?? []) {
       if (!r.pseudo) continue;
       entries.push({
-        path: `/u/${r.pseudo}`,
+        path: `/u/${encodeURIComponent(r.pseudo)}`,
         changefreq: "monthly",
         priority: "0.4",
         lastmod: normalizeDate(r.created_at),
@@ -163,14 +163,14 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     // Public photo albums
     const { data: albums } = await sb
       .from("photo_albums")
-      .select("id, owner_id, profiles(pseudo), updated_at")
+      .select("id, owner_id, profiles!inner(pseudo), updated_at")
       .order("updated_at", { ascending: false })
       .limit(2000);
     for (const r of albums ?? []) {
       const owner = (r as any).profiles?.pseudo;
       if (!owner) continue;
       entries.push({
-        path: `/u/${owner}/albums/${r.id}`,
+        path: `/u/${encodeURIComponent(owner)}/albums/${r.id}`,
         changefreq: "monthly",
         priority: "0.4",
         lastmod: normalizeDate(r.updated_at),
