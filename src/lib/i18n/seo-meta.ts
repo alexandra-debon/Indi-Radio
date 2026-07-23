@@ -23,12 +23,12 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
   },
   "/about": {
     fr: {
-      title: "À propos — InDi RaDio",
-      description: "Notre mission : donner une voix aux artistes indépendants. Découvre l'équipe et le projet InDi ArT CulTuRe.",
+      title: "À propos — Radio gratuite musique indépendante InDi RaDio",
+      description: "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
     },
     en: {
-      title: "About — InDi RaDio",
-      description: "Our mission: give a voice to independent artists. Meet the team and the InDi ArT CulTuRe project.",
+      title: "About — Free Independent Music Radio InDi RaDio",
+      description: "InDi RaDio, free independent music radio 24/7 ad-free. Discover the mission, team and music social network behind InDi ArT CulTuRe.",
     },
   },
   "/actus": {
