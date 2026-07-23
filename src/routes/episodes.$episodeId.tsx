@@ -65,20 +65,31 @@ export const Route = createFileRoute("/episodes/$episodeId")({
             image,
             url,
             datePublished: ep.published_at,
+            inLanguage: "fr-FR",
+            ...(ep.duration_seconds
+              ? { timeRequired: `PT${Math.round(ep.duration_seconds)}S` }
+              : {}),
             ...(ep.audio_url
               ? {
                   associatedMedia: {
                     "@type": "AudioObject",
                     contentUrl: ep.audio_url,
                     name: ep.title,
+                    encodingFormat: "audio/mpeg",
+                    ...(ep.duration_seconds
+                      ? { duration: `PT${Math.round(ep.duration_seconds)}S` }
+                      : {}),
                   },
                 }
               : {}),
             ...(parentTitle
               ? {
                   partOfSeries: {
-                    "@type": "PodcastSeries",
+                    "@type": ["PodcastSeries", "AudioPodcast"],
                     name: parentTitle,
+                    url: ep.podcast_id
+                      ? `${BASE_URL}/podcasts#podcast-${ep.podcast_id}`
+                      : `${BASE_URL}/emissions/${ep.show_id}`,
                   },
                 }
               : {}),
