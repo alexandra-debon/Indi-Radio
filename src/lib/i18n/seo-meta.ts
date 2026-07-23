@@ -36,16 +36,16 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "News · Indi Rézo — Indie Music Social Network InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network. Indie music, clips, reviews and podcasts." },
   },
   "/podcasts": {
-    fr: { title: "Podcasts — InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants." },
-    en: { title: "Podcasts — InDi RaDio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists." },
+    fr: { title: "Podcasts — Radio musique indépendante InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio musique indépendante." },
+    en: { title: "Podcasts — Independent Music Radio InDi RaDio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists on free indie music radio." },
   },
   "/emissions": {
-    fr: { title: "Émissions — InDi RaDio", description: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay." },
-    en: { title: "Shows — InDi RaDio", description: "Browse every InDi RaDio show and catch up on episodes on demand." },
+    fr: { title: "Émissions — Radio gratuite InDi RaDio", description: "Retrouve toutes les émissions d'InDi RaDio, radio gratuite sans pub, et leurs épisodes en replay." },
+    en: { title: "Shows — Free Music Radio InDi RaDio", description: "Browse every InDi RaDio show and catch up on episodes on free independent music radio." },
   },
   "/chroniques": {
-    fr: { title: "Chroniques — InDi RaDio", description: "Les chroniques audio d'InDi RaDio : coups de cœur, critiques et découvertes." },
-    en: { title: "Columns — InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries." },
+    fr: { title: "Chroniques — Radio musique indépendante InDi RaDio", description: "Les chroniques audio d'InDi RaDio : coups de cœur, critiques et découvertes sur la radio musique indépendante sans pub." },
+    en: { title: "Columns — Independent Music Radio InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries on free indie music radio." },
   },
   "/magazines": {
     fr: { title: "Magazine Indi Art Culture — InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture." },
