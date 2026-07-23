@@ -10,6 +10,7 @@ import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 export const Route = createFileRoute("/u/$pseudo")({
   loader: async ({ params }) => {
@@ -70,6 +71,11 @@ export const Route = createFileRoute("/u/$pseudo")({
             },
           }),
         },
+        breadcrumbLd([
+          HOME_CRUMB,
+          { name: "Top utilisateurs", url: `${SITE_ORIGIN}/top-users` },
+          { name: `@${pseudo}`, url },
+        ]),
       ],
     };
   },
