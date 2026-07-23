@@ -55,19 +55,6 @@ function NotFoundComponent() {
     };
   }, []);
 
-  // Server-side hint: TanStack Start doesn't automatically surface a 404
-  // HTTP status for unmatched app routes, so we emit it via the runtime
-  // utilities when available. Safe no-op on the client.
-  if (typeof window === "undefined") {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { setResponseStatus } = require("@tanstack/react-start/server");
-      setResponseStatus(404);
-    } catch {
-      /* ignore — status will remain 200 in SPA fallback */
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-lg text-center">
