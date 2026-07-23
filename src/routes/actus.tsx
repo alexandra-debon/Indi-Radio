@@ -32,10 +32,11 @@ const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 export const Route = createFileRoute("/actus")({
   head: () => ({
     meta: [
-      { title: "Indi Rézo — Actualités et actu InDi Radio" },
-      { name: "description", content: "Indi Rézo : fil d'actualités des artistes indépendants et de l'actu InDi Radio, orchestré par la rédaction." },
-      { property: "og:title", content: "Indi Rézo — Actualités et actu InDi Radio" },
-      { property: "og:description", content: "Le fil d'actus des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction." },
+      { title: "Indi Rézo — Radio musique indé & réseau social musique InDi RaDio" },
+      { name: "description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
+      { name: "keywords", content: "radio musique indé, réseau social musique, radio musique indépendante, actus indépendantes, InDi RaDio, Indi Rézo" },
+      { property: "og:title", content: "Indi Rézo — Radio musique indé & réseau social musique InDi RaDio" },
+      { property: "og:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_ACTUS },

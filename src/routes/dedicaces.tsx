@@ -11,11 +11,15 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/dedicaces")({
   head: () => ({
     meta: [
-      { title: "Dédicaces & demandes — Indi Radio" },
-      { name: "description", content: "Envoie ta demande musicale et ta dédicace en direct sur Indi Radio." },
-      { property: "og:title", content: "Dédicaces — Indi Radio" },
-      { property: "og:description", content: "Musique à la demande et dédicaces sur Indi Radio." },
+      { title: "Dédicaces — Radio gratuite musique indépendante InDi RaDio" },
+      { name: "description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio gratuite musique indépendante sans pub." },
+      { name: "keywords", content: "radio gratuite, radio musique indépendante, radio sans pub, dédicaces radio, musique à la demande, InDi RaDio" },
+      { property: "og:title", content: "Dédicaces — Radio gratuite musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio gratuite musique indépendante sans pub." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/dedicaces" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/dedicaces" }],
   }),
   component: DedicacesPage,
 });

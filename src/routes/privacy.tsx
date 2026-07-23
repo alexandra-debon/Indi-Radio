@@ -5,17 +5,18 @@ import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Politique de confidentialité — Indi Radio" },
+      { title: "Politique de confidentialité — Radio musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Politique de confidentialité d'Indi Radio : données collectées, notifications, cookies et exercice des droits.",
+          "Politique de confidentialité d'InDi RaDio, radio musique indépendante : données collectées, notifications, cookies et exercice des droits.",
       },
-      { property: "og:title", content: "Politique de confidentialité — Indi Radio" },
+      { name: "keywords", content: "radio musique indépendante, politique confidentialité, données personnelles, InDi RaDio" },
+      { property: "og:title", content: "Politique de confidentialité — Radio musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Politique de confidentialité d'Indi Radio : données collectées, notifications, cookies et exercice des droits.",
+          "Politique de confidentialité d'InDi RaDio, radio musique indépendante : données collectées, notifications, cookies et exercice des droits.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/privacy" },
       { property: "og:type", content: "website" },

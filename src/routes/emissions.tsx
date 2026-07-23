@@ -21,10 +21,11 @@ const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 export const Route = createFileRoute("/emissions")({
   head: () => ({
     meta: [
-      { title: "Émissions & Animateurs — Indi Radio" },
-      { name: "description", content: "Les émissions, chroniques et animateurs d'Indi Radio." },
-      { property: "og:title", content: "Émissions & Animateurs — Indi Radio" },
-      { property: "og:description", content: "Découvre les voix et les programmes d'Indi Radio." },
+      { title: "Émissions & Animateurs — Radio gratuite sans pub InDi RaDio" },
+      { name: "description", content: "Retrouve toutes les émissions d'InDi RaDio, radio gratuite sans pub, et leurs épisodes en replay." },
+      { name: "keywords", content: "radio gratuite, radio sans pub, émissions radio indépendante, animateurs indépendants, replay InDi RaDio" },
+      { property: "og:title", content: "Émissions & Animateurs — Radio gratuite sans pub InDi RaDio" },
+      { property: "og:description", content: "Retrouve toutes les émissions d'InDi RaDio, radio gratuite sans pub, et leurs épisodes en replay." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/emissions" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_EMISSIONS },

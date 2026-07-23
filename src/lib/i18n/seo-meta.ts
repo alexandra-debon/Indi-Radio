@@ -11,77 +11,77 @@ export type SeoBundle = Record<Lang, SeoEntry>;
 export const STATIC_SEO: Record<string, SeoBundle> = {
   "/": {
     fr: {
-      title: "Radio 7/24 100% musique indépendante — InDi RaDio",
+      title: "Radio gratuite 24/7 musique indépendante — InDi RaDio",
       description:
-        "Radio 7/24 100% musique indépendante. Radio Gratuite, sans pubs, sans infos. Radio communautaire avec mur social et magazine interactif.",
+        "Radio gratuite 24/7 sans pub, sans info. Écoute la radio musique indé et le réseau social musique de la scène indépendante sur InDi RaDio.",
     },
     en: {
-      title: "24/7 Independent Music Radio — InDi RaDio",
+      title: "Free 24/7 Independent Music Radio — InDi RaDio",
       description:
-        "24/7 independent music radio. Free, ad-free, no news. A community radio with social wall and interactive magazine.",
+        "Free independent music radio 24/7, ad-free, no news. Listen to indie music and join the music social network on InDi RaDio.",
     },
   },
   "/about": {
     fr: {
-      title: "À propos — InDi RaDio",
-      description: "Notre mission : donner une voix aux artistes indépendants. Découvre l'équipe et le projet InDi ArT CulTuRe.",
+      title: "À propos — Radio gratuite musique indépendante InDi RaDio",
+      description: "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
     },
     en: {
-      title: "About — InDi RaDio",
-      description: "Our mission: give a voice to independent artists. Meet the team and the InDi ArT CulTuRe project.",
+      title: "About — Free Independent Music Radio InDi RaDio",
+      description: "InDi RaDio, free independent music radio 24/7 ad-free. Discover the mission, team and music social network behind InDi ArT CulTuRe.",
     },
   },
   "/actus": {
-    fr: { title: "Actus · Indi Rézo — InDi RaDio", description: "Toute l'actualité de la scène indépendante et du réseau InDi ArT CulTuRe." },
-    en: { title: "News · Indi Rézo — InDi RaDio", description: "All the news from the independent scene and the InDi ArT CulTuRe network." },
+    fr: { title: "Actus · Indi Rézo — Radio musique indé InDi RaDio", description: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
+    en: { title: "News · Indi Rézo — Indie Music Social Network InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network. Indie music, clips, reviews and podcasts." },
   },
   "/podcasts": {
-    fr: { title: "Podcasts — InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants." },
-    en: { title: "Podcasts — InDi RaDio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists." },
+    fr: { title: "Podcasts — Radio musique indépendante InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio musique indépendante." },
+    en: { title: "Podcasts — Independent Music Radio InDi RaDio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists on free indie music radio." },
   },
   "/emissions": {
-    fr: { title: "Émissions — InDi RaDio", description: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay." },
-    en: { title: "Shows — InDi RaDio", description: "Browse every InDi RaDio show and catch up on episodes on demand." },
+    fr: { title: "Émissions — Radio gratuite InDi RaDio", description: "Retrouve toutes les émissions d'InDi RaDio, radio gratuite sans pub, et leurs épisodes en replay." },
+    en: { title: "Shows — Free Music Radio InDi RaDio", description: "Browse every InDi RaDio show and catch up on episodes on free independent music radio." },
   },
   "/chroniques": {
-    fr: { title: "Chroniques — InDi RaDio", description: "Les chroniques audio d'InDi RaDio : coups de cœur, critiques et découvertes." },
-    en: { title: "Columns — InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries." },
+    fr: { title: "Chroniques — Radio musique indépendante InDi RaDio", description: "Les chroniques audio d'InDi RaDio : coups de cœur, critiques et découvertes sur la radio musique indépendante sans pub." },
+    en: { title: "Columns — Independent Music Radio InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries on free indie music radio." },
   },
   "/magazines": {
-    fr: { title: "Magazine Indi Art Culture — InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture." },
-    en: { title: "Indi Art Culture Magazine — InDi RaDio", description: "Flip through the interactive Indi Art Culture magazine." },
+    fr: { title: "Magazine Indi Art Culture — Radio musique indé InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio musique indé et du réseau social musique." },
+    en: { title: "Indi Art Culture Magazine — Indie Music Radio InDi RaDio", description: "Flip through the interactive Indi Art Culture magazine, the indie music radio and music social network magazine." },
   },
   "/clips": {
-    fr: { title: "Clip Addict — InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio." },
-    en: { title: "Clip Addict — InDi RaDio", description: "The video playlist of independent music clips curated by InDi RaDio." },
+    fr: { title: "Clip Addict — Radio gratuite InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio, radio gratuite musique indépendante sans pub." },
+    en: { title: "Clip Addict — Free Music Radio InDi RaDio", description: "The video playlist of independent music clips curated by InDi RaDio, free independent music radio ad-free." },
   },
   "/chart": {
-    fr: { title: "Top 25 des titres — InDi RaDio", description: "Le classement des 25 titres les plus aimés par la communauté InDi RaDio." },
-    en: { title: "Top 25 Tracks — InDi RaDio", description: "The chart of the 25 most-loved tracks by the InDi RaDio community." },
+    fr: { title: "Top 25 des titres — Radio sans pub InDi RaDio", description: "Le classement des 25 titres les plus aimés par la communauté de la radio sans pub InDi RaDio. Musique indépendante 24/7." },
+    en: { title: "Top 25 Tracks — Ad-Free Radio InDi RaDio", description: "The chart of the 25 most-loved tracks by the ad-free InDi RaDio community. Independent music 24/7." },
   },
   "/top": {
-    fr: { title: "Top podcasts & chroniques — InDi RaDio", description: "Les podcasts et chroniques les plus écoutés sur InDi RaDio." },
-    en: { title: "Top podcasts & columns — InDi RaDio", description: "The most-listened podcasts and columns on InDi RaDio." },
+    fr: { title: "Top podcasts & chroniques — Radio musique indé InDi RaDio", description: "Les podcasts et chroniques les plus écoutés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+    en: { title: "Top podcasts & columns — Indie Music Radio InDi RaDio", description: "The most-listened podcasts and columns on InDi RaDio, the indie music radio and music social network." },
   },
   "/top-users": {
-    fr: { title: "Top 25 utilisateurs — InDi RaDio", description: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio." },
-    en: { title: "Top 25 Users — InDi RaDio", description: "The 25 most active users in the InDi RaDio community." },
+    fr: { title: "Top 25 utilisateurs — Réseau social musique InDi RaDio", description: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique dédié aux artistes indépendants." },
+    en: { title: "Top 25 Users — Music Social Network InDi RaDio", description: "The 25 most active users in the InDi RaDio music social network community for independent artists." },
   },
   "/dedicaces": {
-    fr: { title: "Dédicaces — InDi RaDio", description: "Envoie une dédicace à l'antenne d'InDi RaDio." },
-    en: { title: "Shout-outs — InDi RaDio", description: "Send a shout-out to be played on InDi RaDio." },
+    fr: { title: "Dédicaces — Radio gratuite InDi RaDio", description: "Envoie une dédicace à l'antenne d'InDi RaDio, la radio gratuite musique indépendante sans pub." },
+    en: { title: "Shout-outs — Free Music Radio InDi RaDio", description: "Send a shout-out to be played on InDi RaDio, free independent music radio ad-free." },
   },
   "/contact": {
-    fr: { title: "Contact — InDi RaDio", description: "Contacte l'équipe InDi RaDio et InDi ArT CulTuRe." },
-    en: { title: "Contact — InDi RaDio", description: "Get in touch with the InDi RaDio and InDi ArT CulTuRe team." },
+    fr: { title: "Contact — Radio musique indépendante InDi RaDio", description: "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe." },
+    en: { title: "Contact — Independent Music Radio InDi RaDio", description: "Get in touch with the InDi RaDio team, free independent music radio ad-free, and InDi ArT CulTuRe." },
   },
   "/soumission-artistes": {
-    fr: { title: "Soumission artistes — InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio." },
-    en: { title: "Artist submissions — InDi RaDio", description: "Independent artists: submit your tracks to be played on InDi RaDio." },
+    fr: { title: "Soumission artistes — Radio musique indé InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique." },
+    en: { title: "Artist submissions — Indie Music Radio InDi RaDio", description: "Independent artists: submit your tracks to be played on InDi RaDio, the indie music radio and music social network." },
   },
   "/newsletter": {
-    fr: { title: "Newsletter — InDi RaDio", description: "Inscris-toi à la newsletter InDi RaDio et reste connecté à la scène indé." },
-    en: { title: "Newsletter — InDi RaDio", description: "Subscribe to the InDi RaDio newsletter and stay tuned to the indie scene." },
+    fr: { title: "Newsletter — Radio musique indépendante InDi RaDio", description: "Inscris-toi à la newsletter InDi RaDio, la radio gratuite musique indépendante sans pub, et reste connecté à la scène indé." },
+    en: { title: "Newsletter — Independent Music Radio InDi RaDio", description: "Subscribe to the InDi RaDio newsletter, free independent music radio ad-free, and stay tuned to the indie scene." },
   },
   "/privacy": {
     fr: { title: "Politique de confidentialité — InDi RaDio", description: "Comment InDi RaDio protège et traite tes données personnelles." },

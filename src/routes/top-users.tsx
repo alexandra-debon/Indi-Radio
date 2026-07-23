@@ -8,11 +8,15 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 export const Route = createFileRoute("/top-users")({
   head: () => ({
     meta: [
-      { title: "Top Utilisateurs — Les 25 plus actifs | InDi RaDio" },
-      { name: "description", content: "Classement des 25 auditeurs les plus actifs de la communauté InDi RaDio, triés par points gagnés." },
-      { property: "og:title", content: "Top Utilisateurs — InDi RaDio" },
-      { property: "og:description", content: "Les 25 membres les plus actifs de la communauté." },
+      { title: "Top 25 utilisateurs — Réseau social musique InDi RaDio" },
+      { name: "description", content: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique dédié aux artistes indépendants." },
+      { name: "keywords", content: "réseau social musique, top utilisateurs, radio musique indé, communauté artistes indépendants, InDi RaDio" },
+      { property: "og:title", content: "Top 25 utilisateurs — Réseau social musique InDi RaDio" },
+      { property: "og:description", content: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique dédié aux artistes indépendants." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/top-users" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/top-users" }],
   }),
   component: TopUsersPage,
   errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,

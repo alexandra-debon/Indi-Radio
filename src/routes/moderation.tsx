@@ -5,17 +5,18 @@ import { Coffee, Handshake, ShieldCheck, MessageSquare, Flag, Pause, Sparkles, A
 export const Route = createFileRoute("/moderation")({
   head: () => ({
     meta: [
-      { title: "Modération & valeurs — InDi RaDio" },
+      { title: "Modération & valeurs — Réseau social musique InDi RaDio" },
       {
         name: "description",
         content:
-          "Notre approche de la modération, nos valeurs de dialogue et la pause hors réseau que nous privilégions avant toute sanction.",
+          "Notre approche de la modération sur le réseau social musique InDi RaDio : dialogue, valeurs communautaires et respect entre auditeurs et artistes indépendants.",
       },
-      { property: "og:title", content: "Modération & valeurs — InDi RaDio" },
+      { name: "keywords", content: "réseau social musique, modération communautaire, valeurs InDi RaDio, radio musique indé, artistes indépendants" },
+      { property: "og:title", content: "Modération & valeurs — Réseau social musique InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Comment nous modérons la communauté InDi : dialogue d'abord, sanctions ensuite. La pause hors réseau pour se comprendre.",
+          "Notre approche de la modération sur le réseau social musique InDi RaDio : dialogue, valeurs communautaires et respect entre auditeurs et artistes indépendants.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://radio.indi-art-culture.com/moderation" },
