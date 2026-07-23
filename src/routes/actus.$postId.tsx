@@ -16,7 +16,7 @@ export const Route = createFileRoute("/actus/$postId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("news_posts")
-      .select("id,title,content,image_url,created_at, author:profiles!news_posts_author_id_fkey(id,pseudo)")
+      .select("id,title,content,image_url,created_at,updated_at, author:profiles!news_posts_author_id_fkey(id,pseudo)")
       .eq("id", params.postId)
       .maybeSingle();
     if (error || !data) throw notFound();
@@ -53,17 +53,31 @@ export const Route = createFileRoute("/actus/$postId")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
-            headline: loaderData.title,
+            "@type": "NewsArticle",
+            headline: loaderData.title.slice(0, 110),
             description: desc,
-            image: image,
+            image: [image],
             url,
+            mainEntityOfPage: { "@type": "WebPage", "@id": url },
             datePublished: loaderData.created_at,
+            dateModified: (loaderData as { updated_at?: string }).updated_at ?? loaderData.created_at,
+            inLanguage: "fr-FR",
+            articleSection: "Indi Rézo",
             author: {
               "@type": "Person",
               name: loaderData.author?.pseudo ?? "La rédaction",
+              ...(loaderData.author?.pseudo
+                ? { url: `${BASE_URL}/u/${loaderData.author.pseudo}` }
+                : {}),
             },
-            publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+            publisher: {
+              "@type": "Organization",
+              name: "InDi RaDio",
+              logo: {
+                "@type": "ImageObject",
+                url: `${BASE_URL}/icons/apple-touch-icon.png`,
+              },
+            },
           }),
         },
         breadcrumbLd([
