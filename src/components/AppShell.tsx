@@ -20,22 +20,24 @@ import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import type { DictKey } from "@/lib/i18n/dict";
 import { useTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
-const NAV: { to: string; key: DictKey; icon: any }[] = [
-  { to: "/", key: "nav.live", icon: Radio },
-  { to: "/actus", key: "nav.news", icon: Newspaper },
-  { to: "/emissions", key: "nav.shows", icon: Mic2 },
-  { to: "/chart", key: "nav.chart", icon: BarChart3 },
-  { to: "/top", key: "nav.top", icon: Star },
-  { to: "/top-users", key: "nav.topUsers", icon: Trophy },
-  { to: "/podcasts", key: "nav.podcasts", icon: Headphones },
-  { to: "/chroniques", key: "nav.reviews", icon: Disc3 },
-  { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart },
-  { to: "/clips", key: "nav.clips", icon: Film },
-  { to: "/magazines", key: "nav.magazines", icon: BookOpen },
-  { to: "/dedicaces", key: "nav.dedications", icon: Send },
-  { to: "/soumission-artistes", key: "nav.submissions", icon: Mic },
-  { to: "/contact", key: "nav.contact", icon: Mail },
-  { to: "/about", key: "nav.about", icon: Info },
+// `seo` renders as the anchor `title` attribute: crawlers use it as anchor
+// context for internal maillage while users get an accessible tooltip.
+const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
+  { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
+  { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Actus de la Radio musique indépendante & du Réseau social musique" },
+  { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
+  { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
+  { to: "/top", key: "nav.top", icon: Star, seo: "Top podcasts & chroniques — Radio musique indépendante" },
+  { to: "/top-users", key: "nav.topUsers", icon: Trophy, seo: "Réseau social musique — Top membres" },
+  { to: "/podcasts", key: "nav.podcasts", icon: Headphones, seo: "Podcasts Radio musique indépendante sans pub" },
+  { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
+  { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
+  { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
+  { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
+  { to: "/dedicaces", key: "nav.dedications", icon: Send, seo: "Dédicaces sur la Radio sans pub InDi RaDio" },
+  { to: "/soumission-artistes", key: "nav.submissions", icon: Mic, seo: "Soumission artistes — Radio gratuite musique indépendante" },
+  { to: "/contact", key: "nav.contact", icon: Mail, seo: "Contacter InDi RaDio — Radio musique indépendante" },
+  { to: "/about", key: "nav.about", icon: Info, seo: "À propos — Radio musique indé sans pub, Réseau social musique" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -59,7 +61,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="size-5" />
           </button>
-          <Link to="/" aria-label="Indi Radio" className="flex min-w-0 items-center justify-center gap-2 overflow-hidden">
+          <Link
+            to="/"
+            aria-label="InDi RaDio — Radio musique indé sans pub"
+            title="InDi RaDio — Radio musique indé, Radio sans pub & Réseau social musique"
+            className="flex min-w-0 items-center justify-center gap-2 overflow-hidden"
+          >
             <img
               src={logoAsset.url}
               alt=""
@@ -169,10 +176,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-3 text-center text-[11px] sm:flex-row sm:justify-between sm:text-left">
             <span>© {new Date().getFullYear()} Indi Radio</span>
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
-              <Link to="/about" className="hover:text-primary">{t("footer.about")}</Link>
-              <Link to="/contact" className="hover:text-primary">{t("footer.contact")}</Link>
-              <Link to="/terms" className="hover:text-primary">{t("footer.terms")}</Link>
-              <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-primary">
+              <Link to="/about" title="À propos — Radio musique indé sans pub" className="hover:text-primary">{t("footer.about")}</Link>
+              <Link to="/contact" title="Contact — Radio musique indépendante InDi RaDio" className="hover:text-primary">{t("footer.contact")}</Link>
+              <Link to="/terms" title="CGU — Réseau social musique InDi RaDio" className="hover:text-primary">{t("footer.terms")}</Link>
+              <Link to="/privacy" title="Confidentialité — Radio gratuite sans pub" className="inline-flex items-center gap-1 hover:text-primary">
                 <FileText className="size-3" />
                 {t("footer.privacy")}
               </Link>
@@ -216,6 +223,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
+                  title={item.seo}
+                  aria-label={item.seo}
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm",
                     active ? "bg-primary text-primary-foreground" : "hover:bg-muted",
