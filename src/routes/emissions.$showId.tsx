@@ -6,6 +6,7 @@ import { EpisodeRow } from "@/components/EpisodeRow";
 import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from "@/components/content/ContentReactions";
 import { ArrowLeft, Mic2 } from "lucide-react";
 import ogEmissions from "@/assets/og-emissions.jpg";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogEmissions}`;
@@ -42,6 +43,13 @@ export const Route = createFileRoute("/emissions/$showId")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        breadcrumbLd([
+          HOME_CRUMB,
+          { name: "Émissions", url: `${SITE_ORIGIN}/emissions` },
+          { name: loaderData.title, url },
+        ]),
+      ],
     };
   },
   notFoundComponent: () => (

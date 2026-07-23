@@ -26,6 +26,7 @@ import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -60,6 +61,10 @@ export const Route = createFileRoute("/actus")({
           publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
         }),
       },
+      breadcrumbLd([
+        HOME_CRUMB,
+        { name: "Indi Rézo", url: `${SITE_ORIGIN}/actus` },
+      ]),
     ],
   }),
   component: ActusPage,

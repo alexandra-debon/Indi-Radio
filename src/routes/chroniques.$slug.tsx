@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ContentLikeButton, ContentCommentsSection, ContentRatingSection } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
@@ -76,7 +77,12 @@ export const Route = createFileRoute("/chroniques/$slug")({
           ...(loaderData.excerpt ? { reviewBody: loaderData.excerpt } : {}),
           publisher: { "@type": "Organization", name: "Indi Radio" },
         }),
-      }],
+      },
+      breadcrumbLd([
+        HOME_CRUMB,
+        { name: "Chroniques", url: `${SITE_ORIGIN}/chroniques` },
+        { name: `${loaderData.title} — ${loaderData.artist}`, url },
+      ])],
     };
   },
   errorComponent: ({ error, reset }) => {

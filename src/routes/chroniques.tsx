@@ -7,6 +7,7 @@ import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
@@ -27,6 +28,12 @@ export const Route = createFileRoute("/chroniques")({
       { name: "twitter:image", content: OG_CHRONIQUES },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chroniques" }],
+    scripts: [
+      breadcrumbLd([
+        HOME_CRUMB,
+        { name: "Chroniques", url: `${SITE_ORIGIN}/chroniques` },
+      ]),
+    ],
   }),
   component: ChroniquesPage,
 });

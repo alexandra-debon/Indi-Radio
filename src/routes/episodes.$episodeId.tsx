@@ -4,6 +4,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ArrowLeft } from "lucide-react";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogPodcasts}`;
@@ -84,6 +85,21 @@ export const Route = createFileRoute("/episodes/$episodeId")({
             publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
           }),
         },
+        breadcrumbLd([
+          HOME_CRUMB,
+          ep.podcast_id
+            ? { name: "Podcasts", url: `${SITE_ORIGIN}/podcasts` }
+            : { name: "Émissions", url: `${SITE_ORIGIN}/emissions` },
+          ...(parentTitle
+            ? [{
+                name: parentTitle,
+                url: ep.show_id
+                  ? `${SITE_ORIGIN}/emissions/${ep.show_id}`
+                  : `${SITE_ORIGIN}/podcasts`,
+              }]
+            : []),
+          { name: ep.title, url },
+        ]),
       ],
     };
   },
