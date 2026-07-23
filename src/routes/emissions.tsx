@@ -10,6 +10,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import ogEmissions from "@/assets/og-emissions.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 function ArchiveHeading() {
   const t = useT();
@@ -35,6 +36,12 @@ export const Route = createFileRoute("/emissions")({
       { name: "twitter:image", content: OG_EMISSIONS },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/emissions" }],
+    scripts: [
+      breadcrumbLd([
+        HOME_CRUMB,
+        { name: "Émissions", url: `${SITE_ORIGIN}/emissions` },
+      ]),
+    ],
   }),
   component: EmissionsPage,
 });
