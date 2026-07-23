@@ -99,14 +99,5 @@ export function resolveLegacyRedirect(pathname: string): string | null {
   let key = pathname.toLowerCase();
   if (key.length > 1 && key.endsWith("/")) key = key.slice(0, -1);
 
-  const direct = LEGACY_REDIRECTS[key];
-  if (direct) return direct;
-
-  // Handle single trailing-slash normalization for any known route
-  // (301 /foo/ → /foo). Only when pathname ends with "/" and isn't root.
-  if (pathname.length > 1 && pathname.endsWith("/")) {
-    return pathname.slice(0, -1);
-  }
-
-  return null;
+  return LEGACY_REDIRECTS[key] ?? null;
 }
