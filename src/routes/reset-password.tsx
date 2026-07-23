@@ -13,6 +13,9 @@ export const Route = createFileRoute("/reset-password")({
       { name: "description", content: "Choisis un nouveau mot de passe pour ton compte Indi Radio." },
       { name: "robots", content: "noindex" },
     ],
+    links: [
+      { rel: "canonical", href: "https://radio.indi-art-culture.com/reset-password" },
+    ],
   }),
   component: ResetPasswordPage,
 });

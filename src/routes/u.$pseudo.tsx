@@ -18,6 +18,10 @@ export const Route = createFileRoute("/u/$pseudo")({
       { name: "description", content: `Profil de @${params.pseudo} sur InDi RaDio : points, niveau et badges.` },
       { property: "og:title", content: `@${params.pseudo} — InDi RaDio` },
       { property: "og:description", content: `Découvrez le profil de @${params.pseudo}.` },
+      { property: "og:url", content: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}` },
+    ],
+    links: [
+      { rel: "canonical", href: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}` },
     ],
   }),
   component: UserProfilePage,

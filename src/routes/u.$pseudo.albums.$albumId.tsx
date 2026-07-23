@@ -12,6 +12,10 @@ export const Route = createFileRoute("/u/$pseudo/albums/$albumId")({
       { name: "description", content: `Galerie photo de @${params.pseudo}.` },
       { property: "og:title", content: `Album de @${params.pseudo}` },
       { property: "og:description", content: `Galerie photo sur InDi RaDio.` },
+      { property: "og:url", content: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
+    ],
+    links: [
+      { rel: "canonical", href: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
     ],
   }),
   component: AlbumGallery,
