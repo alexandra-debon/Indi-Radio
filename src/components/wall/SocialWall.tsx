@@ -859,7 +859,7 @@ export function SocialWall() {
                                 <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                                   {c.image_urls.map((u, i) => (
                                     <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
-                                      <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                      <SmartImg src={u} width={320} height={320} responsive={[160, 320]} alt="" className="w-full h-full object-cover" />
                                     </div>
                                   ))}
                                 </div>
