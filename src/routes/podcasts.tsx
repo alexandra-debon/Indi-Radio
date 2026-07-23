@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Headphones } from "lucide-react";
 import { EpisodeRow } from "@/components/EpisodeRow";
 import { ShareButton } from "@/components/share/ShareButton";
@@ -12,6 +12,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
+const SITE = "https://radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/podcasts")({
   head: () => ({
@@ -50,6 +51,30 @@ function PodcastsPage() {
       return data ?? [];
     },
   });
+
+  useEffect(() => {
+    if (!podcasts.length) return;
+    const scripts: HTMLScriptElement[] = [];
+    for (const p of podcasts) {
+      const s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.setAttribute("data-podcast-ld", p.id);
+      s.text = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": ["PodcastSeries", "AudioPodcast"],
+        name: p.title,
+        description: p.description ?? p.title,
+        url: `${SITE}/podcasts#podcast-${p.id}`,
+        image: p.cover_url || OG_PODCASTS,
+        inLanguage: "fr-FR",
+        publisher: { "@id": `${SITE}/#org` },
+        webFeed: p.rss_url ?? undefined,
+      });
+      document.head.appendChild(s);
+      scripts.push(s);
+    }
+    return () => scripts.forEach((s) => s.remove());
+  }, [podcasts]);
 
   return (
     <div className="space-y-4">
