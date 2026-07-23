@@ -15,10 +15,11 @@ const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 export const Route = createFileRoute("/podcasts")({
   head: () => ({
     meta: [
-      { title: "Podcasts — Indi Radio" },
-      { name: "description", content: "Découvre, écoute et note les podcasts de la rédaction Indi Radio : interviews, chroniques et sessions exclusives." },
-      { property: "og:title", content: "Podcasts — Indi Radio" },
-      { property: "og:description", content: "Découvre, écoute et note les podcasts de la rédaction Indi Radio : interviews, chroniques et sessions exclusives." },
+      { title: "Podcasts — Radio musique indépendante InDi RaDio" },
+      { name: "description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio musique indépendante." },
+      { name: "keywords", content: "radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
+      { property: "og:title", content: "Podcasts — Radio musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio musique indépendante." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/podcasts" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_PODCASTS },
