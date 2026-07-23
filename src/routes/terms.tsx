@@ -4,17 +4,18 @@ import { RADIO_CONFIG } from "@/config/radio";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Conditions d'utilisation — Indi Radio" },
+      { title: "Conditions d'utilisation — Radio musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Conditions générales d'utilisation d'Indi Radio : compte, contenus, modération, tolérance zéro pour tout contenu abusif.",
+          "Conditions générales d'utilisation d'InDi RaDio, radio musique indépendante et réseau social musique : compte, contenus, modération et tolérance zéro.",
       },
-      { property: "og:title", content: "Conditions d'utilisation — Indi Radio" },
+      { name: "keywords", content: "radio musique indépendante, réseau social musique, conditions utilisation, CGU InDi RaDio, modération" },
+      { property: "og:title", content: "Conditions d'utilisation — Radio musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "CGU d'Indi Radio : règles d'utilisation, modération, tolérance zéro pour tout contenu abusif ou utilisateur abusif.",
+          "Conditions générales d'utilisation d'InDi RaDio, radio musique indépendante et réseau social musique : compte, contenus, modération et tolérance zéro.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/terms" },
       { property: "og:type", content: "website" },
