@@ -27,6 +27,7 @@ import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { SmartImg } from "@/components/media/SmartImg";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -324,7 +325,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         if (imgs.length === 1) {
           return (
             <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
-              <img src={imgs[0]} alt="" loading="lazy" className="w-full h-full object-cover" />
+              <SmartImg src={imgs[0]} width={1280} height={720} responsive={[480, 800, 1280]} sizes="(max-width: 640px) 100vw, 800px" alt="" className="w-full h-full object-cover" />
             </div>
           );
         }
@@ -332,7 +333,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
           <div className={`grid gap-1 ${imgs.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
             {imgs.map((u, i) => (
               <div key={i} className="relative overflow-hidden bg-muted" style={{ aspectRatio: "16/9" }}>
-                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                <SmartImg src={u} width={640} height={360} responsive={[320, 480, 640]} alt="" className="w-full h-full object-cover" />
                 {sessionUserId && sessionUserId !== post.author_id && (
                   <ReportImageButton postId={post.id} imageUrl={u} />
                 )}
@@ -474,7 +475,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                           <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                             {c.image_urls.map((u: string, i: number) => (
                               <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
-                                <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                <SmartImg src={u} width={320} height={320} responsive={[160, 320]} alt="" className="w-full h-full object-cover" />
                               </div>
                             ))}
                           </div>

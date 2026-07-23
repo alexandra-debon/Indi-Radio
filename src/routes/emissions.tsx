@@ -11,6 +11,7 @@ import ogEmissions from "@/assets/og-emissions.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { SmartImg } from "@/components/media/SmartImg";
 
 function ArchiveHeading() {
   const t = useT();
@@ -75,7 +76,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
                 className={`card-brut relative block aspect-square w-full overflow-hidden ${i === idx ? "ring-2 ring-primary" : ""}`}
               >
                 {s.cover_url ? (
-                  <img src={s.cover_url} alt={s.title} className="size-full object-cover" />
+                  <SmartImg src={s.cover_url} width={400} height={400} responsive={[200, 400, 600]} alt={s.title} className="size-full object-cover" />
                 ) : (
                   <div className="grid size-full place-items-center bg-muted">
                     <Mic2 className="size-8 text-muted-foreground" />

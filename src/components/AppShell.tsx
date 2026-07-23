@@ -71,11 +71,19 @@ export function AppShell({ children }: { children: ReactNode }) {
               src={logoAsset.url}
               alt=""
               aria-hidden="true"
+              width={72}
+              height={72}
+              decoding="async"
+              fetchPriority="high"
               className="size-8 shrink-0 rounded-sm object-contain sm:size-9"
             />
             <img
               src={wordmarkHeaderAsset.url}
               alt="Indi Radio"
+              width={480}
+              height={120}
+              decoding="async"
+              fetchPriority="high"
               className="h-7 w-auto max-w-full shrink object-contain sm:h-9 md:h-10"
             />
           </Link>
@@ -204,8 +212,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <div className="flex min-w-0 items-center gap-2">
-              <img src={logoAsset.url} alt="" className="size-9 sm:size-10 md:size-11 shrink-0 rounded-sm object-contain" />
-              <img src={wordmarkAsset.url} alt="Indi Radio" className="h-7 sm:h-8 md:h-9 w-auto shrink-0 object-contain" />
+              <img src={logoAsset.url} alt="" width={88} height={88} decoding="async" loading="lazy" className="size-9 sm:size-10 md:size-11 shrink-0 rounded-sm object-contain" />
+              <img src={wordmarkAsset.url} alt="Indi Radio" width={480} height={120} decoding="async" loading="lazy" className="h-7 sm:h-8 md:h-9 w-auto shrink-0 object-contain" />
             </div>
             <button onClick={() => setOpen(false)} aria-label={t("action.close")} className="grid size-8 place-items-center rounded-md hover:bg-muted">
               <X className="size-4" />

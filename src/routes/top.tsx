@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Heart, Star, Trophy, Medal, Headphones, Disc3 } from "lucide-react";
 import { ContentCommentsSection, ContentLikeButton } from "@/components/content/ContentReactions";
 import { useT } from "@/lib/i18n";
+import { SmartImg } from "@/components/media/SmartImg";
 
 // Fixed UUID identifying the /top discussion thread
 const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]/gi, "0");
@@ -131,7 +132,7 @@ function TopList({ metric }: { metric: Metric }) {
           <li key={`${row.kind}-${row.id}`} className="card-brut flex items-center gap-3 p-3">
             <div className="grid size-8 place-items-center"><RankIcon rank={i + 1} /></div>
             {row.cover_url ? (
-              <img src={row.cover_url} alt="" loading="lazy" className="size-12 rounded object-cover" />
+              <SmartImg src={row.cover_url} width={96} height={96} alt={row.title} className="size-12 rounded object-cover" />
             ) : (
               <div className="grid size-12 place-items-center rounded bg-muted">
                 {row.kind === "podcast" ? <Headphones className="size-5" /> : <Disc3 className="size-5" />}

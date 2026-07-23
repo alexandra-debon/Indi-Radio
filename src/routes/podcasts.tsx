@@ -10,6 +10,7 @@ import ogPodcasts from "@/assets/og-podcasts.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { SmartImg } from "@/components/media/SmartImg";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 const SITE = "https://radio.indi-art-culture.com";
@@ -98,7 +99,14 @@ function PodcastsPage() {
             <button onClick={() => setOpenId(openId === p.id ? null : p.id)} id={`podcast-${p.id}`} className="block w-full scroll-mt-24 text-left">
             <div className="aspect-square bg-muted">
               {p.cover_url ? (
-                <img src={p.cover_url} alt={p.title} className="size-full object-cover" />
+                <SmartImg
+                  src={p.cover_url}
+                  width={400}
+                  height={400}
+                  responsive={[200, 400, 600]}
+                  alt={p.title}
+                  className="size-full object-cover"
+                />
               ) : (
                 <div className="grid size-full place-items-center"><Headphones className="size-8 text-muted-foreground" /></div>
               )}

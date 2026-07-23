@@ -8,6 +8,7 @@ import ogChroniques from "@/assets/og-chroniques.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { SmartImg } from "@/components/media/SmartImg";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
@@ -88,7 +89,14 @@ function ChroniquesPage() {
             >
               <div className="size-24 shrink-0 overflow-hidden rounded bg-muted">
                 {r.cover_url ? (
-                  <img src={r.cover_url} alt={`Pochette de ${r.title} par ${r.artist}`} className="size-full object-cover" loading="lazy" />
+                  <SmartImg
+                    src={r.cover_url}
+                    width={192}
+                    height={192}
+                    responsive={[96, 192, 288]}
+                    alt={`Pochette de ${r.title} par ${r.artist}`}
+                    className="size-full object-cover"
+                  />
                 ) : (
                   <div className="grid size-full place-items-center">
                     <Disc3 className="size-8 text-muted-foreground" />

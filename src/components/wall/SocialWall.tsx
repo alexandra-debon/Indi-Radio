@@ -28,6 +28,7 @@ import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
+import { SmartImg } from "@/components/media/SmartImg";
 
 interface PostRow {
   id: string;
@@ -636,7 +637,7 @@ export function SocialWall() {
                       return (
                         <div className="mt-2">
                           <div className="relative w-full overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
-                            <img src={imgs[0]} alt={captions[0] ?? ""} loading="lazy" className="w-full h-full object-cover" />
+                            <SmartImg src={imgs[0]} width={1280} height={720} responsive={[480, 800, 1280]} sizes="(max-width: 640px) 100vw, 640px" alt={captions[0] ?? ""} className="w-full h-full object-cover" />
                             {session && session.user.id !== p.author_id && (
                               <ReportImageButton postId={p.id} imageUrl={imgs[0]} />
                             )}
@@ -650,7 +651,7 @@ export function SocialWall() {
                         {imgs.map((u, i) => (
                           <div key={i} className="flex flex-col">
                             <div className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
-                              <img src={u} alt={captions[i] ?? ""} loading="lazy" className="w-full h-full object-cover" />
+                              <SmartImg src={u} width={640} height={360} responsive={[320, 480, 640]} alt={captions[i] ?? ""} className="w-full h-full object-cover" />
                               {session && session.user.id !== p.author_id && (
                                 <ReportImageButton postId={p.id} imageUrl={u} />
                               )}
@@ -674,7 +675,7 @@ export function SocialWall() {
                           className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-primary/10 pr-2.5 py-1 pl-1 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
                         >
                           {cover ? (
-                            <img src={cover} alt="" className="size-6 rounded-full object-cover border border-black" loading="lazy" />
+                            <SmartImg src={cover} width={48} height={48} alt="" className="size-6 rounded-full object-cover border border-black" />
                           ) : (
                             <span className="inline-flex size-6 items-center justify-center rounded-full border border-black bg-background">
                               <ImageIcon className="size-3.5" />
@@ -858,7 +859,7 @@ export function SocialWall() {
                                 <div className={`mt-1 grid gap-1 ${c.image_urls.length === 1 ? "grid-cols-1" : c.image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                                   {c.image_urls.map((u, i) => (
                                     <div key={i} className="relative overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "1/1" }}>
-                                      <img src={u} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                      <SmartImg src={u} width={320} height={320} responsive={[160, 320]} alt="" className="w-full h-full object-cover" />
                                     </div>
                                   ))}
                                 </div>
