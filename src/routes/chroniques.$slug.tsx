@@ -63,6 +63,36 @@ export const Route = createFileRoute("/chroniques/$slug")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
+          "@type": "Article",
+          headline: `${loaderData.title} — ${loaderData.artist}`.slice(0, 110),
+          description,
+          image: [loaderData.cover_url || OG_FALLBACK],
+          url,
+          mainEntityOfPage: { "@type": "WebPage", "@id": url },
+          datePublished:
+            (loaderData as { created_at?: string }).created_at ??
+            loaderData.release_date ??
+            undefined,
+          dateModified:
+            (loaderData as { updated_at?: string }).updated_at ??
+            (loaderData as { created_at?: string }).created_at ??
+            undefined,
+          inLanguage: "fr-FR",
+          articleSection: "Chroniques",
+          author: { "@type": "Organization", name: "La rédaction Indi Radio" },
+          publisher: {
+            "@type": "Organization",
+            name: "InDi RaDio",
+            logo: {
+              "@type": "ImageObject",
+              url: `${BASE_URL}/icons/apple-touch-icon.png`,
+            },
+          },
+        }),
+      }, {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
           "@type": "Review",
           itemReviewed: {
             "@type": "MusicAlbum",
