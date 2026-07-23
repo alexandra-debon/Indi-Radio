@@ -72,16 +72,16 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Shout-outs — Free Music Radio InDi RaDio", description: "Send a shout-out to be played on InDi RaDio, free independent music radio ad-free." },
   },
   "/contact": {
-    fr: { title: "Contact — InDi RaDio", description: "Contacte l'équipe InDi RaDio et InDi ArT CulTuRe." },
-    en: { title: "Contact — InDi RaDio", description: "Get in touch with the InDi RaDio and InDi ArT CulTuRe team." },
+    fr: { title: "Contact — Radio musique indépendante InDi RaDio", description: "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe." },
+    en: { title: "Contact — Independent Music Radio InDi RaDio", description: "Get in touch with the InDi RaDio team, free independent music radio ad-free, and InDi ArT CulTuRe." },
   },
   "/soumission-artistes": {
-    fr: { title: "Soumission artistes — InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio." },
-    en: { title: "Artist submissions — InDi RaDio", description: "Independent artists: submit your tracks to be played on InDi RaDio." },
+    fr: { title: "Soumission artistes — Radio musique indé InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique." },
+    en: { title: "Artist submissions — Indie Music Radio InDi RaDio", description: "Independent artists: submit your tracks to be played on InDi RaDio, the indie music radio and music social network." },
   },
   "/newsletter": {
-    fr: { title: "Newsletter — InDi RaDio", description: "Inscris-toi à la newsletter InDi RaDio et reste connecté à la scène indé." },
-    en: { title: "Newsletter — InDi RaDio", description: "Subscribe to the InDi RaDio newsletter and stay tuned to the indie scene." },
+    fr: { title: "Newsletter — Radio musique indépendante InDi RaDio", description: "Inscris-toi à la newsletter InDi RaDio, la radio gratuite musique indépendante sans pub, et reste connecté à la scène indé." },
+    en: { title: "Newsletter — Independent Music Radio InDi RaDio", description: "Subscribe to the InDi RaDio newsletter, free independent music radio ad-free, and stay tuned to the indie scene." },
   },
   "/privacy": {
     fr: { title: "Politique de confidentialité — InDi RaDio", description: "Comment InDi RaDio protège et traite tes données personnelles." },
