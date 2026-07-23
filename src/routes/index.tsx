@@ -58,6 +58,61 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: OG_HOME },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "RadioStation",
+          "@id": "https://radio.indi-art-culture.com/#radio",
+          name: "InDi RaDio",
+          url: "https://radio.indi-art-culture.com/",
+          image: {
+            "@type": "ImageObject",
+            url: OG_HOME,
+            width: 1200,
+            height: 630,
+          },
+          logo: "https://radio.indi-art-culture.com/icons/apple-touch-icon.png",
+          description:
+            "Radio gratuite 24/7 sans pub, sans info. Écoute la radio musique indé et le réseau social musique de la scène indépendante.",
+          parentOrganization: {
+            "@id": "https://radio.indi-art-culture.com/#org",
+          },
+          audio: {
+            "@type": "AudioObject",
+            contentUrl: "http://ecmanager6.pro-fhi.net:2180/stream",
+            encodingFormat: "audio/mpeg",
+            name: "Flux audio InDi RaDio",
+          },
+          broadcastFrequency: "24/7",
+          genre: ["Indie", "Musique indépendante", "Radio communautaire"],
+          areaServed: {
+            "@type": "Country",
+            name: "France",
+          },
+          inLanguage: "fr-FR",
+          potentialAction: {
+            "@type": "ListenAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: "https://radio.indi-art-culture.com/",
+              actionPlatform: [
+                "http://schema.org/DesktopWebPlatform",
+                "http://schema.org/MobileWebPlatform",
+                "http://schema.org/AndroidPlatform",
+                "http://schema.org/IOSPlatform",
+              ],
+            },
+            expectsAcceptanceOf: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "EUR",
+            },
+          },
+        }),
+      },
+    ],
   }),
   component: LivePage,
 });

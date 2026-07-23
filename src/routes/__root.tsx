@@ -154,13 +154,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
               inLanguage: "fr-FR",
             },
-            {
-              "@type": "RadioStation",
-              "@id": "https://radio.indi-art-culture.com/#radio",
-              name: "InDi RaDio",
-              url: "https://radio.indi-art-culture.com/",
-              parentOrganization: { "@id": "https://radio.indi-art-culture.com/#org" },
-            },
           ],
         }),
       },
