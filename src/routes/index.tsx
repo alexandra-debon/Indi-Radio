@@ -369,6 +369,68 @@ function NewsletterBanner() {
   );
 }
 
+/**
+ * Bloc de maillage interne SEO : ancres riches en mots-clés cibles
+ * (« Radio musique indé », « Radio musique indépendante », « Radio sans pub »,
+ * « Réseau social musique ») pointant vers les rubriques clés. Rendu visible en
+ * bas de page d'accueil pour bénéficier à la fois aux crawlers et aux
+ * auditeurs.
+ */
+export function SeoInternalLinks() {
+  return (
+    <nav
+      aria-label="Liens Radio musique indé & Réseau social musique"
+      className="card-brut mt-4 space-y-2 p-4 text-sm"
+    >
+      <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+        Explorer InDi RaDio
+      </h2>
+      <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-muted-foreground">
+        <li>
+          <Link to="/" title="Radio musique indé en direct — Radio sans pub" className="underline-offset-2 hover:text-primary hover:underline">
+            Radio musique indé en direct
+          </Link>
+        </li>
+        <li>
+          <Link to="/podcasts" title="Podcasts Radio musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
+            Radio musique indépendante — Podcasts
+          </Link>
+        </li>
+        <li>
+          <Link to="/emissions" title="Émissions Radio sans pub" className="underline-offset-2 hover:text-primary hover:underline">
+            Radio sans pub — Émissions replay
+          </Link>
+        </li>
+        <li>
+          <Link to="/chroniques" title="Chroniques Radio musique indé" className="underline-offset-2 hover:text-primary hover:underline">
+            Chroniques Radio musique indé
+          </Link>
+        </li>
+        <li>
+          <Link to="/actus" title="Actus du Réseau social musique InDi" className="underline-offset-2 hover:text-primary hover:underline">
+            Réseau social musique — Actus
+          </Link>
+        </li>
+        <li>
+          <Link to="/top-users" title="Top membres du Réseau social musique" className="underline-offset-2 hover:text-primary hover:underline">
+            Réseau social musique — Top membres
+          </Link>
+        </li>
+        <li>
+          <Link to="/coups-de-coeur" title="Coups de cœur Radio musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
+            Coups de cœur Radio musique indépendante
+          </Link>
+        </li>
+        <li>
+          <Link to="/soumission-artistes" title="Soumission artistes — Radio gratuite musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
+            Soumission artistes — Radio gratuite
+          </Link>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
 function HistoryRow({
   track,
   locale,
