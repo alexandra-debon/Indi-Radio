@@ -25,6 +25,8 @@ export const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/contact", changefreq: "monthly", priority: "0.5" },
   { path: "/privacy", changefreq: "monthly", priority: "0.5" },
   { path: "/terms", changefreq: "monthly", priority: "0.5" },
+  { path: "/moderation", changefreq: "monthly", priority: "0.5" },
+  { path: "/coups-de-coeur", changefreq: "weekly", priority: "0.7" },
 ];
 
 export async function loadAllEntries(): Promise<SitemapEntry[]> {

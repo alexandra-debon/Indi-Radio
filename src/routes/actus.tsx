@@ -386,6 +386,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         <div className="flex items-center gap-2 pt-1">
           <button
             onClick={() => (sessionUserId ? toggleLike.mutate() : onSignIn())}
+            aria-label={likeInfo?.liked ? "Retirer mon j'aime" : "J'aime cette actualité"}
             className={`flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs ${likeInfo?.liked ? "bg-primary text-primary-foreground border-primary" : "hover:bg-muted"}`}
           >
             <Heart className={`size-3.5 ${likeInfo?.liked ? "fill-current" : ""}`} /> {likeInfo?.count ?? 0}
