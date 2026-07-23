@@ -12,18 +12,67 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/u/$pseudo")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `@${params.pseudo} — Profil | InDi RaDio` },
-      { name: "description", content: `Profil de @${params.pseudo} sur InDi RaDio : points, niveau et badges.` },
-      { property: "og:title", content: `@${params.pseudo} — InDi RaDio` },
-      { property: "og:description", content: `Découvrez le profil de @${params.pseudo}.` },
-      { property: "og:url", content: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}` },
-    ],
-    links: [
-      { rel: "canonical", href: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}` },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi")
+      .ilike("pseudo", params.pseudo)
+      .maybeSingle();
+    return data;
+  },
+  head: ({ params, loaderData }) => {
+    const url = `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
+    const pseudo = loaderData?.pseudo ?? params.pseudo;
+    const roleLabel = loaderData?.is_team_indi
+      ? "Team InDi"
+      : loaderData?.role === "artiste"
+        ? "Artiste"
+        : loaderData?.role === "animateur"
+          ? "Animateur"
+          : "Auditeur";
+    const title = `@${pseudo} — ${roleLabel} sur InDi RaDio`;
+    const bio = (loaderData?.bio ?? "").replace(/\s+/g, " ").trim();
+    const desc =
+      bio.slice(0, 180) ||
+      `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
+        loaderData ? `, niveau ${loaderData.level} · ${loaderData.points} pts` : ""
+      }. Réseau social musique indépendante.`;
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "profile" },
+      { property: "profile:username", content: pseudo },
+      { name: "twitter:card", content: "summary" },
+    ];
+    if (loaderData?.avatar_url) {
+      meta.push({ property: "og:image", content: loaderData.avatar_url });
+      meta.push({ name: "twitter:image", content: loaderData.avatar_url });
+    }
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            url,
+            mainEntity: {
+              "@type": "Person",
+              name: pseudo,
+              alternateName: `@${pseudo}`,
+              ...(loaderData?.avatar_url ? { image: loaderData.avatar_url } : {}),
+              ...(bio ? { description: bio } : {}),
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: UserProfilePage,
   errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,
   notFoundComponent: () => <UserNotFound />,
