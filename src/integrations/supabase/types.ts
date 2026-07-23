@@ -545,6 +545,7 @@ export type Database = {
           published_at: string
           show_id: string | null
           title: string
+          updated_at: string
         }
         Insert: {
           audio_url?: string | null
@@ -557,6 +558,7 @@ export type Database = {
           published_at?: string
           show_id?: string | null
           title: string
+          updated_at?: string
         }
         Update: {
           audio_url?: string | null
@@ -569,6 +571,7 @@ export type Database = {
           published_at?: string
           show_id?: string | null
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -788,6 +791,7 @@ export type Database = {
           image_urls: string[]
           social_links: Json
           title: string
+          updated_at: string
         }
         Insert: {
           author_id: string
@@ -799,6 +803,7 @@ export type Database = {
           image_urls?: string[]
           social_links?: Json
           title: string
+          updated_at?: string
         }
         Update: {
           author_id?: string
@@ -810,6 +815,7 @@ export type Database = {
           image_urls?: string[]
           social_links?: Json
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1158,6 +1164,7 @@ export type Database = {
           pinned_at: string | null
           social_links: Json
           title: string | null
+          updated_at: string
         }
         Insert: {
           album_id?: string | null
@@ -1173,6 +1180,7 @@ export type Database = {
           pinned_at?: string | null
           social_links?: Json
           title?: string | null
+          updated_at?: string
         }
         Update: {
           album_id?: string | null
@@ -1188,6 +1196,7 @@ export type Database = {
           pinned_at?: string | null
           social_links?: Json
           title?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1241,6 +1250,7 @@ export type Database = {
           quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
           social_links: Json
+          updated_at: string
           website: string | null
         }
         Insert: {
@@ -1259,6 +1269,7 @@ export type Database = {
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           social_links?: Json
+          updated_at?: string
           website?: string | null
         }
         Update: {
@@ -1277,6 +1288,7 @@ export type Database = {
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           social_links?: Json
+          updated_at?: string
           website?: string | null
         }
         Relationships: []
@@ -1327,6 +1339,7 @@ export type Database = {
           schedule: string | null
           title: string
           type: string
+          updated_at: string
         }
         Insert: {
           cover_url?: string | null
@@ -1338,6 +1351,7 @@ export type Database = {
           schedule?: string | null
           title: string
           type: string
+          updated_at?: string
         }
         Update: {
           cover_url?: string | null
@@ -1349,6 +1363,7 @@ export type Database = {
           schedule?: string | null
           title?: string
           type?: string
+          updated_at?: string
         }
         Relationships: []
       }

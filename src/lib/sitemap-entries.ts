@@ -64,43 +64,43 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     // News posts (Indi Rézo)
     const { data: news } = await sb
       .from("news_posts")
-      .select("id, created_at")
-      .order("created_at", { ascending: false })
+      .select("id, updated_at")
+      .order("updated_at", { ascending: false })
       .limit(2000);
     for (const r of news ?? []) {
       entries.push({
         path: `/actus/${r.id}`,
         changefreq: "weekly",
         priority: "0.6",
-        lastmod: normalizeDate(r.created_at),
+        lastmod: normalizeDate(r.updated_at),
       });
     }
     // Shows (emissions, podcasts, chroniques hosts, animateurs)
     const { data: shows } = await sb
       .from("shows")
-      .select("id, created_at")
-      .order("created_at", { ascending: false })
+      .select("id, updated_at")
+      .order("updated_at", { ascending: false })
       .limit(2000);
     for (const r of shows ?? []) {
       entries.push({
         path: `/emissions/${r.id}`,
         changefreq: "weekly",
         priority: "0.6",
-        lastmod: normalizeDate(r.created_at),
+        lastmod: normalizeDate(r.updated_at),
       });
     }
     // Episodes
     const { data: episodes } = await sb
       .from("episodes")
-      .select("id, published_at")
-      .order("published_at", { ascending: false })
+      .select("id, published_at, updated_at")
+      .order("updated_at", { ascending: false })
       .limit(5000);
     for (const r of episodes ?? []) {
       entries.push({
         path: `/episodes/${r.id}`,
         changefreq: "monthly",
         priority: "0.5",
-        lastmod: normalizeDate(r.published_at),
+        lastmod: normalizeDate((r as any).updated_at ?? r.published_at),
       });
     }
     // Magazines
@@ -134,22 +134,22 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     // Social wall posts (publications)
     const { data: posts } = await sb
       .from("posts")
-      .select("id, created_at")
-      .order("created_at", { ascending: false })
+      .select("id, updated_at")
+      .order("updated_at", { ascending: false })
       .limit(2000);
     for (const r of posts ?? []) {
       entries.push({
         path: `/p/${r.id}`,
         changefreq: "monthly",
         priority: "0.5",
-        lastmod: normalizeDate(r.created_at),
+        lastmod: normalizeDate(r.updated_at),
       });
     }
     // Public user profiles
     const { data: profiles } = await sb
       .from("profiles")
-      .select("pseudo, created_at")
-      .order("created_at", { ascending: false })
+      .select("pseudo, updated_at")
+      .order("updated_at", { ascending: false })
       .limit(2000);
     for (const r of profiles ?? []) {
       if (!r.pseudo) continue;
@@ -157,7 +157,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
         path: `/u/${encodeURIComponent(r.pseudo)}`,
         changefreq: "monthly",
         priority: "0.4",
-        lastmod: normalizeDate(r.created_at),
+        lastmod: normalizeDate(r.updated_at),
       });
     }
     // Public photo albums
@@ -180,6 +180,48 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     /* fail-soft */
   }
   return entries;
+}
+
+/**
+ * Compute the freshest lastmod across all entries. Used to emit
+ * `Last-Modified` and a weak ETag so CDNs / crawlers can revalidate
+ * cheaply and pick up new publications quickly.
+ */
+export function computeMaxLastmod(entries: SitemapEntry[]): string {
+  let maxTs = 0;
+  for (const e of entries) {
+    if (!e.lastmod) continue;
+    const t = Date.parse(e.lastmod);
+    if (!Number.isNaN(t) && t > maxTs) maxTs = t;
+  }
+  return new Date(maxTs || Date.now()).toUTCString();
+}
+
+/**
+ * Build cache headers with SWR + conditional-GET support. Short TTL so
+ * new content shows up in the sitemap within minutes, SWR keeps latency
+ * low, and ETag/Last-Modified let crawlers hit 304 the rest of the time.
+ */
+export function sitemapHeaders(body: string, lastModified: string): Headers {
+  const h = new Headers();
+  h.set("Content-Type", "application/xml");
+  h.set("Cache-Control", "public, max-age=300, s-maxage=300, stale-while-revalidate=86400");
+  h.set("Last-Modified", lastModified);
+  // Weak ETag from body length + lastmod (cheap, stable)
+  h.set("ETag", `W/"${body.length.toString(16)}-${Date.parse(lastModified).toString(16)}"`);
+  return h;
+}
+
+export function matchesConditional(request: Request, lastModified: string, etag: string): boolean {
+  const inm = request.headers.get("if-none-match");
+  if (inm && inm === etag) return true;
+  const ims = request.headers.get("if-modified-since");
+  if (ims) {
+    const since = Date.parse(ims);
+    const mod = Date.parse(lastModified);
+    if (!Number.isNaN(since) && !Number.isNaN(mod) && mod <= since) return true;
+  }
+  return false;
 }
 
 export const BASE_URL = "https://radio.indi-art-culture.com";

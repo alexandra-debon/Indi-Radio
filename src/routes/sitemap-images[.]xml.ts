@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { BASE_URL } from "@/lib/sitemap-entries";
+import { BASE_URL, sitemapHeaders, matchesConditional } from "@/lib/sitemap-entries";
 
 const GEO = "France";
 
@@ -51,6 +51,7 @@ interface ImageRef {
 interface PageImages {
   path: string;
   images: ImageRef[];
+  lastmod?: string;
 }
 
 function pushIfImage(list: ImageRef[], url: string | null, title?: string | null, caption?: string | null) {
@@ -73,40 +74,40 @@ async function collect(): Promise<PageImages[]> {
     );
 
     const [shows, episodes, magazines, clips, reviews, news, profiles] = await Promise.all([
-      sb.from("shows").select("id, title, cover_url").limit(2000),
-      sb.from("episodes").select("id, title, cover_url").limit(5000),
-      sb.from("magazine_entries").select("id, title, cover_url").limit(1000),
-      sb.from("clip_entries").select("id, title, video_url").limit(2000),
-      sb.from("album_reviews").select("slug, title, cover_url").eq("published", true).limit(2000),
-      sb.from("news_posts").select("id, title, image_url, image_urls").limit(2000),
-      sb.from("profiles").select("pseudo, avatar_url").not("avatar_url", "is", null).limit(2000),
+      sb.from("shows").select("id, title, cover_url, updated_at").limit(2000),
+      sb.from("episodes").select("id, title, cover_url, updated_at").limit(5000),
+      sb.from("magazine_entries").select("id, title, cover_url, updated_at").limit(1000),
+      sb.from("clip_entries").select("id, title, video_url, updated_at").limit(2000),
+      sb.from("album_reviews").select("slug, title, cover_url, updated_at").eq("published", true).limit(2000),
+      sb.from("news_posts").select("id, title, image_url, image_urls, updated_at").limit(2000),
+      sb.from("profiles").select("pseudo, avatar_url, updated_at").not("avatar_url", "is", null).limit(2000),
     ]);
 
     for (const r of shows.data ?? []) {
       const imgs: ImageRef[] = [];
       pushIfImage(imgs, r.cover_url, r.title, r.title);
-      if (imgs.length) pages.push({ path: `/emissions/${r.id}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/emissions/${r.id}`, images: imgs, lastmod: r.updated_at ?? undefined });
     }
     for (const r of episodes.data ?? []) {
       const imgs: ImageRef[] = [];
       pushIfImage(imgs, r.cover_url, r.title, r.title);
-      if (imgs.length) pages.push({ path: `/episodes/${r.id}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/episodes/${r.id}`, images: imgs, lastmod: (r as any).updated_at ?? undefined });
     }
     for (const r of magazines.data ?? []) {
       const imgs: ImageRef[] = [];
       pushIfImage(imgs, r.cover_url, r.title, r.title);
-      if (imgs.length) pages.push({ path: `/magazines/${r.id}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/magazines/${r.id}`, images: imgs, lastmod: r.updated_at ?? undefined });
     }
     for (const r of clips.data ?? []) {
       const yt = youtubeId(r.video_url);
       const imgs: ImageRef[] = [];
       if (yt) pushIfImage(imgs, `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`, r.title, r.title);
-      if (imgs.length) pages.push({ path: `/clips/${r.id}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/clips/${r.id}`, images: imgs, lastmod: r.updated_at ?? undefined });
     }
     for (const r of reviews.data ?? []) {
       const imgs: ImageRef[] = [];
       pushIfImage(imgs, r.cover_url, r.title, r.title);
-      if (imgs.length) pages.push({ path: `/chroniques/${r.slug}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/chroniques/${r.slug}`, images: imgs, lastmod: r.updated_at ?? undefined });
     }
     for (const r of news.data ?? []) {
       const imgs: ImageRef[] = [];
@@ -114,13 +115,13 @@ async function collect(): Promise<PageImages[]> {
       for (const extra of (r.image_urls ?? []) as string[]) {
         pushIfImage(imgs, extra, r.title, r.title);
       }
-      if (imgs.length) pages.push({ path: `/actus/${r.id}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/actus/${r.id}`, images: imgs, lastmod: (r as any).updated_at ?? undefined });
     }
     for (const r of profiles.data ?? []) {
       if (!r.pseudo) continue;
       const imgs: ImageRef[] = [];
       pushIfImage(imgs, r.avatar_url, `@${r.pseudo}`, `Avatar ${r.pseudo}`);
-      if (imgs.length) pages.push({ path: `/u/${encodeURIComponent(r.pseudo)}`, images: imgs });
+      if (imgs.length) pages.push({ path: `/u/${encodeURIComponent(r.pseudo)}`, images: imgs, lastmod: (r as any).updated_at ?? undefined });
     }
   } catch {
     /* fail-soft */
@@ -155,11 +156,21 @@ function render(pages: PageImages[]): string {
 export const Route = createFileRoute("/sitemap-images.xml")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
         const pages = await collect();
-        return new Response(render(pages), {
-          headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=3600" },
-        });
+        const body = render(pages);
+        let maxTs = 0;
+        for (const p of pages) {
+          if (!p.lastmod) continue;
+          const t = Date.parse(p.lastmod);
+          if (!Number.isNaN(t) && t > maxTs) maxTs = t;
+        }
+        const lastModified = new Date(maxTs || Date.now()).toUTCString();
+        const headers = sitemapHeaders(body, lastModified);
+        if (matchesConditional(request, lastModified, headers.get("ETag")!)) {
+          return new Response(null, { status: 304, headers });
+        }
+        return new Response(body, { headers });
       },
     },
   },
