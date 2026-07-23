@@ -60,16 +60,16 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Top 25 Tracks — Ad-Free Radio InDi RaDio", description: "The chart of the 25 most-loved tracks by the ad-free InDi RaDio community. Independent music 24/7." },
   },
   "/top": {
-    fr: { title: "Top podcasts & chroniques — InDi RaDio", description: "Les podcasts et chroniques les plus écoutés sur InDi RaDio." },
-    en: { title: "Top podcasts & columns — InDi RaDio", description: "The most-listened podcasts and columns on InDi RaDio." },
+    fr: { title: "Top podcasts & chroniques — Radio musique indé InDi RaDio", description: "Les podcasts et chroniques les plus écoutés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+    en: { title: "Top podcasts & columns — Indie Music Radio InDi RaDio", description: "The most-listened podcasts and columns on InDi RaDio, the indie music radio and music social network." },
   },
   "/top-users": {
-    fr: { title: "Top 25 utilisateurs — InDi RaDio", description: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio." },
-    en: { title: "Top 25 Users — InDi RaDio", description: "The 25 most active users in the InDi RaDio community." },
+    fr: { title: "Top 25 utilisateurs — Réseau social musique InDi RaDio", description: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique dédié aux artistes indépendants." },
+    en: { title: "Top 25 Users — Music Social Network InDi RaDio", description: "The 25 most active users in the InDi RaDio music social network community for independent artists." },
   },
   "/dedicaces": {
-    fr: { title: "Dédicaces — InDi RaDio", description: "Envoie une dédicace à l'antenne d'InDi RaDio." },
-    en: { title: "Shout-outs — InDi RaDio", description: "Send a shout-out to be played on InDi RaDio." },
+    fr: { title: "Dédicaces — Radio gratuite InDi RaDio", description: "Envoie une dédicace à l'antenne d'InDi RaDio, la radio gratuite musique indépendante sans pub." },
+    en: { title: "Shout-outs — Free Music Radio InDi RaDio", description: "Send a shout-out to be played on InDi RaDio, free independent music radio ad-free." },
   },
   "/contact": {
     fr: { title: "Contact — InDi RaDio", description: "Contacte l'équipe InDi RaDio et InDi ArT CulTuRe." },
