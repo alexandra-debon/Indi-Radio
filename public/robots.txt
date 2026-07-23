@@ -86,3 +86,4 @@ Disallow: /api/
 Sitemap: https://radio.indi-art-culture.com/sitemap.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-fr.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-en.xml
+Sitemap: https://radio.indi-art-culture.com/sitemap-images.xml
