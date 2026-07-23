@@ -23,32 +23,74 @@ import { IosInstallHint } from "@/components/IosInstallHint";
 import { LanguageProvider } from "@/lib/i18n";
 import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { redirect } from "@tanstack/react-router";
+import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
 function NotFoundComponent() {
+  const attempted =
+    typeof window !== "undefined" ? window.location.pathname : "";
+
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Historical alias — hard-refresh at root.
     if (window.location.pathname === "/index") {
       window.history.replaceState(null, "", "/");
       window.location.reload();
+      return;
     }
+    // SEO: mark this rendered 404 as noindex + set a descriptive title so
+    // legacy links that reach us don't get indexed as duplicates of "/".
+    document.title = "Page introuvable (404) — InDi RaDio";
+    const prev = document.querySelector<HTMLMetaElement>(
+      'meta[name="robots"]',
+    );
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, follow";
+    meta.setAttribute("data-notfound", "1");
+    document.head.appendChild(meta);
+    return () => {
+      meta.remove();
+      if (prev) document.head.appendChild(prev.cloneNode(true));
+    };
   }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
+      <div className="max-w-lg text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">
+          Page introuvable · Page not found
+        </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          Le lien que vous avez suivi est cassé ou la page a été déplacée.
+          Voici des raccourcis utiles pour continuer votre visite sur la
+          radio 100% musique indé.
         </p>
+        {attempted ? (
+          <p className="mt-1 text-xs text-muted-foreground/70 break-all">
+            URL demandée : <code>{attempted}</code>
+          </p>
+        ) : null}
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            Retour à l'accueil
           </Link>
         </div>
+        <nav
+          aria-label="Liens utiles"
+          className="mt-8 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3"
+        >
+          <Link to="/actus" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Indi Rézo</Link>
+          <Link to="/podcasts" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Podcasts</Link>
+          <Link to="/emissions" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Émissions</Link>
+          <Link to="/chroniques" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Chroniques</Link>
+          <Link to="/chart" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Top 25</Link>
+          <Link to="/coups-de-coeur" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Coups de Cœur</Link>
+        </nav>
       </div>
     </div>
   );
@@ -93,6 +135,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: ({ location }) => {
+    const target = resolveLegacyRedirect(location.pathname);
+    if (target && target !== location.pathname) {
+      throw redirect({
+        href: target + (location.searchStr || ""),
+        statusCode: 301,
+      });
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
