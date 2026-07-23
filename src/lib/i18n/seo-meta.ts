@@ -11,14 +11,14 @@ export type SeoBundle = Record<Lang, SeoEntry>;
 export const STATIC_SEO: Record<string, SeoBundle> = {
   "/": {
     fr: {
-      title: "InDi RaDio — Live 24/7 musique indépendante",
+      title: "Radio 7/24 100% musique indépendante — InDi RaDio",
       description:
-        "Écoute InDi RaDio en direct : radio 100% musique indé, sans pub ni info. Découvre les artistes, participe au mur social et retrouve l'historique des titres.",
+        "Radio 7/24 100% musique indépendante. Radio Gratuite, sans pubs, sans infos. Radio communautaire avec mur social et magazine interactif.",
     },
     en: {
-      title: "InDi RaDio — 24/7 Live Independent Music",
+      title: "24/7 Independent Music Radio — InDi RaDio",
       description:
-        "Listen to InDi RaDio live: 100% independent music, no ads, no news. Discover artists, join the social wall and browse the played tracks history.",
+        "24/7 independent music radio. Free, ad-free, no news. A community radio with social wall and interactive magazine.",
     },
   },
   "/about": {
