@@ -3,6 +3,12 @@ Allow: /
 
 Disallow: /auth
 Disallow: /admin
+Disallow: /admin/
 Disallow: /profile
+Disallow: /profile/
+Disallow: /notifications
+Disallow: /notif-test
+Disallow: /reset-password
+Disallow: /lovable/
 
 Sitemap: https://radio.indi-art-culture.com/sitemap.xml
