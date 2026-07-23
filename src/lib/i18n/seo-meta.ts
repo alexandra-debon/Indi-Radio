@@ -48,16 +48,16 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Columns — Independent Music Radio InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries on free indie music radio." },
   },
   "/magazines": {
-    fr: { title: "Magazine Indi Art Culture — InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture." },
-    en: { title: "Indi Art Culture Magazine — InDi RaDio", description: "Flip through the interactive Indi Art Culture magazine." },
+    fr: { title: "Magazine Indi Art Culture — Radio musique indé InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio musique indé et du réseau social musique." },
+    en: { title: "Indi Art Culture Magazine — Indie Music Radio InDi RaDio", description: "Flip through the interactive Indi Art Culture magazine, the indie music radio and music social network magazine." },
   },
   "/clips": {
-    fr: { title: "Clip Addict — InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio." },
-    en: { title: "Clip Addict — InDi RaDio", description: "The video playlist of independent music clips curated by InDi RaDio." },
+    fr: { title: "Clip Addict — Radio gratuite InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio, radio gratuite musique indépendante sans pub." },
+    en: { title: "Clip Addict — Free Music Radio InDi RaDio", description: "The video playlist of independent music clips curated by InDi RaDio, free independent music radio ad-free." },
   },
   "/chart": {
-    fr: { title: "Top 25 des titres — InDi RaDio", description: "Le classement des 25 titres les plus aimés par la communauté InDi RaDio." },
-    en: { title: "Top 25 Tracks — InDi RaDio", description: "The chart of the 25 most-loved tracks by the InDi RaDio community." },
+    fr: { title: "Top 25 des titres — Radio sans pub InDi RaDio", description: "Le classement des 25 titres les plus aimés par la communauté de la radio sans pub InDi RaDio. Musique indépendante 24/7." },
+    en: { title: "Top 25 Tracks — Ad-Free Radio InDi RaDio", description: "The chart of the 25 most-loved tracks by the ad-free InDi RaDio community. Independent music 24/7." },
   },
   "/top": {
     fr: { title: "Top podcasts & chroniques — InDi RaDio", description: "Les podcasts et chroniques les plus écoutés sur InDi RaDio." },
