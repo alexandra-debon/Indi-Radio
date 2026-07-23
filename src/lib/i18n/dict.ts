@@ -146,7 +146,7 @@ export const dict = {
     "live.shareTrack": "Partager ce morceau",
     "live.shareText": "Écoute {title} en direct sur InDi RaDio",
     "live.indieNoAds": "musique 100% indé",
-    "live.noAdsNoNews": "Sans Pubbs sans infos",
+    "live.noAdsNoNews": "Sans pubs sans infos",
     "live.registered": "inscrits",
     "live.onAir": "On air",
     "live.playing": "Lecture en cours",
