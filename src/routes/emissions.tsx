@@ -11,6 +11,7 @@ import ogEmissions from "@/assets/og-emissions.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { SmartImg } from "@/components/media/SmartImg";
 
 function ArchiveHeading() {
   const t = useT();
