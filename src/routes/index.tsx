@@ -341,6 +341,9 @@ function LivePage() {
           ))}
         </ul>
       </section>
+
+      {/* Maillage interne SEO — ancres riches vers les rubriques clés */}
+      <SeoInternalLinks />
     </div>
   );
 }
