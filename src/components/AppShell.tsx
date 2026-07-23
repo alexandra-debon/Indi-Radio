@@ -61,7 +61,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="size-5" />
           </button>
-          <Link to="/" aria-label="Indi Radio" className="flex min-w-0 items-center justify-center gap-2 overflow-hidden">
+          <Link
+            to="/"
+            aria-label="InDi RaDio — Radio musique indé sans pub"
+            title="InDi RaDio — Radio musique indé, Radio sans pub & Réseau social musique"
+            className="flex min-w-0 items-center justify-center gap-2 overflow-hidden"
+          >
             <img
               src={logoAsset.url}
               alt=""
@@ -171,10 +176,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-3 text-center text-[11px] sm:flex-row sm:justify-between sm:text-left">
             <span>© {new Date().getFullYear()} Indi Radio</span>
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
-              <Link to="/about" className="hover:text-primary">{t("footer.about")}</Link>
-              <Link to="/contact" className="hover:text-primary">{t("footer.contact")}</Link>
-              <Link to="/terms" className="hover:text-primary">{t("footer.terms")}</Link>
-              <Link to="/privacy" className="inline-flex items-center gap-1 hover:text-primary">
+              <Link to="/about" title="À propos — Radio musique indé sans pub" className="hover:text-primary">{t("footer.about")}</Link>
+              <Link to="/contact" title="Contact — Radio musique indépendante InDi RaDio" className="hover:text-primary">{t("footer.contact")}</Link>
+              <Link to="/terms" title="CGU — Réseau social musique InDi RaDio" className="hover:text-primary">{t("footer.terms")}</Link>
+              <Link to="/privacy" title="Confidentialité — Radio gratuite sans pub" className="inline-flex items-center gap-1 hover:text-primary">
                 <FileText className="size-3" />
                 {t("footer.privacy")}
               </Link>
