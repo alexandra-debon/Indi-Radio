@@ -12,11 +12,15 @@ const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]
 export const Route = createFileRoute("/top")({
   head: () => ({
     meta: [
-      { title: "Top — Podcasts & Chroniques les mieux notés | Indi Radio" },
-      { name: "description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur Indi Radio." },
-      { property: "og:title", content: "Top — Indi Radio" },
-      { property: "og:description", content: "Podcasts et chroniques préférés des auditeurs." },
+      { title: "Top — Radio musique indé & réseau social musique InDi RaDio" },
+      { name: "description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+      { name: "keywords", content: "radio musique indé, réseau social musique, top podcasts, top chroniques, radio musique indépendante, InDi RaDio" },
+      { property: "og:title", content: "Top — Radio musique indé & réseau social musique InDi RaDio" },
+      { property: "og:description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+      { property: "og:url", content: "https://radio.indi-art-culture.com/top" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/top" }],
   }),
   component: TopPage,
   errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,

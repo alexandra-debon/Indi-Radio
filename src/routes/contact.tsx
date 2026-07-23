@@ -10,17 +10,18 @@ const OG_CONTACT = `${BASE_URL}${ogContact}`;
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — InDi RaDio" },
+      { title: "Contact — Radio musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Contactez l'équipe d'InDi RaDio : auditeurs, artistes, soumissions ou assistance. Email, téléphone et formulaire.",
+          "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire.",
       },
-      { property: "og:title", content: "Contact — InDi RaDio" },
+      { name: "keywords", content: "radio musique indépendante, radio gratuite, radio sans pub, contact InDi RaDio, InDi ArT CulTuRe" },
+      { property: "og:title", content: "Contact — Radio musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Contactez l'équipe d'InDi RaDio : auditeurs, artistes, soumissions ou assistance. Email, téléphone et formulaire.",
+          "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/contact" },
       { property: "og:type", content: "website" },
