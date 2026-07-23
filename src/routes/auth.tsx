@@ -9,6 +9,9 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Connecte-toi ou crée un compte Indi Radio." },
       { name: "robots", content: "noindex" },
     ],
+    links: [
+      { rel: "canonical", href: "https://radio.indi-art-culture.com/auth" },
+    ],
   }),
   component: AuthRedirect,
 });

@@ -60,6 +60,10 @@ export const Route = createFileRoute("/tag/$tag")({
         { property: "og:title", content: `#${t} — InDi RaDio` },
         { property: "og:description", content: `Publications taggées #${t}.` },
         { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
+      ],
+      links: [
+        { rel: "canonical", href: `https://radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
       ],
     };
   },
