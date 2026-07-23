@@ -68,7 +68,7 @@ function PodcastsPage() {
         image: p.cover_url || OG_PODCASTS,
         inLanguage: "fr-FR",
         publisher: { "@id": `${SITE}/#org` },
-        webFeed: p.rss_url ?? undefined,
+        ...(p.external_url ? { sameAs: p.external_url } : {}),
       });
       document.head.appendChild(s);
       scripts.push(s);
