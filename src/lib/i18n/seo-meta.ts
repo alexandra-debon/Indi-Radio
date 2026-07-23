@@ -32,8 +32,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     },
   },
   "/actus": {
-    fr: { title: "Actus · Indi Rézo — InDi RaDio", description: "Toute l'actualité de la scène indépendante et du réseau InDi ArT CulTuRe." },
-    en: { title: "News · Indi Rézo — InDi RaDio", description: "All the news from the independent scene and the InDi ArT CulTuRe network." },
+    fr: { title: "Actus · Indi Rézo — Radio musique indé InDi RaDio", description: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
+    en: { title: "News · Indi Rézo — Indie Music Social Network InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network. Indie music, clips, reviews and podcasts." },
   },
   "/podcasts": {
     fr: { title: "Podcasts — InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants." },
