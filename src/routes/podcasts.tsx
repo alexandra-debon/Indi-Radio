@@ -9,6 +9,7 @@ import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from 
 import ogPodcasts from "@/assets/og-podcasts.jpg";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 
@@ -29,6 +30,12 @@ export const Route = createFileRoute("/podcasts")({
       { name: "twitter:image", content: OG_PODCASTS },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/podcasts" }],
+    scripts: [
+      breadcrumbLd([
+        HOME_CRUMB,
+        { name: "Podcasts", url: `${SITE_ORIGIN}/podcasts` },
+      ]),
+    ],
   }),
   component: PodcastsPage,
 });
