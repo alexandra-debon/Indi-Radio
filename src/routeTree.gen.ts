@@ -14,6 +14,7 @@ import { Route as TopRouteImport } from './routes/top'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -88,6 +89,11 @@ const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
+  id: '/sitemap-images.xml',
+  path: '/sitemap-images.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapFrDotxmlRoute = SitemapFrDotxmlRouteImport.update({
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -428,6 +435,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -486,6 +494,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
   '/terms': typeof TermsRoute
@@ -544,6 +553,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
+    | '/sitemap-images.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -600,6 +610,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
+    | '/sitemap-images.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -657,6 +668,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
+    | '/sitemap-images.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
     | '/terms'
@@ -715,6 +727,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapFrDotxmlRoute: typeof SitemapFrDotxmlRoute
+  SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
   TermsRoute: typeof TermsRoute
@@ -771,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-images.xml': {
+      id: '/sitemap-images.xml'
+      path: '/sitemap-images.xml'
+      fullPath: '/sitemap-images.xml'
+      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-fr.xml': {
@@ -1252,6 +1272,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapFrDotxmlRoute: SitemapFrDotxmlRoute,
+  SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoumissionArtistesRoute: SoumissionArtistesRoute,
   TermsRoute: TermsRoute,
