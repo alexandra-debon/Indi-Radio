@@ -1,14 +1,88 @@
+# robots.txt — InDi RaDio
+# Dernière mise à jour : 2026-07-23
+# Site principal : https://radio.indi-art-culture.com
+
+# ============================================================
+# Règles communes pour tous les robots
+# ============================================================
 User-agent: *
 Allow: /
 
+# Espace privé / authentification (ne pas indexer)
 Disallow: /auth
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /reset-password/
+
+# Espace administrateur (tableau de bord, modération, SEO preview)
+Disallow: /admin
+Disallow: /admin/
+
+# Profils connectés (édition, likes, badges, albums personnels)
+Disallow: /profile
+Disallow: /profile/
+
+# Notifications et tests internes
+Disallow: /notifications
+Disallow: /notifications/
+Disallow: /notif-test
+Disallow: /notif-test/
+
+# Routes internes Lovable (outils de preview, webhooks email)
+Disallow: /lovable
+Disallow: /lovable/
+
+# API interne (pas de pages à indexer)
+Disallow: /api
+Disallow: /api/
+
+# ============================================================
+# Googlebot (règles spécifiques)
+# ============================================================
+User-agent: Googlebot
+Allow: /
+Disallow: /auth
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /reset-password/
 Disallow: /admin
 Disallow: /admin/
 Disallow: /profile
 Disallow: /profile/
 Disallow: /notifications
+Disallow: /notifications/
 Disallow: /notif-test
-Disallow: /reset-password
+Disallow: /notif-test/
+Disallow: /lovable
 Disallow: /lovable/
+Disallow: /api
+Disallow: /api/
 
+# ============================================================
+# Bingbot / Microsoft Bing (règles spécifiques)
+# ============================================================
+User-agent: Bingbot
+Allow: /
+Disallow: /auth
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /reset-password/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /profile
+Disallow: /profile/
+Disallow: /notifications
+Disallow: /notifications/
+Disallow: /notif-test
+Disallow: /notif-test/
+Disallow: /lovable
+Disallow: /lovable/
+Disallow: /api
+Disallow: /api/
+
+# ============================================================
+# Sitemaps (index + sitemaps par langue avec hreflang)
+# ============================================================
 Sitemap: https://radio.indi-art-culture.com/sitemap.xml
+Sitemap: https://radio.indi-art-culture.com/sitemap-fr.xml
+Sitemap: https://radio.indi-art-culture.com/sitemap-en.xml
