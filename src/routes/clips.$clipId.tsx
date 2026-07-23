@@ -9,19 +9,31 @@ import ogClips from "@/assets/og-clips.jpg";
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogClips}`;
 
-function pickThumb(row: {
+function pickMedia(row: {
   video_url: string | null;
   playlist_url: string | null;
   video_urls: string[] | null;
-}): string | null {
+}): { thumb: string | null; embed: string | null; content: string | null } {
   const candidates = [row.video_url, row.playlist_url, ...(row.video_urls ?? [])].filter(Boolean) as string[];
   for (const u of candidates) {
     const m = parseMediaUrl(u);
     if (m?.kind === "youtube" && m.type === "video") {
-      return `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg`;
+      return {
+        thumb: `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg`,
+        embed: `https://www.youtube.com/embed/${m.id}`,
+        content: `https://www.youtube.com/watch?v=${m.id}`,
+      };
+    }
+    if (m?.kind === "vimeo") {
+      return {
+        thumb: null,
+        embed: `https://player.vimeo.com/video/${m.id}`,
+        content: `https://vimeo.com/${m.id}`,
+      };
     }
   }
-  return null;
+  const first = candidates[0] ?? null;
+  return { thumb: null, embed: null, content: first };
 }
 
 export const Route = createFileRoute("/clips/$clipId")({
@@ -41,7 +53,8 @@ export const Route = createFileRoute("/clips/$clipId")({
     }
     const title = `${loaderData.title} — Clip Addict · Indi Radio`;
     const desc = (loaderData.body ?? loaderData.title).slice(0, 200);
-    const image = pickThumb(loaderData) || OG_FALLBACK;
+    const media = pickMedia(loaderData);
+    const image = media.thumb || OG_FALLBACK;
     return {
       meta: [
         { title },
@@ -49,12 +62,30 @@ export const Route = createFileRoute("/clips/$clipId")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
-        { property: "og:type", content: "article" },
+        { property: "og:type", content: "video.other" },
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: loaderData.title,
+            description: desc,
+            thumbnailUrl: image,
+            uploadDate: loaderData.created_at,
+            url,
+            inLanguage: "fr-FR",
+            ...(media.embed ? { embedUrl: media.embed } : {}),
+            ...(media.content ? { contentUrl: media.content } : {}),
+            publisher: { "@id": `${BASE_URL}/#org` },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (
