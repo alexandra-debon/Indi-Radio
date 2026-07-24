@@ -50,6 +50,8 @@ function ProfilePage() {
   const [bioDraft, setBioDraft] = useState("");
   const [editingPseudo, setEditingPseudo] = useState(false);
   const [pseudoDraft, setPseudoDraft] = useState("");
+  const [confirmPseudoOpen, setConfirmPseudoOpen] = useState(false);
+  const [pseudoError, setPseudoError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const { data: mentions = [] } = useQuery({
@@ -148,6 +150,24 @@ function ProfilePage() {
     onError: (err: any) => toast.error(err?.message ?? "Erreur"),
   });
 
+  const validateAndConfirmPseudo = () => {
+    setPseudoError(null);
+    const clean = pseudoDraft.trim();
+    if (clean.length < 3 || clean.length > 30) {
+      setPseudoError(lang === "fr" ? "Pseudo : 3 à 30 caractères" : "Pseudo: 3 to 30 characters");
+      return;
+    }
+    if (!PSEUDO_RE.test(clean)) {
+      setPseudoError(lang === "fr" ? "Lettres, chiffres, espaces, _ . - uniquement" : "Letters, digits, spaces, _ . - only");
+      return;
+    }
+    if (clean.toLowerCase() === (profile?.pseudo ?? "").toLowerCase()) {
+      setPseudoError(lang === "fr" ? "Le pseudo est identique" : "The pseudo is identical");
+      return;
+    }
+    setConfirmPseudoOpen(true);
+  };
+
   if (!profile) return <div className="p-4">{t("profile.loading")}</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
@@ -179,7 +199,7 @@ function ProfilePage() {
                 <Button
                   size="sm"
                   disabled={savePseudo.isPending || !pseudoDraft.trim()}
-                  onClick={() => savePseudo.mutate(pseudoDraft)}
+                  onClick={validateAndConfirmPseudo}
                   className="flex-1"
                 >
                   {savePseudo.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Check className="mr-2 size-4" />}
@@ -195,6 +215,7 @@ function ProfilePage() {
                   {t("profile.cancel")}
                 </Button>
               </div>
+              {pseudoError && <p className="text-[10px] text-destructive">{pseudoError}</p>}
               <p className="text-[10px] text-muted-foreground">
                 {lang === "fr"
                   ? "3 à 30 caractères. Lettres, chiffres, espaces, _ . - uniquement. Unique dans toute l'app."
@@ -263,6 +284,34 @@ function ProfilePage() {
           <Heart className="size-4" /> Mes likes
         </Link>
       </div>
+
+      <AlertDialog open={confirmPseudoOpen} onOpenChange={setConfirmPseudoOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("profile.changePseudoTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("profile.changePseudoMessage")
+                .replace("{oldPseudo}", profile.pseudo ?? "")
+                .replace("{newPseudo}", pseudoDraft.trim())}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmPseudoOpen(false)} disabled={savePseudo.isPending}>
+              {t("profile.changePseudoCancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmPseudoOpen(false);
+                savePseudo.mutate(pseudoDraft.trim());
+              }}
+              disabled={savePseudo.isPending}
+            >
+              {savePseudo.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {t("profile.changePseudoConfirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <section className="card-brut p-4">
         <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
