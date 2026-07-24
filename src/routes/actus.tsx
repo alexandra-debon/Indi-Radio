@@ -154,7 +154,7 @@ function ActusPage() {
       {canPublish && (
         <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
           <div className="mb-1 text-[10px] uppercase tracking-widest text-primary">
-            {t("page.actus.newPost") ?? "Nouveau post"} — {profile?.role}
+            Nouveau post — {profile?.role}
           </div>
           {/* Titre en haut */}
           <Input
@@ -225,7 +225,7 @@ function ActusPage() {
           </div>
           <div className="mt-2 flex justify-end">
             <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>
-              {t("wall.publish") ?? "Publier"}
+              Publier
             </Button>
           </div>
         </div>
