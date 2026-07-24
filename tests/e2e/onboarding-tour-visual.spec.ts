@@ -98,6 +98,36 @@ async function goToStep(page: Page, targetIndex: number) {
   ).catch(() => { /* best-effort; snapshot will still be taken */ });
 }
 
+async function assertTourContentVisible(page: Page, viewport: { width: number; height: number }) {
+  // Tour dialog must be present and fully inside the viewport.
+  const dialog = page.getByRole("dialog").first();
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toBeInViewport();
+
+  // All interactive buttons in the tour must be visible (not clipped).
+  const buttons = page.locator('[role="dialog"] button');
+  const count = await buttons.count();
+  for (let i = 0; i < count; i++) {
+    await expect(buttons.nth(i)).toBeVisible();
+    await expect(buttons.nth(i)).toBeInViewport();
+  }
+
+  // Main text blocks must be visible and not overflow the viewport.
+  const textNodes = page.locator('[role="dialog"] h2, [role="dialog"] h3, [role="dialog"] p, [role="dialog"] span');
+  const textCount = await textNodes.count();
+  for (let i = 0; i < textCount; i++) {
+    const node = textNodes.nth(i);
+    const box = await node.boundingBox();
+    if (!box || box.width === 0 || box.height === 0) continue;
+    // Allow a small tolerance for sub-pixel rounding.
+    expect(box.x).toBeGreaterThanOrEqual(-1);
+    expect(box.y).toBeGreaterThanOrEqual(-1);
+    expect(box.x + box.width).toBeLessThanOrEqual(viewport.width + 1);
+    expect(box.y + box.height).toBeLessThanOrEqual(viewport.height + 1);
+    await expect(node).toBeVisible();
+  }
+}
+
 test.describe("OnboardingTour visual regression", () => {
   for (const vp of VIEWPORTS) {
     test.describe(`${vp.name} (${vp.width}x${vp.height})`, () => {
@@ -125,8 +155,8 @@ test.describe("OnboardingTour visual regression", () => {
           try { window.localStorage.removeItem("indi.lang"); } catch {}
           window.dispatchEvent(new CustomEvent("indi:open-tour"));
         });
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`intro-lang-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
@@ -134,8 +164,8 @@ test.describe("OnboardingTour visual regression", () => {
 
       test("welcome screen", async ({ page }) => {
         await openTour(page, "welcome");
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`welcome-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
@@ -145,6 +175,7 @@ test.describe("OnboardingTour visual regression", () => {
         test(`tour ${s.name}`, async ({ page }) => {
           await openTour(page, "welcome");
           await goToStep(page, s.index);
+          await assertTourContentVisible(page, vp);
           // Full-page shot so both the spotlight and the bubble are
           // captured (they live in different fixed layers).
           await expect(page).toHaveScreenshot(`${s.name}-${vp.name}.png`, {
@@ -155,8 +186,8 @@ test.describe("OnboardingTour visual regression", () => {
 
       test("summary screen", async ({ page }) => {
         await openTour(page, "summary");
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`summary-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
