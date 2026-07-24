@@ -29,6 +29,8 @@ import { renderRich } from "@/lib/rich-text";
 import { useLang, useT } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
+import { MentionTextarea } from "@/components/mentions/MentionTextarea";
+import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
@@ -150,14 +152,82 @@ function ActusPage() {
       <p className="text-sm text-muted-foreground">{t("page.actus.subtitle")}</p>
 
       {canPublish && (
-        <div className="card-brut space-y-2 p-3">
-          <div className="text-[10px] uppercase tracking-widest text-primary">Nouveau post — {profile?.role}</div>
-          <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <MultiImageUploader values={images} onChange={setImages} folder="news" />
-          <Input placeholder="Lien vidéo YouTube ou Vimeo (optionnel)" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
-          <Textarea placeholder="Contenu…" rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
-          <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
-          <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>Publier</Button>
+        <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
+          <div className="mb-1 text-[10px] uppercase tracking-widest text-primary">
+            {t("page.actus.newPost") ?? "Nouveau post"} — {profile?.role}
+          </div>
+          {/* Titre en haut */}
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder={t("wall.postTitle")}
+            maxLength={120}
+            className="h-8 text-sm font-bold bg-transparent border-0 border-b border-primary/40 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary placeholder:italic placeholder:text-primary placeholder:font-medium"
+          />
+          {/* Fine ligne de séparation jaune */}
+          <div className="mt-2 h-px bg-primary/60" aria-hidden="true" />
+          {/* Mention hint */}
+          <p className="mt-1.5 text-[11px] italic leading-tight text-primary">
+            {t("wall.mentionHint")}
+          </p>
+          <MentionTextarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={t("wall.composePlaceholder")}
+            rows={3}
+            className="mt-2 resize-none border-0 bg-transparent text-sm placeholder:text-xs placeholder:font-normal placeholder:italic placeholder:text-muted-foreground/70 disabled:opacity-100 focus-visible:ring-0"
+          />
+          {(title.trim() || content.trim()) && (
+            <div className="mt-1 flex items-center gap-2">
+              <EmojiPickerButton
+                onPick={(e) => setContent((v) => v + e)}
+                ariaLabel="Insérer un emoji dans le message"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                {t("wall.emojiHint")}
+              </span>
+            </div>
+          )}
+          {(title.trim() || content.trim()) && (
+            <div className="mt-1 rounded border border-dashed border-border bg-muted/30 px-1.5 py-1 text-[11px] leading-snug">
+              <span className="mr-1 text-[9px] font-bold uppercase text-muted-foreground">{t("wall.preview")}</span>
+              {title.trim() && (
+                <span className="mr-1 font-bold">{renderRich(title)}</span>
+              )}
+              <span className="whitespace-pre-wrap">{renderRich(content)}</span>
+            </div>
+          )}
+          <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1">
+            <p className="text-[11px] italic leading-tight text-primary">
+              {t("wall.videoHint")}
+            </p>
+          </div>
+          <Input
+            type="url"
+            inputMode="url"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder={t("wall.videoUrlPlaceholder")}
+            className="mt-1.5 h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70 placeholder:font-normal"
+          />
+          <div className="mt-2">
+            <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
+          </div>
+          <div className="mt-2">
+            <div className="rounded border border-primary/60 bg-primary/5 px-2 py-1">
+              <p className="text-[11px] italic leading-tight text-primary">
+                {t("wall.imageHint")}
+              </p>
+            </div>
+            <div className="mt-1.5">
+              <MultiImageUploader values={images} onChange={setImages} folder="news" />
+            </div>
+          </div>
+          <div className="mt-2 flex justify-end">
+            <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>
+              {t("wall.publish") ?? "Publier"}
+            </Button>
+          </div>
         </div>
       )}
 
