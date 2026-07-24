@@ -64,6 +64,7 @@ export function AdminChatTrigger({ className }: { className?: string }) {
       onClick={onClick}
       aria-label="Chat Team Indi"
       title="Chat Team Indi"
+      data-tour="chat-team-indi"
       className={cn("flex shrink-0 flex-col items-center gap-0.5", className)}
     >
       <span className="text-[8px] font-black uppercase leading-[1.05] tracking-wide text-primary text-center">
