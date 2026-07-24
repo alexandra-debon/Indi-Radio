@@ -161,6 +161,62 @@ function ProfilePage() {
       <h1 className="section-title">{t("profile.title")}</h1>
       <div className="card-brut space-y-3 p-4">
         <UserBadge profile={profile} className="text-base" />
+        <div className="rounded-md border-2 border-border bg-background p-2">
+          {editingPseudo ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <AtSign className="size-4 text-muted-foreground" />
+                <Input
+                  autoFocus
+                  value={pseudoDraft}
+                  onChange={(e) => setPseudoDraft(e.target.value)}
+                  maxLength={30}
+                  placeholder={lang === "fr" ? "Nouveau pseudo" : "New pseudo"}
+                  disabled={savePseudo.isPending}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  disabled={savePseudo.isPending || !pseudoDraft.trim()}
+                  onClick={() => savePseudo.mutate(pseudoDraft)}
+                  className="flex-1"
+                >
+                  {savePseudo.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Check className="mr-2 size-4" />}
+                  {t("profile.save")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={savePseudo.isPending}
+                  onClick={() => { setEditingPseudo(false); setPseudoDraft(profile.pseudo ?? ""); }}
+                >
+                  <X className="mr-2 size-4" />
+                  {t("profile.cancel")}
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                {lang === "fr"
+                  ? "3 à 30 caractères. Lettres, chiffres, espaces, _ . - uniquement. Unique dans toute l'app."
+                  : "3 to 30 chars. Letters, digits, spaces, _ . - only. Must be unique across the app."}
+              </p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => { setPseudoDraft(profile.pseudo ?? ""); setEditingPseudo(true); }}
+              className="flex w-full items-center justify-between gap-2 text-left text-xs font-black uppercase tracking-widest hover:opacity-80"
+            >
+              <span className="inline-flex items-center gap-2">
+                <AtSign className="size-4" />
+                {lang === "fr" ? "Modifier mon pseudo" : "Edit my pseudo"}
+              </span>
+              <span className="truncate rounded bg-muted px-2 py-0.5 text-[11px] normal-case tracking-normal text-muted-foreground">
+                @{profile.pseudo}
+              </span>
+            </button>
+          )}
+        </div>
         <div>
           <div className="flex items-baseline justify-between">
             <span className="text-sm text-muted-foreground">{t("profile.level")} {profile.level}</span>
