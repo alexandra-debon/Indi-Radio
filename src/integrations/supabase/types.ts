@@ -1293,6 +1293,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pseudo_history: {
+        Row: {
+          changed_at: string
+          id: string
+          old_pseudo: string
+          user_id: string
+        }
+        Insert: {
+          changed_at?: string
+          id?: string
+          old_pseudo: string
+          user_id: string
+        }
+        Update: {
+          changed_at?: string
+          id?: string
+          old_pseudo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       requests: {
         Row: {
           author_id: string

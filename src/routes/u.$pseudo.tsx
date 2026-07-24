@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -19,6 +19,25 @@ export const Route = createFileRoute("/u/$pseudo")({
       .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
+    if (!data) {
+      const { data: hist } = await supabase
+        .from("pseudo_history")
+        .select("user_id")
+        .ilike("old_pseudo", params.pseudo)
+        .order("changed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (hist?.user_id) {
+        const { data: current } = await supabase
+          .from("profiles")
+          .select("pseudo")
+          .eq("id", hist.user_id)
+          .maybeSingle();
+        if (current?.pseudo && current.pseudo.toLowerCase() !== params.pseudo.toLowerCase()) {
+          throw redirect({ to: "/u/$pseudo", params: { pseudo: current.pseudo }, replace: true });
+        }
+      }
+    }
     return data;
   },
   head: ({ params, loaderData }) => {
