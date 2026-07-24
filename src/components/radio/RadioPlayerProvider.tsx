@@ -13,7 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { scrapeCurrentTrack } from "@/lib/track-scrape.functions";
 import { useArtwork } from "@/hooks/use-artwork";
-import indiRadioLogo from "@/assets/indi-radio-logo.png";
+import indiRadioLogoAsset from "@/assets/indi-radio-logo.png.asset.json";
+const indiRadioLogo = indiRadioLogoAsset.url;
 
 interface CurrentTrack {
   id: string;
