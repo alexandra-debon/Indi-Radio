@@ -92,8 +92,8 @@ const TOUR_STEPS: TourStep[] = [
     target: "[data-tour='social-wall']",
     title: { fr: "💬 Le mur social", en: "💬 The social wall" },
     body: {
-      fr: "Poste des messages, réagis, commente, mentionne @pseudo et utilise #hashtag. Tu peux lire tout sans compte — pour publier, il faut juste t'inscrire (gratuit).",
-      en: "Post messages, react, comment, mention @someone and use #hashtag. You can browse everything without an account — posting just requires a free signup.",
+      fr: "Publie avec un titre optionnel, un lien YouTube/Vimeo et une ou plusieurs photos. L'auto-complétion suggère les @pseudos, les mentions et #hashtags sont surlignés, et un raccourci ↩ permet de répondre à un @pseudo en un clic. La lecture est libre sans compte — publier ou commenter demande juste une inscription gratuite.",
+      en: "Post with an optional title, a YouTube/Vimeo link and one or several photos. Autocomplete suggests @pseudos, mentions and #hashtags are highlighted, and a ↩ shortcut lets you reply to an @pseudo in one click. Reading is free without an account — posting or commenting just requires a free signup.",
     },
     placement: "top",
   },
@@ -152,10 +152,20 @@ const TOUR_STEPS: TourStep[] = [
     target: "[data-tour='login-button']",
     title: { fr: "👤 Connexion", en: "👤 Sign in" },
     body: {
-      fr: "Inscris-toi ou connecte-toi pour poster, commenter, liker, dédicacer et débloquer ton profil communautaire.",
-      en: "Sign up or sign in to post, comment, like, send shout-outs and unlock your community profile.",
+      fr: "Inscris-toi ou connecte-toi pour poster, commenter, liker et dédicacer. Le choix d'un pseudo est obligatoire à l'inscription (modifiable ensuite depuis ton profil, une fois toutes les 2 semaines). Une fois connecté, ce même bouton ouvre ton menu profil avec un raccourci de déconnexion.",
+      en: "Sign up or sign in to post, comment, like and send shout-outs. Picking a pseudo is required at signup (editable later from your profile, once every 2 weeks). Once signed in, this same button opens your profile menu with a sign-out shortcut.",
     },
     placement: "bottom",
+  },
+  {
+    id: "chat-team-indi",
+    target: "[data-tour='chat-team-indi']",
+    title: { fr: "💛 Chat Team Indi", en: "💛 Chat Team Indi" },
+    body: {
+      fr: "Cette bulle jaune dans le bandeau du lecteur ouvre un chat direct avec l'équipe Indi. Un badge rouge indique les nouveaux messages non lus, côté auditeur comme côté admin.",
+      en: "This yellow bubble in the player bar opens a direct chat with the Indi team. A red badge shows unread messages, for both listeners and admins.",
+    },
+    placement: "top",
   },
   {
     id: "tour-button",
