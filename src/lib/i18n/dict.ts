@@ -545,6 +545,7 @@ export const dict = {
     "wall.noTag": "No posts with",
     "wall.pinned": "Pinned",
     "wall.publicProfile": "Public profile",
+    "wall.mentionHint": "Drop your message here and mention @pseudos",
     "page.actus.title": "Indi Rézo — News from the independent scene",
     "page.actus.feed": "News feed",
     "page.submissions.title": "Call for Artists: Submit your world to InDi RaDio",
