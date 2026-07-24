@@ -1,41 +1,60 @@
-## Objectif
-Refondre la barre d'en-tête (`src/components/AppShell.tsx`) pour qu'elle corresponde à la capture fournie et regroupe : menu · logo carré + wordmark « iNDi RaDiO » · cloche de notifications · bloc utilisateur (Connexion → pseudo cliquable + bouton « modifier profil »).
+## Problème
 
-## Changements dans le header
+Sur Safari iPhone, quand l'utilisateur **n'est pas connecté** et verrouille son écran, la musique s'arrête. Quand il est connecté, elle continue.
 
-Ordre final des cellules (grid 3 colonnes : `auto | 1fr | auto`) :
+## Cause racine
 
-```text
-[☰ Menu]   [🟨 logo carré + iNDi RaDiO wordmark → /]   [🔔 cloche] [pseudo / bonhomme]
+iOS Safari n'autorise la lecture audio en arrière-plan (écran verrouillé) **que si l'onglet a des métadonnées MediaSession valides** (`title` + `artist` au minimum). Sans métadonnées, iOS considère l'audio comme un « son de notification » et le coupe dès le verrouillage.
+
+Dans `RadioPlayerProvider.tsx` :
+
+```ts
+if (!currentTrack) {
+  navigator.mediaSession.metadata = null;   // ← iOS coupe l'audio au lock
+  return;
+}
 ```
 
-1. **Colonne centrale** — lien vers `/` contenant côte à côte :
-   - le petit logo carré (`indi-radio-logo.png.asset.json`, `size-8 sm:size-9`)
-   - le wordmark (`indi-radio-wordmark-header.jpeg.asset.json`, `h-7 sm:h-9`)
-   - un `gap-2`, centré, `shrink` pour rester dans la largeur dispo.
+`currentTrack` vient d'une requête sur la table `track_history`. Les politiques RLS restreignent probablement la lecture aux utilisateurs authentifiés → **anon = `currentTrack` reste `null` = pas de métadonnées = coupure au verrouillage**. Les utilisateurs connectés voient la piste → métadonnées présentes → lecture continue.
 
-2. **Colonne droite** :
-   - **Retirer** le `ShareButton` du header (le partage reste disponible sur chaque publication/podcast/émission, conforme au souhait).
-   - **Retirer** le `LanguageToggle` du header pour libérer de la place (à confirmer — voir question ci-dessous). Sinon on le déplace dans le drawer menu.
-   - Conserver `NotificationsBell` (cloche avec pastille).
-   - Bloc auth :
-     - **Déconnecté** : bouton texte `Connexion` (inchangé).
-     - **Connecté** : 
-       - `UserBadge` compact (pseudo + éventuel rôle) → lien vers `/u/$pseudo` (profil **public**), tronqué à `max-w-[7rem] sm:max-w-[10rem]`.
-       - Petit bouton icône bonhomme (`UserIcon`, `size-8` bordé) → lien vers `/profile/edit` (modifier le profil), avec tooltip « Modifier mon profil ».
-       - Sur mobile (< sm) : masquer le pseudo texte et n'afficher que le bouton bonhomme (qui pointe alors vers `/profile` pour rester utile) + garder un petit avatar rond cliquable vers le profil public si la place le permet.
-     - Admin : garder le badge Admin `lg:inline-flex` inchangé.
+## Plan
 
-3. **Suppression de la flèche ↗** actuelle (remplacée par le pseudo lui-même qui est déjà le lien vers le profil public → plus lisible).
+### 1. Fallback MediaSession inconditionnel (fix principal)
 
-## Fichier modifié
-- `src/components/AppShell.tsx` uniquement (imports : retirer `ShareButton`, `ArrowUpRight` ; garder `UserIcon`, `NotificationsBell`, `UserBadge`, `Tooltip*`).
+Dans `src/components/radio/RadioPlayerProvider.tsx` (bloc `useEffect` lignes 330-353), remplacer le `metadata = null` par un fallback station :
+
+- `title` = `"InDi RaDio — En direct"`
+- `artist` = `"Radio 100% musique indépendante"`
+- `album` = `"InDi RaDio"`
+- `artwork` = logo InDi RaDio (import statique depuis `src/assets/indi-radio-logo.png`, en 512/256/128)
+
+Comme ça, dès que l'utilisateur appuie sur play — connecté ou non — MediaSession a de vraies métadonnées et iOS maintient la lecture au verrouillage. Quand `currentTrack` arrive plus tard, on l'écrase avec les vraies infos.
+
+### 2. Vérifier l'accès `anon` à `track_history`
+
+Contrôler via une requête SQL en lecture seule si la policy SELECT couvre `anon`. Si non, ajouter :
+
+```sql
+GRANT SELECT ON public.track_history TO anon;
+CREATE POLICY "Public read track_history"
+  ON public.track_history FOR SELECT TO anon USING (true);
+```
+
+Bénéfice secondaire : les utilisateurs non connectés voient aussi le titre en cours dans le mini-player et sur l'écran de verrouillage. La lecture en arrière-plan reste garantie par le point 1 même si cette étape échoue.
+
+### 3. Durcissement (petit)
+
+- Ajouter `playsInline` sur l'élément `<audio>` (ligne 662) pour bien signaler à iOS un lecteur média inline (pas d'incidence UI, l'élément est masqué mais ça sécurise le comportement).
 
 ## Vérification
-- Playwright screenshots à 360 px, 390 px, 768 px, 1280 px pour confirmer :
-  - centrage du bloc logo+wordmark,
-  - non-débordement du pseudo long (troncature),
-  - cloche + bouton bonhomme toujours visibles sur iPhone SE (360 px).
 
-## Question rapide avant build
-Le sélecteur de langue FR/EN : je le déplace dans le menu latéral (drawer) pour libérer la place dans le header, OK ? Sinon je le garde dans le header en le réduisant.
+- Build passe (typecheck / lint).
+- Test manuel Safari iPhone en mode privé (non connecté) : appuyer play → verrouiller l'écran → la musique doit continuer et les contrôles doivent apparaître sur l'écran de verrouillage avec le logo.
+
+## Zone technique
+
+Fichier modifié :
+- `src/components/radio/RadioPlayerProvider.tsx` (fallback MediaMetadata + `playsInline`).
+
+Migration éventuelle :
+- Policy + GRANT `SELECT` anon sur `public.track_history` uniquement si l'audit RLS confirme qu'anon n'a pas accès aujourd'hui.
