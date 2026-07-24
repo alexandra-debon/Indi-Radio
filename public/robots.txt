@@ -1,5 +1,5 @@
 # robots.txt — InDi RaDio
-# Dernière mise à jour : 2026-07-23
+# Dernière mise à jour : 2026-07-24
 # Site principal : https://radio.indi-art-culture.com
 
 # ============================================================
@@ -81,10 +81,22 @@ Disallow: /api
 Disallow: /api/
 
 # ============================================================
-# Sitemaps (index + sitemaps par langue avec hreflang)
+# Profils publics (/u/$pseudo)
+# ============================================================
+# Seuls les pseudos actuels (canoniques) sont listés dans le
+# sitemap dédié. Les anciens pseudos (alias historiques) sont
+# redirigés en 301 vers le pseudo courant et portent une balise
+# canonical/noindex. Le robots.txt ne peut pas bloquer un alias
+# individuel car il partage le même motif d'URL que le profil
+# canonique ; c'est le 301 + canonical + sitemap qui empêchent
+# son indexation.
+
+# ============================================================
+# Sitemaps (index + sitemaps par langue avec hreflang + profils)
 # ============================================================
 Sitemap: https://radio.indi-art-culture.com/sitemap.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-fr.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-en.xml
+Sitemap: https://radio.indi-art-culture.com/sitemap-users.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-images.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-video.xml
