@@ -64,12 +64,15 @@ export const Route = createFileRoute("/sitemap-users.xml")({
         const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
         const lastModified = computeMaxLastmod(entries);
         const headers = sitemapHeaders(body, lastModified);
-        // Always regenerate on pseudo changes: bypass CDN caching and rely on
-        // ETag / Last-Modified conditional GETs so crawlers still get cheap
-        // 304 responses when nothing changed.
+        // Fast to serve, quick to update. Browsers/crawlers always
+        // revalidate (max-age=0) so a pseudo change is picked up on the
+        // next request; the CDN keeps a 60s copy and can serve a stale
+        // response for up to 10 min while it revalidates in the
+        // background. ETag + Last-Modified (set by sitemapHeaders) make
+        // the revalidation a cheap 304.
         headers.set(
           "Cache-Control",
-          "public, max-age=0, s-maxage=0, must-revalidate",
+          "public, max-age=0, s-maxage=60, stale-while-revalidate=600, must-revalidate",
         );
         if (matchesConditional(request, lastModified, headers.get("ETag")!)) {
           return new Response(null, { status: 304, headers });
