@@ -11,6 +11,15 @@ import { MiniPlayer } from "@/components/radio/MiniPlayer";
 import { AdminChatWidget, openAdminChat } from "@/components/chat/AdminChatWidget";
 import { AdminChatAdminPanel } from "@/components/chat/AdminChatAdminPanel";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { RequirePseudoDialog } from "@/components/RequirePseudoDialog";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
@@ -141,21 +150,40 @@ export function AppShell({ children }: { children: ReactNode }) {
                       </TooltipContent>
                     </Tooltip>
                   ) : null}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        to="/profile/edit"
-                        aria-label={t("profile.mySpace")}
-                        data-tour="login-button"
-                        className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      aria-label={t("profile.mySpace")}
+                      data-tour="login-button"
+                      className="grid size-8 shrink-0 place-items-center rounded-md border border-border hover:bg-muted"
+                    >
+                      <UserCog className="size-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" sideOffset={6} className="w-56 border-2 border-black shadow-[2px_2px_0_0_#000]">
+                      {profile?.pseudo && (
+                        <DropdownMenuLabel className="truncate">@{profile.pseudo}</DropdownMenuLabel>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile/edit" className="flex items-center gap-2">
+                          <UserCog className="size-4" /> {t("profile.mySpace")}
+                        </Link>
+                      </DropdownMenuItem>
+                      {profile?.pseudo && (
+                        <DropdownMenuItem asChild>
+                          <Link to="/u/$pseudo" params={{ pseudo: profile.pseudo }} className="flex items-center gap-2">
+                            <UserIcon className="size-4" /> {t("profile.viewPublic")}
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onSelect={(e) => { e.preventDefault(); void signOut(); }}
+                        className="flex items-center gap-2 text-destructive focus:text-destructive"
                       >
-                        <UserCog className="size-4" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={6} className="border-2 border-black font-semibold shadow-[2px_2px_0_0_#000]">
-                      {t("profile.mySpace")}
-                    </TooltipContent>
-                  </Tooltip>
+                        <LogOut className="size-4" /> {t("action.logout")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ) : (
@@ -173,6 +201,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <EmailVerificationBanner />
+      <RequirePseudoDialog />
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-56 pt-4">{children}</main>
 
       <div
