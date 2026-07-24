@@ -23,6 +23,9 @@ const VIEWPORTS = [
   // overflow and sticky-bar collisions on very short screens.
   { name: "iphone-se", width: 375, height: 667 },
   { name: "mobile", width: 390, height: 844 },
+  // Small Android handset — taller viewport and higher density, covers
+  // tooltip placement variations on modern narrow/tall screens.
+  { name: "android-small", width: 412, height: 915 },
   // iPad portrait — mid-size layout where placement often flips between
   // bottom and right.
   { name: "tablet-portrait", width: 820, height: 1180 },
