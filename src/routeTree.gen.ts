@@ -53,6 +53,7 @@ import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authent
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
+import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
 import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
@@ -292,6 +293,12 @@ const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
   path: '/api/public/mention-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIndexnowKeyDottxtRoute =
+  ApiPublicIndexnowKeyDottxtRouteImport.update({
+    id: '/api/public/indexnow-key.txt',
+    path: '/api/public/indexnow-key.txt',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
   path: '/api/public/health',
@@ -426,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
@@ -486,6 +494,7 @@ export interface FileRoutesByTo {
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
@@ -548,6 +557,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
@@ -610,6 +620,7 @@ export interface FileRouteTypes {
     | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
@@ -670,6 +681,7 @@ export interface FileRouteTypes {
     | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
@@ -731,6 +743,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
@@ -778,6 +791,7 @@ export interface RootRouteChildren {
   UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiPublicIndexnowKeyDottxtRoute: typeof ApiPublicIndexnowKeyDottxtRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
@@ -1098,6 +1112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMentionEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/indexnow-key.txt': {
+      id: '/api/public/indexnow-key.txt'
+      path: '/api/public/indexnow-key.txt'
+      fullPath: '/api/public/indexnow-key.txt'
+      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/health': {
       id: '/api/public/health'
       path: '/api/public/health'
@@ -1349,6 +1370,7 @@ const rootRouteChildren: RootRouteChildren = {
   UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiPublicIndexnowKeyDottxtRoute: ApiPublicIndexnowKeyDottxtRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
   ApiPublicProcessTranslationRetriesRoute:
