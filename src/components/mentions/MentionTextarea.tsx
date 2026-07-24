@@ -46,6 +46,43 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   const localRef = useRef<HTMLTextAreaElement | null>(null);
   useImperativeHandle(ref, () => localRef.current as HTMLTextAreaElement);
   const { isAdmin } = useAuth();
+  const highlightRef = useRef<HTMLDivElement | null>(null);
+
+  const syncScroll = () => {
+    const ta = localRef.current;
+    const hl = highlightRef.current;
+    if (!ta || !hl) return;
+    hl.scrollTop = ta.scrollTop;
+    hl.scrollLeft = ta.scrollLeft;
+  };
+
+  useEffect(() => {
+    syncScroll();
+  }, [value]);
+
+  // Render text with @mentions and #hashtags wrapped in highlight spans.
+  // Split preserving delimiters so caret/line-wrap stays perfectly aligned.
+  const HIGHLIGHT_RE = /(@[\p{L}\p{N}_.-]+|#[\p{L}\p{N}_.-]+)/gu;
+  const highlighted = (() => {
+    const parts = value.split(HIGHLIGHT_RE);
+    return parts.map((part, i) => {
+      if (part.startsWith("@")) {
+        return (
+          <span key={i} className="rounded bg-primary/20 text-primary">
+            {part}
+          </span>
+        );
+      }
+      if (part.startsWith("#")) {
+        return (
+          <span key={i} className="rounded bg-accent/30 text-accent-foreground">
+            {part}
+          </span>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  })();
 
   const [query, setQuery] = useState<string | null>(null);
   const [tokenStart, setTokenStart] = useState<number | null>(null);
@@ -174,13 +211,30 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
 
   return (
     <div className="relative">
+      <div
+        ref={highlightRef}
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words text-transparent",
+          className,
+        )}
+        style={{
+          // keep bg transparent so the textarea styling shows through
+          background: "transparent",
+          borderColor: "transparent",
+        }}
+      >
+        {highlighted}
+        {"\n"}
+      </div>
       <Textarea
         {...rest}
         ref={localRef}
         value={value}
-        onChange={(e) => { onChange(e); requestAnimationFrame(detect); }}
+        onChange={(e) => { onChange(e); requestAnimationFrame(() => { detect(); syncScroll(); }); }}
         onKeyUp={detect}
         onClick={detect}
+        onScroll={(e) => { syncScroll(); rest.onScroll?.(e); }}
         onKeyDown={(e) => {
           if (open) {
             if (e.key === "ArrowDown") { e.preventDefault(); setActiveIdx((i) => (i + 1) % suggestions.length); return; }
@@ -205,7 +259,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
           rest.onKeyDown?.(e);
         }}
         onBlur={(e) => { setTimeout(() => { setQuery(null); setHashQuery(null); }, 150); rest.onBlur?.(e); }}
-        className={className}
+        className={cn("relative bg-transparent", className)}
       />
       {open && (
         <ul
