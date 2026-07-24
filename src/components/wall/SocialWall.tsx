@@ -839,7 +839,7 @@ export function SocialWall() {
                       />
                     </div>
                     {isOpen && (
-                      <div className="mt-2 space-y-2">
+                      <div className="mt-2 space-y-2" data-reply-scope>
                         {postComments.map((c) => {
                           const canDelC = session?.user.id === c.author_id || isAdmin;
                           return (
@@ -904,7 +904,7 @@ export function SocialWall() {
                             </div>
                           );
                         })}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2" data-reply-composer>
                           <MentionTextarea
                             value={replyDraft[p.id] ?? ""}
                             onChange={(e) => setReplyDraft((r) => ({ ...r, [p.id]: e.target.value }))}
