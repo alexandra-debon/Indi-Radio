@@ -81,25 +81,28 @@ export function renderRich(text: string | null | undefined): ReactNode {
  */
 function prefillReply(origin: HTMLElement, pseudo: string) {
   const scope = origin.closest("[data-reply-scope]") ?? document.body;
-  const ta =
-    scope.querySelector<HTMLTextAreaElement>("[data-reply-composer] textarea") ??
-    scope.querySelector<HTMLTextAreaElement>("textarea");
-  if (!ta) return;
+  const field =
+    scope.querySelector<HTMLTextAreaElement | HTMLInputElement>(
+      "[data-reply-composer] textarea, [data-reply-composer] input[type='text'], [data-reply-composer] input:not([type])",
+    ) ??
+    scope.querySelector<HTMLTextAreaElement | HTMLInputElement>("textarea, input[type='text'], input:not([type])");
+  if (!field) return;
   const mention = `@${pseudo} `;
-  const current = ta.value ?? "";
+  const current = field.value ?? "";
   const stripped = current.replace(/^@[\p{L}\p{N}_.-]+\s+/u, "");
   const next = current.startsWith(mention) ? current : stripped ? `${mention}${stripped}` : mention;
-  const setter = Object.getOwnPropertyDescriptor(
-    window.HTMLTextAreaElement.prototype,
-    "value",
-  )?.set;
-  setter?.call(ta, next);
-  ta.dispatchEvent(new Event("input", { bubbles: true }));
+  const proto =
+    field instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+  setter?.call(field, next);
+  field.dispatchEvent(new Event("input", { bubbles: true }));
   requestAnimationFrame(() => {
     try {
-      ta.focus();
-      ta.setSelectionRange(next.length, next.length);
-      ta.scrollIntoView({ block: "center", behavior: "smooth" });
+      field.focus();
+      (field as HTMLTextAreaElement).setSelectionRange?.(next.length, next.length);
+      field.scrollIntoView({ block: "center", behavior: "smooth" });
     } catch {}
   });
 }
