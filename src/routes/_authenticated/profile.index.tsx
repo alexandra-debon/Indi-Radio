@@ -215,6 +215,7 @@ function ProfilePage() {
                   {t("profile.cancel")}
                 </Button>
               </div>
+              {pseudoError && <p className="text-[10px] text-destructive">{pseudoError}</p>}
               <p className="text-[10px] text-muted-foreground">
                 {lang === "fr"
                   ? "3 à 30 caractères. Lettres, chiffres, espaces, _ . - uniquement. Unique dans toute l'app."
