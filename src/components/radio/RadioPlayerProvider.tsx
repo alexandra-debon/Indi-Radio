@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { scrapeCurrentTrack } from "@/lib/track-scrape.functions";
 import { useArtwork } from "@/hooks/use-artwork";
+import indiRadioLogo from "@/assets/indi-radio-logo.png";
 
 interface CurrentTrack {
   id: string;
@@ -329,23 +330,31 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
   // lisent ces métadonnées automatiquement.
   useEffect(() => {
     if (typeof window === "undefined" || typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
-    if (!currentTrack) {
-      navigator.mediaSession.metadata = null;
-      return;
-    }
     try {
       if (!("MediaMetadata" in window)) return;
+      // IMPORTANT — iOS Safari n'autorise la lecture audio en arrière-plan
+      // (écran verrouillé) QUE si l'onglet expose des métadonnées MediaSession
+      // valides. Sans metadata, iOS coupe le son au verrouillage. On garde
+      // donc TOUJOURS des métadonnées de repli (station) même si la piste
+      // courante n'est pas encore chargée (utilisateurs non connectés dont
+      // la requête `track_history` peut échouer / renvoyer null).
+      const fallbackArtwork = [
+        { src: indiRadioLogo, sizes: "512x512", type: "image/png" },
+        { src: indiRadioLogo, sizes: "256x256", type: "image/png" },
+        { src: indiRadioLogo, sizes: "128x128", type: "image/png" },
+      ];
+      const trackArtwork = artworkUrl
+        ? [
+            { src: artworkUrl, sizes: "512x512", type: "image/jpeg" },
+            { src: artworkUrl, sizes: "256x256", type: "image/jpeg" },
+            { src: artworkUrl, sizes: "128x128", type: "image/jpeg" },
+          ]
+        : fallbackArtwork;
       navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: currentTrack.title || "InDi Radio",
-        artist: currentTrack.artist || "InDi Radio",
-        album: "InDi Radio",
-        artwork: artworkUrl
-          ? [
-              { src: artworkUrl, sizes: "512x512", type: "image/jpeg" },
-              { src: artworkUrl, sizes: "256x256", type: "image/jpeg" },
-              { src: artworkUrl, sizes: "128x128", type: "image/jpeg" },
-            ]
-          : [],
+        title: currentTrack?.title || "InDi RaDio — En direct",
+        artist: currentTrack?.artist || "Radio 100% musique indépendante",
+        album: "InDi RaDio",
+        artwork: trackArtwork,
       });
     } catch {
       /* MediaMetadata indisponible */
@@ -659,7 +668,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
           Stream is served through a same-origin proxy so no crossOrigin
           attribute is needed — and adding one triggers a CORS preflight
           Icecast doesn't answer, which silently zeroes the analyser. */}
-      <audio ref={audioRef} preload="none" />
+      <audio ref={audioRef} preload="none" playsInline />
       {children}
     </RadioContext.Provider>
   );
