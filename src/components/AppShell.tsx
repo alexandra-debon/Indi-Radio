@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
@@ -20,6 +20,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RequirePseudoDialog } from "@/components/RequirePseudoDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
@@ -51,11 +62,39 @@ const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { profile, isAdmin, session, openAuth, signOut } = useAuth();
   const t = useT();
   const tourDemo = useTourDemoActive();
   const showDemoUser = tourDemo && !session;
+
+  const requestLogout = () => {
+    setOpen(false); // close mobile menu if open
+    setConfirmLogout(true);
+  };
+
+  const performLogout = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+      // Close any transient UI that could survive the auth change.
+      setOpen(false);
+      try { window.dispatchEvent(new Event("indi:close-admin-chat")); } catch {}
+      setConfirmLogout(false);
+      toast.success(t("logout.success"));
+      // Redirect to the public home screen.
+      await navigate({ to: "/" });
+    } catch (e) {
+      console.error("[logout]", e);
+      toast.error(t("logout.error"));
+    } finally {
+      setSigningOut(false);
+    }
+  };
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -177,7 +216,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                       )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onSelect={(e) => { e.preventDefault(); void signOut(); }}
+                        onSelect={(e) => { e.preventDefault(); requestLogout(); }}
                         className="flex items-center gap-2 text-destructive focus:text-destructive"
                       >
                         <LogOut className="size-4" /> {t("action.logout")}
@@ -313,7 +352,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <UserBadge profile={profile} className="text-xs" />
                 </Link>
                 <button
-                  onClick={async () => { await signOut(); setOpen(false); }}
+                  onClick={requestLogout}
                   className="grid size-9 place-items-center rounded-md border border-border hover:bg-muted"
                   aria-label={t("action.logout")}
                 >
@@ -333,6 +372,24 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <AdminChatWidget />
       <AdminChatAdminPanel />
+      <AlertDialog open={confirmLogout} onOpenChange={(o) => { if (!signingOut) setConfirmLogout(o); }}>
+        <AlertDialogContent className="border-2 border-black shadow-[4px_4px_0_0_#000]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("logout.confirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("logout.confirmMessage")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={signingOut}>{t("logout.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); void performLogout(); }}
+              disabled={signingOut}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {signingOut ? "…" : t("logout.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
     </TooltipProvider>
   );
