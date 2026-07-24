@@ -426,6 +426,11 @@ export function SocialWall() {
             <span className="whitespace-pre-wrap">{renderRich(content)}</span>
           </div>
         )}
+        <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1">
+          <p className="text-[11px] italic leading-tight text-primary">
+            {t("wall.videoHint")}
+          </p>
+        </div>
         <Input
           type="url"
           inputMode="url"
@@ -433,7 +438,7 @@ export function SocialWall() {
           onChange={(e) => setVideoUrl(e.target.value)}
           placeholder={t("wall.videoUrl")}
           disabled={!session}
-          className="mt-2 h-8 text-xs bg-transparent border-border/50"
+          className="mt-1.5 h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-primary/70"
         />
         {isAdmin && (
           <div className="mt-2">
@@ -442,7 +447,14 @@ export function SocialWall() {
         )}
         {canUploadImages && (
           <div className="mt-2">
-            <MultiImageUploader values={imagesDraft} onChange={setImagesDraft} folder="wall" />
+            <div className="rounded border border-primary/60 bg-primary/5 px-2 py-1">
+              <p className="text-[11px] italic leading-tight text-primary">
+                {t("wall.imageHint")}
+              </p>
+            </div>
+            <div className="mt-1.5">
+              <MultiImageUploader values={imagesDraft} onChange={setImagesDraft} folder="wall" />
+            </div>
           </div>
         )}
         <div className="mt-2 flex justify-end">
