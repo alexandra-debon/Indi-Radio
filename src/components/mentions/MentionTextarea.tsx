@@ -216,6 +216,8 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
         aria-hidden="true"
         className={cn(
           "pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words text-transparent",
+          // mirror Textarea defaults so metrics/padding match
+          "min-h-[60px] w-full rounded-md border border-transparent px-3 py-2 text-base md:text-sm",
           className,
         )}
         style={{
