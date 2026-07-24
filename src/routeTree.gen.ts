@@ -69,6 +69,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
+import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
 
 const TopUsersRoute = TopUsersRouteImport.update({
   id: '/top-users',
@@ -383,6 +384,11 @@ const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
   path: '/api/public/radio/artwork',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
+  id: '/api/public/hooks/indexnow',
+  path: '/api/public/hooks/indexnow',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -438,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -499,6 +506,7 @@ export interface FileRoutesByTo {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -562,6 +570,7 @@ export interface FileRoutesById {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -625,6 +634,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile/'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -686,6 +696,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -748,6 +759,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/_authenticated/profile/'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -795,6 +807,7 @@ export interface RootRouteChildren {
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
+  ApiPublicHooksIndexnowRoute: typeof ApiPublicHooksIndexnowRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1224,6 +1237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/indexnow': {
+      id: '/api/public/hooks/indexnow'
+      path: '/api/public/hooks/indexnow'
+      fullPath: '/api/public/hooks/indexnow'
+      preLoaderRoute: typeof ApiPublicHooksIndexnowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1375,6 +1395,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
   ApiPublicProcessTranslationRetriesRoute:
     ApiPublicProcessTranslationRetriesRoute,
+  ApiPublicHooksIndexnowRoute: ApiPublicHooksIndexnowRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
