@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
+import { renderRich } from "@/lib/rich-text";
 import { useT } from "@/lib/i18n";
 
 type Props = { contentType: string; contentId: string };
@@ -152,7 +153,9 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
         <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
       </div>
       <p className="mt-1 whitespace-pre-wrap text-foreground/90">
-        <TranslatedText entityType="content_comment" entityKey={c.id} field="body" text={c.body} />
+        <TranslatedText entityType="content_comment" entityKey={c.id} field="body" text={c.body}>
+          {(txt) => <>{renderRich(txt)}</>}
+        </TranslatedText>
       </p>
       {Array.isArray((c as any).image_urls) && (c as any).image_urls.length > 0 && (
         <div className={cn("mt-1 grid gap-1", (c as any).image_urls.length === 1 ? "grid-cols-1" : (c as any).image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
@@ -319,7 +322,9 @@ export function ContentRatingSection({ contentType, contentId }: Props) {
                     entityKey={`${contentId}:${r.user_id}:${r.created_at}`}
                     field="comment"
                     text={r.comment}
-                  />
+                  >
+                    {(txt) => <>{renderRich(txt)}</>}
+                  </TranslatedText>
                 </p>
               )}
             </li>

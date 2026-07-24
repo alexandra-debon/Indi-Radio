@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { renderRich } from "@/lib/rich-text";
 
 type Props = { coupId: string };
 
@@ -181,14 +182,16 @@ export function CoupComments({ coupId }: Props) {
                       {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
-                  <TranslatedText
-                    entityType="content_comment"
-                    entityKey={c.id}
-                    field="body"
-                    text={c.body}
-                    as="p"
-                    className="mt-1 whitespace-pre-wrap text-foreground/90"
-                  />
+                  <p className="mt-1 whitespace-pre-wrap text-foreground/90">
+                    <TranslatedText
+                      entityType="content_comment"
+                      entityKey={c.id}
+                      field="body"
+                      text={c.body}
+                    >
+                      {(txt) => <>{renderRich(txt)}</>}
+                    </TranslatedText>
+                  </p>
                   <div className="mt-1 flex items-center gap-3">
                     {session && (
                       <button
@@ -244,14 +247,16 @@ export function CoupComments({ coupId }: Props) {
                               {new Date(r.created_at).toLocaleDateString("fr-FR")}
                             </span>
                           </div>
-                          <TranslatedText
-                            entityType="content_comment"
-                            entityKey={r.id}
-                            field="body"
-                            text={r.body}
-                            as="p"
-                            className="mt-1 whitespace-pre-wrap text-foreground/90"
-                          />
+                          <p className="mt-1 whitespace-pre-wrap text-foreground/90">
+                            <TranslatedText
+                              entityType="content_comment"
+                              entityKey={r.id}
+                              field="body"
+                              text={r.body}
+                            >
+                              {(txt) => <>{renderRich(txt)}</>}
+                            </TranslatedText>
+                          </p>
                           <div className="mt-1 flex items-center gap-3">
                             {session?.user.id === r.author_id && (
                               <button

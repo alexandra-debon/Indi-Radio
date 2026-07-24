@@ -25,6 +25,7 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { renderRich } from "@/lib/rich-text";
 import { useLang, useT } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
@@ -468,7 +469,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                       <div className="min-w-0 flex-1">
                         {stripMediaUrls(c.content) && (
                           <p className="text-sm">
-                            <TranslatedText entityType="news_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)} />
+                            <TranslatedText entityType="news_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)}>
+                              {(txt) => <>{renderRich(txt)}</>}
+                            </TranslatedText>
                           </p>
                         )}
                         {Array.isArray(c.image_urls) && c.image_urls.length > 0 && (
