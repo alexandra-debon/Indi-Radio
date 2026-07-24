@@ -41,8 +41,14 @@ export const Route = createFileRoute("/u/$pseudo")({
     return data;
   },
   head: ({ params, loaderData }) => {
-    const url = `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
+    // Canonical always points at the CURRENT pseudo (the one stored in the
+    // profile), so old-pseudo URLs and different-case URLs consolidate to a
+    // single canonical after the loader's redirect resolves them.
     const pseudo = loaderData?.pseudo ?? params.pseudo;
+    const canonicalUrl = `https://radio.indi-art-culture.com/u/${encodeURIComponent(pseudo)}`;
+    const requestedUrl = `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
+    const aliasedCasing =
+      loaderData?.pseudo && loaderData.pseudo !== params.pseudo;
     const roleLabel = loaderData?.is_team_indi
       ? "Team InDi"
       : loaderData?.role === "artiste"
@@ -62,25 +68,35 @@ export const Route = createFileRoute("/u/$pseudo")({
       { name: "description", content: desc },
       { property: "og:title", content: title },
       { property: "og:description", content: desc },
-      { property: "og:url", content: url },
+      { property: "og:url", content: canonicalUrl },
       { property: "og:type", content: "profile" },
       { property: "profile:username", content: pseudo },
       { name: "twitter:card", content: "summary" },
     ];
+    // Unresolved pseudo (no profile, no redirect target) — keep it out of the
+    // index so stale links don't pollute search results.
+    if (!loaderData) {
+      meta.push({ name: "robots", content: "noindex, follow" });
+    } else if (aliasedCasing) {
+      // Different casing than the canonical: tell crawlers to prefer the
+      // canonical URL and not to index this alias.
+      meta.push({ name: "robots", content: "noindex, follow" });
+    }
     if (loaderData?.avatar_url) {
       meta.push({ property: "og:image", content: loaderData.avatar_url });
       meta.push({ name: "twitter:image", content: loaderData.avatar_url });
     }
     return {
       meta,
-      links: [{ rel: "canonical", href: url }],
+      links: [{ rel: "canonical", href: canonicalUrl }],
       scripts: [
         {
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ProfilePage",
-            url,
+            url: canonicalUrl,
+            ...(aliasedCasing ? { sameAs: [requestedUrl] } : {}),
             mainEntity: {
               "@type": "Person",
               name: pseudo,
@@ -93,7 +109,7 @@ export const Route = createFileRoute("/u/$pseudo")({
         breadcrumbLd([
           HOME_CRUMB,
           { name: "Top utilisateurs", url: `${SITE_ORIGIN}/top-users` },
-          { name: `@${pseudo}`, url },
+          { name: `@${pseudo}`, url: canonicalUrl },
         ]),
       ],
     };
