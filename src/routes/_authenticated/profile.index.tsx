@@ -4,7 +4,8 @@ import { UserBadge } from "@/components/UserBadge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass, Heart } from "lucide-react";
+import { LogOut, AtSign, Trash2, Pencil, Trophy, Eye, UserCircle2, Loader2, Compass, Heart, Check, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -47,6 +48,8 @@ function ProfilePage() {
   const [deleting, setDeleting] = useState(false);
   const [editingBio, setEditingBio] = useState(false);
   const [bioDraft, setBioDraft] = useState("");
+  const [editingPseudo, setEditingPseudo] = useState(false);
+  const [pseudoDraft, setPseudoDraft] = useState("");
   const navigate = useNavigate();
 
   const { data: mentions = [] } = useQuery({
@@ -101,6 +104,48 @@ function ProfilePage() {
     onError: (err: any) => {
       toast.error(err?.message ?? (lang === "fr" ? "Erreur lors de la sauvegarde" : "Save failed"));
     },
+  });
+
+  const PSEUDO_RE = /^[\p{L}\p{N} _.\-]+$/u;
+  const savePseudo = useMutation({
+    mutationFn: async (newPseudo: string) => {
+      const clean = newPseudo.trim();
+      if (clean.length < 3 || clean.length > 30) {
+        throw new Error(lang === "fr" ? "Pseudo : 3 à 30 caractères" : "Pseudo: 3 to 30 characters");
+      }
+      if (!PSEUDO_RE.test(clean)) {
+        throw new Error(lang === "fr" ? "Lettres, chiffres, espaces, _ . - uniquement" : "Letters, digits, spaces, _ . - only");
+      }
+      if (clean.toLowerCase() !== (profile!.pseudo ?? "").toLowerCase()) {
+        const { data: exists } = await supabase
+          .from("profiles")
+          .select("id")
+          .ilike("pseudo", clean)
+          .neq("id", session!.user.id)
+          .maybeSingle();
+        if (exists) throw new Error(lang === "fr" ? "Ce pseudo est déjà pris" : "This pseudo is already taken");
+      }
+      const { error } = await supabase
+        .from("profiles")
+        .update({ pseudo: clean } as any)
+        .eq("id", session!.user.id);
+      if (error) {
+        const msg = error.message?.toLowerCase().includes("duplicate")
+          ? (lang === "fr" ? "Ce pseudo est déjà pris" : "This pseudo is already taken")
+          : error.message;
+        throw new Error(msg);
+      }
+      return clean;
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["profile", session?.user.id] }),
+        qc.invalidateQueries(),
+      ]);
+      toast.success(lang === "fr" ? "Pseudo mis à jour" : "Pseudo updated");
+      setEditingPseudo(false);
+    },
+    onError: (err: any) => toast.error(err?.message ?? "Erreur"),
   });
 
   if (!profile) return <div className="p-4">{t("profile.loading")}</div>;
