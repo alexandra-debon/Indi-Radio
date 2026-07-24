@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { CornerUpLeft } from "lucide-react";
 import { normalizeHashtag } from "@/lib/hashtag";
 
 // Matches @mention or #hashtag (Unicode letters/numbers, `_` `.` `-`).
@@ -43,17 +44,65 @@ export function renderRich(text: string | null | undefined): ReactNode {
     if (p.startsWith("@") && p.length > 1) {
       const pseudo = p.slice(1);
       return (
-        <Link
-          key={i}
-          to="/u/$pseudo"
-          params={{ pseudo }}
-          className="mention font-semibold text-primary hover:underline"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {p}
-        </Link>
+        <span key={i} className="mention-wrap inline-flex items-baseline gap-0.5">
+          <Link
+            to="/u/$pseudo"
+            params={{ pseudo }}
+            className="mention font-semibold text-primary hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {p}
+          </Link>
+          <button
+            type="button"
+            aria-label={`Répondre à @${pseudo}`}
+            title={`Répondre à @${pseudo}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              prefillReply(e.currentTarget as HTMLElement, pseudo);
+            }}
+            className="inline-flex size-4 translate-y-[1px] items-center justify-center rounded text-muted-foreground/70 hover:text-primary"
+          >
+            <CornerUpLeft className="size-3" aria-hidden />
+          </button>
+        </span>
       );
     }
     return <span key={i}>{p}</span>;
+  });
+}
+
+/**
+ * Prefill the nearest reply composer with `@pseudo `.
+ * Walks up the DOM from `origin` to find a `[data-reply-scope]` ancestor,
+ * then targets a `[data-reply-composer] textarea` (or first textarea) inside it.
+ * Uses the native value setter so React `onChange` fires correctly.
+ */
+function prefillReply(origin: HTMLElement, pseudo: string) {
+  const scope = origin.closest("[data-reply-scope]") ?? document.body;
+  const field =
+    scope.querySelector<HTMLTextAreaElement | HTMLInputElement>(
+      "[data-reply-composer] textarea, [data-reply-composer] input[type='text'], [data-reply-composer] input:not([type])",
+    ) ??
+    scope.querySelector<HTMLTextAreaElement | HTMLInputElement>("textarea, input[type='text'], input:not([type])");
+  if (!field) return;
+  const mention = `@${pseudo} `;
+  const current = field.value ?? "";
+  const stripped = current.replace(/^@[\p{L}\p{N}_.-]+\s+/u, "");
+  const next = current.startsWith(mention) ? current : stripped ? `${mention}${stripped}` : mention;
+  const proto =
+    field instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+  setter?.call(field, next);
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+  requestAnimationFrame(() => {
+    try {
+      field.focus();
+      (field as HTMLTextAreaElement).setSelectionRange?.(next.length, next.length);
+      field.scrollIntoView({ block: "center", behavior: "smooth" });
+    } catch {}
   });
 }

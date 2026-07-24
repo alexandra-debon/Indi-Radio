@@ -147,9 +147,9 @@ export function CoupComments({ coupId }: Props) {
       </div>
 
       {open && (
-        <div className="mt-3 space-y-3">
+        <div className="mt-3 space-y-3" data-reply-scope>
           {session ? (
-            <div className="space-y-2">
+            <div className="space-y-2" data-reply-composer>
               <Textarea
                 rows={2}
                 placeholder="Écris un commentaire…"

@@ -185,7 +185,7 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
         )}
       </div>
       {replyTo === c.id && session && (
-        <div className="mt-2 space-y-1">
+        <div className="mt-2 space-y-1" data-reply-composer>
           <Textarea rows={2} placeholder={t("comment.replyPlaceholder")} value={replyText} onChange={(e) => setReplyText(e.target.value)} />
           <MultiImageUploader values={replyImages} onChange={setReplyImages} folder="content-comments" max={4} />
           <div className="flex gap-2">
@@ -203,9 +203,9 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   );
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" data-reply-scope>
       {session ? (
-        <div className="space-y-2">
+        <div className="space-y-2" data-reply-composer>
           <Textarea rows={2} placeholder={t("comment.placeholder")} value={text} onChange={(e) => setText(e.target.value)} />
           <MultiImageUploader values={images} onChange={setImages} folder="content-comments" max={4} />
           <Button size="sm" disabled={add.isPending || (!text.trim() && images.length === 0)} onClick={() => add.mutate({ body: text, parentId: null, images })}>{t("comment.publish")}</Button>
