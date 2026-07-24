@@ -61,6 +61,7 @@ import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authen
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -338,6 +339,12 @@ const AuthenticatedAdminMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDiagnosticsPseudosRoute =
+  AuthenticatedAdminDiagnosticsPseudosRouteImport.update({
+    id: '/diagnostics-pseudos',
+    path: '/diagnostics-pseudos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
   id: '/albums/$albumId',
   path: '/albums/$albumId',
@@ -410,6 +417,7 @@ export interface FileRoutesByFullPath {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
@@ -469,6 +477,7 @@ export interface FileRoutesByTo {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
@@ -530,6 +539,7 @@ export interface FileRoutesById {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
@@ -591,6 +601,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
@@ -650,6 +661,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
@@ -710,6 +722,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/seo-preview'
     | '/_authenticated/profile/albums'
@@ -1141,6 +1154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/diagnostics-pseudos': {
+      id: '/_authenticated/admin/diagnostics-pseudos'
+      path: '/diagnostics-pseudos'
+      fullPath: '/admin/diagnostics-pseudos'
+      preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/u/$pseudo/albums/$albumId': {
       id: '/u/$pseudo/albums/$albumId'
       path: '/albums/$albumId'
@@ -1187,11 +1207,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminDiagnosticsPseudosRoute:
+    AuthenticatedAdminDiagnosticsPseudosRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
 }
