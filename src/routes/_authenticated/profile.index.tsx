@@ -285,6 +285,34 @@ function ProfilePage() {
         </Link>
       </div>
 
+      <AlertDialog open={confirmPseudoOpen} onOpenChange={setConfirmPseudoOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("profile.changePseudoTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("profile.changePseudoMessage")
+                .replace("{oldPseudo}", profile.pseudo ?? "")
+                .replace("{newPseudo}", pseudoDraft.trim())}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmPseudoOpen(false)} disabled={savePseudo.isPending}>
+              {t("profile.changePseudoCancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmPseudoOpen(false);
+                savePseudo.mutate(pseudoDraft.trim());
+              }}
+              disabled={savePseudo.isPending}
+            >
+              {savePseudo.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {t("profile.changePseudoConfirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <section className="card-brut p-4">
         <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
           <UserCircle2 className="size-4" /> {t("profile.presentation")}
