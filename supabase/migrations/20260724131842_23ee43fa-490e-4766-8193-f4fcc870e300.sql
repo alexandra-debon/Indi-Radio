@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.enforce_pseudo_change_cooldown() FROM PUBLIC, anon, authenticated;

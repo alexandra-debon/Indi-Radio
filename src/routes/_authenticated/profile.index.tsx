@@ -54,6 +54,47 @@ function ProfilePage() {
   const [pseudoError, setPseudoError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const PSEUDO_COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000;
+  const { data: lastPseudoChange } = useQuery({
+    queryKey: ["pseudo-last-change", session?.user.id],
+    enabled: !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("pseudo_history")
+        .select("changed_at")
+        .eq("user_id", session!.user.id)
+        .order("changed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data?.changed_at ?? null;
+    },
+  });
+  const [nowTs, setNowTs] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNowTs(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const cooldownRemainingMs = (() => {
+    if (isAdmin || !lastPseudoChange) return 0;
+    const until = new Date(lastPseudoChange).getTime() + PSEUDO_COOLDOWN_MS;
+    return Math.max(0, until - nowTs);
+  })();
+  const cooldownActive = cooldownRemainingMs > 0;
+  const formatCooldown = (ms: number) => {
+    const totalMin = Math.ceil(ms / 60_000);
+    const days = Math.floor(totalMin / (60 * 24));
+    const hours = Math.floor((totalMin % (60 * 24)) / 60);
+    const minutes = totalMin % 60;
+    if (lang === "fr") {
+      if (days > 0) return `${days} j ${hours} h`;
+      if (hours > 0) return `${hours} h ${minutes} min`;
+      return `${minutes} min`;
+    }
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
+
   const { data: mentions = [] } = useQuery({
     queryKey: ["profile-mentions", session?.user.id],
     enabled: !!session,
@@ -132,9 +173,17 @@ function ProfilePage() {
         .update({ pseudo: clean } as any)
         .eq("id", session!.user.id);
       if (error) {
-        const msg = error.message?.toLowerCase().includes("duplicate")
-          ? (lang === "fr" ? "Ce pseudo est déjà pris" : "This pseudo is already taken")
-          : error.message;
+        const raw = error.message ?? "";
+        const cooldownMatch = raw.match(/PSEUDO_COOLDOWN:(\d+)/);
+        let msg = raw;
+        if (cooldownMatch) {
+          const secs = parseInt(cooldownMatch[1], 10);
+          msg = lang === "fr"
+            ? `Tu pourras changer ton pseudo dans ${formatCooldown(secs * 1000)}.`
+            : `You'll be able to change your pseudo in ${formatCooldown(secs * 1000)}.`;
+        } else if (raw.toLowerCase().includes("duplicate")) {
+          msg = lang === "fr" ? "Ce pseudo est déjà pris" : "This pseudo is already taken";
+        }
         throw new Error(msg);
       }
       return clean;
@@ -142,6 +191,7 @@ function ProfilePage() {
     onSuccess: async () => {
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["profile", session?.user.id] }),
+        qc.invalidateQueries({ queryKey: ["pseudo-last-change", session?.user.id] }),
         qc.invalidateQueries(),
       ]);
       toast.success(lang === "fr" ? "Pseudo mis à jour" : "Pseudo updated");
@@ -152,6 +202,12 @@ function ProfilePage() {
 
   const validateAndConfirmPseudo = () => {
     setPseudoError(null);
+    if (cooldownActive) {
+      setPseudoError(lang === "fr"
+        ? `Tu pourras changer ton pseudo dans ${formatCooldown(cooldownRemainingMs)}.`
+        : `You'll be able to change your pseudo in ${formatCooldown(cooldownRemainingMs)}.`);
+      return;
+    }
     const clean = pseudoDraft.trim();
     if (clean.length < 3 || clean.length > 30) {
       setPseudoError(lang === "fr" ? "Pseudo : 3 à 30 caractères" : "Pseudo: 3 to 30 characters");
@@ -223,19 +279,35 @@ function ProfilePage() {
               </p>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => { setPseudoDraft(profile.pseudo ?? ""); setEditingPseudo(true); }}
-              className="flex w-full items-center justify-between gap-2 text-left text-xs font-black uppercase tracking-widest hover:opacity-80"
-            >
-              <span className="inline-flex items-center gap-2">
-                <AtSign className="size-4" />
-                {lang === "fr" ? "Modifier mon pseudo" : "Edit my pseudo"}
-              </span>
-              <span className="truncate rounded bg-muted px-2 py-0.5 text-[11px] normal-case tracking-normal text-muted-foreground">
-                @{profile.pseudo}
-              </span>
-            </button>
+            <div className="space-y-1">
+              <button
+                type="button"
+                disabled={cooldownActive}
+                onClick={() => { setPseudoDraft(profile.pseudo ?? ""); setEditingPseudo(true); }}
+                className="flex w-full items-center justify-between gap-2 text-left text-xs font-black uppercase tracking-widest hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <AtSign className="size-4" />
+                  {lang === "fr" ? "Modifier mon pseudo" : "Edit my pseudo"}
+                </span>
+                <span className="truncate rounded bg-muted px-2 py-0.5 text-[11px] normal-case tracking-normal text-muted-foreground">
+                  @{profile.pseudo}
+                </span>
+              </button>
+              {cooldownActive ? (
+                <p className="text-[10px] normal-case tracking-normal text-muted-foreground">
+                  {lang === "fr"
+                    ? `Prochain changement possible dans ${formatCooldown(cooldownRemainingMs)} (limite : 1 fois toutes les 2 semaines).`
+                    : `Next change available in ${formatCooldown(cooldownRemainingMs)} (limit: once every 2 weeks).`}
+                </p>
+              ) : (
+                <p className="text-[10px] normal-case tracking-normal text-muted-foreground">
+                  {lang === "fr"
+                    ? "Tu peux changer ton pseudo (1 fois toutes les 2 semaines)."
+                    : "You can change your pseudo (once every 2 weeks)."}
+                </p>
+              )}
+            </div>
           )}
         </div>
         <div>
