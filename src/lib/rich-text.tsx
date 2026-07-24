@@ -60,11 +60,7 @@ export function renderRich(text: string | null | undefined): ReactNode {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              const evt = new CustomEvent("indi:mention-reply", {
-                detail: { pseudo },
-                bubbles: true,
-              });
-              e.currentTarget.dispatchEvent(evt);
+              prefillReply(e.currentTarget as HTMLElement, pseudo);
             }}
             className="inline-flex size-4 translate-y-[1px] items-center justify-center rounded text-muted-foreground/70 hover:text-primary"
           >
@@ -74,5 +70,36 @@ export function renderRich(text: string | null | undefined): ReactNode {
       );
     }
     return <span key={i}>{p}</span>;
+  });
+}
+
+/**
+ * Prefill the nearest reply composer with `@pseudo `.
+ * Walks up the DOM from `origin` to find a `[data-reply-scope]` ancestor,
+ * then targets a `[data-reply-composer] textarea` (or first textarea) inside it.
+ * Uses the native value setter so React `onChange` fires correctly.
+ */
+function prefillReply(origin: HTMLElement, pseudo: string) {
+  const scope = origin.closest("[data-reply-scope]") ?? document.body;
+  const ta =
+    scope.querySelector<HTMLTextAreaElement>("[data-reply-composer] textarea") ??
+    scope.querySelector<HTMLTextAreaElement>("textarea");
+  if (!ta) return;
+  const mention = `@${pseudo} `;
+  const current = ta.value ?? "";
+  const stripped = current.replace(/^@[\p{L}\p{N}_.-]+\s+/u, "");
+  const next = current.startsWith(mention) ? current : stripped ? `${mention}${stripped}` : mention;
+  const setter = Object.getOwnPropertyDescriptor(
+    window.HTMLTextAreaElement.prototype,
+    "value",
+  )?.set;
+  setter?.call(ta, next);
+  ta.dispatchEvent(new Event("input", { bubbles: true }));
+  requestAnimationFrame(() => {
+    try {
+      ta.focus();
+      ta.setSelectionRange(next.length, next.length);
+      ta.scrollIntoView({ block: "center", behavior: "smooth" });
+    } catch {}
   });
 }
