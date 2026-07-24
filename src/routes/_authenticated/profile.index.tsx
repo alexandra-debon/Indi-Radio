@@ -150,6 +150,24 @@ function ProfilePage() {
     onError: (err: any) => toast.error(err?.message ?? "Erreur"),
   });
 
+  const validateAndConfirmPseudo = () => {
+    setPseudoError(null);
+    const clean = pseudoDraft.trim();
+    if (clean.length < 3 || clean.length > 30) {
+      setPseudoError(lang === "fr" ? "Pseudo : 3 à 30 caractères" : "Pseudo: 3 to 30 characters");
+      return;
+    }
+    if (!PSEUDO_RE.test(clean)) {
+      setPseudoError(lang === "fr" ? "Lettres, chiffres, espaces, _ . - uniquement" : "Letters, digits, spaces, _ . - only");
+      return;
+    }
+    if (clean.toLowerCase() === (profile?.pseudo ?? "").toLowerCase()) {
+      setPseudoError(lang === "fr" ? "Le pseudo est identique" : "The pseudo is identical");
+      return;
+    }
+    setConfirmPseudoOpen(true);
+  };
+
   if (!profile) return <div className="p-4">{t("profile.loading")}</div>;
 
   const nextThreshold = LEVEL_THRESHOLDS[profile.level] ?? LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
