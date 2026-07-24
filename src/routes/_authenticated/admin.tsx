@@ -637,6 +637,7 @@ function UserAdmin() {
 
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const [pseudoTarget, setPseudoTarget] = useState<{ id: string; pseudo: string } | null>(null);
 
   const release = useServerFn(releaseUser);
   const releaseMut = useMutation({
@@ -726,6 +727,14 @@ function UserAdmin() {
                   <ShieldOff className="size-4" />
                 </Button>
               )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPseudoTarget({ id: p.id, pseudo: p.pseudo })}
+                title="Modifier le pseudo"
+              >
+                <Pencil className="size-4" />
+              </Button>
             </div>
             <BadgeEditor
               badges={(p as any).badges ?? []}
@@ -745,7 +754,92 @@ function UserAdmin() {
         onClose={() => setBanTarget(null)}
         onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
       />
+      <AdminEditPseudoDialog
+        target={pseudoTarget}
+        onClose={() => setPseudoTarget(null)}
+        onDone={() => {
+          qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+          qc.invalidateQueries({ queryKey: ["profile"] });
+        }}
+      />
     </div>
+  );
+}
+
+function AdminEditPseudoDialog({
+  target,
+  onClose,
+  onDone,
+}: {
+  target: { id: string; pseudo: string } | null;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [value, setValue] = useState("");
+  const [busy, setBusy] = useState(false);
+  const open = !!target;
+
+  const submit = async () => {
+    if (!target) return;
+    const next = value.trim();
+    if (!/^[a-zA-Z0-9_.\-]{3,30}$/.test(next)) {
+      toast.error("Pseudo invalide (3–30 caractères, lettres/chiffres/._-)");
+      return;
+    }
+    if (next.toLowerCase() === target.pseudo.toLowerCase()) {
+      toast.error("Ce pseudo est identique à l'actuel");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { data: taken } = await supabase
+        .from("profiles")
+        .select("id")
+        .ilike("pseudo", next)
+        .neq("id", target.id)
+        .maybeSingle();
+      if (taken) {
+        toast.error("Ce pseudo est déjà utilisé");
+        setBusy(false);
+        return;
+      }
+      const { error } = await supabase.from("profiles").update({ pseudo: next }).eq("id", target.id);
+      if (error) throw error;
+      toast.success(`Pseudo mis à jour : ${target.pseudo} → ${next}`);
+      setValue("");
+      onDone();
+      onClose();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) { setValue(""); onClose(); } }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Modifier le pseudo de {target?.pseudo}</DialogTitle>
+          <DialogDescription>
+            En tant qu'admin, la limite de fréquence (14 jours) est ignorée. L'ancien pseudo est
+            conservé dans l'historique et redirigera automatiquement vers le nouveau.
+          </DialogDescription>
+        </DialogHeader>
+        <Input
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Nouveau pseudo"
+        />
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose} disabled={busy}>Annuler</Button>
+          <Button onClick={submit} disabled={busy || !value.trim()}>
+            {busy ? "Enregistrement…" : "Enregistrer"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
