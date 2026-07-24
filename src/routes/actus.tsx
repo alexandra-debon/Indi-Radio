@@ -425,7 +425,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         </div>
 
         {commentOpen && (
-          <div className="space-y-2 border-t border-border pt-3">
+          <div className="space-y-2 border-t border-border pt-3" data-reply-scope>
             {comments.map((c: any) => {
               const isCommentOwner = sessionUserId === c.author_id;
               const canDelC = isCommentOwner || isAdmin;
@@ -509,7 +509,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               );
             })}
             {sessionUserId ? (
-              <div className="space-y-2">
+              <div className="space-y-2" data-reply-composer>
                 <div className="flex gap-2">
                   <Input placeholder={t("comment.add")} value={comment} onChange={(e) => setComment(e.target.value)} />
                   <Button size="sm" onClick={() => addComment.mutate()} disabled={!comment.trim() && commentImages.length === 0}>{t("comment.send")}</Button>
