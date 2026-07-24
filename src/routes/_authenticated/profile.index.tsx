@@ -199,7 +199,7 @@ function ProfilePage() {
                 <Button
                   size="sm"
                   disabled={savePseudo.isPending || !pseudoDraft.trim()}
-                  onClick={() => savePseudo.mutate(pseudoDraft)}
+                  onClick={validateAndConfirmPseudo}
                   className="flex-1"
                 >
                   {savePseudo.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Check className="mr-2 size-4" />}
