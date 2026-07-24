@@ -50,6 +50,8 @@ function ProfilePage() {
   const [bioDraft, setBioDraft] = useState("");
   const [editingPseudo, setEditingPseudo] = useState(false);
   const [pseudoDraft, setPseudoDraft] = useState("");
+  const [confirmPseudoOpen, setConfirmPseudoOpen] = useState(false);
+  const [pseudoError, setPseudoError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const { data: mentions = [] } = useQuery({
