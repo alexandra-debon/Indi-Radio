@@ -155,8 +155,8 @@ test.describe("OnboardingTour visual regression", () => {
           try { window.localStorage.removeItem("indi.lang"); } catch {}
           window.dispatchEvent(new CustomEvent("indi:open-tour"));
         });
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`intro-lang-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
@@ -164,8 +164,8 @@ test.describe("OnboardingTour visual regression", () => {
 
       test("welcome screen", async ({ page }) => {
         await openTour(page, "welcome");
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`welcome-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
@@ -175,6 +175,7 @@ test.describe("OnboardingTour visual regression", () => {
         test(`tour ${s.name}`, async ({ page }) => {
           await openTour(page, "welcome");
           await goToStep(page, s.index);
+          await assertTourContentVisible(page, vp);
           // Full-page shot so both the spotlight and the bubble are
           // captured (they live in different fixed layers).
           await expect(page).toHaveScreenshot(`${s.name}-${vp.name}.png`, {
@@ -185,8 +186,8 @@ test.describe("OnboardingTour visual regression", () => {
 
       test("summary screen", async ({ page }) => {
         await openTour(page, "summary");
+        await assertTourContentVisible(page, vp);
         const dialog = page.getByRole("dialog").first();
-        await expect(dialog).toBeVisible();
         await expect(dialog).toHaveScreenshot(`summary-${vp.name}.png`, {
           maxDiffPixelRatio: 0.02,
         });
