@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.ping_indexnow_on_pseudo_change() FROM PUBLIC, anon, authenticated;

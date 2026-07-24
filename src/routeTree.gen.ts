@@ -53,6 +53,7 @@ import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authent
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
 import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
+import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
 import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
@@ -68,6 +69,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
+import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
 
 const TopUsersRoute = TopUsersRouteImport.update({
   id: '/top-users',
@@ -292,6 +294,12 @@ const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
   path: '/api/public/mention-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIndexnowKeyDottxtRoute =
+  ApiPublicIndexnowKeyDottxtRouteImport.update({
+    id: '/api/public/indexnow-key.txt',
+    path: '/api/public/indexnow-key.txt',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
   path: '/api/public/health',
@@ -376,6 +384,11 @@ const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
   path: '/api/public/radio/artwork',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
+  id: '/api/public/hooks/indexnow',
+  path: '/api/public/hooks/indexnow',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -426,10 +439,12 @@ export interface FileRoutesByFullPath {
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -486,10 +501,12 @@ export interface FileRoutesByTo {
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -548,10 +565,12 @@ export interface FileRoutesById {
   '/_authenticated/profile/likes': typeof AuthenticatedProfileLikesRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/api/public/mention-email': typeof ApiPublicMentionEmailRoute
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -610,10 +629,12 @@ export interface FileRouteTypes {
     | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile/'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -670,10 +691,12 @@ export interface FileRouteTypes {
     | '/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -731,10 +754,12 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/likes'
     | '/api/public/admin-message-email'
     | '/api/public/health'
+    | '/api/public/indexnow-key.txt'
     | '/api/public/mention-email'
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/_authenticated/profile/'
+    | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -778,9 +803,11 @@ export interface RootRouteChildren {
   UPseudoRoute: typeof UPseudoRouteWithChildren
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ApiPublicIndexnowKeyDottxtRoute: typeof ApiPublicIndexnowKeyDottxtRoute
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
+  ApiPublicHooksIndexnowRoute: typeof ApiPublicHooksIndexnowRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1098,6 +1125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMentionEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/indexnow-key.txt': {
+      id: '/api/public/indexnow-key.txt'
+      path: '/api/public/indexnow-key.txt'
+      fullPath: '/api/public/indexnow-key.txt'
+      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/health': {
       id: '/api/public/health'
       path: '/api/public/health'
@@ -1201,6 +1235,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/radio/artwork'
       fullPath: '/api/public/radio/artwork'
       preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/indexnow': {
+      id: '/api/public/hooks/indexnow'
+      path: '/api/public/hooks/indexnow'
+      fullPath: '/api/public/hooks/indexnow'
+      preLoaderRoute: typeof ApiPublicHooksIndexnowRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -1349,10 +1390,12 @@ const rootRouteChildren: RootRouteChildren = {
   UPseudoRoute: UPseudoRouteWithChildren,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ApiPublicIndexnowKeyDottxtRoute: ApiPublicIndexnowKeyDottxtRoute,
   ApiPublicMentionEmailRoute: ApiPublicMentionEmailRoute,
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
   ApiPublicProcessTranslationRetriesRoute:
     ApiPublicProcessTranslationRetriesRoute,
+  ApiPublicHooksIndexnowRoute: ApiPublicHooksIndexnowRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
