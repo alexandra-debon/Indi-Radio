@@ -389,16 +389,14 @@ export function SocialWall() {
           placeholder={t("wall.postTitle")}
           maxLength={120}
           disabled={!session}
-          className="h-8 text-sm font-bold bg-transparent border-0 border-b border-primary/40 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary placeholder:font-semibold placeholder:text-muted-foreground/70"
+          className="h-8 text-sm font-bold bg-transparent border-0 border-b border-primary/40 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary placeholder:italic placeholder:text-primary placeholder:font-medium"
         />
         {/* Fine ligne de séparation jaune */}
         <div className="mt-2 h-px bg-primary/60" aria-hidden="true" />
-        {/* Cadre fin jaune avec le conseil de mention */}
-        <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-primary">
-            {t("wall.mentionHint")}
-          </p>
-        </div>
+        {/* Mention : plus mince, en italique jaune */}
+        <p className="mt-1.5 text-[11px] italic leading-tight text-primary">
+          {t("wall.mentionHint")}
+        </p>
         <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
