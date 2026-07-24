@@ -64,6 +64,13 @@ export const Route = createFileRoute("/sitemap-users.xml")({
         const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
         const lastModified = computeMaxLastmod(entries);
         const headers = sitemapHeaders(body, lastModified);
+        // Always regenerate on pseudo changes: bypass CDN caching and rely on
+        // ETag / Last-Modified conditional GETs so crawlers still get cheap
+        // 304 responses when nothing changed.
+        headers.set(
+          "Cache-Control",
+          "public, max-age=0, s-maxage=0, must-revalidate",
+        );
         if (matchesConditional(request, lastModified, headers.get("ETag")!)) {
           return new Response(null, { status: 304, headers });
         }
