@@ -15,6 +15,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapVideoDotxmlRouteImport } from './routes/sitemap-video[.]xml'
+import { Route as SitemapUsersDotxmlRouteImport } from './routes/sitemap-users[.]xml'
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
@@ -95,6 +96,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SitemapVideoDotxmlRoute = SitemapVideoDotxmlRouteImport.update({
   id: '/sitemap-video.xml',
   path: '/sitemap-video.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapUsersDotxmlRoute = SitemapUsersDotxmlRouteImport.update({
+  id: '/sitemap-users.xml',
+  path: '/sitemap-users.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
@@ -385,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-users.xml': typeof SitemapUsersDotxmlRoute
   '/sitemap-video.xml': typeof SitemapVideoDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -443,6 +450,7 @@ export interface FileRoutesByTo {
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-users.xml': typeof SitemapUsersDotxmlRoute
   '/sitemap-video.xml': typeof SitemapVideoDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -503,6 +511,7 @@ export interface FileRoutesById {
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-users.xml': typeof SitemapUsersDotxmlRoute
   '/sitemap-video.xml': typeof SitemapVideoDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/soumission-artistes': typeof SoumissionArtistesRoute
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-users.xml'
     | '/sitemap-video.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -621,6 +631,7 @@ export interface FileRouteTypes {
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-users.xml'
     | '/sitemap-video.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -680,6 +691,7 @@ export interface FileRouteTypes {
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-users.xml'
     | '/sitemap-video.xml'
     | '/sitemap.xml'
     | '/soumission-artistes'
@@ -740,6 +752,7 @@ export interface RootRouteChildren {
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapFrDotxmlRoute: typeof SitemapFrDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
+  SitemapUsersDotxmlRoute: typeof SitemapUsersDotxmlRoute
   SitemapVideoDotxmlRoute: typeof SitemapVideoDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoumissionArtistesRoute: typeof SoumissionArtistesRoute
@@ -804,6 +817,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-video.xml'
       fullPath: '/sitemap-video.xml'
       preLoaderRoute: typeof SitemapVideoDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-users.xml': {
+      id: '/sitemap-users.xml'
+      path: '/sitemap-users.xml'
+      fullPath: '/sitemap-users.xml'
+      preLoaderRoute: typeof SitemapUsersDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-images.xml': {
@@ -1293,6 +1313,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapFrDotxmlRoute: SitemapFrDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
+  SitemapUsersDotxmlRoute: SitemapUsersDotxmlRoute,
   SitemapVideoDotxmlRoute: SitemapVideoDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoumissionArtistesRoute: SoumissionArtistesRoute,
