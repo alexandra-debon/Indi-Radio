@@ -279,19 +279,35 @@ function ProfilePage() {
               </p>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => { setPseudoDraft(profile.pseudo ?? ""); setEditingPseudo(true); }}
-              className="flex w-full items-center justify-between gap-2 text-left text-xs font-black uppercase tracking-widest hover:opacity-80"
-            >
-              <span className="inline-flex items-center gap-2">
-                <AtSign className="size-4" />
-                {lang === "fr" ? "Modifier mon pseudo" : "Edit my pseudo"}
-              </span>
-              <span className="truncate rounded bg-muted px-2 py-0.5 text-[11px] normal-case tracking-normal text-muted-foreground">
-                @{profile.pseudo}
-              </span>
-            </button>
+            <div className="space-y-1">
+              <button
+                type="button"
+                disabled={cooldownActive}
+                onClick={() => { setPseudoDraft(profile.pseudo ?? ""); setEditingPseudo(true); }}
+                className="flex w-full items-center justify-between gap-2 text-left text-xs font-black uppercase tracking-widest hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <AtSign className="size-4" />
+                  {lang === "fr" ? "Modifier mon pseudo" : "Edit my pseudo"}
+                </span>
+                <span className="truncate rounded bg-muted px-2 py-0.5 text-[11px] normal-case tracking-normal text-muted-foreground">
+                  @{profile.pseudo}
+                </span>
+              </button>
+              {cooldownActive ? (
+                <p className="text-[10px] normal-case tracking-normal text-muted-foreground">
+                  {lang === "fr"
+                    ? `Prochain changement possible dans ${formatCooldown(cooldownRemainingMs)} (limite : 1 fois toutes les 2 semaines).`
+                    : `Next change available in ${formatCooldown(cooldownRemainingMs)} (limit: once every 2 weeks).`}
+                </p>
+              ) : (
+                <p className="text-[10px] normal-case tracking-normal text-muted-foreground">
+                  {lang === "fr"
+                    ? "Tu peux changer ton pseudo (1 fois toutes les 2 semaines)."
+                    : "You can change your pseudo (once every 2 weeks)."}
+                </p>
+              )}
+            </div>
           )}
         </div>
         <div>
