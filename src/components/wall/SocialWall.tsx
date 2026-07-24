@@ -382,22 +382,31 @@ export function SocialWall() {
       </div>
 
       <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
-        <MentionTextarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={session ? t("wall.placeholderSignedIn") : t("wall.placeholderSignedOut")}
-          onFocus={() => { if (!session) requireAuth(() => {}); }}
-          rows={2}
-          className="resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
-          disabled={!session}
-        />
+        {/* Titre en haut, clairement séparé */}
         <Input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={t("wall.postTitle")}
           maxLength={120}
           disabled={!session}
-          className="mt-2 h-8 text-xs font-semibold"
+          className="h-8 text-sm font-bold bg-transparent border-0 border-b border-primary/40 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary placeholder:font-semibold placeholder:text-muted-foreground/70"
+        />
+        {/* Fine ligne de séparation jaune */}
+        <div className="mt-2 h-px bg-primary/60" aria-hidden="true" />
+        {/* Cadre fin jaune avec le conseil de mention */}
+        <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-primary">
+            {t("wall.mentionHint")}
+          </p>
+        </div>
+        <MentionTextarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder={session ? t("wall.placeholderSignedIn") : t("wall.placeholderSignedOut")}
+          onFocus={() => { if (!session) requireAuth(() => {}); }}
+          rows={2}
+          className="mt-2 resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
+          disabled={!session}
         />
         {(title.trim() || content.trim()) && (
           <div className="mt-1 flex items-center gap-2">
@@ -426,7 +435,7 @@ export function SocialWall() {
           onChange={(e) => setVideoUrl(e.target.value)}
           placeholder={t("wall.videoUrl")}
           disabled={!session}
-          className="mt-2 h-8 text-xs"
+          className="mt-2 h-8 text-xs bg-transparent border-border/50"
         />
         {isAdmin && (
           <div className="mt-2">
