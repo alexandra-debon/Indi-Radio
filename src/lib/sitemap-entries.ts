@@ -145,21 +145,9 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
         lastmod: normalizeDate(r.updated_at),
       });
     }
-    // Public user profiles
-    const { data: profiles } = await sb
-      .from("profiles")
-      .select("pseudo, updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(2000);
-    for (const r of profiles ?? []) {
-      if (!r.pseudo) continue;
-      entries.push({
-        path: `/u/${encodeURIComponent(r.pseudo)}`,
-        changefreq: "monthly",
-        priority: "0.4",
-        lastmod: normalizeDate(r.updated_at),
-      });
-    }
+    // Public user profiles are served by /sitemap-users.xml so canonical
+    // /u/$pseudo URLs live in a single dedicated sitemap (no alias, no
+    // duplicate). Do not add them here.
     // Public photo albums
     const { data: albums } = await sb
       .from("photo_albums")
@@ -257,5 +245,5 @@ export function renderLocalizedSitemap(entries: SitemapEntry[], lang: "fr" | "en
 }
 
 export function renderSitemapIndex(): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${BASE_URL}/sitemap-fr.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-en.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-images.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-video.xml</loc></sitemap>\n</sitemapindex>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${BASE_URL}/sitemap-fr.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-en.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-users.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-images.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-video.xml</loc></sitemap>\n</sitemapindex>`;
 }
