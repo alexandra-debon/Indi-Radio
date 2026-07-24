@@ -90,7 +90,6 @@ Disallow: /api/
 # individuel car il partage le même motif d'URL que le profil
 # canonique ; c'est le 301 + canonical + sitemap qui empêchent
 # son indexation.
-Allow: /u/
 
 # ============================================================
 # Sitemaps (index + sitemaps par langue avec hreflang + profils)
