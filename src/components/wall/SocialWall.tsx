@@ -400,10 +400,10 @@ export function SocialWall() {
         <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={session ? t("wall.placeholderSignedIn") : t("wall.placeholderSignedOut")}
+          placeholder={session ? t("wall.composePlaceholder") : t("wall.placeholderSignedOut")}
           onFocus={() => { if (!session) requireAuth(() => {}); }}
           rows={2}
-          className="mt-2 resize-none border-0 bg-transparent placeholder:font-semibold placeholder:text-foreground placeholder:opacity-100 disabled:opacity-100 focus-visible:ring-0"
+          className="mt-2 resize-none border-0 bg-transparent text-sm placeholder:text-xs placeholder:font-normal placeholder:italic placeholder:text-muted-foreground/70 disabled:opacity-100 focus-visible:ring-0"
           disabled={!session}
         />
         {(title.trim() || content.trim()) && (
@@ -436,9 +436,9 @@ export function SocialWall() {
           inputMode="url"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder={t("wall.videoUrl")}
+          placeholder={t("wall.videoUrlPlaceholder")}
           disabled={!session}
-          className="mt-1.5 h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-primary/70"
+          className="mt-1.5 h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70 placeholder:font-normal"
         />
         {isAdmin && (
           <div className="mt-2">
