@@ -29,6 +29,9 @@ type TourSpotlightProps = {
 };
 
 const PADDING = 8;
+// Height reserved for the sticky bottom action bar so the tooltip never
+// slides underneath it on small screens (iPhone SE/mini in particular).
+const BOTTOM_BAR_RESERVE = 72;
 
 export function TourSpotlight({
   open,
@@ -146,7 +149,7 @@ export function TourSpotlight({
       {/* Tooltip */}
       <div
         className={cn(
-          "absolute max-h-[85vh] w-[calc(100vw-2rem)] max-w-xs overflow-auto rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
+          "absolute w-[calc(100vw-2rem)] max-w-xs overflow-auto rounded-xl border-2 border-black bg-background p-4 shadow-[4px_4px_0_0_#000]",
           !tooltipPos && "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
         )}
         style={
@@ -154,8 +157,9 @@ export function TourSpotlight({
             ? {
                 left: tooltipPos.left,
                 top: tooltipPos.top,
+                maxHeight: `calc(100vh - ${tooltipPos.top}px - ${BOTTOM_BAR_RESERVE + 16}px)`,
               }
-            : {}
+            : { maxHeight: `calc(100vh - ${BOTTOM_BAR_RESERVE + 32}px)` }
         }
       >
         <div className="mb-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -257,7 +261,12 @@ function positionTooltip(target: DOMRect, placement: NonNullable<TourStep["place
   const tooltipWidth = 320;
   const tooltipHeight = 260;
   const maxLeft = Math.max(margin, window.innerWidth - tooltipWidth - margin);
-  const maxTop = Math.max(margin, window.innerHeight - tooltipHeight - margin);
+  // Reserve space for the sticky bottom bar so the tooltip never lands
+  // underneath it on short viewports (mobile).
+  const maxTop = Math.max(
+    margin,
+    window.innerHeight - tooltipHeight - margin - BOTTOM_BAR_RESERVE,
+  );
   const centerLeft = Math.min(
     Math.max(target.left + target.width / 2 - tooltipWidth / 2, margin),
     maxLeft,
