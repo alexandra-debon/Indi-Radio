@@ -19,8 +19,17 @@ import { test, expect, type Page } from "@playwright/test";
  */
 
 const VIEWPORTS = [
+  // iPhone SE — the tightest common mobile viewport; catches tooltip
+  // overflow and sticky-bar collisions on very short screens.
+  { name: "iphone-se", width: 375, height: 667 },
   { name: "mobile", width: 390, height: 844 },
+  // iPad portrait — mid-size layout where placement often flips between
+  // bottom and right.
+  { name: "tablet-portrait", width: 820, height: 1180 },
   { name: "desktop", width: 1280, height: 900 },
+  // Wide desktop — ensures bubbles stay near their anchors rather than
+  // drifting to the far edge on large monitors.
+  { name: "desktop-wide", width: 1680, height: 1050 },
 ] as const;
 
 // Tour steps to snapshot. Keep a small, representative subset covering
