@@ -410,18 +410,13 @@ export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
             {t("wall.publish")}
           </Button>
           {onCollapse && (
-            <Button
-              size="sm"
-              variant="outline"
+            <WallExpandHandle
+              direction="up"
               onClick={onCollapse}
-              aria-label={t("wall.collapse")}
-              title={t("wall.collapse")}
-              className="gap-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5"
-            >
-              <Minimize2 className="size-4" />
-              <span className="hidden sm:inline">{t("wall.collapse")}</span>
-            </Button>
+              label={t("wall.collapse")}
+            />
           )}
+
         </div>
       </div>
 
