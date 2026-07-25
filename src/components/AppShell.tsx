@@ -244,6 +244,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-56 pt-4">{children}</main>
 
       <div
+        data-app-bottom-bar
         className="safe-bottom fixed inset-x-0 bottom-0 z-40 will-change-auto"
         style={{ transform: "translateZ(0)", contain: "layout paint" }}
       >
