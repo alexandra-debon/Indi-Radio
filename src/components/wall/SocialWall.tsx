@@ -106,6 +106,7 @@ export function SocialWall() {
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
+  const [replyVideo, setReplyVideo] = useState<Record<string, string>>({});
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
