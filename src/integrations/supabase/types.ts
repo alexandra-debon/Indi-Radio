@@ -1239,6 +1239,9 @@ export type Database = {
           badges: string[]
           bio: string | null
           created_at: string
+          gallery_cover_url: string | null
+          gallery_summary: string | null
+          gallery_visible: boolean
           id: string
           is_certified: boolean
           is_team_indi: boolean
@@ -1250,6 +1253,7 @@ export type Database = {
           quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
           social_links: Json
+          stage_name: string | null
           updated_at: string
           website: string | null
         }
@@ -1258,6 +1262,9 @@ export type Database = {
           badges?: string[]
           bio?: string | null
           created_at?: string
+          gallery_cover_url?: string | null
+          gallery_summary?: string | null
+          gallery_visible?: boolean
           id: string
           is_certified?: boolean
           is_team_indi?: boolean
@@ -1269,6 +1276,7 @@ export type Database = {
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           social_links?: Json
+          stage_name?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -1277,6 +1285,9 @@ export type Database = {
           badges?: string[]
           bio?: string | null
           created_at?: string
+          gallery_cover_url?: string | null
+          gallery_summary?: string | null
+          gallery_visible?: boolean
           id?: string
           is_certified?: boolean
           is_team_indi?: boolean
@@ -1288,6 +1299,7 @@ export type Database = {
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           social_links?: Json
+          stage_name?: string | null
           updated_at?: string
           website?: string | null
         }
