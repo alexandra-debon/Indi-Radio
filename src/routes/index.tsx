@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SocialWall } from "@/components/wall/SocialWall";
+import { SocialWallPanel } from "@/components/wall/SocialWallPanel";
 import { useRadio } from "@/components/radio/RadioPlayerProvider";
 import { Play, Pause, Radio as RadioIcon, History, BarChart3, Loader2, Users, Map } from "lucide-react";
 import { Mail } from "lucide-react";
@@ -301,7 +301,7 @@ function LivePage() {
 
       {/* Social wall */}
       <div data-tour="social-wall">
-        <SocialWall />
+        <SocialWallPanel />
       </div>
 
       {/* Newsletter banner */}
