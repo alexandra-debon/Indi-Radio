@@ -168,7 +168,7 @@ export function SocialWall() {
   useEffect(() => {
     const channel = supabase
       .channel("posts-live")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, () => {
         qc.invalidateQueries({ queryKey: ["wall-posts"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "post_likes" }, () => {
