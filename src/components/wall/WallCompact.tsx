@@ -124,9 +124,13 @@ export function WallCompact({
 
       <div className="space-y-2">
         {posts.length === 0 && (
-          <div className="card-brut p-4 text-center text-sm text-muted-foreground">
+          <button
+            type="button"
+            onClick={onExpand}
+            className="card-brut w-full p-4 text-center text-sm text-muted-foreground transition hover:-translate-y-0.5 hover:bg-primary/5"
+          >
             {t("wall.compactEmpty")}
-          </div>
+          </button>
         )}
         {posts.map((p) => {
           const cover = (p.image_urls && p.image_urls[0]) || p.image_url;
@@ -188,6 +192,14 @@ export function WallCompact({
           );
         })}
       </div>
+
+      <button
+        type="button"
+        onClick={onExpand}
+        className="w-full rounded-lg border-2 border-black bg-primary/10 px-3 py-2 text-xs font-bold uppercase tracking-wide text-primary shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-primary/20"
+      >
+        {t("wall.seeAll")}
+      </button>
 
     </section>
 
