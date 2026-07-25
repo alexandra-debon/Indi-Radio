@@ -115,6 +115,23 @@ export function SocialWall() {
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
 
+  // Deep-link: `/?mention=<pseudo>` opens the composer with the mention prefilled.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const mention = params.get("mention");
+    if (!mention) return;
+    setContent((v) => (v.trim() ? v : `@${mention} `));
+    setComposerOpen(true);
+    params.delete("mention");
+    const newSearch = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname + (newSearch ? `?${newSearch}` : "") + window.location.hash,
+    );
+  }, []);
+
   // Auto-open the thread targeted by a notification hash like `post-<id>|c-<cid>`
   useEffect(() => {
     const { primary } = parseHashTargets(hash);
