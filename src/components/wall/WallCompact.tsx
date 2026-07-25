@@ -103,6 +103,20 @@ export function WallCompact({
     setShowTooltip(false);
   };
 
+  const [demoTimer, setDemoTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const playDemo = () => {
+    if (demoPhase === "playing") return;
+    if (demoTimer) clearTimeout(demoTimer);
+    setShowTooltip(false);
+    setDemoPhase("playing");
+    const timer = setTimeout(() => {
+      setDemoPhase("done");
+      setShowTooltip(true);
+    }, DEMO_DURATION_MS);
+    setDemoTimer(timer);
+  };
+
   const syncArrow = useCallback(() => {
     if (!handleWrapRef.current || !tooltipRef.current) return;
     const handleRect = handleWrapRef.current.getBoundingClientRect();
