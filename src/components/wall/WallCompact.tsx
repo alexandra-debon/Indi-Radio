@@ -195,6 +195,12 @@ export function WallCompact({
     };
   }, [showTooltip, syncArrow]);
 
+  useEffect(() => {
+    return () => {
+      if (demoTimer) clearTimeout(demoTimer);
+    };
+  }, [demoTimer]);
+
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
