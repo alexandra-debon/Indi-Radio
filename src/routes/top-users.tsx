@@ -104,26 +104,29 @@ function TopUsersPage() {
                     )}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    <span>{u.role ?? "auditeur"}</span>
+                    <span>{t(`role.${(u.role ?? "auditeur") as "admin" | "artiste" | "animateur" | "auditeur"}` as any)}</span>
                     <span>·</span>
                     <span>{t("page.topUsers.level")} {u.level ?? 1}</span>
                   </div>
                   {u.badges && u.badges.length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {u.badges.map((b) => (
-                        <span
+                        <TranslatedText
                           key={b}
+                          as="span"
+                          entityType="user_badge"
+                          entityKey={`${u.id}:${b}`}
+                          field="label"
+                          text={b}
                           className="inline-flex items-center gap-0.5 rounded-md border-2 border-border bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-foreground"
-                        >
-                          <Award className="size-2.5" aria-hidden /> {b}
-                        </span>
+                        />
                       ))}
                     </div>
                   )}
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-lg font-black tabular-nums text-primary">{u.points ?? 0}</span>
-                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">points</span>
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("page.topUsers.points")}</span>
                 </div>
                 </Link>
               </li>
