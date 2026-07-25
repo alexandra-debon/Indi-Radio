@@ -69,6 +69,7 @@ function EditProfilePage() {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [galleryVisible, setGalleryVisible] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
@@ -78,6 +79,7 @@ function EditProfilePage() {
     setAvatarUrl(profile.avatar_url ?? null);
     const sl = (profile as any).social_links;
     setSocialLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
+    setGalleryVisible((profile as any).gallery_visible ?? true);
   }, [profile]);
 
   if (!profile || !session) return <div className="p-4">Chargement…</div>;
@@ -179,6 +181,7 @@ function EditProfilePage() {
           website: parsed.data.website || null,
           avatar_url: avatarUrl,
           social_links: sanitizeLinks(socialLinks),
+          gallery_visible: galleryVisible,
         } as any)
         .eq("id", session!.user.id);
       if (error) throw error;
