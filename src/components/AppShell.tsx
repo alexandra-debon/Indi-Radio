@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -70,6 +70,28 @@ export function AppShell({ children }: { children: ReactNode }) {
   const t = useT();
   const tourDemo = useTourDemoActive();
   const showDemoUser = tourDemo && !session;
+
+  // Publish the real height of the fixed bottom bar (MiniPlayer + footer +
+  // safe-area) as a CSS variable so any floating UI can align above it.
+  const bottomBarRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = bottomBarRef.current;
+    if (!el) return;
+    const apply = () => {
+      const h = el.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--app-bottom-bar-h", `${Math.round(h)}px`);
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    window.addEventListener("resize", apply);
+    window.addEventListener("orientationchange", apply);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", apply);
+      window.removeEventListener("orientationchange", apply);
+    };
+  }, []);
 
   const requestLogout = () => {
     setOpen(false); // close mobile menu if open
@@ -244,6 +266,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="mx-auto w-full max-w-3xl flex-1 px-3 pb-56 pt-4">{children}</main>
 
       <div
+        ref={bottomBarRef}
         data-app-bottom-bar
         className="safe-bottom fixed inset-x-0 bottom-0 z-40 will-change-auto"
         style={{ transform: "translateZ(0)", contain: "layout paint" }}
