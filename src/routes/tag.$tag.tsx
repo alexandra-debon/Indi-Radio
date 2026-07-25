@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Hash } from "lucide-react";
 import { normalizeHashtag } from "@/lib/hashtag";
 
