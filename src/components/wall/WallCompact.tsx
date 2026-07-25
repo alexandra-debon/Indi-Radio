@@ -74,7 +74,9 @@ export function WallCompact({
       if (!shouldShow) return;
 
       const isMobileNow = window.innerWidth < 768;
-      if (isMobileNow) {
+      const demoVersionSeen = localStorage.getItem(WALL_DEMO_VERSION_KEY);
+      if (isMobileNow && demoVersionSeen !== WALL_TOOLTIP_VERSION) {
+        localStorage.setItem(WALL_DEMO_VERSION_KEY, WALL_TOOLTIP_VERSION);
         setDemoPhase("playing");
         timer = setTimeout(() => {
           setDemoPhase("done");
