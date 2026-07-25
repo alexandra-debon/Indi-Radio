@@ -6,6 +6,7 @@ interface WallExpandHandleProps {
   label?: string;
   className?: string;
   showLabel?: boolean;
+  disabled?: boolean;
 }
 
 export function WallExpandHandle({
@@ -14,11 +15,13 @@ export function WallExpandHandle({
   label,
   className = "",
   showLabel = true,
+  disabled = false,
 }: WallExpandHandleProps) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={`
         group inline-flex items-center justify-center gap-1.5
         rounded-full bg-primary text-primary-foreground
@@ -27,10 +30,13 @@ export function WallExpandHandle({
         transition-all duration-200
         hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] hover:bg-primary/90
         active:translate-y-0 active:shadow-[1px_1px_0_0_#000]
+        disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0
+        disabled:hover:shadow-[2px_2px_0_0_#000]
         ${className}
       `}
       aria-label={label}
       title={label}
+      aria-disabled={disabled}
       data-testid={direction === "down" ? "wall-expand-handle" : "wall-collapse-handle"}
     >
 
