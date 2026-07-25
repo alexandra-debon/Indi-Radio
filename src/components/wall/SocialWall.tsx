@@ -22,7 +22,7 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
-import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
+
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
 
@@ -85,7 +85,7 @@ interface CommentRow {
 
 const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 
-export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
+export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
   const t = useT();
   const { lang } = useLang();
@@ -409,13 +409,6 @@ export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          {onCollapse && (
-            <WallExpandHandle
-              direction="up"
-              onClick={onCollapse}
-              label={t("wall.collapse")}
-            />
-          )}
 
         </div>
       </div>
