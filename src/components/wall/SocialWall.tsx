@@ -230,13 +230,20 @@ export function SocialWall() {
   });
 
   const addComment = useMutation({
-    mutationFn: async ({ postId, text, images }: { postId: string; text: string; images: string[] }) => {
+    mutationFn: async ({ postId, text, images, video }: { postId: string; text: string; images: string[]; video?: string }) => {
       if (!session) return;
-      if (!text.trim() && images.length === 0) return;
+      const trimmedVideo = (video ?? "").trim();
+      if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
+        throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
+      }
+      if (!text.trim() && images.length === 0 && !trimmedVideo) return;
+      const finalContent = trimmedVideo
+        ? (text.trim() ? `${text.trim()}\n${trimmedVideo}` : trimmedVideo)
+        : text.trim();
       const { error } = await supabase.from("post_comments").insert({
         post_id: postId,
         author_id: session.user.id,
-        content: text.trim(),
+        content: finalContent,
         image_urls: images,
       } as any);
       if (error) throw error;
@@ -244,6 +251,7 @@ export function SocialWall() {
     onSuccess: (_d, v) => {
       setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
       setReplyImages((r) => ({ ...r, [v.postId]: [] }));
+      setReplyVideo((r) => ({ ...r, [v.postId]: "" }));
       qc.invalidateQueries({ queryKey: ["wall-comments"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
