@@ -9,7 +9,7 @@ import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -56,6 +56,9 @@ export function WallCompact({
   const [showTooltip, setShowTooltip] = useState(false);
   const [demoPhase, setDemoPhase] = useState<"idle" | "playing" | "done">("idle");
   const hasInitializedRef = useRef(false);
+  const handleWrapRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [arrowRight, setArrowRight] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (hasInitializedRef.current) return;
@@ -96,6 +99,19 @@ export function WallCompact({
     }
     setShowTooltip(false);
   };
+
+  const syncArrow = useCallback(() => {
+    if (!handleWrapRef.current || !tooltipRef.current) return;
+    const handleRect = handleWrapRef.current.getBoundingClientRect();
+    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    // Center of the handle relative to the tooltip's left edge.
+    const targetCenter = handleRect.left + handleRect.width / 2 - tooltipRect.left;
+    // Arrow is 16px wide; place its center over the handle center.
+    const nextRight = tooltipRect.width - targetCenter - 8;
+    // Clamp to keep the arrow visually inside the tooltip.
+    const clamped = Math.max(12, Math.min(tooltipRect.width - 28, nextRight));
+    setArrowRight(clamped);
+  }, []);
 
   const { data: posts = [] } = useQuery({
     queryKey: ["wall-compact"],
@@ -150,6 +166,18 @@ export function WallCompact({
     };
   }, [qc]);
 
+  useEffect(() => {
+    if (!showTooltip) return;
+    syncArrow();
+    const onResize = () => syncArrow();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [showTooltip, syncArrow]);
+
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
@@ -163,7 +191,7 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <div className="relative">
+          <div ref={handleWrapRef} className="relative">
             <WallExpandHandle
               direction="down"
               onClick={onExpand}
@@ -187,9 +215,15 @@ export function WallCompact({
               </div>
             )}
             {showTooltip && (
-              <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72">
+              <div
+                ref={tooltipRef}
+                className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72"
+              >
                 <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
-                  <div className="absolute -top-2 right-8 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary" />
+                  <div
+                    className="absolute -top-2 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary transition-none"
+                    style={{ right: arrowRight ?? 32 }}
+                  />
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-1">
                       <p className="text-sm font-black uppercase tracking-wide">
