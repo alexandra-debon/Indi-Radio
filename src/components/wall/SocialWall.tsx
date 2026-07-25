@@ -967,19 +967,29 @@ export function SocialWall() {
                           />
                           <Button
                             size="sm"
-                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [] }))}
-                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0) || addComment.isPending}
+                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [], video: replyVideo[p.id] ?? "" }))}
+                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0 && !(replyVideo[p.id] ?? "").trim()) || addComment.isPending}
                           >
                             {t("comment.send")}
                           </Button>
                         </div>
                         {session && (
-                          <MultiImageUploader
-                            values={replyImages[p.id] ?? []}
-                            onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
-                            folder="wall-comments"
-                            max={4}
-                          />
+                          <>
+                            <Input
+                              type="url"
+                              inputMode="url"
+                              value={replyVideo[p.id] ?? ""}
+                              onChange={(e) => setReplyVideo((r) => ({ ...r, [p.id]: e.target.value }))}
+                              placeholder={t("wall.videoUrlPlaceholder")}
+                              className="h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70 placeholder:font-normal"
+                            />
+                            <MultiImageUploader
+                              values={replyImages[p.id] ?? []}
+                              onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
+                              folder="wall-comments"
+                              max={4}
+                            />
+                          </>
                         )}
                       </div>
                     )}
