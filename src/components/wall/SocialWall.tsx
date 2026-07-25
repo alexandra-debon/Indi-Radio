@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare, Minimize2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -83,7 +83,7 @@ interface CommentRow {
 
 const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 
-export function SocialWall() {
+export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
   const t = useT();
   const { lang } = useLang();
@@ -397,15 +397,30 @@ export function SocialWall() {
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
         <h2 className="section-title">{t("wall.title")}</h2>
-        <Button
-          size="sm"
-          data-tour="wall-publish"
-          onClick={() => requireAuth(() => setComposerOpen(true))}
-          className="gap-1.5 bg-primary text-primary-foreground shadow-[2px_2px_0_0_#000] border-2 border-black hover:-translate-y-0.5 hover:bg-primary/90"
-        >
-          <PenSquare className="size-4" />
-          {t("wall.publish")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            data-tour="wall-publish"
+            onClick={() => requireAuth(() => setComposerOpen(true))}
+            className="gap-1.5 bg-primary text-primary-foreground shadow-[2px_2px_0_0_#000] border-2 border-black hover:-translate-y-0.5 hover:bg-primary/90"
+          >
+            <PenSquare className="size-4" />
+            {t("wall.publish")}
+          </Button>
+          {onCollapse && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onCollapse}
+              aria-label={t("wall.collapse")}
+              title={t("wall.collapse")}
+              className="gap-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5"
+            >
+              <Minimize2 className="size-4" />
+              <span className="hidden sm:inline">{t("wall.collapse")}</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       <Sheet open={composerOpen} onOpenChange={setComposerOpen}>
