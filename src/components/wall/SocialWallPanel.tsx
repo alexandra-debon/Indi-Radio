@@ -225,7 +225,10 @@ export function SocialWallPanel() {
               </span>
             </div>
           )}
-          <div className="mx-auto max-w-3xl px-3 pb-56 sm:px-6 sm:pb-48">
+          <div
+            className="mx-auto max-w-3xl px-3 sm:px-6"
+            style={{ paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${bottomBarH + 96}px)` }}
+          >
             <SocialWall />
           </div>
 
