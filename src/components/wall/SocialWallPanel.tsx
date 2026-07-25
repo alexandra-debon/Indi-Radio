@@ -3,10 +3,12 @@ import { useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { WallCompact } from "@/components/wall/WallCompact";
+import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
 import { parseHashTargets } from "@/lib/notif-navigate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useT } from "@/lib/i18n";
 import { ChevronUp, ChevronDown } from "lucide-react";
+
 
 export function SocialWallPanel() {
   const [expanded, setExpanded] = useState(false);
