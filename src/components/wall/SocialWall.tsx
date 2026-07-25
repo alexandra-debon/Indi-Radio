@@ -22,8 +22,10 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
+import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
+
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
