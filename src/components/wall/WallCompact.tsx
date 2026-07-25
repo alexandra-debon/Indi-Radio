@@ -9,7 +9,7 @@ import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -55,8 +55,13 @@ export function WallCompact({
 
   const [showTooltip, setShowTooltip] = useState(false);
   const [demoPhase, setDemoPhase] = useState<"idle" | "playing" | "done">("idle");
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
+    if (hasInitializedRef.current) return;
+    if (typeof window === "undefined") return;
+    hasInitializedRef.current = true;
+
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const dismissed = localStorage.getItem(WALL_TOOLTIP_KEY) === "1";
@@ -64,7 +69,8 @@ export function WallCompact({
       const shouldShow = !dismissed || storedVersion !== WALL_TOOLTIP_VERSION;
       if (!shouldShow) return;
 
-      if (isMobile) {
+      const isMobileNow = window.innerWidth < 768;
+      if (isMobileNow) {
         setDemoPhase("playing");
         timer = setTimeout(() => {
           setDemoPhase("done");
@@ -79,7 +85,7 @@ export function WallCompact({
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [isMobile]);
+  }, []);
 
   const dismissTooltip = () => {
     try {
