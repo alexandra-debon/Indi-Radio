@@ -714,10 +714,30 @@ function UserAdmin() {
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
-              <label className="ml-2 flex items-center gap-2 text-xs">
-                <Switch checked={p.is_certified} onCheckedChange={(v) => toggleCert.mutate({ id: p.id, is_certified: v })} />
-                Certifié
-              </label>
+              {p.is_certified ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-2 h-8 text-xs"
+                  onClick={() => toggleCert.mutate({ id: p.id, is_certified: false })}
+                  title="Retirer la certification"
+                >
+                  ✓ Certifié — Retirer
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="ml-2 h-8 text-xs"
+                  onClick={() => {
+                    setCertifyTarget(p);
+                    setCertifyStageName(((p as any).stage_name ?? "") as string);
+                    setCertifySummary(((p as any).gallery_summary ?? "") as string);
+                    setCertifyCover(((p as any).gallery_cover_url ?? "") as string);
+                  }}
+                >
+                  Certifier artiste
+                </Button>
+              )}
               <label className="flex items-center gap-2 text-xs">
                 <Switch checked={!!p.is_team_indi} onCheckedChange={(v) => toggleTeamIndi.mutate({ id: p.id, is_team_indi: v })} />
                 Team Indi
