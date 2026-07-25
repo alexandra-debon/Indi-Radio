@@ -177,15 +177,12 @@ export function WallCompact({
                 aria-hidden="true"
               >
                 <div className="relative flex flex-col items-center">
-                  <span className="mb-1 text-[10px] font-black uppercase tracking-wide text-primary">
-                    {t("wall.swipeUpHint")}
-                  </span>
                   <div className="animate-swipe-up-demo">
-                    <div className="rounded-full border-2 border-black bg-primary p-2 text-primary-foreground shadow-[2px_2px_0_0_#000]">
-                      <Hand className="size-5" />
+                    <div className="rounded-full border-2 border-black bg-primary p-2.5 text-primary-foreground shadow-[2px_2px_0_0_#000]">
+                      <Hand className="size-6" />
                     </div>
                   </div>
-                  <div className="absolute -bottom-1 h-10 w-0.5 rounded-full bg-primary/30" />
+                  <div className="absolute bottom-0 h-10 w-0.5 rounded-full bg-primary/30" />
                 </div>
               </div>
             )}
