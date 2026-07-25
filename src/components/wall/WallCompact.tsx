@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
