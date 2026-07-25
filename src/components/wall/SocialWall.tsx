@@ -106,6 +106,7 @@ export function SocialWall() {
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
+  const [replyVideo, setReplyVideo] = useState<Record<string, string>>({});
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
@@ -229,13 +230,20 @@ export function SocialWall() {
   });
 
   const addComment = useMutation({
-    mutationFn: async ({ postId, text, images }: { postId: string; text: string; images: string[] }) => {
+    mutationFn: async ({ postId, text, images, video }: { postId: string; text: string; images: string[]; video?: string }) => {
       if (!session) return;
-      if (!text.trim() && images.length === 0) return;
+      const trimmedVideo = (video ?? "").trim();
+      if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
+        throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
+      }
+      if (!text.trim() && images.length === 0 && !trimmedVideo) return;
+      const finalContent = trimmedVideo
+        ? (text.trim() ? `${text.trim()}\n${trimmedVideo}` : trimmedVideo)
+        : text.trim();
       const { error } = await supabase.from("post_comments").insert({
         post_id: postId,
         author_id: session.user.id,
-        content: text.trim(),
+        content: finalContent,
         image_urls: images,
       } as any);
       if (error) throw error;
@@ -243,6 +251,7 @@ export function SocialWall() {
     onSuccess: (_d, v) => {
       setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
       setReplyImages((r) => ({ ...r, [v.postId]: [] }));
+      setReplyVideo((r) => ({ ...r, [v.postId]: "" }));
       qc.invalidateQueries({ queryKey: ["wall-comments"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
@@ -958,19 +967,29 @@ export function SocialWall() {
                           />
                           <Button
                             size="sm"
-                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [] }))}
-                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0) || addComment.isPending}
+                            onClick={() => requireAuth(() => addComment.mutate({ postId: p.id, text: replyDraft[p.id] ?? "", images: replyImages[p.id] ?? [], video: replyVideo[p.id] ?? "" }))}
+                            disabled={(!(replyDraft[p.id] ?? "").trim() && (replyImages[p.id]?.length ?? 0) === 0 && !(replyVideo[p.id] ?? "").trim()) || addComment.isPending}
                           >
                             {t("comment.send")}
                           </Button>
                         </div>
                         {session && (
-                          <MultiImageUploader
-                            values={replyImages[p.id] ?? []}
-                            onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
-                            folder="wall-comments"
-                            max={4}
-                          />
+                          <>
+                            <Input
+                              type="url"
+                              inputMode="url"
+                              value={replyVideo[p.id] ?? ""}
+                              onChange={(e) => setReplyVideo((r) => ({ ...r, [p.id]: e.target.value }))}
+                              placeholder={t("wall.videoUrlPlaceholder")}
+                              className="h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70 placeholder:font-normal"
+                            />
+                            <MultiImageUploader
+                              values={replyImages[p.id] ?? []}
+                              onChange={(v) => setReplyImages((r) => ({ ...r, [p.id]: v }))}
+                              folder="wall-comments"
+                              max={4}
+                            />
+                          </>
                         )}
                       </div>
                     )}
