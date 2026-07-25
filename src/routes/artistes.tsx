@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BadgeCheck, Search, MessageCircle } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { useT } from "@/lib/i18n";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 export const Route = createFileRoute("/artistes")({
   head: () => ({
@@ -113,9 +114,14 @@ function ArtistesPage() {
                     </div>
                     <div className="text-[11px] uppercase tracking-wide text-muted-foreground">@{a.pseudo}</div>
                     {a.gallery_summary && (
-                      <p className="mt-1 line-clamp-3 whitespace-pre-wrap text-xs text-foreground/80">
-                        {a.gallery_summary}
-                      </p>
+                      <TranslatedText
+                        as="p"
+                        entityType="artist_gallery"
+                        entityKey={a.id}
+                        field="gallery_summary"
+                        text={a.gallery_summary}
+                        className="mt-1 line-clamp-3 whitespace-pre-wrap text-xs text-foreground/80"
+                      />
                     )}
                   </div>
                 </Link>
