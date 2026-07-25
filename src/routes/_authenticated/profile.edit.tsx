@@ -286,6 +286,23 @@ function EditProfilePage() {
           <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
         </div>
 
+        {profile.role === "artiste" && (profile as any).is_certified && (
+          <div className="space-y-1.5 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input
+                type="checkbox"
+                checked={galleryVisible}
+                onChange={(e) => setGalleryVisible(e.target.checked)}
+                className="size-4 accent-primary"
+              />
+              Apparaître dans la Galerie Artistes
+            </label>
+            <p className="text-[11px] text-muted-foreground">
+              Visible par défaut. Décoche pour te retirer de l'annuaire public.
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-2">
           <Button type="submit" disabled={saving || uploading} className="flex-1">
             {saving ? <Loader2 className="size-4 animate-spin" /> : null}
