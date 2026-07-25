@@ -777,8 +777,24 @@ export const dict = {
     "upub.albumsEmpty": "No album shared yet.",
     "upub.photo": "photo",
     "upub.photos": "photos",
-
-
+    "nav.gallery": "Artists Gallery",
+    "gallery.title": "Artists Gallery",
+    "gallery.subtitle": "Certified independent artists played on InDi RaDio.",
+    "gallery.search": "Search an artist or band…",
+    "gallery.empty": "No artist in the gallery yet.",
+    "gallery.certified": "Certified",
+    "gallery.viewProfile": "View profile",
+    "gallery.writeTo": "Write to the artist",
+    "gallery.visibleToggle": "Appear in the Artists Gallery",
+    "gallery.visibleHint": "Visible by default. Uncheck to remove yourself from the public directory.",
+    "admin.certifyArtist.button": "Certify artist",
+    "admin.certifyArtist.title": "Certify an artist",
+    "admin.certifyArtist.desc": "Fill in the artist/band name and a visual for the Artists Gallery.",
+    "admin.certifyArtist.stageName": "Artist / band name",
+    "admin.certifyArtist.summary": "Short bio",
+    "admin.certifyArtist.cover": "Visual (cover, logo, photo)",
+    "admin.certifyArtist.save": "Confirm certification",
+    "admin.uncertify": "Remove certification",
   },
 } as const;
 
