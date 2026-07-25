@@ -320,6 +320,14 @@ function UserProfilePage() {
         </div>
 
         <LevelBar points={profile.points} level={profile.level} />
+        {profile.role === "artiste" && profile.is_certified && (
+          <a
+            href={`/?mention=${encodeURIComponent(profile.pseudo)}`}
+            className="inline-flex items-center justify-center gap-1.5 border-2 border-border bg-primary px-3 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground shadow-[2px_2px_0_0_hsl(var(--border))] transition hover:-translate-y-0.5"
+          >
+            <MessageSquare className="size-3.5" /> {t("gallery.writeTo")}
+          </a>
+        )}
       </div>
 
       {(profile.bio || profile.website || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (

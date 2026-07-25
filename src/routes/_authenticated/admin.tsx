@@ -638,6 +638,34 @@ function UserAdmin() {
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [pseudoTarget, setPseudoTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const [certifyTarget, setCertifyTarget] = useState<any | null>(null);
+  const [certifyStageName, setCertifyStageName] = useState("");
+  const [certifySummary, setCertifySummary] = useState("");
+  const [certifyCover, setCertifyCover] = useState("");
+
+  const saveCertify = useMutation({
+    mutationFn: async () => {
+      if (!certifyTarget) return;
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          is_certified: true,
+          stage_name: certifyStageName.trim() || null,
+          gallery_summary: certifySummary.trim() || null,
+          gallery_cover_url: certifyCover || null,
+          gallery_visible: true,
+        } as any)
+        .eq("id", certifyTarget.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Artiste certifié");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+      qc.invalidateQueries({ queryKey: ["artistes-gallery"] });
+      setCertifyTarget(null);
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const release = useServerFn(releaseUser);
   const releaseMut = useMutation({
@@ -686,10 +714,30 @@ function UserAdmin() {
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
-              <label className="ml-2 flex items-center gap-2 text-xs">
-                <Switch checked={p.is_certified} onCheckedChange={(v) => toggleCert.mutate({ id: p.id, is_certified: v })} />
-                Certifié
-              </label>
+              {p.is_certified ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-2 h-8 text-xs"
+                  onClick={() => toggleCert.mutate({ id: p.id, is_certified: false })}
+                  title="Retirer la certification"
+                >
+                  ✓ Certifié — Retirer
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="ml-2 h-8 text-xs"
+                  onClick={() => {
+                    setCertifyTarget(p);
+                    setCertifyStageName(((p as any).stage_name ?? "") as string);
+                    setCertifySummary(((p as any).gallery_summary ?? "") as string);
+                    setCertifyCover(((p as any).gallery_cover_url ?? "") as string);
+                  }}
+                >
+                  Certifier artiste
+                </Button>
+              )}
               <label className="flex items-center gap-2 text-xs">
                 <Switch checked={!!p.is_team_indi} onCheckedChange={(v) => toggleTeamIndi.mutate({ id: p.id, is_team_indi: v })} />
                 Team Indi
@@ -762,6 +810,59 @@ function UserAdmin() {
           qc.invalidateQueries({ queryKey: ["profile"] });
         }}
       />
+      <Dialog open={!!certifyTarget} onOpenChange={(v) => !v && setCertifyTarget(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Certifier un artiste</DialogTitle>
+            <DialogDescription>
+              Renseigne le nom d'artiste ou de groupe et un visuel pour la Galerie Artistes.
+              Ces informations apparaîtront publiquement.
+            </DialogDescription>
+          </DialogHeader>
+          {certifyTarget && (
+            <div className="space-y-3">
+              <div className="text-xs text-muted-foreground">
+                @{certifyTarget.pseudo}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Nom d'artiste / groupe</label>
+                <Input
+                  value={certifyStageName}
+                  onChange={(e) => setCertifyStageName(e.target.value)}
+                  placeholder="ex : Les Voyageurs du Son"
+                  maxLength={80}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Présentation (courte)</label>
+                <Textarea
+                  value={certifySummary}
+                  onChange={(e) => setCertifySummary(e.target.value)}
+                  rows={4}
+                  maxLength={600}
+                  placeholder="Quelques mots sur l'artiste, le groupe, leur univers…"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Visuel (pochette, logo, photo)</label>
+                <ImageUploader
+                  value={certifyCover}
+                  onChange={setCertifyCover}
+                  folder="artist-gallery"
+                  label=""
+                  defaultRatio="1:1"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCertifyTarget(null)}>Annuler</Button>
+            <Button onClick={() => saveCertify.mutate()} disabled={saveCertify.isPending}>
+              {saveCertify.isPending ? "Enregistrement…" : "Valider la certification"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

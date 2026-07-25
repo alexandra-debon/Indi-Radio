@@ -69,6 +69,7 @@ function EditProfilePage() {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [galleryVisible, setGalleryVisible] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
@@ -78,6 +79,7 @@ function EditProfilePage() {
     setAvatarUrl(profile.avatar_url ?? null);
     const sl = (profile as any).social_links;
     setSocialLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
+    setGalleryVisible((profile as any).gallery_visible ?? true);
   }, [profile]);
 
   if (!profile || !session) return <div className="p-4">Chargement…</div>;
@@ -179,6 +181,7 @@ function EditProfilePage() {
           website: parsed.data.website || null,
           avatar_url: avatarUrl,
           social_links: sanitizeLinks(socialLinks),
+          gallery_visible: galleryVisible,
         } as any)
         .eq("id", session!.user.id);
       if (error) throw error;
@@ -282,6 +285,23 @@ function EditProfilePage() {
           </p>
           <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
         </div>
+
+        {profile.role === "artiste" && (profile as any).is_certified && (
+          <div className="space-y-1.5 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input
+                type="checkbox"
+                checked={galleryVisible}
+                onChange={(e) => setGalleryVisible(e.target.checked)}
+                className="size-4 accent-primary"
+              />
+              Apparaître dans la Galerie Artistes
+            </label>
+            <p className="text-[11px] text-muted-foreground">
+              Visible par défaut. Décoche pour te retirer de l'annuaire public.
+            </p>
+          </div>
+        )}
 
         <div className="flex gap-2">
           <Button type="submit" disabled={saving || uploading} className="flex-1">
