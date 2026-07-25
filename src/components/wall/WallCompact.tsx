@@ -13,6 +13,10 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Bump this value when the wall gesture/UI changes to re-show the tooltip.
+const WALL_TOOLTIP_VERSION = "1";
+const WALL_TOOLTIP_KEY = "indi-wall-tooltip-dismissed";
+const WALL_TOOLTIP_VERSION_KEY = "indi-wall-tooltip-version";
 
 interface CompactPost {
   id: string;
@@ -51,7 +55,9 @@ export function WallCompact({
   const [showTooltip, setShowTooltip] = useState(false);
   useEffect(() => {
     try {
-      if (!localStorage.getItem("indi-wall-tooltip-dismissed")) {
+      const dismissed = localStorage.getItem(WALL_TOOLTIP_KEY) === "1";
+      const storedVersion = localStorage.getItem(WALL_TOOLTIP_VERSION_KEY);
+      if (!dismissed || storedVersion !== WALL_TOOLTIP_VERSION) {
         setShowTooltip(true);
       }
     } catch {
@@ -61,7 +67,8 @@ export function WallCompact({
 
   const dismissTooltip = () => {
     try {
-      localStorage.setItem("indi-wall-tooltip-dismissed", "1");
+      localStorage.setItem(WALL_TOOLTIP_KEY, "1");
+      localStorage.setItem(WALL_TOOLTIP_VERSION_KEY, WALL_TOOLTIP_VERSION);
     } catch {
       // ignore
     }
