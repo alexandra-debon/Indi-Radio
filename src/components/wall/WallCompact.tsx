@@ -163,7 +163,26 @@ export function WallCompact({
               onClick={onExpand}
               label={t("wall.expand")}
               aria-expanded={false}
+              disabled={demoPhase === "playing"}
             />
+            {demoPhase === "playing" && isMobile && (
+              <div
+                className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center overflow-hidden"
+                aria-hidden="true"
+              >
+                <div className="relative flex flex-col items-center">
+                  <span className="mb-1 text-[10px] font-black uppercase tracking-wide text-primary">
+                    {t("wall.swipeUpHint")}
+                  </span>
+                  <div className="animate-swipe-up-demo">
+                    <div className="rounded-full border-2 border-black bg-primary p-2 text-primary-foreground shadow-[2px_2px_0_0_#000]">
+                      <Hand className="size-5" />
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-1 h-10 w-0.5 rounded-full bg-primary/30" />
+                </div>
+              </div>
+            )}
             {showTooltip && (
               <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72">
                 <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
