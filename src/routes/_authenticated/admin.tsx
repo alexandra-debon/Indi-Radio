@@ -810,6 +810,58 @@ function UserAdmin() {
           qc.invalidateQueries({ queryKey: ["profile"] });
         }}
       />
+      <Dialog open={!!certifyTarget} onOpenChange={(v) => !v && setCertifyTarget(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Certifier un artiste</DialogTitle>
+            <DialogDescription>
+              Renseigne le nom d'artiste ou de groupe et un visuel pour la Galerie Artistes.
+              Ces informations apparaîtront publiquement.
+            </DialogDescription>
+          </DialogHeader>
+          {certifyTarget && (
+            <div className="space-y-3">
+              <div className="text-xs text-muted-foreground">
+                @{certifyTarget.pseudo}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Nom d'artiste / groupe</label>
+                <Input
+                  value={certifyStageName}
+                  onChange={(e) => setCertifyStageName(e.target.value)}
+                  placeholder="ex : Les Voyageurs du Son"
+                  maxLength={80}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Présentation (courte)</label>
+                <Textarea
+                  value={certifySummary}
+                  onChange={(e) => setCertifySummary(e.target.value)}
+                  rows={4}
+                  maxLength={600}
+                  placeholder="Quelques mots sur l'artiste, le groupe, leur univers…"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Visuel (pochette, logo, photo)</label>
+                <ImageUploader
+                  bucket="artist-gallery"
+                  value={certifyCover}
+                  onChange={setCertifyCover}
+                  maxSizeMb={50}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCertifyTarget(null)}>Annuler</Button>
+            <Button onClick={() => saveCertify.mutate()} disabled={saveCertify.isPending}>
+              {saveCertify.isPending ? "Enregistrement…" : "Valider la certification"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
