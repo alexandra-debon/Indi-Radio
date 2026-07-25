@@ -8,9 +8,10 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon } from "lucide-react";
-import { useEffect } from "react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 interface CompactPost {
