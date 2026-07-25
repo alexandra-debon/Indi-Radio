@@ -100,6 +100,19 @@ export function WallCompact({
     setShowTooltip(false);
   };
 
+  const syncArrow = useCallback(() => {
+    if (!handleWrapRef.current || !tooltipRef.current) return;
+    const handleRect = handleWrapRef.current.getBoundingClientRect();
+    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    // Center of the handle relative to the tooltip's left edge.
+    const targetCenter = handleRect.left + handleRect.width / 2 - tooltipRect.left;
+    // Arrow is 16px wide; place its center over the handle center.
+    const nextRight = tooltipRect.width - targetCenter - 8;
+    // Clamp to keep the arrow visually inside the tooltip.
+    const clamped = Math.max(12, Math.min(tooltipRect.width - 28, nextRight));
+    setArrowRight(clamped);
+  }, []);
+
   const { data: posts = [] } = useQuery({
     queryKey: ["wall-compact"],
     queryFn: async () => {
