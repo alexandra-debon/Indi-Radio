@@ -208,7 +208,7 @@ export function SocialWallPanel() {
           )}
           <div
             className="mx-auto max-w-3xl px-3 sm:px-6"
-            style={{ paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${bottomBarH + 96}px)` }}
+            style={{ paddingBottom: "calc(var(--app-bottom-bar-h, 140px) + 96px)" }}
           >
             <SocialWall />
           </div>
@@ -216,7 +216,7 @@ export function SocialWallPanel() {
           <div
             className="pointer-events-none fixed inset-x-0 z-[60] flex justify-center px-4"
             style={{
-              bottom: `calc(env(safe-area-inset-bottom, 0px) + ${bottomBarH + 12}px)`,
+              bottom: "calc(var(--app-bottom-bar-h, 140px) + 12px)",
             }}
           >
             <div className="pointer-events-auto">
