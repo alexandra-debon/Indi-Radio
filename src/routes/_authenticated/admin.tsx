@@ -846,10 +846,11 @@ function UserAdmin() {
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold">Visuel (pochette, logo, photo)</label>
                 <ImageUploader
-                  bucket="artist-gallery"
                   value={certifyCover}
                   onChange={setCertifyCover}
-                  maxSizeMb={50}
+                  folder="artist-gallery"
+                  label=""
+                  defaultRatio="1:1"
                 />
               </div>
             </div>
