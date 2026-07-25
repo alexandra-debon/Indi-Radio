@@ -215,9 +215,15 @@ export function WallCompact({
               </div>
             )}
             {showTooltip && (
-              <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72">
+              <div
+                ref={tooltipRef}
+                className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72"
+              >
                 <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
-                  <div className="absolute -top-2 right-8 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary" />
+                  <div
+                    className="absolute -top-2 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary transition-none"
+                    style={{ right: arrowRight ?? 32 }}
+                  />
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-1">
                       <p className="text-sm font-black uppercase tracking-wide">
