@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -103,6 +103,20 @@ export function WallCompact({
     setShowTooltip(false);
   };
 
+  const [demoTimer, setDemoTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const playDemo = () => {
+    if (demoPhase === "playing") return;
+    if (demoTimer) clearTimeout(demoTimer);
+    setShowTooltip(false);
+    setDemoPhase("playing");
+    const timer = setTimeout(() => {
+      setDemoPhase("done");
+      setShowTooltip(true);
+    }, DEMO_DURATION_MS);
+    setDemoTimer(timer);
+  };
+
   const syncArrow = useCallback(() => {
     if (!handleWrapRef.current || !tooltipRef.current) return;
     const handleRect = handleWrapRef.current.getBoundingClientRect();
@@ -181,6 +195,12 @@ export function WallCompact({
     };
   }, [showTooltip, syncArrow]);
 
+  useEffect(() => {
+    return () => {
+      if (demoTimer) clearTimeout(demoTimer);
+    };
+  }, [demoTimer]);
+
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
@@ -258,6 +278,16 @@ export function WallCompact({
               </div>
             )}
           </div>
+          <button
+            type="button"
+            onClick={playDemo}
+            disabled={demoPhase === "playing"}
+            className="inline-flex items-center justify-center rounded-full border-2 border-black bg-background p-1.5 text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-muted disabled:opacity-60 disabled:hover:translate-y-0 md:hidden"
+            aria-label={t("wall.tooltip.replayDemo")}
+            title={t("wall.tooltip.replayDemo")}
+          >
+            <RotateCcw className="size-4" />
+          </button>
         </div>
       </div>
 
