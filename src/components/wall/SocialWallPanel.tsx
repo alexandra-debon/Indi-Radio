@@ -15,6 +15,12 @@ export function SocialWallPanel() {
   const isMobile = useIsMobile();
   const t = useT();
 
+  // Animated overlay lifecycle: keep it mounted through the exit transition.
+  const [overlayMounted, setOverlayMounted] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const savedScrollY = useRef(0);
+  const ANIM_MS = 260;
+
   // Swipe state
   const [drag, setDrag] = useState(0); // px translate (negative = up, positive = down)
   const [dragging, setDragging] = useState(false);
@@ -29,8 +35,27 @@ export function SocialWallPanel() {
     if (primary && primary.startsWith("post-")) setExpanded(true);
   }, [hash]);
 
+  // Drive enter/exit animations + scroll preservation
   useEffect(() => {
-    if (!expanded) return;
+    if (expanded) {
+      savedScrollY.current = window.scrollY;
+      setOverlayMounted(true);
+      // next frame to trigger CSS transition from initial hidden state
+      const raf = requestAnimationFrame(() => setOverlayVisible(true));
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setOverlayVisible(false);
+      const timer = setTimeout(() => {
+        setOverlayMounted(false);
+        // Restore page scroll after unmount so user keeps their place
+        window.scrollTo({ top: savedScrollY.current, behavior: "auto" });
+      }, ANIM_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [expanded]);
+
+  useEffect(() => {
+    if (!overlayMounted) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setExpanded(false);
     };
@@ -41,7 +66,7 @@ export function SocialWallPanel() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [expanded]);
+  }, [overlayMounted]);
 
   const openPublish = () => {
     requireAuth(() => setExpanded(true));
@@ -95,25 +120,43 @@ export function SocialWallPanel() {
     axisLocked.current = null;
   };
 
-  if (!expanded) {
-    const passed = drag <= -THRESHOLD;
-    return (
+  const passedUp = drag <= -THRESHOLD;
+  const passedDown = drag >= THRESHOLD;
+
+  const compactTransform = !expanded && !dragging
+    ? `translateY(0)`
+    : `translateY(${drag}px)`;
+  const compactStyle: React.CSSProperties = {
+    transform: compactTransform,
+    transition: dragging ? "none" : `transform ${ANIM_MS}ms ease-out, opacity ${ANIM_MS}ms ease-out`,
+    opacity: overlayVisible ? 0.4 : 1,
+  };
+
+  const overlayStyle: React.CSSProperties = {
+    transform: `translateY(${overlayVisible ? drag : 16}px)`,
+    opacity: overlayVisible ? 1 : 0,
+    transition: dragging
+      ? "none"
+      : `transform ${ANIM_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${ANIM_MS}ms ease-out`,
+    willChange: "transform, opacity",
+  };
+
+  return (
+    <>
       <div
         onTouchStart={onTouchStart}
         onTouchMove={(e) => onTouchMove(e, "compact")}
         onTouchEnd={() => onTouchEnd("compact")}
         onTouchCancel={() => onTouchEnd("compact")}
-        style={{
-          transform: `translateY(${drag}px)`,
-          transition: dragging ? "none" : "transform 200ms ease-out",
-        }}
+        style={compactStyle}
         className="relative touch-pan-y"
+        aria-hidden={overlayMounted}
       >
         <WallCompact onExpand={() => setExpanded(true)} onPublish={openPublish} />
-        {isMobile && dragging && (
+        {isMobile && dragging && !expanded && (
           <div
             className={`pointer-events-none absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-full border-2 border-black px-3 py-1 text-[11px] font-bold uppercase shadow-[2px_2px_0_0_#000] transition-colors ${
-              passed ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
+              passedUp ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
             }`}
           >
             <span className="inline-flex items-center gap-1">
@@ -123,40 +166,36 @@ export function SocialWallPanel() {
           </div>
         )}
       </div>
-    );
-  }
 
-  const passedDown = drag >= THRESHOLD;
-  return (
-    <div
-      className="fixed inset-0 z-40 overflow-y-auto bg-background touch-pan-y"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Mur social"
-      onTouchStart={onTouchStart}
-      onTouchMove={(e) => onTouchMove(e, "expanded")}
-      onTouchEnd={() => onTouchEnd("expanded")}
-      onTouchCancel={() => onTouchEnd("expanded")}
-      style={{
-        transform: `translateY(${drag}px)`,
-        transition: dragging ? "none" : "transform 200ms ease-out",
-      }}
-    >
-      {isMobile && dragging && (
+      {overlayMounted && (
         <div
-          className={`pointer-events-none fixed left-1/2 top-3 z-50 -translate-x-1/2 rounded-full border-2 border-black px-3 py-1 text-[11px] font-bold uppercase shadow-[2px_2px_0_0_#000] transition-colors ${
-            passedDown ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
-          }`}
+          className="fixed inset-0 z-40 overflow-y-auto bg-background touch-pan-y"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mur social"
+          onTouchStart={onTouchStart}
+          onTouchMove={(e) => onTouchMove(e, "expanded")}
+          onTouchEnd={() => onTouchEnd("expanded")}
+          onTouchCancel={() => onTouchEnd("expanded")}
+          style={overlayStyle}
         >
-          <span className="inline-flex items-center gap-1">
-            <ChevronDown className="size-3" />
-            {t("wall.swipeDownHint")}
-          </span>
+          {isMobile && dragging && (
+            <div
+              className={`pointer-events-none fixed left-1/2 top-3 z-50 -translate-x-1/2 rounded-full border-2 border-black px-3 py-1 text-[11px] font-bold uppercase shadow-[2px_2px_0_0_#000] transition-colors ${
+                passedDown ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
+              }`}
+            >
+              <span className="inline-flex items-center gap-1">
+                <ChevronDown className="size-3" />
+                {t("wall.swipeDownHint")}
+              </span>
+            </div>
+          )}
+          <div className="mx-auto max-w-3xl px-3 pt-4 pb-32 sm:px-6">
+            <SocialWall onCollapse={() => setExpanded(false)} />
+          </div>
         </div>
       )}
-      <div className="mx-auto max-w-3xl px-3 pt-4 pb-32 sm:px-6">
-        <SocialWall onCollapse={() => setExpanded(false)} />
-      </div>
-    </div>
+    </>
   );
 }
