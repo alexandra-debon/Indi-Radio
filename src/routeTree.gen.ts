@@ -33,6 +33,7 @@ import { Route as ClipsRouteImport } from './routes/clips'
 import { Route as ChroniquesRouteImport } from './routes/chroniques'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ArtistesRouteImport } from './routes/artistes'
 import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -189,6 +190,11 @@ const ChartRoute = ChartRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtistesRoute = ArtistesRouteImport.update({
+  id: '/artistes',
+  path: '/artistes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActusRoute = ActusRouteImport.update({
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/actus': typeof ActusRouteWithChildren
+  '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/actus': typeof ActusRouteWithChildren
+  '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -520,6 +528,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/actus': typeof ActusRouteWithChildren
+  '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
   '/chroniques': typeof ChroniquesRouteWithChildren
@@ -584,6 +593,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/actus'
+    | '/artistes'
     | '/auth'
     | '/chart'
     | '/chroniques'
@@ -646,6 +656,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/actus'
+    | '/artistes'
     | '/auth'
     | '/chart'
     | '/chroniques'
@@ -709,6 +720,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/actus'
+    | '/artistes'
     | '/auth'
     | '/chart'
     | '/chroniques'
@@ -773,6 +785,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ActusRoute: typeof ActusRouteWithChildren
+  ArtistesRoute: typeof ArtistesRoute
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
   ChroniquesRoute: typeof ChroniquesRouteWithChildren
@@ -983,6 +996,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artistes': {
+      id: '/artistes'
+      path: '/artistes'
+      fullPath: '/artistes'
+      preLoaderRoute: typeof ArtistesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/actus': {
@@ -1360,6 +1380,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ActusRoute: ActusRouteWithChildren,
+  ArtistesRoute: ArtistesRoute,
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
   ChroniquesRoute: ChroniquesRouteWithChildren,
