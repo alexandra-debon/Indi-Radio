@@ -151,9 +151,9 @@ export function WallCompact({
                         {t("wall.tooltip.title")}
                       </p>
                       <p className="text-xs font-medium leading-snug">
-                        {isMobile ? t("wall.tooltip.swipe") : t("wall.tooltip.handle")}
-                        {" "}
-                        {t("wall.tooltip.handle")}
+                        {isMobile
+                          ? `${t("wall.tooltip.swipe")} ${t("wall.tooltip.handle")}`
+                          : t("wall.tooltip.handle")}
                       </p>
                     </div>
                     <button
