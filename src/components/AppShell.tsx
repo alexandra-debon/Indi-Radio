@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RequirePseudoDialog } from "@/components/RequirePseudoDialog";
+import { SafeAreaDebug } from "@/components/debug/SafeAreaDebug";
 import {
   AlertDialog,
   AlertDialogAction,
