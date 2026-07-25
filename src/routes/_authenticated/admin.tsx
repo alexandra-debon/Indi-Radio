@@ -638,6 +638,34 @@ function UserAdmin() {
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [pseudoTarget, setPseudoTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const [certifyTarget, setCertifyTarget] = useState<any | null>(null);
+  const [certifyStageName, setCertifyStageName] = useState("");
+  const [certifySummary, setCertifySummary] = useState("");
+  const [certifyCover, setCertifyCover] = useState("");
+
+  const saveCertify = useMutation({
+    mutationFn: async () => {
+      if (!certifyTarget) return;
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          is_certified: true,
+          stage_name: certifyStageName.trim() || null,
+          gallery_summary: certifySummary.trim() || null,
+          gallery_cover_url: certifyCover || null,
+          gallery_visible: true,
+        } as any)
+        .eq("id", certifyTarget.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Artiste certifié");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+      qc.invalidateQueries({ queryKey: ["artistes-gallery"] });
+      setCertifyTarget(null);
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const release = useServerFn(releaseUser);
   const releaseMut = useMutation({
