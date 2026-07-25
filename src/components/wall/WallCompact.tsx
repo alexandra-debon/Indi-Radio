@@ -166,6 +166,18 @@ export function WallCompact({
     };
   }, [qc]);
 
+  useEffect(() => {
+    if (!showTooltip) return;
+    syncArrow();
+    const onResize = () => syncArrow();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [showTooltip, syncArrow]);
+
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
