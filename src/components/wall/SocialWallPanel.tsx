@@ -32,27 +32,8 @@ export function SocialWallPanel() {
   const THRESHOLD = 60;
   const MAX_DRAG = 90;
 
-  // Measure the app's fixed bottom bar (MiniPlayer + footer) so the collapse
-  // button always floats just above it, on every viewport.
-  const [bottomBarH, setBottomBarH] = useState(140);
-  useEffect(() => {
-    if (!overlayMounted) return;
-    const measure = () => {
-      const el = document.querySelector("[data-app-bottom-bar]") as HTMLElement | null;
-      if (el) setBottomBarH(el.getBoundingClientRect().height);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    window.addEventListener("orientationchange", measure);
-    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    const el = document.querySelector("[data-app-bottom-bar]");
-    if (ro && el) ro.observe(el);
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("orientationchange", measure);
-      ro?.disconnect();
-    };
-  }, [overlayMounted]);
+  // Bottom bar height is published as --app-bottom-bar-h by AppShell and
+  // kept in sync with the real MiniPlayer + footer + safe-area height.
 
   useEffect(() => {
     const { primary } = parseHashTargets(hash);
