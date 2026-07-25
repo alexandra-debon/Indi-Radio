@@ -3,10 +3,12 @@ import { useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { SocialWall } from "@/components/wall/SocialWall";
 import { WallCompact } from "@/components/wall/WallCompact";
+import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
 import { parseHashTargets } from "@/lib/notif-navigate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useT } from "@/lib/i18n";
 import { ChevronUp, ChevronDown } from "lucide-react";
+
 
 export function SocialWallPanel() {
   const [expanded, setExpanded] = useState(false);
@@ -179,6 +181,16 @@ export function SocialWallPanel() {
           onTouchCancel={() => onTouchEnd("expanded")}
           style={overlayStyle}
         >
+          <div className="sticky top-0 z-50 flex items-center justify-center gap-3 bg-background/80 px-4 py-2 backdrop-blur-sm sm:py-3">
+            <WallExpandHandle
+              direction="up"
+              onClick={() => setExpanded(false)}
+              label={t("wall.collapse")}
+            />
+            <span className="hidden text-xs font-bold uppercase tracking-wide text-muted-foreground sm:inline">
+              {t("wall.title")}
+            </span>
+          </div>
           {isMobile && dragging && (
             <div
               className={`pointer-events-none fixed left-1/2 top-3 z-50 -translate-x-1/2 rounded-full border-2 border-black px-3 py-1 text-[11px] font-bold uppercase shadow-[2px_2px_0_0_#000] transition-colors ${
@@ -191,11 +203,13 @@ export function SocialWallPanel() {
               </span>
             </div>
           )}
-          <div className="mx-auto max-w-3xl px-3 pt-4 pb-32 sm:px-6">
-            <SocialWall onCollapse={() => setExpanded(false)} />
+          <div className="mx-auto max-w-3xl px-3 pb-32 sm:px-6">
+            <SocialWall />
           </div>
+
         </div>
       )}
+
     </>
   );
 }

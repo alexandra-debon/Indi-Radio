@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare, Minimize2 } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -22,8 +22,10 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
 import { InlineEditable } from "@/components/wall/InlineEditable";
+
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 import { renderRich } from "@/lib/rich-text";
+
 import { suggestHashtags, type HashtagSuggestion } from "@/lib/hashtag-suggest";
 import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
@@ -83,7 +85,7 @@ interface CommentRow {
 
 const MENTION_RE = /@([\p{L}\p{N}_.-]+)/gu;
 
-export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
+export function SocialWall() {
   const { session, requireAuth, isAdmin, isArtiste } = useAuth();
   const t = useT();
   const { lang } = useLang();
@@ -407,19 +409,7 @@ export function SocialWall({ onCollapse }: { onCollapse?: () => void } = {}) {
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          {onCollapse && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onCollapse}
-              aria-label={t("wall.collapse")}
-              title={t("wall.collapse")}
-              className="gap-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5"
-            >
-              <Minimize2 className="size-4" />
-              <span className="hidden sm:inline">{t("wall.collapse")}</span>
-            </Button>
-          )}
+
         </div>
       </div>
 

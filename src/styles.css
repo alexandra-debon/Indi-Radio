@@ -29,6 +29,16 @@
   display: inline-block;
 }
 
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 1.8s ease-in-out infinite;
+}
+
+
 @keyframes audio-bar {
   0%, 100% { transform: scaleY(0.25); }
   50% { transform: scaleY(1); }

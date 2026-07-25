@@ -2,14 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
+import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
 import { useT, useLang } from "@/lib/i18n";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, Maximize2, PenSquare, Image as ImageIcon } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+
 
 interface CompactPost {
   id: string;
@@ -110,20 +112,15 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
+          <WallExpandHandle
+            direction="down"
             onClick={onExpand}
-            aria-label={t("wall.expand")}
+            label={t("wall.expand")}
             aria-expanded={false}
-            title={t("wall.expand")}
-            className="gap-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5"
-          >
-            <Maximize2 className="size-4" />
-            <span className="hidden sm:inline">{t("wall.expand")}</span>
-          </Button>
+          />
         </div>
       </div>
+
 
       <div className="space-y-2">
         {posts.length === 0 && (
@@ -190,15 +187,7 @@ export function WallCompact({
         })}
       </div>
 
-      {posts.length > 0 && (
-        <button
-          type="button"
-          onClick={onExpand}
-          className="w-full rounded-md border border-dashed border-primary/50 bg-primary/5 py-2 text-xs font-bold uppercase tracking-wide text-primary transition hover:bg-primary/10"
-        >
-          {t("wall.seeAll")} →
-        </button>
-      )}
     </section>
+
   );
 }
