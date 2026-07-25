@@ -203,16 +203,23 @@ export function SocialWallPanel() {
               </span>
             </div>
           )}
-          <div className="mx-auto max-w-3xl px-3 pb-44 sm:px-6">
+          <div className="mx-auto max-w-3xl px-3 pb-56 sm:px-6 sm:pb-48">
             <SocialWall />
           </div>
 
-          <div className="fixed bottom-28 left-1/2 z-50 -translate-x-1/2">
-            <WallExpandHandle
-              direction="down"
-              onClick={() => setExpanded(false)}
-              label={t("wall.collapse")}
-            />
+          <div
+            className="pointer-events-none fixed inset-x-0 z-[60] flex justify-center px-4"
+            style={{
+              bottom: "calc(env(safe-area-inset-bottom, 0px) + 128px)",
+            }}
+          >
+            <div className="pointer-events-auto">
+              <WallExpandHandle
+                direction="up"
+                onClick={() => setExpanded(false)}
+                label={t("wall.collapse")}
+              />
+            </div>
           </div>
 
         </div>
