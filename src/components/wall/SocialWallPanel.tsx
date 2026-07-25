@@ -28,6 +28,14 @@ export function SocialWallPanel() {
     if (primary && primary.startsWith("post-")) setExpanded(true);
   }, [hash]);
 
+  // Deep-link: `/?mention=<pseudo>` should expand the panel so SocialWall
+  // can pick up the param and prefill the composer.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mention")) setExpanded(true);
+  }, []);
+
   // Drive enter/exit animations + scroll preservation
   useEffect(() => {
     if (expanded) {
