@@ -14,9 +14,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Bump this value when the wall gesture/UI changes to re-show the tooltip + demo.
-const WALL_TOOLTIP_VERSION = "2";
+const WALL_TOOLTIP_VERSION = "3";
 const WALL_TOOLTIP_KEY = "indi-wall-tooltip-dismissed";
 const WALL_TOOLTIP_VERSION_KEY = "indi-wall-tooltip-version";
+const WALL_DEMO_VERSION_KEY = "indi-wall-demo-version";
 const DEMO_DURATION_MS = 3200;
 
 interface CompactPost {
@@ -73,7 +74,9 @@ export function WallCompact({
       if (!shouldShow) return;
 
       const isMobileNow = window.innerWidth < 768;
-      if (isMobileNow) {
+      const demoVersionSeen = localStorage.getItem(WALL_DEMO_VERSION_KEY);
+      if (isMobileNow && demoVersionSeen !== WALL_TOOLTIP_VERSION) {
+        localStorage.setItem(WALL_DEMO_VERSION_KEY, WALL_TOOLTIP_VERSION);
         setDemoPhase("playing");
         timer = setTimeout(() => {
           setDemoPhase("done");
