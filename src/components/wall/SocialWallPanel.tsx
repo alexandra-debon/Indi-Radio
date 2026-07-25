@@ -203,8 +203,16 @@ export function SocialWallPanel() {
               </span>
             </div>
           )}
-          <div className="mx-auto max-w-3xl px-3 pb-32 sm:px-6">
+          <div className="mx-auto max-w-3xl px-3 pb-44 sm:px-6">
             <SocialWall />
+          </div>
+
+          <div className="fixed bottom-28 left-1/2 z-50 -translate-x-1/2">
+            <WallExpandHandle
+              direction="down"
+              onClick={() => setExpanded(false)}
+              label={t("wall.collapse")}
+            />
           </div>
 
         </div>
