@@ -163,16 +163,7 @@ export function WallCompact({
                       {p.pin_label || t("wall.pinned")}
                     </span>
                   )}
-                  {p.author && (
-                    <UserBadge
-                      pseudo={p.author.pseudo}
-                      role={p.author.role}
-                      isCertified={p.author.is_certified}
-                      isTeamIndi={p.author.is_team_indi}
-                      badges={p.author.badges}
-                      level={p.author.level}
-                    />
-                  )}
+                  {p.author && <UserBadge profile={p.author} compact />}
                   <span className="text-muted-foreground">
                     · {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
                   </span>
