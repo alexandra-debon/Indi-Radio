@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Hash } from "lucide-react";
 import { normalizeHashtag } from "@/lib/hashtag";
 
@@ -122,11 +123,17 @@ function TagPage() {
               </div>
               {p.title && (
                 <Link to="/p/$postId" params={{ postId: p.id }} className="block text-base font-bold leading-tight hover:underline">
-                  {renderRich(p.title)}
+                  <TranslatedText entityType="post" entityKey={p.id} field="title" text={p.title}>
+                    {(tt) => <>{renderRich(tt)}</>}
+                  </TranslatedText>
                 </Link>
               )}
               {cleanedContent && (
-                <p className="whitespace-pre-wrap text-sm">{renderRich(cleanedContent)}</p>
+                <p className="whitespace-pre-wrap text-sm">
+                  <TranslatedText entityType="post" entityKey={p.id} field="content" text={cleanedContent}>
+                    {(tt) => <>{renderRich(tt)}</>}
+                  </TranslatedText>
+                </p>
               )}
               {imgs[0] && (
                 <div className="mt-2 overflow-hidden rounded border border-border bg-muted" style={{ aspectRatio: "16/9" }}>
