@@ -160,7 +160,7 @@ export function WallCompact({
                       type="button"
                       onClick={dismissTooltip}
                       className="shrink-0 rounded-full border border-black/20 p-1 hover:bg-black/10"
-                      aria-label={t("common.close")}
+                      aria-label={t("action.close")}
                     >
                       <X className="size-3.5" />
                     </button>
