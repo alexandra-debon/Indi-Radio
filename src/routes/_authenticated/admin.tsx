@@ -715,15 +715,31 @@ function UserAdmin() {
                 </SelectContent>
               </Select>
               {p.is_certified ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="ml-2 h-8 text-xs"
-                  onClick={() => toggleCert.mutate({ id: p.id, is_certified: false })}
-                  title="Retirer la certification"
-                >
-                  ✓ Certifié — Retirer
-                </Button>
+                <>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="ml-2 h-8 text-xs"
+                    onClick={() => {
+                      setCertifyTarget(p);
+                      setCertifyStageName(((p as any).stage_name ?? "") as string);
+                      setCertifySummary(((p as any).gallery_summary ?? "") as string);
+                      setCertifyCover(((p as any).gallery_cover_url ?? "") as string);
+                    }}
+                    title="Modifier la fiche Galerie"
+                  >
+                    ✎ Fiche Galerie
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs"
+                    onClick={() => toggleCert.mutate({ id: p.id, is_certified: false })}
+                    title="Retirer la certification"
+                  >
+                    ✓ Certifié — Retirer
+                  </Button>
+                </>
               ) : (
                 <Button
                   size="sm"
