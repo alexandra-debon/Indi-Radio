@@ -38,6 +38,33 @@
   animation: bounce-slow 1.8s ease-in-out infinite;
 }
 
+@keyframes swipe-up-demo {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(-28px) scale(1);
+  }
+  90% {
+    opacity: 0;
+    transform: translateY(-56px) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-56px) scale(0.95);
+  }
+}
+
+.animate-swipe-up-demo {
+  animation: swipe-up-demo 1.2s ease-in-out infinite;
+}
+
 
 @keyframes audio-bar {
   0%, 100% { transform: scaleY(0.25); }

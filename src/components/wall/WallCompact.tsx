@@ -8,15 +8,16 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Bump this value when the wall gesture/UI changes to re-show the tooltip.
-const WALL_TOOLTIP_VERSION = "1";
+// Bump this value when the wall gesture/UI changes to re-show the tooltip + demo.
+const WALL_TOOLTIP_VERSION = "2";
 const WALL_TOOLTIP_KEY = "indi-wall-tooltip-dismissed";
 const WALL_TOOLTIP_VERSION_KEY = "indi-wall-tooltip-version";
+const DEMO_DURATION_MS = 3200;
 
 interface CompactPost {
   id: string;
@@ -53,16 +54,37 @@ export function WallCompact({
   const isMobile = useIsMobile();
 
   const [showTooltip, setShowTooltip] = useState(false);
+  const [demoPhase, setDemoPhase] = useState<"idle" | "playing" | "done">("idle");
+  const hasInitializedRef = useRef(false);
+
   useEffect(() => {
+    if (hasInitializedRef.current) return;
+    if (typeof window === "undefined") return;
+    hasInitializedRef.current = true;
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const dismissed = localStorage.getItem(WALL_TOOLTIP_KEY) === "1";
       const storedVersion = localStorage.getItem(WALL_TOOLTIP_VERSION_KEY);
-      if (!dismissed || storedVersion !== WALL_TOOLTIP_VERSION) {
+      const shouldShow = !dismissed || storedVersion !== WALL_TOOLTIP_VERSION;
+      if (!shouldShow) return;
+
+      const isMobileNow = window.innerWidth < 768;
+      if (isMobileNow) {
+        setDemoPhase("playing");
+        timer = setTimeout(() => {
+          setDemoPhase("done");
+          setShowTooltip(true);
+        }, DEMO_DURATION_MS);
+      } else {
         setShowTooltip(true);
       }
     } catch {
       // ignore
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const dismissTooltip = () => {
@@ -147,7 +169,23 @@ export function WallCompact({
               onClick={onExpand}
               label={t("wall.expand")}
               aria-expanded={false}
+              disabled={demoPhase === "playing"}
             />
+            {demoPhase === "playing" && isMobile && (
+              <div
+                className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center overflow-hidden"
+                aria-hidden="true"
+              >
+                <div className="relative flex flex-col items-center">
+                  <div className="animate-swipe-up-demo">
+                    <div className="rounded-full border-2 border-black bg-primary p-2.5 text-primary-foreground shadow-[2px_2px_0_0_#000]">
+                      <Hand className="size-6" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 h-10 w-0.5 rounded-full bg-primary/30" />
+                </div>
+              </div>
+            )}
             {showTooltip && (
               <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72">
                 <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
