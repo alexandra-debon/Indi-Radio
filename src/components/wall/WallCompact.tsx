@@ -112,20 +112,15 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
+          <WallExpandHandle
+            direction="down"
             onClick={onExpand}
-            aria-label={t("wall.expand")}
+            label={t("wall.expand")}
             aria-expanded={false}
-            title={t("wall.expand")}
-            className="gap-1.5 border-2 border-black shadow-[2px_2px_0_0_#000] hover:-translate-y-0.5"
-          >
-            <Maximize2 className="size-4" />
-            <span className="hidden sm:inline">{t("wall.expand")}</span>
-          </Button>
+          />
         </div>
       </div>
+
 
       <div className="space-y-2">
         {posts.length === 0 && (
