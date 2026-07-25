@@ -31,7 +31,9 @@ export function WallExpandHandle({
       `}
       aria-label={label}
       title={label}
+      data-testid={direction === "down" ? "wall-expand-handle" : "wall-collapse-handle"}
     >
+
       {direction === "down" && (
         <ChevronDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5 animate-bounce-slow" />
       )}
