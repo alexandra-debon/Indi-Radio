@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -138,7 +138,7 @@ export function WallCompact({
               onClick={onExpand}
               className="card-brut flex w-full items-start gap-3 p-3 text-left transition hover:-translate-y-0.5 hover:bg-primary/5"
             >
-              {cover ? (
+              {cover && (
                 <img
                   src={cover}
                   alt=""
@@ -146,10 +146,6 @@ export function WallCompact({
                   decoding="async"
                   className="size-16 shrink-0 rounded object-cover"
                 />
-              ) : (
-                <div className="grid size-16 shrink-0 place-items-center rounded bg-muted text-muted-foreground">
-                  <ImageIcon className="size-5" />
-                </div>
               )}
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
