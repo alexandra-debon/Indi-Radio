@@ -204,8 +204,9 @@ export function SocialWallPanel() {
             </div>
           )}
           <div className="mx-auto max-w-3xl px-3 pb-32 sm:px-6">
-            <SocialWall onCollapse={() => setExpanded(false)} />
+            <SocialWall />
           </div>
+
         </div>
       )}
 
