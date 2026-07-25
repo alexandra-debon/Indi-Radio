@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RequirePseudoDialog } from "@/components/RequirePseudoDialog";
+import { SafeAreaDebug } from "@/components/debug/SafeAreaDebug";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -396,6 +397,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <AdminChatWidget />
       <AdminChatAdminPanel />
+      <SafeAreaDebug />
       <AlertDialog open={confirmLogout} onOpenChange={(o) => { if (!signingOut) setConfirmLogout(o); }}>
         <AlertDialogContent className="border-2 border-black shadow-[4px_4px_0_0_#000]">
           <AlertDialogHeader>
