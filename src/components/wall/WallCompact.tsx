@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -161,11 +162,17 @@ export function WallCompact({
                   </span>
                 </div>
                 {p.title && (
-                  <div className="line-clamp-1 text-sm font-bold">{renderRich(p.title)}</div>
+                  <div className="line-clamp-1 text-sm font-bold">
+                    <TranslatedText entityType="post" entityKey={p.id} field="title" text={p.title}>
+                      {(tt) => <>{renderRich(tt)}</>}
+                    </TranslatedText>
+                  </div>
                 )}
                 {bodyText && (
                   <div className="line-clamp-2 text-xs text-muted-foreground">
-                    {renderRich(bodyText)}
+                    <TranslatedText entityType="post" entityKey={p.id} field="content" text={bodyText}>
+                      {(tt) => <>{renderRich(tt)}</>}
+                    </TranslatedText>
                   </div>
                 )}
                 <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
