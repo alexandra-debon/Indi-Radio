@@ -191,7 +191,7 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <div className="relative">
+          <div ref={handleWrapRef} className="relative">
             <WallExpandHandle
               direction="down"
               onClick={onExpand}
