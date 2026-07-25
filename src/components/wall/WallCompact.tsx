@@ -187,15 +187,7 @@ export function WallCompact({
         })}
       </div>
 
-      {posts.length > 0 && (
-        <button
-          type="button"
-          onClick={onExpand}
-          className="w-full rounded-md border border-dashed border-primary/50 bg-primary/5 py-2 text-xs font-bold uppercase tracking-wide text-primary transition hover:bg-primary/10"
-        >
-          {t("wall.seeAll")} →
-        </button>
-      )}
     </section>
+
   );
 }
