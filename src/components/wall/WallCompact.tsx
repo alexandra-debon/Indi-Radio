@@ -46,6 +46,27 @@ export function WallCompact({
   const { lang } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
   const qc = useQueryClient();
+  const isMobile = useIsMobile();
+
+  const [showTooltip, setShowTooltip] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("indi-wall-tooltip-dismissed")) {
+        setShowTooltip(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const dismissTooltip = () => {
+    try {
+      localStorage.setItem("indi-wall-tooltip-dismissed", "1");
+    } catch {
+      // ignore
+    }
+    setShowTooltip(false);
+  };
 
   const { data: posts = [] } = useQuery({
     queryKey: ["wall-compact"],
