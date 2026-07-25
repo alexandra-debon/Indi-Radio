@@ -68,7 +68,6 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
 
   "/soumission": "/soumission-artistes",
   "/soumissions": "/soumission-artistes",
-  "/artistes": "/soumission-artistes",
   "/submit": "/soumission-artistes",
 
   "/contactez-nous": "/contact",
