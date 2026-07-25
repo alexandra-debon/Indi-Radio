@@ -129,9 +129,9 @@ function ArtistesPage() {
                     <Link to="/u/$pseudo" params={{ pseudo: a.pseudo }}>{t("gallery.viewProfile")}</Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1 gap-1.5">
-                    <Link to="/" search={{ mention: a.pseudo } as any}>
+                    <a href={`/?mention=${encodeURIComponent(a.pseudo)}`}>
                       <MessageCircle className="size-4" /> {t("gallery.writeTo")}
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </li>
