@@ -56,6 +56,9 @@ export function WallCompact({
   const [showTooltip, setShowTooltip] = useState(false);
   const [demoPhase, setDemoPhase] = useState<"idle" | "playing" | "done">("idle");
   const hasInitializedRef = useRef(false);
+  const handleWrapRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [arrowRight, setArrowRight] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (hasInitializedRef.current) return;
