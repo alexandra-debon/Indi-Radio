@@ -32,6 +32,28 @@ export function SocialWallPanel() {
   const THRESHOLD = 60;
   const MAX_DRAG = 90;
 
+  // Measure the app's fixed bottom bar (MiniPlayer + footer) so the collapse
+  // button always floats just above it, on every viewport.
+  const [bottomBarH, setBottomBarH] = useState(140);
+  useEffect(() => {
+    if (!overlayMounted) return;
+    const measure = () => {
+      const el = document.querySelector("[data-app-bottom-bar]") as HTMLElement | null;
+      if (el) setBottomBarH(el.getBoundingClientRect().height);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    const el = document.querySelector("[data-app-bottom-bar]");
+    if (ro && el) ro.observe(el);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+      ro?.disconnect();
+    };
+  }, [overlayMounted]);
+
   useEffect(() => {
     const { primary } = parseHashTargets(hash);
     if (primary && primary.startsWith("post-")) setExpanded(true);
@@ -210,7 +232,7 @@ export function SocialWallPanel() {
           <div
             className="pointer-events-none fixed inset-x-0 z-[60] flex justify-center px-4"
             style={{
-              bottom: "calc(env(safe-area-inset-bottom, 0px) + 128px)",
+              bottom: `calc(env(safe-area-inset-bottom, 0px) + ${bottomBarH + 12}px)`,
             }}
           >
             <div className="pointer-events-auto">
