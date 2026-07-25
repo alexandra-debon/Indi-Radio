@@ -55,6 +55,7 @@ const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
   { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
   { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
   { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
+  { to: "/artistes", key: "nav.gallery", icon: Mic, seo: "Galerie Artistes certifiés — Radio musique indé" },
   { to: "/dedicaces", key: "nav.dedications", icon: Send, seo: "Dédicaces sur la Radio sans pub InDi RaDio" },
   { to: "/soumission-artistes", key: "nav.submissions", icon: Mic, seo: "Soumission artistes — Radio gratuite musique indépendante" },
   { to: "/contact", key: "nav.contact", icon: Mail, seo: "Contacter InDi RaDio — Radio musique indépendante" },
