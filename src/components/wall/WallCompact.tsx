@@ -8,9 +8,10 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon } from "lucide-react";
-import { useEffect } from "react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 interface CompactPost {
@@ -45,6 +46,27 @@ export function WallCompact({
   const { lang } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
   const qc = useQueryClient();
+  const isMobile = useIsMobile();
+
+  const [showTooltip, setShowTooltip] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("indi-wall-tooltip-dismissed")) {
+        setShowTooltip(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const dismissTooltip = () => {
+    try {
+      localStorage.setItem("indi-wall-tooltip-dismissed", "1");
+    } catch {
+      // ignore
+    }
+    setShowTooltip(false);
+  };
 
   const { data: posts = [] } = useQuery({
     queryKey: ["wall-compact"],
@@ -112,12 +134,48 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <WallExpandHandle
-            direction="down"
-            onClick={onExpand}
-            label={t("wall.expand")}
-            aria-expanded={false}
-          />
+          <div className="relative">
+            <WallExpandHandle
+              direction="down"
+              onClick={onExpand}
+              label={t("wall.expand")}
+              aria-expanded={false}
+            />
+            {showTooltip && (
+              <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72">
+                <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
+                  <div className="absolute -top-2 right-8 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary" />
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <p className="text-sm font-black uppercase tracking-wide">
+                        {t("wall.tooltip.title")}
+                      </p>
+                      <p className="text-xs font-medium leading-snug">
+                        {isMobile
+                          ? `${t("wall.tooltip.swipe")} ${t("wall.tooltip.handle")}`
+                          : t("wall.tooltip.handle")}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={dismissTooltip}
+                      className="shrink-0 rounded-full border border-black/20 p-1 hover:bg-black/10"
+                      aria-label={t("action.close")}
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={dismissTooltip}
+                    className="mt-2 w-full rounded-full border-2 border-black bg-background py-1.5 text-xs font-bold uppercase text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5"
+                  >
+                    {t("wall.tooltip.gotIt")}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
