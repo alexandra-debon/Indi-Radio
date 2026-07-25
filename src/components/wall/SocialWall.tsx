@@ -8,7 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -29,6 +29,13 @@ import { Hash } from "lucide-react";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang, useT } from "@/lib/i18n";
 import { SmartImg } from "@/components/media/SmartImg";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 interface PostRow {
   id: string;
@@ -101,6 +108,7 @@ export function SocialWall() {
   const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
+  const [composerOpen, setComposerOpen] = useState(false);
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
 
@@ -282,6 +290,7 @@ export function SocialWall() {
       setSocialDraft({});
       setImageDraft("");
       setImagesDraft([]);
+      setComposerOpen(false);
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
@@ -377,11 +386,29 @@ export function SocialWall() {
 
   return (
     <section className="space-y-3">
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-end justify-between gap-3">
         <h2 className="section-title">{t("wall.title")}</h2>
+        <Button
+          size="sm"
+          data-tour="wall-publish"
+          onClick={() => requireAuth(() => setComposerOpen(true))}
+          className="gap-1.5 bg-primary text-primary-foreground shadow-[2px_2px_0_0_#000] border-2 border-black hover:-translate-y-0.5 hover:bg-primary/90"
+        >
+          <PenSquare className="size-4" />
+          {t("wall.publish")}
+        </Button>
       </div>
 
-      <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
+      <Sheet open={composerOpen} onOpenChange={setComposerOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[92vh] overflow-y-auto rounded-t-2xl border-t-4 border-primary p-0 sm:max-w-2xl sm:mx-auto"
+        >
+          <SheetHeader className="border-b border-border bg-primary/5 px-4 py-3">
+            <SheetTitle className="text-base">{t("wall.composerTitle")}</SheetTitle>
+            <SheetDescription className="text-xs">{t("wall.publishSubtitle")}</SheetDescription>
+          </SheetHeader>
+          <div className="p-4">
         {/* Titre en haut, clairement séparé */}
         <Input
           value={title}
@@ -457,7 +484,10 @@ export function SocialWall() {
             </div>
           </div>
         )}
-        <div className="mt-2 flex justify-end">
+        <div className="mt-3 flex justify-end gap-2">
+          <Button size="sm" variant="ghost" onClick={() => setComposerOpen(false)}>
+            {t("wall.cancel")}
+          </Button>
           <Button
             size="sm"
             onClick={() => requireAuth(() => create.mutate())}
@@ -467,7 +497,19 @@ export function SocialWall() {
             {t("comment.publish")}
           </Button>
         </div>
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* FAB pour ouvrir le composer rapidement depuis n'importe où sur la page */}
+      <button
+        type="button"
+        onClick={() => requireAuth(() => setComposerOpen(true))}
+        aria-label={t("wall.publish")}
+        className="fixed bottom-24 right-4 z-40 grid size-14 place-items-center rounded-full border-2 border-black bg-primary text-primary-foreground shadow-[3px_3px_0_0_#000] transition hover:-translate-y-0.5 sm:hidden"
+      >
+        <Plus className="size-6" strokeWidth={3} />
+      </button>
 
       {(popularTags.length > 0 || activeTag) && (
         <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background/40 p-2">
