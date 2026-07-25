@@ -92,8 +92,8 @@ const TOUR_STEPS: TourStep[] = [
     target: "[data-tour='social-wall']",
     title: { fr: "💬 Le mur social", en: "💬 The social wall" },
     body: {
-      fr: "Publie avec un titre optionnel, un lien YouTube/Vimeo et une ou plusieurs photos. L'auto-complétion suggère les @pseudos, les mentions et #hashtags sont surlignés, et un raccourci ↩ permet de répondre à un @pseudo en un clic. La lecture est libre sans compte — publier ou commenter demande juste une inscription gratuite.",
-      en: "Post with an optional title, a YouTube/Vimeo link and one or several photos. Autocomplete suggests @pseudos, mentions and #hashtags are highlighted, and a ↩ shortcut lets you reply to an @pseudo in one click. Reading is free without an account — posting or commenting just requires a free signup.",
+      fr: "Un aperçu des 3 dernières publications s'affiche ici. Utilise le bouton jaune fléché pour déployer le mur en plein écran, et le bouton inversé en bas pour le rétracter. Publie avec un titre optionnel, un lien YouTube/Vimeo et une ou plusieurs photos. L'auto-complétion suggère les @pseudos, les mentions et #hashtags sont surlignés, et un raccourci ↩ permet de répondre à un @pseudo en un clic. La lecture est libre sans compte — publier ou commenter demande juste une inscription gratuite.",
+      en: "A preview of the latest 3 posts shows up here. Use the yellow arrow button to expand the wall full-screen, and the reverse button at the bottom to collapse it. Post with an optional title, a YouTube/Vimeo link and one or several photos. Autocomplete suggests @pseudos, mentions and #hashtags are highlighted, and a ↩ shortcut lets you reply to an @pseudo in one click. Reading is free without an account — posting or commenting just requires a free signup.",
     },
     placement: "top",
   },

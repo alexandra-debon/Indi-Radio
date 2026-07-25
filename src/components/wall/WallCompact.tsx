@@ -8,17 +8,9 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
-import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon, X, Hand, RotateCcw } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Heart, MessageCircle, Pin, PenSquare, Image as ImageIcon } from "lucide-react";
+import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-// Bump this value when the wall gesture/UI changes to re-show the tooltip + demo.
-const WALL_TOOLTIP_VERSION = "3";
-const WALL_TOOLTIP_KEY = "indi-wall-tooltip-dismissed";
-const WALL_TOOLTIP_VERSION_KEY = "indi-wall-tooltip-version";
-const WALL_DEMO_VERSION_KEY = "indi-wall-demo-version";
-const DEMO_DURATION_MS = 3200;
 
 interface CompactPost {
   id: string;
@@ -52,83 +44,6 @@ export function WallCompact({
   const { lang } = useLang();
   const dateLocale = lang === "en" ? enUS : fr;
   const qc = useQueryClient();
-  const isMobile = useIsMobile();
-
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [demoPhase, setDemoPhase] = useState<"idle" | "playing" | "done">("idle");
-  const hasInitializedRef = useRef(false);
-  const handleWrapRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [arrowRight, setArrowRight] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (hasInitializedRef.current) return;
-    if (typeof window === "undefined") return;
-    hasInitializedRef.current = true;
-
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    try {
-      const dismissed = localStorage.getItem(WALL_TOOLTIP_KEY) === "1";
-      const storedVersion = localStorage.getItem(WALL_TOOLTIP_VERSION_KEY);
-      const shouldShow = !dismissed || storedVersion !== WALL_TOOLTIP_VERSION;
-      if (!shouldShow) return;
-
-      const isMobileNow = window.innerWidth < 768;
-      const demoVersionSeen = localStorage.getItem(WALL_DEMO_VERSION_KEY);
-      if (isMobileNow && demoVersionSeen !== WALL_TOOLTIP_VERSION) {
-        localStorage.setItem(WALL_DEMO_VERSION_KEY, WALL_TOOLTIP_VERSION);
-        setDemoPhase("playing");
-        timer = setTimeout(() => {
-          setDemoPhase("done");
-          setShowTooltip(true);
-        }, DEMO_DURATION_MS);
-      } else {
-        setShowTooltip(true);
-      }
-    } catch {
-      // ignore
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, []);
-
-  const dismissTooltip = () => {
-    try {
-      localStorage.setItem(WALL_TOOLTIP_KEY, "1");
-      localStorage.setItem(WALL_TOOLTIP_VERSION_KEY, WALL_TOOLTIP_VERSION);
-    } catch {
-      // ignore
-    }
-    setShowTooltip(false);
-  };
-
-  const [demoTimer, setDemoTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  const playDemo = () => {
-    if (demoPhase === "playing") return;
-    if (demoTimer) clearTimeout(demoTimer);
-    setShowTooltip(false);
-    setDemoPhase("playing");
-    const timer = setTimeout(() => {
-      setDemoPhase("done");
-      setShowTooltip(true);
-    }, DEMO_DURATION_MS);
-    setDemoTimer(timer);
-  };
-
-  const syncArrow = useCallback(() => {
-    if (!handleWrapRef.current || !tooltipRef.current) return;
-    const handleRect = handleWrapRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
-    // Center of the handle relative to the tooltip's left edge.
-    const targetCenter = handleRect.left + handleRect.width / 2 - tooltipRect.left;
-    // Arrow is 16px wide; place its center over the handle center.
-    const nextRight = tooltipRect.width - targetCenter - 8;
-    // Clamp to keep the arrow visually inside the tooltip.
-    const clamped = Math.max(12, Math.min(tooltipRect.width - 28, nextRight));
-    setArrowRight(clamped);
-  }, []);
 
   const { data: posts = [] } = useQuery({
     queryKey: ["wall-compact"],
@@ -183,24 +98,6 @@ export function WallCompact({
     };
   }, [qc]);
 
-  useEffect(() => {
-    if (!showTooltip) return;
-    syncArrow();
-    const onResize = () => syncArrow();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("orientationchange", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-    };
-  }, [showTooltip, syncArrow]);
-
-  useEffect(() => {
-    return () => {
-      if (demoTimer) clearTimeout(demoTimer);
-    };
-  }, [demoTimer]);
-
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
@@ -214,80 +111,12 @@ export function WallCompact({
             <PenSquare className="size-4" />
             {t("wall.publish")}
           </Button>
-          <div ref={handleWrapRef} className="relative">
-            <WallExpandHandle
-              direction="down"
-              onClick={onExpand}
-              label={t("wall.expand")}
-              aria-expanded={false}
-              disabled={demoPhase === "playing"}
-            />
-            {demoPhase === "playing" && isMobile && (
-              <div
-                className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center overflow-hidden"
-                aria-hidden="true"
-              >
-                <div className="relative flex flex-col items-center">
-                  <div className="animate-swipe-up-demo">
-                    <div className="rounded-full border-2 border-black bg-primary p-2.5 text-primary-foreground shadow-[2px_2px_0_0_#000]">
-                      <Hand className="size-6" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 h-10 w-0.5 rounded-full bg-primary/30" />
-                </div>
-              </div>
-            )}
-            {showTooltip && (
-              <div
-                ref={tooltipRef}
-                className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-in sm:w-72"
-              >
-                <div className="relative rounded-xl border-2 border-black bg-primary p-3 text-primary-foreground shadow-[3px_3px_0_0_#000]">
-                  <div
-                    className="absolute -top-2 h-4 w-4 rotate-45 border-l-2 border-t-2 border-black bg-primary transition-none"
-                    style={{ right: arrowRight ?? 32 }}
-                  />
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
-                      <p className="text-sm font-black uppercase tracking-wide">
-                        {t("wall.tooltip.title")}
-                      </p>
-                      <p className="text-xs font-medium leading-snug">
-                        {isMobile
-                          ? `${t("wall.tooltip.swipe")} ${t("wall.tooltip.handle")}`
-                          : t("wall.tooltip.handle")}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={dismissTooltip}
-                      className="shrink-0 rounded-full border border-black/20 p-1 hover:bg-black/10"
-                      aria-label={t("action.close")}
-                    >
-                      <X className="size-3.5" />
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={dismissTooltip}
-                    className="mt-2 w-full rounded-full border-2 border-black bg-background py-1.5 text-xs font-bold uppercase text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5"
-                  >
-                    {t("wall.tooltip.gotIt")}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={playDemo}
-            disabled={demoPhase === "playing"}
-            className="inline-flex items-center justify-center rounded-full border-2 border-black bg-background p-1.5 text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-muted disabled:opacity-60 disabled:hover:translate-y-0 md:hidden"
-            aria-label={t("wall.tooltip.replayDemo")}
-            title={t("wall.tooltip.replayDemo")}
-          >
-            <RotateCcw className="size-4" />
-          </button>
+          <WallExpandHandle
+            direction="down"
+            onClick={onExpand}
+            label={t("wall.expand")}
+            aria-expanded={false}
+          />
         </div>
       </div>
 
