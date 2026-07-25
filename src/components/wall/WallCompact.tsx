@@ -222,25 +222,6 @@ export function WallCompact({
               aria-expanded={false}
               disabled={demoPhase === "playing"}
             />
-          </div>
-          <button
-            type="button"
-            onClick={playDemo}
-            disabled={demoPhase === "playing"}
-            className="inline-flex items-center justify-center rounded-full border-2 border-black bg-background p-1.5 text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-muted disabled:opacity-60 disabled:hover:translate-y-0 md:hidden"
-            aria-label={t("wall.tooltip.replayDemo")}
-            title={t("wall.tooltip.replayDemo")}
-          >
-            <RotateCcw className="size-4" />
-          </button>
-          <div ref={handleWrapRef} className="relative hidden">
-            <WallExpandHandle
-              direction="down"
-              onClick={onExpand}
-              label={t("wall.expand")}
-              aria-expanded={false}
-              disabled={demoPhase === "playing"}
-            />
             {demoPhase === "playing" && isMobile && (
               <div
                 className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center overflow-hidden"
@@ -297,6 +278,16 @@ export function WallCompact({
               </div>
             )}
           </div>
+          <button
+            type="button"
+            onClick={playDemo}
+            disabled={demoPhase === "playing"}
+            className="inline-flex items-center justify-center rounded-full border-2 border-black bg-background p-1.5 text-foreground shadow-[2px_2px_0_0_#000] transition hover:-translate-y-0.5 hover:bg-muted disabled:opacity-60 disabled:hover:translate-y-0 md:hidden"
+            aria-label={t("wall.tooltip.replayDemo")}
+            title={t("wall.tooltip.replayDemo")}
+          >
+            <RotateCcw className="size-4" />
+          </button>
         </div>
       </div>
 
