@@ -23,6 +23,7 @@ import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
+import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
 import { ImageUploader } from "@/components/media/ImageUploader";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
@@ -50,7 +51,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails", "diffuseurs"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -137,6 +138,7 @@ function AdminPage() {
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
+          <TabsTrigger value="diffuseurs">Diffuseurs</TabsTrigger>
           <TabsTrigger value="deploy">Déploiement</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
@@ -149,6 +151,7 @@ function AdminPage() {
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
+        <TabsContent value="diffuseurs" className="mt-4"><BroadcastPartnersAdmin /></TabsContent>
         <TabsContent value="deploy" className="mt-4"><DeployCheckPanel /></TabsContent>
       </Tabs>
     </div>
