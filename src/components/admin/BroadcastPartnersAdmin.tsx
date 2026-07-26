@@ -121,26 +121,6 @@ export function BroadcastPartnersAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const move = useMutation({
-    mutationFn: async ({ id, dir }: { id: string; dir: -1 | 1 }) => {
-      const idx = partners.findIndex((p) => p.id === id);
-      const swap = partners[idx + dir];
-      if (!swap) return;
-      const a = partners[idx];
-      const { error: e1 } = await supabase
-        .from("broadcast_partners")
-        .update({ position: swap.position })
-        .eq("id", a.id);
-      const { error: e2 } = await supabase
-        .from("broadcast_partners")
-        .update({ position: a.position })
-        .eq("id", swap.id);
-      if (e1 || e2) throw e1 ?? e2;
-    },
-    onSuccess: invalidate,
-    onError: (e: Error) => toast.error(e.message),
-  });
-
   // Local optimistic order for drag & drop
   const [order, setOrder] = useState<Partner[]>([]);
   useEffect(() => {
