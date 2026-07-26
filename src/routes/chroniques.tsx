@@ -16,10 +16,10 @@ export const Route = createFileRoute("/chroniques")({
   head: () => ({
     meta: [
       { title: "Chroniques — Radio musique indépendante sans pub InDi RaDio" },
-      { name: "description", content: "Chroniques d'albums de la scène indépendante française : découverte musicale, nouvelles sorties, artistes émergents sur la radio musique indépendante sans pub." },
+      { name: "description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio InDi RaDio." },
       { name: "keywords", content: "radio musique indépendante, radio sans pub, chroniques albums indépendants, découvertes musicales, InDi RaDio" },
       { property: "og:title", content: "Chroniques — Radio musique indépendante sans pub InDi RaDio" },
-      { property: "og:description", content: "Chroniques d'albums de la scène indépendante française : découverte musicale, nouvelles sorties, artistes émergents sur la radio musique indépendante sans pub." },
+      { property: "og:description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio InDi RaDio." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://radio.indi-art-culture.com/chroniques" },
       { property: "og:image", content: OG_CHRONIQUES },

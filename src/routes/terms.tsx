@@ -4,14 +4,14 @@ import { RADIO_CONFIG } from "@/config/radio";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Conditions d'utilisation — Radio musique indépendante InDi RaDio" },
+      { title: "Conditions d'utilisation — InDi RaDio musique indé" },
       {
         name: "description",
         content:
           "Conditions générales d'utilisation d'InDi RaDio, radio musique indépendante et réseau social musique : compte, contenus, modération et tolérance zéro.",
       },
       { name: "keywords", content: "radio musique indépendante, réseau social musique, conditions utilisation, CGU InDi RaDio, modération" },
-      { property: "og:title", content: "Conditions d'utilisation — Radio musique indépendante InDi RaDio" },
+      { property: "og:title", content: "Conditions d'utilisation — InDi RaDio musique indé" },
       {
         property: "og:description",
         content:
