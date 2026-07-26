@@ -14,7 +14,7 @@ type Partner = {
   link_url: string | null;
   alt_text: string | null;
   html_snippet: string | null;
-  visible_on: string[] | null;
+  visible_on?: string[] | null;
 };
 
 export function BroadcastPartners() {
