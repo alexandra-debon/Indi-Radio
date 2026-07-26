@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/lib/toast";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from "lucide-react";
+import { PartnerItem } from "@/components/about/BroadcastPartners";
 
 type Partner = {
   id: string;
@@ -229,6 +230,37 @@ export function BroadcastPartnersAdmin() {
               {draft.id ? <Save className="mr-1 size-4" /> : <Plus className="mr-1 size-4" />}
               {draft.id ? "Enregistrer" : "Ajouter"}
             </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2 border-t border-border/60 pt-3">
+          <div className="flex items-center justify-between">
+            <h4 className="font-display text-xs uppercase tracking-wide text-muted-foreground">
+              Aperçu en direct
+            </h4>
+            <span className="text-[11px] text-muted-foreground">
+              Rendu identique à la page « À propos »
+            </span>
+          </div>
+          <div className="card-brut flex min-h-[112px] items-center justify-center bg-muted/30 p-4">
+            {(draft.kind === "logo" && draft.logo_url) ||
+            (draft.kind === "html" && draft.html_snippet?.trim()) ? (
+              <PartnerItem
+                p={{
+                  id: "preview",
+                  name: draft.name || "Aperçu",
+                  kind: draft.kind,
+                  logo_url: draft.logo_url || null,
+                  link_url: draft.link_url || null,
+                  alt_text: draft.alt_text || null,
+                  html_snippet: draft.html_snippet || null,
+                }}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Renseigne un logo ou un snippet HTML pour voir l'aperçu.
+              </p>
+            )}
           </div>
         </div>
       </section>
