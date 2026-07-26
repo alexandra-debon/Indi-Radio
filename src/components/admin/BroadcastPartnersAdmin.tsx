@@ -64,6 +64,33 @@ const EMPTY: Draft = {
 export function BroadcastPartnersAdmin() {
   const qc = useQueryClient();
   const [draft, setDraft] = useState<Draft>(EMPTY);
+  const [logoDims, setLogoDims] = useState<{ w: number; h: number } | null>(null);
+  const [logoError, setLogoError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLogoDims(null);
+    setLogoError(null);
+    const url = draft.kind === "logo" ? draft.logo_url : null;
+    if (!url) return;
+    const img = new Image();
+    img.onload = () => setLogoDims({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => setLogoError("Impossible de charger l'image (URL invalide ou CORS)");
+    img.src = url;
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [draft.kind, draft.logo_url]);
+
+  const logoWarning = (() => {
+    if (!logoDims) return null;
+    const { w, h } = logoDims;
+    if (w < 80 || h < 40) return `Logo trop petit (${w}×${h}px). Recommandé ≥ 200×80px.`;
+    if (w > 1600 || h > 1200) return `Logo très lourd (${w}×${h}px). Recommandé ≤ 800×400px.`;
+    const ratio = w / h;
+    if (ratio > 8 || ratio < 0.2) return `Ratio inhabituel (${ratio.toFixed(2)}). Peut mal s'afficher.`;
+    return null;
+  })();
 
   const { data: partners = [] } = useQuery({
     queryKey: ["admin", "broadcast-partners"],
@@ -87,6 +114,7 @@ export function BroadcastPartnersAdmin() {
     mutationFn: async (d: Draft) => {
       if (!d.name.trim()) throw new Error("Nom requis");
       if (d.kind === "logo" && !d.logo_url) throw new Error("URL du logo requise");
+      if (d.kind === "logo" && logoError) throw new Error(logoError);
       let safeHtml: string | null = null;
       if (d.kind === "html") {
         const raw = d.html_snippet?.trim() ?? "";
@@ -262,6 +290,20 @@ export function BroadcastPartnersAdmin() {
                 onChange={(e) => setDraft({ ...draft, logo_url: e.target.value })}
                 placeholder="…ou colle une URL de logo distant"
               />
+              {draft.logo_url && (
+                <div className="text-[11px]">
+                  {logoError ? (
+                    <span className="text-destructive">{logoError}</span>
+                  ) : logoDims ? (
+                    <span className={logoWarning ? "text-amber-600" : "text-muted-foreground"}>
+                      Dimensions : {logoDims.w}×{logoDims.h}px
+                      {logoWarning ? ` — ${logoWarning}` : " — OK"}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">Analyse du logo…</span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Lien au clic</label>

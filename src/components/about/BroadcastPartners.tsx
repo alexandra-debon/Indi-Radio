@@ -73,7 +73,8 @@ export function PartnerItem({ p }: { p: Partner }) {
         src={p.logo_url}
         alt={p.alt_text ?? p.name}
         loading="lazy"
-        className="h-16 w-auto max-w-[160px] object-contain transition hover:scale-105"
+        decoding="async"
+        className="h-12 w-auto max-w-[140px] object-contain transition hover:scale-105 sm:h-16 sm:max-w-[180px] md:h-20 md:max-w-[220px]"
       />
     );
     return p.link_url ? (
@@ -89,7 +90,7 @@ export function PartnerItem({ p }: { p: Partner }) {
     if (!clean) return null;
     return (
       <div
-        className="broadcast-html [&_a]:inline-block [&_img]:h-16 [&_img]:w-auto [&_img]:max-w-[220px] [&_img]:object-contain"
+        className="broadcast-html [&_a]:inline-block [&_img]:h-12 [&_img]:w-auto [&_img]:max-w-[180px] [&_img]:object-contain sm:[&_img]:h-16 sm:[&_img]:max-w-[220px] md:[&_img]:h-20 md:[&_img]:max-w-[260px]"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: clean }}
       />
