@@ -295,6 +295,45 @@ export function BroadcastPartnersAdmin() {
           </div>
         )}
 
+        <div className="space-y-2 rounded border border-border/60 bg-muted/30 p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Visibilité
+            </span>
+            <span className="text-[11px] text-muted-foreground">
+              Toujours masqué sur les futures apps natives (App Store / Play Store)
+            </span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {ALL_SURFACES.map((s) => {
+              const list = draft.visible_on ?? [...ALL_SURFACES];
+              const checked = list.includes(s);
+              return (
+                <label
+                  key={s}
+                  className="flex cursor-pointer items-start gap-2 rounded border border-border bg-background p-2 text-sm"
+                >
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={(v) => {
+                      const next = new Set(list);
+                      if (v) next.add(s);
+                      else next.delete(s);
+                      setDraft({ ...draft, visible_on: Array.from(next) as Surface[] });
+                    }}
+                  />
+                  <span>{SURFACE_LABELS[s]}</span>
+                </label>
+              );
+            })}
+          </div>
+          {(draft.visible_on ?? []).length === 0 && (
+            <p className="text-[11px] text-destructive">
+              Sélectionne au moins une surface, sinon toutes seront réactivées par défaut.
+            </p>
+          )}
+        </div>
+
         <div className="flex items-center justify-between gap-3">
           <label className="flex items-center gap-2 text-sm">
             <Switch
