@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -184,7 +184,11 @@ export function BroadcastPartnersAdmin() {
 
   // Local optimistic order for drag & drop
   const [order, setOrder] = useState<Partner[]>([]);
+  const prevOrderRef = useRef<Partner[]>([]);
+  const pendingReorderRef = useRef(false);
   useEffect(() => {
+    // Don't clobber the optimistic order while a reorder write is in flight.
+    if (pendingReorderRef.current) return;
     setOrder(partners);
   }, [partners]);
 
@@ -199,12 +203,15 @@ export function BroadcastPartnersAdmin() {
       if (err) throw err;
     },
     onSuccess: () => {
+      pendingReorderRef.current = false;
       toast.success("Ordre mis à jour");
       invalidate();
     },
     onError: (e: Error) => {
+      pendingReorderRef.current = false;
       toast.error(e.message);
-      setOrder(partners);
+      // Rollback to the snapshot captured just before the drag committed.
+      setOrder(prevOrderRef.current);
     },
   });
 
@@ -220,6 +227,8 @@ export function BroadcastPartnersAdmin() {
     const newIndex = order.findIndex((p) => p.id === over.id);
     if (oldIndex < 0 || newIndex < 0) return;
     const next = arrayMove(order, oldIndex, newIndex);
+    prevOrderRef.current = order;
+    pendingReorderRef.current = true;
     setOrder(next);
     reorder.mutate(next);
   };
@@ -229,6 +238,8 @@ export function BroadcastPartnersAdmin() {
     const j = idx + dir;
     if (idx < 0 || j < 0 || j >= order.length) return;
     const next = arrayMove(order, idx, j);
+    prevOrderRef.current = order;
+    pendingReorderRef.current = true;
     setOrder(next);
     reorder.mutate(next);
   };
