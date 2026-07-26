@@ -193,6 +193,48 @@ export type Database = {
         }
         Relationships: []
       }
+      broadcast_partners: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          html_snippet: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          link_url: string | null
+          logo_url: string | null
+          name: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          html_snippet?: string | null
+          id?: string
+          is_active?: boolean
+          kind: string
+          link_url?: string | null
+          logo_url?: string | null
+          name: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          html_snippet?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          link_url?: string | null
+          logo_url?: string | null
+          name?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clip_entries: {
         Row: {
           author_id: string | null
