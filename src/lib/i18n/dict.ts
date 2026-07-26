@@ -256,6 +256,7 @@ export const dict = {
     "page.about.radio.p2": "Nous tenons à respecter les droits d'auteurs conformément à nos statuts. {station} est titulaire d'une licence SACEM concernant la radio et les podcasts et cotisera à la SPRE chaque fin d'année pour respecter comme il se doit les artistes et leurs productions.",
     "page.about.radio.p3": "{station} est une radio non-commerciale, sans publicité et sans informations généralistes hors culture. Elle demeure sous statut particulier durant ses premiers mois d'existence au nom de sa fondatrice Alexandra Debon (Melody Alex. Patrick) avant de rejoindre définitivement la société à mission à la fin de cette année 2026.",
     "page.about.tunein.caption": "Diffusion internationale",
+    "page.about.broadcasters.title": "Ils nous diffusent au travers du monde",
     "page.dedications.title": "Musique à la demande & dédicaces",
     "page.magazines.title": "Magazine Indi Art Culture",
     "page.magazines.articles": "Articles interactifs",
