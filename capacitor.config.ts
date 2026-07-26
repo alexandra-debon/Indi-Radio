@@ -58,6 +58,7 @@ const config: CapacitorConfig = {
       scopes: ["profile", "email"],
       clientId: "860841844830-9k5oqmqtd0siicarpp76j0ub51r595ag.apps.googleusercontent.com",
       iosClientId: "860841844830-dtmkl9pl27m4hiqrg15v856gke877ort.apps.googleusercontent.com",
+      serverClientId: "860841844830-9k5oqmqtd0siicarpp76j0ub51r595ag.apps.googleusercontent.com",
       forceCodeForRefreshToken: false,
     },
   },

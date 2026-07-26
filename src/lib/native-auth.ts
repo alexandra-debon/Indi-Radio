@@ -11,27 +11,30 @@ const GOOGLE_WEB_CLIENT_ID = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID as
   | string
   | undefined;
 
-/**
- * Google iOS Client ID (OAuth iOS application). Requis pour que le plugin
- * natif iOS utilise le bon client OAuth (schéma personnalisé
- * com.googleusercontent.apps.*), sinon Google rejette la requête avec
- * « Custom scheme URIs are not allowed for 'WEB' client type ».
- */
-const GOOGLE_IOS_CLIENT_ID = import.meta.env.VITE_GOOGLE_IOS_CLIENT_ID as
-  | string
-  | undefined;
-
 let googleInitialized = false;
 
 async function ensureGoogleInit() {
-  if (googleInitialized || !GOOGLE_WEB_CLIENT_ID) return;
+  if (googleInitialized) return;
   const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
-  await GoogleAuth.initialize({
-    clientId: GOOGLE_WEB_CLIENT_ID,
-    ...(GOOGLE_IOS_CLIENT_ID ? { iosClientId: GOOGLE_IOS_CLIENT_ID } : {}),
+
+  const baseOptions = {
     scopes: ["profile", "email"],
     grantOfflineAccess: false,
-  } as Parameters<typeof GoogleAuth.initialize>[0]);
+  };
+
+  if (getPlatform() === "ios") {
+    // iOS: do not pass `clientId` from JS. The plugin's Swift layer only
+    // supports `clientId` in initialize(), so passing the Web client ID here
+    // overrides `iosClientId` from capacitor.config.ts and triggers Google's
+    // “Custom scheme URIs are not allowed for 'WEB' client type” error.
+    await GoogleAuth.initialize(baseOptions);
+  } else {
+    if (!GOOGLE_WEB_CLIENT_ID) return;
+    await GoogleAuth.initialize({
+      ...baseOptions,
+      clientId: GOOGLE_WEB_CLIENT_ID,
+    });
+  }
   googleInitialized = true;
 }
 
