@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { isNative } from "@/lib/native";
@@ -19,6 +19,7 @@ type Partner = {
 
 export function BroadcastPartners() {
   const t = useT();
+  const qc = useQueryClient();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
 
@@ -36,6 +37,21 @@ export function BroadcastPartners() {
     },
     staleTime: 60_000,
   });
+
+  // Realtime: refresh the list as soon as an admin reorders/edits/toggles a partner.
+  useEffect(() => {
+    const channel = supabase
+      .channel("broadcast_partners:public")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "broadcast_partners" },
+        () => qc.invalidateQueries({ queryKey: ["broadcast-partners"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
 
   // Masqué sur apps natives (App Store / Play Store)
   if (hydrated && isNative()) return null;
