@@ -335,71 +335,110 @@ export function BroadcastPartnersAdmin() {
 
       <section className="space-y-2">
         <h3 className="font-display text-sm uppercase tracking-wide">Diffuseurs enregistrés</h3>
-        {partners.length === 0 ? (
+        {order.length === 0 ? (
           <p className="text-sm text-muted-foreground">Aucun diffuseur pour le moment.</p>
         ) : (
-          <ul className="space-y-2">
-            {partners.map((p, i) => (
-              <li key={p.id} className="card-brut flex items-center gap-3 p-3">
-                <div className="flex flex-col gap-1">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    disabled={i === 0}
-                    onClick={() => move.mutate({ id: p.id, dir: -1 })}
-                    aria-label="Monter"
-                  >
-                    <ArrowUp className="size-3" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    disabled={i === partners.length - 1}
-                    onClick={() => move.mutate({ id: p.id, dir: 1 })}
-                    aria-label="Descendre"
-                  >
-                    <ArrowDown className="size-3" />
-                  </Button>
-                </div>
-
-                <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted/40">
-                  {p.kind === "logo" && p.logo_url ? (
-                    <img src={p.logo_url} alt={p.alt_text ?? p.name} className="max-h-14 max-w-14 object-contain" />
-                  ) : (
-                    <span className="text-[10px] uppercase text-muted-foreground">HTML</span>
-                  )}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-semibold">{p.name}</div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {p.kind === "logo" ? p.link_url || "(sans lien)" : "Bannière HTML"}
-                  </div>
-                </div>
-
-                <Switch
-                  checked={p.is_active}
-                  onCheckedChange={() => toggleActive.mutate(p)}
-                  aria-label="Actif"
-                />
-                <Button size="sm" variant="outline" onClick={() => setDraft({ ...p })}>
-                  Modifier
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => {
-                    if (confirm(`Supprimer « ${p.name} » ?`)) remove.mutate(p.id);
-                  }}
-                  aria-label="Supprimer"
-                >
-                  <Trash2 className="size-4 text-destructive" />
-                </Button>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p className="text-[11px] text-muted-foreground">
+              Glisser-déposer la poignée pour réordonner. L'ordre est enregistré immédiatement.
+            </p>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={order.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+                <ul className="space-y-2">
+                  {order.map((p, i) => (
+                    <SortableRow
+                      key={p.id}
+                      p={p}
+                      isFirst={i === 0}
+                      isLast={i === order.length - 1}
+                      onMoveUp={() => moveByOne(p.id, -1)}
+                      onMoveDown={() => moveByOne(p.id, 1)}
+                      onEdit={() => setDraft({ ...p })}
+                      onToggle={() => toggleActive.mutate(p)}
+                      onDelete={() => {
+                        if (confirm(`Supprimer « ${p.name} » ?`)) remove.mutate(p.id);
+                      }}
+                    />
+                  ))}
+                </ul>
+              </SortableContext>
+            </DndContext>
+          </>
         )}
       </section>
     </div>
+  );
+}
+
+function SortableRow({
+  p,
+  isFirst,
+  isLast,
+  onMoveUp,
+  onMoveDown,
+  onEdit,
+  onToggle,
+  onDelete,
+}: {
+  p: Partner;
+  isFirst: boolean;
+  isLast: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onEdit: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: p.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+  return (
+    <li ref={setNodeRef} style={style} className="card-brut flex items-center gap-3 p-3">
+      <button
+        type="button"
+        className="flex h-10 w-6 cursor-grab touch-none items-center justify-center rounded text-muted-foreground hover:bg-muted active:cursor-grabbing"
+        aria-label="Réordonner (glisser-déposer)"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-4" />
+      </button>
+
+      <div className="flex flex-col gap-1">
+        <Button size="icon" variant="outline" disabled={isFirst} onClick={onMoveUp} aria-label="Monter">
+          <ArrowUp className="size-3" />
+        </Button>
+        <Button size="icon" variant="outline" disabled={isLast} onClick={onMoveDown} aria-label="Descendre">
+          <ArrowDown className="size-3" />
+        </Button>
+      </div>
+
+      <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted/40">
+        {p.kind === "logo" && p.logo_url ? (
+          <img src={p.logo_url} alt={p.alt_text ?? p.name} className="max-h-14 max-w-14 object-contain" />
+        ) : (
+          <span className="text-[10px] uppercase text-muted-foreground">HTML</span>
+        )}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-semibold">{p.name}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {p.kind === "logo" ? p.link_url || "(sans lien)" : "Bannière HTML"}
+        </div>
+      </div>
+
+      <Switch checked={p.is_active} onCheckedChange={onToggle} aria-label="Actif" />
+      <Button size="sm" variant="outline" onClick={onEdit}>
+        Modifier
+      </Button>
+      <Button size="icon" variant="ghost" onClick={onDelete} aria-label="Supprimer">
+        <Trash2 className="size-4 text-destructive" />
+      </Button>
+    </li>
   );
 }
