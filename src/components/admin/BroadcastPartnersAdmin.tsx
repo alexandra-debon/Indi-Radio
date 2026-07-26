@@ -170,10 +170,10 @@ export function BroadcastPartnersAdmin() {
             <div className="space-y-1 sm:col-span-2">
               <label className="text-xs text-muted-foreground">Logo</label>
               <ImageUploader
-                value={draft.logo_url ?? null}
-                onChange={(url) => setDraft({ ...draft, logo_url: url ?? "" })}
-                bucket="content-images"
+                value={draft.logo_url ?? ""}
+                onChange={(url) => setDraft({ ...draft, logo_url: url })}
                 folder="broadcast-partners"
+                label="Logo"
               />
               <Input
                 value={draft.logo_url ?? ""}
