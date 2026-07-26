@@ -141,6 +141,57 @@ export function BroadcastPartnersAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Local optimistic order for drag & drop
+  const [order, setOrder] = useState<Partner[]>([]);
+  useEffect(() => {
+    setOrder(partners);
+  }, [partners]);
+
+  const reorder = useMutation({
+    mutationFn: async (list: Partner[]) => {
+      // Persist a normalized position for every row (0..n-1)
+      const updates = list.map((p, i) =>
+        supabase.from("broadcast_partners").update({ position: i }).eq("id", p.id),
+      );
+      const results = await Promise.all(updates);
+      const err = results.find((r) => r.error)?.error;
+      if (err) throw err;
+    },
+    onSuccess: () => {
+      toast.success("Ordre mis à jour");
+      invalidate();
+    },
+    onError: (e: Error) => {
+      toast.error(e.message);
+      setOrder(partners);
+    },
+  });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = order.findIndex((p) => p.id === active.id);
+    const newIndex = order.findIndex((p) => p.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const next = arrayMove(order, oldIndex, newIndex);
+    setOrder(next);
+    reorder.mutate(next);
+  };
+
+  const moveByOne = (id: string, dir: -1 | 1) => {
+    const idx = order.findIndex((p) => p.id === id);
+    const j = idx + dir;
+    if (idx < 0 || j < 0 || j >= order.length) return;
+    const next = arrayMove(order, idx, j);
+    setOrder(next);
+    reorder.mutate(next);
+  };
+
   const toggleActive = useMutation({
     mutationFn: async (p: Partner) => {
       const { error } = await supabase
