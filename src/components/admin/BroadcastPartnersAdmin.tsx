@@ -32,6 +32,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { ALL_SURFACES, SURFACE_LABELS, type Surface } from "@/lib/surface";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Partner = {
   id: string;
@@ -43,6 +45,7 @@ type Partner = {
   html_snippet: string | null;
   position: number;
   is_active: boolean;
+  visible_on: string[] | null;
 };
 
 type Draft = Omit<Partner, "id" | "position"> & { id?: string; position?: number };
@@ -55,6 +58,7 @@ const EMPTY: Draft = {
   alt_text: "",
   html_snippet: "",
   is_active: true,
+  visible_on: [...ALL_SURFACES],
 };
 
 export function BroadcastPartnersAdmin() {
@@ -114,6 +118,9 @@ export function BroadcastPartnersAdmin() {
         alt_text: d.alt_text || null,
         html_snippet: safeHtml,
         is_active: d.is_active,
+        visible_on: (d.visible_on && d.visible_on.length > 0
+          ? d.visible_on
+          : [...ALL_SURFACES]) as string[],
       };
 
       if (d.id) {
