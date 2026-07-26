@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isNative } from "@/lib/native";
 import { useT } from "@/lib/i18n";
 import { sanitizePartnerHtml } from "@/lib/sanitize-partner-html";
+import { getSurface, type Surface } from "@/lib/surface";
 
 type Partner = {
   id: string;
@@ -13,6 +14,7 @@ type Partner = {
   link_url: string | null;
   alt_text: string | null;
   html_snippet: string | null;
+  visible_on: string[] | null;
 };
 
 export function BroadcastPartners() {
@@ -25,7 +27,7 @@ export function BroadcastPartners() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("broadcast_partners")
-        .select("id,name,kind,logo_url,link_url,alt_text,html_snippet")
+        .select("id,name,kind,logo_url,link_url,alt_text,html_snippet,visible_on")
         .eq("is_active", true)
         .order("position", { ascending: true })
         .order("created_at", { ascending: true });
@@ -39,12 +41,23 @@ export function BroadcastPartners() {
   if (hydrated && isNative()) return null;
   if (!data || data.length === 0) return null;
 
+  // Avant hydratation on ne connaît pas encore la surface : on rend tout
+  // le monde pour éviter un flash, puis on filtre côté client.
+  const surface: Surface | null = hydrated ? getSurface() : null;
+  const visible = surface
+    ? data.filter((p) => {
+        const list = p.visible_on ?? ["web_desktop", "pwa_android", "pwa_ios"];
+        return list.includes(surface);
+      })
+    : data;
+  if (visible.length === 0) return null;
+
   return (
     <section className="space-y-3">
       <h2 className="section-title">{t("page.about.broadcasters.title")}</h2>
       <div className="card-brut p-4">
         <div className="flex flex-wrap items-center justify-center gap-6">
-          {data.map((p) => (
+          {visible.map((p) => (
             <PartnerItem key={p.id} p={p} />
           ))}
         </div>
