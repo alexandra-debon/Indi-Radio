@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import { isNative } from "@/lib/native";
 import { useT } from "@/lib/i18n";
+import { sanitizePartnerHtml } from "@/lib/sanitize-partner-html";
 
 type Partner = {
   id: string;
@@ -72,11 +72,8 @@ export function PartnerItem({ p }: { p: Partner }) {
     );
   }
   if (p.kind === "html" && p.html_snippet) {
-    const clean = DOMPurify.sanitize(p.html_snippet, {
-      ALLOWED_TAGS: ["a", "img", "span", "div", "br"],
-      ALLOWED_ATTR: ["href", "src", "alt", "title", "target", "rel", "class", "style", "width", "height"],
-      ADD_ATTR: ["target"],
-    });
+    const clean = sanitizePartnerHtml(p.html_snippet);
+    if (!clean) return null;
     return (
       <div
         className="broadcast-html [&_a]:inline-block [&_img]:h-16 [&_img]:w-auto [&_img]:max-w-[220px] [&_img]:object-contain"
