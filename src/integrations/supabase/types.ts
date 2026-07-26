@@ -206,6 +206,7 @@ export type Database = {
           name: string
           position: number
           updated_at: string
+          visible_on: string[]
         }
         Insert: {
           alt_text?: string | null
@@ -219,6 +220,7 @@ export type Database = {
           name: string
           position?: number
           updated_at?: string
+          visible_on?: string[]
         }
         Update: {
           alt_text?: string | null
@@ -232,6 +234,7 @@ export type Database = {
           name?: string
           position?: number
           updated_at?: string
+          visible_on?: string[]
         }
         Relationships: []
       }
