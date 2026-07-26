@@ -290,6 +290,20 @@ export function BroadcastPartnersAdmin() {
                 onChange={(e) => setDraft({ ...draft, logo_url: e.target.value })}
                 placeholder="…ou colle une URL de logo distant"
               />
+              {draft.logo_url && (
+                <div className="text-[11px]">
+                  {logoError ? (
+                    <span className="text-destructive">{logoError}</span>
+                  ) : logoDims ? (
+                    <span className={logoWarning ? "text-amber-600" : "text-muted-foreground"}>
+                      Dimensions : {logoDims.w}×{logoDims.h}px
+                      {logoWarning ? ` — ${logoWarning}` : " — OK"}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">Analyse du logo…</span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Lien au clic</label>
