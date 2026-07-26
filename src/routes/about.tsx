@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RADIO_CONFIG } from "@/config/radio";
 import sacemLogo from "@/assets/sacem-logo.png.asset.json";
-import tuneinLogo from "@/assets/tunein-logo.webp.asset.json";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
+import { BroadcastPartners } from "@/components/about/BroadcastPartners";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
@@ -62,13 +62,10 @@ function AboutPage() {
           <p>{t("page.about.radio.p3").replace("{station}", RADIO_CONFIG.stationName)}</p>
           <div className="flex flex-wrap items-start justify-center gap-8 pt-4">
             <img src={sacemLogo.url} alt="Logo SACEM" className="h-20 w-20 object-contain" />
-            <div className="flex flex-col items-center gap-1">
-              <img src={tuneinLogo.url} alt="Logo TuneIn" className="h-20 w-20 object-contain" />
-              <span className="text-xs text-muted-foreground">{t("page.about.tunein.caption")}</span>
-            </div>
           </div>
         </div>
       </section>
+      <BroadcastPartners />
     </div>
   );
 }
