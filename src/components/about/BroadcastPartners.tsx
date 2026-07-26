@@ -68,17 +68,25 @@ export function BroadcastPartners() {
 
 export function PartnerItem({ p }: { p: Partner }) {
   if (p.kind === "logo" && p.logo_url) {
+    const altText = (p.alt_text?.trim() || `${p.name} — diffuseur InDi RaDio`);
     const img = (
       <img
         src={p.logo_url}
-        alt={p.alt_text ?? p.name}
+        alt={altText}
         loading="lazy"
         decoding="async"
         className="h-12 w-auto max-w-[140px] object-contain transition hover:scale-105 sm:h-16 sm:max-w-[180px] md:h-20 md:max-w-[220px]"
       />
     );
     return p.link_url ? (
-      <a href={p.link_url} target="_blank" rel="noopener noreferrer" title={p.name} aria-label={p.name}>
+      <a
+        href={p.link_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={p.name}
+        aria-label={`${p.name} (ouvre dans un nouvel onglet)`}
+        className="inline-flex rounded outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
         {img}
       </a>
     ) : (
@@ -90,7 +98,7 @@ export function PartnerItem({ p }: { p: Partner }) {
     if (!clean) return null;
     return (
       <div
-        className="broadcast-html [&_a]:inline-block [&_img]:h-12 [&_img]:w-auto [&_img]:max-w-[180px] [&_img]:object-contain sm:[&_img]:h-16 sm:[&_img]:max-w-[220px] md:[&_img]:h-20 md:[&_img]:max-w-[260px]"
+        className="broadcast-html [&_a]:inline-block [&_a]:rounded [&_a]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-primary [&_a:focus-visible]:ring-offset-2 [&_a:focus-visible]:ring-offset-background [&_img]:h-12 [&_img]:w-auto [&_img]:max-w-[180px] [&_img]:object-contain sm:[&_img]:h-16 sm:[&_img]:max-w-[220px] md:[&_img]:h-20 md:[&_img]:max-w-[260px]"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: clean }}
       />
