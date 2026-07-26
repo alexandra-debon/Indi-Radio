@@ -11,6 +11,16 @@ const GOOGLE_WEB_CLIENT_ID = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID as
   | string
   | undefined;
 
+/**
+ * Google iOS Client ID (OAuth iOS application). Requis pour que le plugin
+ * natif iOS utilise le bon client OAuth (schéma personnalisé
+ * com.googleusercontent.apps.*), sinon Google rejette la requête avec
+ * « Custom scheme URIs are not allowed for 'WEB' client type ».
+ */
+const GOOGLE_IOS_CLIENT_ID = import.meta.env.VITE_GOOGLE_IOS_CLIENT_ID as
+  | string
+  | undefined;
+
 let googleInitialized = false;
 
 async function ensureGoogleInit() {
@@ -18,9 +28,10 @@ async function ensureGoogleInit() {
   const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
   await GoogleAuth.initialize({
     clientId: GOOGLE_WEB_CLIENT_ID,
+    ...(GOOGLE_IOS_CLIENT_ID ? { iosClientId: GOOGLE_IOS_CLIENT_ID } : {}),
     scopes: ["profile", "email"],
     grantOfflineAccess: false,
-  });
+  } as Parameters<typeof GoogleAuth.initialize>[0]);
   googleInitialized = true;
 }
 
