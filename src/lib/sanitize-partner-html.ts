@@ -41,6 +41,17 @@ function ensureHooks() {
       if (!isSafeUrl(href)) node.removeAttribute("href");
       node.setAttribute("target", "_blank");
       node.setAttribute("rel", "noopener noreferrer nofollow");
+      const label =
+        node.getAttribute("aria-label") ||
+        node.getAttribute("title") ||
+        (node.textContent || "").trim() ||
+        node.querySelector("img")?.getAttribute("alt") ||
+        "";
+      if (label) {
+        node.setAttribute("aria-label", `${label} (ouvre dans un nouvel onglet)`);
+      } else {
+        node.setAttribute("aria-label", "Lien partenaire (ouvre dans un nouvel onglet)");
+      }
     }
 
     if (tag === "img") {
@@ -50,8 +61,18 @@ function ensureHooks() {
         return;
       }
       node.setAttribute("loading", "lazy");
+      node.setAttribute("decoding", "async");
       node.setAttribute("referrerpolicy", "no-referrer");
-      if (!node.getAttribute("alt")) node.setAttribute("alt", "");
+      const existingAlt = node.getAttribute("alt");
+      if (!existingAlt || existingAlt.trim().length === 0) {
+        const parentLink = node.closest("a");
+        const fallback =
+          parentLink?.getAttribute("title") ||
+          parentLink?.getAttribute("aria-label") ||
+          "";
+        // Linked images MUST have an accessible name; decorative-only images stay empty.
+        node.setAttribute("alt", parentLink ? fallback || "Logo partenaire" : "");
+      }
     }
 
     for (const attr of Array.from(node.attributes)) {
