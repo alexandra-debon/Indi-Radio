@@ -11,6 +11,11 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { ArrowDown, ArrowUp, GripVertical, Plus, Save, Trash2 } from "lucide-react";
 import { PartnerItem } from "@/components/about/BroadcastPartners";
 import {
+  sanitizePartnerHtml,
+  hasRenderableHtml,
+  PARTNER_HTML_MAX_LENGTH,
+} from "@/lib/sanitize-partner-html";
+import {
   DndContext,
   PointerSensor,
   KeyboardSensor,
@@ -78,7 +83,28 @@ export function BroadcastPartnersAdmin() {
     mutationFn: async (d: Draft) => {
       if (!d.name.trim()) throw new Error("Nom requis");
       if (d.kind === "logo" && !d.logo_url) throw new Error("URL du logo requise");
-      if (d.kind === "html" && !d.html_snippet?.trim()) throw new Error("Snippet HTML requis");
+      let safeHtml: string | null = null;
+      if (d.kind === "html") {
+        const raw = d.html_snippet?.trim() ?? "";
+        if (!raw) throw new Error("Snippet HTML requis");
+        if (raw.length > PARTNER_HTML_MAX_LENGTH) {
+          throw new Error(`Snippet trop long (max ${PARTNER_HTML_MAX_LENGTH} caractères)`);
+        }
+        safeHtml = sanitizePartnerHtml(raw);
+        if (!hasRenderableHtml(safeHtml)) {
+          throw new Error("Snippet HTML invalide après filtrage (aucun lien/image sûr détecté)");
+        }
+      }
+      if (d.kind === "logo" && d.link_url) {
+        try {
+          const u = new URL(d.link_url);
+          if (u.protocol !== "http:" && u.protocol !== "https:") {
+            throw new Error("bad-proto");
+          }
+        } catch {
+          throw new Error("Le lien au clic doit être une URL http(s) valide");
+        }
+      }
 
       const payload = {
         name: d.name.trim(),
@@ -86,7 +112,7 @@ export function BroadcastPartnersAdmin() {
         logo_url: d.kind === "logo" ? d.logo_url : null,
         link_url: d.link_url || null,
         alt_text: d.alt_text || null,
-        html_snippet: d.kind === "html" ? d.html_snippet : null,
+        html_snippet: safeHtml,
         is_active: d.is_active,
       };
 
