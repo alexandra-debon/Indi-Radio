@@ -53,7 +53,7 @@ export function BroadcastPartners() {
   );
 }
 
-function PartnerItem({ p }: { p: Partner }) {
+export function PartnerItem({ p }: { p: Partner }) {
   if (p.kind === "logo" && p.logo_url) {
     const img = (
       <img
