@@ -75,7 +75,7 @@ export const Route = createFileRoute("/")({
           },
           logo: "https://radio.indi-art-culture.com/icons/apple-touch-icon.png",
           description:
-            "Radio gratuite 24/7 sans pub, sans info. Écoute la radio musique indé et le réseau social musique de la scène indépendante.",
+            "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante.",
           parentOrganization: {
             "@id": "https://radio.indi-art-culture.com/#org",
           },
