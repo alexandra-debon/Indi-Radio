@@ -1,5 +1,5 @@
 # robots.txt — InDi RaDio
-# Dernière mise à jour : 2026-07-24
+# Dernière mise à jour : 2026-07-27
 # Site principal : https://radio.indi-art-culture.com
 
 # ============================================================
