@@ -4,21 +4,23 @@ import { RADIO_CONFIG } from "@/config/radio";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Conditions d'utilisation — InDi RaDio musique indé" },
+      { title: "Conditions d'utilisation — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Conditions générales d'utilisation d'InDi RaDio, radio musique indépendante et réseau social musique : compte, contenus, modération et tolérance zéro.",
+          "Conditions générales d'utilisation d'InDi RaDio, la radio 24/7 de la musique indépendante et le réseau social musique : compte, contenus, modération et tolérance zéro."
       },
       { name: "keywords", content: "radio musique indépendante, réseau social musique, conditions utilisation, CGU InDi RaDio, modération" },
-      { property: "og:title", content: "Conditions d'utilisation — InDi RaDio musique indé" },
+      { property: "og:title", content: "Conditions d'utilisation — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Conditions générales d'utilisation d'InDi RaDio, radio musique indépendante et réseau social musique : compte, contenus, modération et tolérance zéro.",
+          "Conditions générales d'utilisation d'InDi RaDio, la radio 24/7 de la musique indépendante et le réseau social musique : compte, contenus, modération et tolérance zéro."
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/terms" },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Conditions d'utilisation — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Conditions générales d'utilisation d'InDi RaDio, la radio 24/7 de la musique indépendante et le réseau social musique : compte, contenus, modération et tolérance zéro." },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/terms" }],
   }),

@@ -29,6 +29,8 @@ export const Route = createFileRoute("/podcasts")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "twitter:image", content: OG_PODCASTS },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/podcasts" }],

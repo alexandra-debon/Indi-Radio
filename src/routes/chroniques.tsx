@@ -15,11 +15,13 @@ const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 export const Route = createFileRoute("/chroniques")({
   head: () => ({
     meta: [
-      { title: "Chroniques — Radio musique indépendante sans pub InDi RaDio" },
-      { name: "description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio InDi RaDio." },
+      { title: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio musique indépendante, radio sans pub, chroniques albums indépendants, découvertes musicales, InDi RaDio" },
-      { property: "og:title", content: "Chroniques — Radio musique indépendante sans pub InDi RaDio" },
-      { property: "og:description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio InDi RaDio." },
+      { property: "og:title", content: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio 24/7 de la musique indépendante InDi RaDio." },
+      { name: "twitter:title", content: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://radio.indi-art-culture.com/chroniques" },
       { property: "og:image", content: OG_CHRONIQUES },

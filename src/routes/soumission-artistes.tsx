@@ -10,26 +10,28 @@ const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
 export const Route = createFileRoute("/soumission-artistes")({
   head: () => ({
     meta: [
-      { title: "Soumission artistes — Radio musique indé InDi RaDio" },
+      { title: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique. Soumission 100% gratuite.",
+          "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite."
       },
       { name: "keywords", content: "radio musique indé, réseau social musique, soumission artistes indépendants, radio gratuite, diffusion artistes indépendants, InDi RaDio" },
-      { property: "og:title", content: "Soumission artistes — Radio musique indé InDi RaDio" },
+      { property: "og:title", content: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique. Soumission 100% gratuite.",
+          "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite."
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/soumission-artistes" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_SOUMISSION },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "twitter:card", content: "summary_large_image" },
-      { property: "twitter:image", content: OG_SOUMISSION },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite." },
+      { name: "twitter:image", content: OG_SOUMISSION },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/soumission-artistes" }],
   }),

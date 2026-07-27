@@ -12,10 +12,12 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 export const Route = createFileRoute("/artistes")({
   head: () => ({
     meta: [
-      { title: "Galerie Artistes — InDi RaDio" },
-      { name: "description", content: "Annuaire des artistes indépendants certifiés diffusés sur InDi RaDio. Découvre leurs profils, écoute leurs projets et échange avec eux." },
-      { property: "og:title", content: "Galerie Artistes — InDi RaDio" },
-      { property: "og:description", content: "Annuaire des artistes indépendants certifiés diffusés sur InDi RaDio." },
+      { title: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio. Découvre leurs profils et échange avec eux." },
+      { property: "og:title", content: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio." },
+      { name: "twitter:title", content: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/artistes" },
       { property: "og:type", content: "website" },
     ],

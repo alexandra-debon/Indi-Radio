@@ -5,21 +5,23 @@ import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Confidentialité — Radio musique indépendante InDi RaDio" },
+      { title: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Politique de confidentialité d'InDi RaDio, radio musique indépendante : données collectées, notifications, cookies et exercice des droits.",
+          "Politique de confidentialité d'InDi RaDio, la radio 24/7 de la musique indépendante : données collectées, notifications, cookies et exercice des droits."
       },
       { name: "keywords", content: "radio musique indépendante, politique confidentialité, données personnelles, InDi RaDio" },
-      { property: "og:title", content: "Confidentialité — Radio musique indépendante InDi RaDio" },
+      { property: "og:title", content: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Politique de confidentialité d'InDi RaDio, radio musique indépendante : données collectées, notifications, cookies et exercice des droits.",
+          "Politique de confidentialité d'InDi RaDio, la radio 24/7 de la musique indépendante : données collectées, notifications, cookies et exercice des droits."
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/privacy" },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Politique de confidentialité d'InDi RaDio, la radio 24/7 de la musique indépendante : données collectées, notifications, cookies et exercice des droits." },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/privacy" }],
   }),

@@ -55,6 +55,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Radio gratuite 24/7 de la musique indépendante — InDi RaDio" },
+      { name: "twitter:description", content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante." },
       { name: "twitter:image", content: OG_HOME },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],

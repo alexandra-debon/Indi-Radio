@@ -8,11 +8,13 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/chart")({
   head: () => ({
     meta: [
-      { title: "Top 25 des titres — Radio sans pub InDi RaDio" },
-      { name: "description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio sans pub InDi RaDio. Musique indépendante 24/7." },
+      { title: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio sans pub, top 25 musique indépendante, classement radio gratuite, musique indé, InDi RaDio" },
-      { property: "og:title", content: "Top 25 des titres — Radio sans pub InDi RaDio" },
-      { property: "og:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio sans pub InDi RaDio. Musique indépendante 24/7." },
+      { property: "og:title", content: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
+      { name: "twitter:title", content: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/chart" },
       { property: "og:type", content: "website" },
     ],

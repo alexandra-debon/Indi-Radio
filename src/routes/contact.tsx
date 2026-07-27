@@ -10,26 +10,28 @@ const OG_CONTACT = `${BASE_URL}${ogContact}`;
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Radio musique indépendante InDi RaDio" },
+      { title: "Contact — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire.",
+          "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire."
       },
       { name: "keywords", content: "radio musique indépendante, radio gratuite, radio sans pub, contact InDi RaDio, InDi ArT CulTuRe" },
-      { property: "og:title", content: "Contact — Radio musique indépendante InDi RaDio" },
+      { property: "og:title", content: "Contact — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Contacte l'équipe InDi RaDio, radio gratuite musique indépendante sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire.",
+          "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire."
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/contact" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_CONTACT },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "twitter:card", content: "summary_large_image" },
-      { property: "twitter:image", content: OG_CONTACT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire." },
+      { name: "twitter:image", content: OG_CONTACT },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/contact" }],
   }),
