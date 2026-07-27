@@ -76,7 +76,7 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Contact — 24/7 Independent Music Radio InDi RaDio", description: "Get in touch with the InDi RaDio team on 24/7 independent music radio ad-free, and InDi ArT CulTuRe." },
   },
   "/soumission-artistes": {
-    fr: { title: "Soumission artistes — Radio musique indé InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique." },
+    fr: { title: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio", description: "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio." },
     en: { title: "Artist submissions — 24/7 Independent Music Radio InDi RaDio", description: "Independent artists: submit your tracks to be played on InDi RaDio, the 24/7 independent music radio and music social network." },
   },
   "/newsletter": {
