@@ -29,17 +29,17 @@ type LikeRow = { coup_id: string; user_id: string };
 export const Route = createFileRoute("/coups-de-coeur")({
   head: () => ({
     meta: [
-      { title: "Coups de Cœur InDi RaDiO — Radio musique indé & réseau social musique" },
+      { title: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio musique indé et le réseau social musique.",
+          "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio 24/7 de la musique indépendante InDi RaDio."
       },
       { name: "keywords", content: "radio musique indé, réseau social musique, coups de cœur musique indépendante, découvertes artistes indépendants, InDi RaDio" },
-      { property: "og:title", content: "Coups de Cœur InDi RaDiO — Radio musique indé & réseau social musique" },
+      { property: "og:title", content: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
-        content: "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio musique indé et le réseau social musique.",
+        content: "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio 24/7 de la musique indépendante InDi RaDio."
       },
       { property: "og:type", content: "website" },
       {

@@ -21,11 +21,13 @@ const OG_CLIPS = `${BASE_URL}${ogClips}`;
 export const Route = createFileRoute("/clips")({
   head: () => ({
     meta: [
-      { title: "Clip Addict — Radio gratuite musique indépendante InDi RaDio" },
-      { name: "description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio, radio gratuite musique indépendante sans pub. YouTube et Vimeo directement." },
+      { title: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub. YouTube et Vimeo directement." },
       { name: "keywords", content: "radio gratuite, clips musique indépendante, radio sans pub, playlists vidéo indé, InDi RaDio" },
-      { property: "og:title", content: "Clip Addict — Radio gratuite musique indépendante InDi RaDio" },
-      { property: "og:description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio, radio gratuite musique indépendante sans pub." },
+      { property: "og:title", content: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub." },
+      { name: "twitter:title", content: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub." },
       { property: "og:url", content: `${BASE_URL}/clips` },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_CLIPS },

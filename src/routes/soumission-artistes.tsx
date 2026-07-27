@@ -10,18 +10,18 @@ const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
 export const Route = createFileRoute("/soumission-artistes")({
   head: () => ({
     meta: [
-      { title: "Soumission artistes — Radio musique indé InDi RaDio" },
+      { title: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique. Soumission 100% gratuite.",
+          "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite."
       },
       { name: "keywords", content: "radio musique indé, réseau social musique, soumission artistes indépendants, radio gratuite, diffusion artistes indépendants, InDi RaDio" },
-      { property: "og:title", content: "Soumission artistes — Radio musique indé InDi RaDio" },
+      { property: "og:title", content: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content:
-          "Artistes indépendants : proposez vos titres à la diffusion sur InDi RaDio, la radio musique indé et le réseau social musique. Soumission 100% gratuite.",
+          "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite."
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/soumission-artistes" },
       { property: "og:type", content: "website" },

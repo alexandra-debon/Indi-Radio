@@ -20,17 +20,17 @@ const BASE_URL = "https://radio.indi-art-culture.com";
 export const Route = createFileRoute("/magazines")({
   head: () => ({
     meta: [
-      { title: "Magazine Indi Art Culture — Radio musique indé & réseau social musique" },
+      { title: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
-          "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio musique indé et du réseau social musique de la scène indépendante.",
+          "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante."
       },
       { name: "keywords", content: "radio musique indé, réseau social musique, magazine interactif Indi Art Culture, magazine indépendant, InDi RaDio" },
-      { property: "og:title", content: "Magazine Indi Art Culture — Radio musique indé & réseau social musique" },
+      { property: "og:title", content: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
-        content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio musique indé et du réseau social musique de la scène indépendante.",
+        content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante."
       },
       { property: "og:url", content: `${BASE_URL}/magazines` },
       { property: "og:type", content: "website" },

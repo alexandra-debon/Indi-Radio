@@ -37,11 +37,13 @@ const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 export const Route = createFileRoute("/actus")({
   head: () => ({
     meta: [
-      { title: "Indi Rézo — Actu scène indé & réseau social InDi RaDio" },
-      { name: "description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
+      { title: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
       { name: "keywords", content: "radio musique indé, réseau social musique, radio musique indépendante, actus indépendantes, InDi RaDio, Indi Rézo" },
-      { property: "og:title", content: "Indi Rézo — Actu scène indé & réseau social InDi RaDio" },
-      { property: "og:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe. Radio musique indé, clips, chroniques et podcasts." },
+      { property: "og:title", content: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
+      { name: "twitter:title", content: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_ACTUS },

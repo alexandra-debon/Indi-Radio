@@ -8,14 +8,14 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "À propos — Radio gratuite musique indépendante InDi RaDio" },
+      { title: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
         content:
           "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
       },
       { name: "keywords", content: "radio gratuite, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, InDi RaDio, InDi ArT CulTuRe" },
-      { property: "og:title", content: "À propos — Radio gratuite musique indépendante InDi RaDio" },
+      { property: "og:title", content: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
         content: "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",

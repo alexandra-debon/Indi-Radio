@@ -13,11 +13,13 @@ const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]
 export const Route = createFileRoute("/top")({
   head: () => ({
     meta: [
-      { title: "Top — Radio musique indé & réseau social musique InDi RaDio" },
-      { name: "description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+      { title: "Top — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio musique indé, réseau social musique, top podcasts, top chroniques, radio musique indépendante, InDi RaDio" },
-      { property: "og:title", content: "Top — Radio musique indé & réseau social musique InDi RaDio" },
-      { property: "og:description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur InDi RaDio, la radio musique indé et le réseau social musique." },
+      { property: "og:title", content: "Top — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur la radio 24/7 de la musique indépendante InDi RaDio." },
+      { name: "twitter:title", content: "Top — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/top" },
       { property: "og:type", content: "website" },
     ],

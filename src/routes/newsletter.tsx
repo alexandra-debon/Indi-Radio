@@ -21,11 +21,13 @@ export const Route = createFileRoute("/newsletter")({
   }),
   head: () => ({
     meta: [
-      { title: "Newsletter — Radio gratuite musique indépendante InDi RaDio" },
-      { name: "description", content: "Inscris-toi à la newsletter InDi RaDio, la radio gratuite musique indépendante sans pub, et reste connecté à la scène indé." },
+      { title: "Newsletter — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
       { name: "keywords", content: "radio gratuite, radio musique indépendante, radio sans pub, newsletter musique indé, InDi RaDio" },
-      { property: "og:title", content: "Newsletter — Radio gratuite musique indépendante InDi RaDio" },
-      { property: "og:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio gratuite musique indépendante sans pub, et reste connecté à la scène indé." },
+      { property: "og:title", content: "Newsletter — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
+      { name: "twitter:title", content: "Newsletter — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/newsletter" },
       { property: "og:type", content: "website" },
     ],
