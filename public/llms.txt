@@ -1,9 +1,9 @@
 # Indi Radio
 
-> La radio d'InDi ArT CulTuRe : le live 24/7, le mur social, les podcasts, les émissions et les actus des arts indépendants.
+> La radio d'InDi ArT CulTuRe : le live 24/7 de la musique indépendante, le mur social, les podcasts, les émissions et les actus.
 
-Indi Radio est un magazine interactif et un hub communautaire dédié aux
-arts indépendants. Écoute sans compte ; crée un compte pour liker, voter,
+Indi Radio est un magazine interactif et un hub communautaire dédié à la
+musique indépendante. Écoute sans compte ; crée un compte pour liker, voter,
 commenter, poster sur le mur et envoyer des dédicaces.
 
 ## Pages
