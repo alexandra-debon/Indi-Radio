@@ -11,9 +11,9 @@ export type SeoBundle = Record<Lang, SeoEntry>;
 export const STATIC_SEO: Record<string, SeoBundle> = {
   "/": {
     fr: {
-      title: "Radio gratuite 24/7 musique indépendante — InDi RaDio",
+      title: "Radio gratuite 24/7 de la musique indépendante — InDi RaDio",
       description:
-        "Radio gratuite 24/7 sans pub, sans info. Écoute la radio musique indé et le réseau social musique de la scène indépendante sur InDi RaDio.",
+        "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante.",
     },
     en: {
       title: "Free 24/7 Independent Music Radio — InDi RaDio",
