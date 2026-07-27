@@ -12,16 +12,18 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
+          "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
       },
       { name: "keywords", content: "radio gratuite, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, InDi RaDio, InDi ArT CulTuRe" },
       { property: "og:title", content: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
       {
         property: "og:description",
-        content: "InDi RaDio, radio gratuite musique indépendante 24/7 sans pub. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
+        content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe.",
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/about" },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe." },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/about" }],
   }),

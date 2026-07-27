@@ -34,6 +34,8 @@ export const Route = createFileRoute("/magazines")({
       },
       { property: "og:url", content: `${BASE_URL}/magazines` },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante." },
     ],
     links: [{ rel: "canonical", href: `${BASE_URL}/magazines` }],
   }),

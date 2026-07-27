@@ -20,6 +20,8 @@ export const Route = createFileRoute("/privacy")({
       },
       { property: "og:url", content: "https://radio.indi-art-culture.com/privacy" },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Politique de confidentialité d'InDi RaDio, la radio 24/7 de la musique indépendante : données collectées, notifications, cookies et exercice des droits." },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/privacy" }],
   }),

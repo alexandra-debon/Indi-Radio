@@ -19,6 +19,8 @@ export const Route = createFileRoute("/moderation")({
           "Notre approche de la modération sur le réseau social musique InDi RaDio, la radio 24/7 de la musique indépendante : dialogue, valeurs communautaires et respect entre auditeurs et artistes indépendants."
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Modération & valeurs — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Notre approche de la modération sur le réseau social musique InDi RaDio, la radio 24/7 de la musique indépendante : dialogue, valeurs communautaires et respect entre auditeurs et artistes indépendants." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/moderation" },
     ],
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/moderation" }],

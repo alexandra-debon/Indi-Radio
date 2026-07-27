@@ -42,6 +42,8 @@ export const Route = createFileRoute("/coups-de-coeur")({
         content: "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio 24/7 de la musique indépendante InDi RaDio."
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:description", content: "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio 24/7 de la musique indépendante InDi RaDio." },
       {
         property: "og:url",
         content: "https://radio.indi-art-culture.com/coups-de-coeur",
