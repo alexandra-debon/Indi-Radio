@@ -8,6 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import ogHome from "@/assets/og-home.jpg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT } from "@/lib/i18n";
+import { renderRich } from "@/lib/rich-text";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -109,7 +110,9 @@ function PostDetailPage() {
           </div>
           {body && (
             <p className="whitespace-pre-wrap text-sm">
-              <TranslatedText entityType="post" entityKey={post.id} field="content" text={body} />
+              <TranslatedText entityType="post" entityKey={post.id} field="content" text={body}>
+                {(txt) => <>{renderRich(txt)}</>}
+              </TranslatedText>
             </p>
           )}
           <UrlEmbeds text={post.content ?? ""} />

@@ -8,6 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import ogActus from "@/assets/og-actus.jpg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { renderRich } from "@/lib/rich-text";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogActus}`;
@@ -123,7 +124,9 @@ function NewsDetailPage() {
           </div>
           {body && (
             <p className="whitespace-pre-wrap text-sm">
-              <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body} />
+              <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body}>
+                {(txt) => <>{renderRich(txt)}</>}
+              </TranslatedText>
             </p>
           )}
           <UrlEmbeds text={post.content ?? ""} />
