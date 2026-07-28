@@ -123,7 +123,9 @@ function NewsDetailPage() {
           </div>
           {body && (
             <p className="whitespace-pre-wrap text-sm">
-              <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body} />
+              <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body}>
+                {(txt) => <>{renderRich(txt)}</>}
+              </TranslatedText>
             </p>
           )}
           <UrlEmbeds text={post.content ?? ""} />
