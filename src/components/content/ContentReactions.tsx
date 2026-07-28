@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
@@ -186,7 +187,7 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       </div>
       {replyTo === c.id && session && (
         <div className="mt-2 space-y-1" data-reply-composer>
-          <Textarea rows={2} placeholder={t("comment.replyPlaceholder")} value={replyText} onChange={(e) => setReplyText(e.target.value)} />
+          <MentionTextarea rows={2} placeholder={t("comment.replyPlaceholder")} value={replyText} onChange={(e) => setReplyText(e.target.value)} />
           <MultiImageUploader values={replyImages} onChange={setReplyImages} folder="content-comments" max={4} />
           <div className="flex gap-2">
             <Button size="sm" disabled={add.isPending || (!replyText.trim() && replyImages.length === 0)} onClick={() => add.mutate({ body: replyText, parentId: c.id, images: replyImages })}>{t("comment.reply")}</Button>
@@ -206,7 +207,7 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     <div className="space-y-3" data-reply-scope>
       {session ? (
         <div className="space-y-2" data-reply-composer>
-          <Textarea rows={2} placeholder={t("comment.placeholder")} value={text} onChange={(e) => setText(e.target.value)} />
+          <MentionTextarea rows={2} placeholder={t("comment.placeholder")} value={text} onChange={(e) => setText(e.target.value)} />
           <MultiImageUploader values={images} onChange={setImages} folder="content-comments" max={4} />
           <Button size="sm" disabled={add.isPending || (!text.trim() && images.length === 0)} onClick={() => add.mutate({ body: text, parentId: null, images })}>{t("comment.publish")}</Button>
         </div>
@@ -305,7 +306,7 @@ export function ContentRatingSection({ contentType, contentId }: Props) {
       </div>
       {stars > 0 && (
         <div className="space-y-2">
-          <Textarea rows={2} placeholder="Un commentaire ? (optionnel)" value={comment} onChange={(e) => setComment(e.target.value)} />
+          <MentionTextarea rows={2} placeholder="Un commentaire ? (optionnel)" value={comment} onChange={(e) => setComment(e.target.value)} />
           <Button size="sm" disabled={rate.isPending} onClick={() => requireAuth(() => rate.mutate())}>Publier ma note</Button>
         </div>
       )}
