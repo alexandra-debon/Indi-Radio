@@ -1668,6 +1668,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      resolve_pseudo_alias: { Args: { _alias: string }; Returns: string }
     }
     Enums: {
       app_role: "auditeur" | "artiste" | "animateur" | "admin"
