@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { ReportButton } from "@/components/moderation/ReportButton";
@@ -150,7 +151,7 @@ export function CoupComments({ coupId }: Props) {
         <div className="mt-3 space-y-3" data-reply-scope>
           {session ? (
             <div className="space-y-2" data-reply-composer>
-              <Textarea
+              <MentionTextarea
                 rows={2}
                 placeholder="Écris un commentaire…"
                 value={text}
@@ -216,7 +217,7 @@ export function CoupComments({ coupId }: Props) {
 
                   {replyTo === c.id && session && (
                     <div className="mt-2 space-y-1">
-                      <Textarea
+                      <MentionTextarea
                         rows={2}
                         placeholder="Ta réponse…"
                         value={replyText}
