@@ -3,6 +3,9 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : "",
+  }),
   head: () => ({
     meta: [
       { title: "Connexion — Indi Radio" },
@@ -16,13 +19,22 @@ export const Route = createFileRoute("/auth")({
   component: AuthRedirect,
 });
 
-// The auth dialog is global — this route just opens it and redirects home.
+// The auth dialog is global — this route opens it and, when a session becomes
+// available, sends the user to `next` (used by the OAuth consent flow) or home.
 function AuthRedirect() {
-  const { openAuth } = useAuth();
+  const { openAuth, session } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   useEffect(() => {
+    if (session) {
+      if (next) {
+        window.location.replace(next);
+      } else {
+        navigate({ to: "/", replace: true });
+      }
+      return;
+    }
     openAuth();
-    navigate({ to: "/", replace: true });
-  }, [openAuth, navigate]);
+  }, [openAuth, navigate, session, next]);
   return null;
 }
