@@ -68,6 +68,7 @@ import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -386,6 +387,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
   id: '/albums/$albumId',
   path: '/albums/$albumId',
@@ -467,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -534,6 +541,7 @@ export interface FileRoutesByTo {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -603,6 +611,7 @@ export interface FileRoutesById {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -672,6 +681,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
@@ -739,6 +749,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
@@ -807,6 +818,7 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
@@ -868,6 +880,7 @@ export interface RootRouteChildren {
   PPostIdRoute: typeof PPostIdRoute
   TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
@@ -1298,6 +1311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$pseudo/albums/$albumId': {
       id: '/u/$pseudo/albums/$albumId'
       path: '/albums/$albumId'
@@ -1496,6 +1516,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPostIdRoute: PPostIdRoute,
   TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
