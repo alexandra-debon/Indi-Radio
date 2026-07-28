@@ -8,6 +8,7 @@ import { UserBadge } from "@/components/UserBadge";
 import ogActus from "@/assets/og-actus.jpg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { renderRich } from "@/lib/rich-text";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogActus}`;
