@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { ShareButton } from "@/components/share/ShareButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT } from "@/lib/i18n";
@@ -188,7 +189,7 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
       </div>
       {stars > 0 && (
         <div className="space-y-2">
-          <Textarea
+          <MentionTextarea
             rows={2}
             placeholder="Un commentaire ? (optionnel, publié avec ton pseudo)"
             value={comment}
