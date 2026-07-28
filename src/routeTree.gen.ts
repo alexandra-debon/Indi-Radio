@@ -24,6 +24,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ModerationRouteImport } from './routes/moderation'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MagazinesRouteImport } from './routes/magazines'
 import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
@@ -50,6 +51,8 @@ import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
@@ -64,6 +67,8 @@ import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -145,6 +150,11 @@ const NewsletterRoute = NewsletterRouteImport.update({
 const ModerationRoute = ModerationRouteImport.update({
   id: '/moderation',
   path: '/moderation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazinesRoute = MagazinesRouteImport.update({
@@ -277,6 +287,18 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedProfileIndexRoute =
   AuthenticatedProfileIndexRouteImport.update({
     id: '/profile/',
@@ -359,6 +381,17 @@ const AuthenticatedAdminDiagnosticsPseudosRoute =
     path: '/diagnostics-pseudos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
   id: '/albums/$albumId',
   path: '/albums/$albumId',
@@ -410,6 +443,7 @@ export interface FileRoutesByFullPath {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -425,6 +459,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -437,6 +473,8 @@ export interface FileRoutesByFullPath {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -473,6 +511,7 @@ export interface FileRoutesByTo {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -488,6 +527,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -500,6 +541,8 @@ export interface FileRoutesByTo {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -538,6 +581,7 @@ export interface FileRoutesById {
   '/dedicaces': typeof DedicacesRoute
   '/emissions': typeof EmissionsRouteWithChildren
   '/magazines': typeof MagazinesRouteWithChildren
+  '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
   '/podcasts': typeof PodcastsRoute
@@ -553,6 +597,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/top': typeof TopRoute
   '/top-users': typeof TopUsersRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -565,6 +611,8 @@ export interface FileRoutesById {
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
   '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -603,6 +651,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/mcp'
     | '/moderation'
     | '/newsletter'
     | '/podcasts'
@@ -618,6 +667,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/top'
     | '/top-users'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -630,6 +681,8 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
@@ -666,6 +719,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/mcp'
     | '/moderation'
     | '/newsletter'
     | '/podcasts'
@@ -681,6 +735,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/top'
     | '/top-users'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/notif-test'
     | '/notifications'
@@ -693,6 +749,8 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
@@ -730,6 +788,7 @@ export interface FileRouteTypes {
     | '/dedicaces'
     | '/emissions'
     | '/magazines'
+    | '/mcp'
     | '/moderation'
     | '/newsletter'
     | '/podcasts'
@@ -745,6 +804,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/top'
     | '/top-users'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
@@ -757,6 +818,8 @@ export interface FileRouteTypes {
     | '/p/$postId'
     | '/tag/$tag'
     | '/u/$pseudo'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/seo-preview'
@@ -795,6 +858,7 @@ export interface RootRouteChildren {
   DedicacesRoute: typeof DedicacesRoute
   EmissionsRoute: typeof EmissionsRouteWithChildren
   MagazinesRoute: typeof MagazinesRouteWithChildren
+  McpRoute: typeof McpRoute
   ModerationRoute: typeof ModerationRoute
   NewsletterRoute: typeof NewsletterRoute
   PodcastsRoute: typeof PodcastsRoute
@@ -810,10 +874,14 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TopRoute: typeof TopRoute
   TopUsersRoute: typeof TopUsersRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   PPostIdRoute: typeof PPostIdRoute
   TagTagRoute: typeof TagTagRoute
   UPseudoRoute: typeof UPseudoRouteWithChildren
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicIndexnowKeyDottxtRoute: typeof ApiPublicIndexnowKeyDottxtRoute
@@ -933,6 +1001,13 @@ declare module '@tanstack/react-router' {
       path: '/moderation'
       fullPath: '/moderation'
       preLoaderRoute: typeof ModerationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magazines': {
@@ -1117,6 +1192,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile/': {
       id: '/_authenticated/profile/'
       path: '/profile'
@@ -1214,6 +1303,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/diagnostics-pseudos'
       preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/u/$pseudo/albums/$albumId': {
       id: '/u/$pseudo/albums/$albumId'
@@ -1390,6 +1493,7 @@ const rootRouteChildren: RootRouteChildren = {
   DedicacesRoute: DedicacesRoute,
   EmissionsRoute: EmissionsRouteWithChildren,
   MagazinesRoute: MagazinesRouteWithChildren,
+  McpRoute: McpRoute,
   ModerationRoute: ModerationRoute,
   NewsletterRoute: NewsletterRoute,
   PodcastsRoute: PodcastsRoute,
@@ -1405,10 +1509,15 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TopRoute: TopRoute,
   TopUsersRoute: TopUsersRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   PPostIdRoute: PPostIdRoute,
   TagTagRoute: TagTagRoute,
   UPseudoRoute: UPseudoRouteWithChildren,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicIndexnowKeyDottxtRoute: ApiPublicIndexnowKeyDottxtRoute,
@@ -1426,3 +1535,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
