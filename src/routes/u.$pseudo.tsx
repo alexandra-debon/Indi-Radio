@@ -20,22 +20,11 @@ export const Route = createFileRoute("/u/$pseudo")({
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
-      const { data: hist } = await supabase
-        .from("pseudo_history")
-        .select("user_id")
-        .ilike("old_pseudo", params.pseudo)
-        .order("changed_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (hist?.user_id) {
-        const { data: current } = await supabase
-          .from("profiles")
-          .select("pseudo")
-          .eq("id", hist.user_id)
-          .maybeSingle();
-        if (current?.pseudo && current.pseudo.toLowerCase() !== params.pseudo.toLowerCase()) {
-          throw redirect({ to: "/u/$pseudo", params: { pseudo: current.pseudo }, replace: true });
-        }
+      const { data: currentPseudo } = await supabase.rpc("resolve_pseudo_alias", {
+        _alias: params.pseudo,
+      });
+      if (currentPseudo && String(currentPseudo).toLowerCase() !== params.pseudo.toLowerCase()) {
+        throw redirect({ to: "/u/$pseudo", params: { pseudo: String(currentPseudo) }, replace: true });
       }
     }
     return data;
