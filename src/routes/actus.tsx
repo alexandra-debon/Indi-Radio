@@ -440,7 +440,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             </h3>
             {stripMediaUrls(post.content) && (
               <p className="whitespace-pre-wrap text-sm">
-                <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={stripMediaUrls(post.content)} />
+                <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={stripMediaUrls(post.content)}>
+                  {(txt) => <>{renderRich(txt)}</>}
+                </TranslatedText>
               </p>
             )}
             <UrlEmbeds text={post.content} />
