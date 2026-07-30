@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bell, Check, ChevronDown, ChevronRight, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,10 @@ export function NotificationsBell() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const swipeStartY = useRef(0);
+  const swipeCurrentY = useRef(0);
 
   const { data: notifs = [] } = useQuery<Notif[]>({
     queryKey: ["notifications", session?.user.id],
@@ -151,7 +155,39 @@ export function NotificationsBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="fixed left-1/2 top-16 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)] sm:translate-x-0">
+          <div
+            className="fixed left-1/2 top-16 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)] sm:translate-x-0"
+            style={{
+              transform: `translateX(-50%) translateY(${swipeOffset}px)`,
+              transition: isSwiping ? "none" : "transform 0.2s ease-out",
+            }}
+            onTouchStart={(e) => {
+              swipeStartY.current = e.touches[0].clientY;
+              swipeCurrentY.current = e.touches[0].clientY;
+              setIsSwiping(true);
+            }}
+            onTouchMove={(e) => {
+              if (!isSwiping) return;
+              swipeCurrentY.current = e.touches[0].clientY;
+              const delta = swipeCurrentY.current - swipeStartY.current;
+              if (delta > 0) {
+                setSwipeOffset(delta);
+              }
+            }}
+            onTouchEnd={() => {
+              setIsSwiping(false);
+              const delta = swipeCurrentY.current - swipeStartY.current;
+              if (delta > 80) {
+                setSwipeOffset(0);
+                setOpen(false);
+              } else {
+                setSwipeOffset(0);
+              }
+            }}
+          >
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" aria-hidden="true" />
+            </div>
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
               <span className="text-xs font-bold uppercase tracking-widest">Notifications</span>
               <div className="flex items-center gap-2">
