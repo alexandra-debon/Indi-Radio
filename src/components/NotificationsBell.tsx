@@ -185,6 +185,9 @@ export function NotificationsBell() {
               }
             }}
           >
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" aria-hidden="true" />
+            </div>
             <div className="flex items-center justify-between border-b border-border px-3 py-2">
               <span className="text-xs font-bold uppercase tracking-widest">Notifications</span>
               <div className="flex items-center gap-2">
@@ -204,9 +207,6 @@ export function NotificationsBell() {
                   <X className="size-3.5" />
                 </button>
               </div>
-            </div>
-            <div className="flex justify-center pt-2 pb-1 sm:hidden">
-              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" aria-hidden="true" />
             </div>
             <ul className="max-h-96 overflow-auto">
               {notifs.length === 0 && (
