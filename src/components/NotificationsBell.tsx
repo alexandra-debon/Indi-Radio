@@ -163,6 +163,13 @@ export function NotificationsBell() {
                 <Link to="/notifications" onClick={() => setOpen(false)} className="text-[10px] uppercase text-primary hover:underline">
                   Ouvrir
                 </Link>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Fermer les notifications"
+                  className="grid size-6 place-items-center rounded hover:bg-muted"
+                >
+                  <X className="size-3.5" />
+                </button>
               </div>
             </div>
             <ul className="max-h-96 overflow-auto">
