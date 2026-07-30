@@ -161,9 +161,9 @@ export function NotificationsBell() {
             onTouchStart={() => setOpen(false)}
           />
           <div
-            className="fixed left-1/2 top-16 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)] sm:translate-x-0"
+            className="fixed inset-x-4 top-16 z-50 overflow-hidden rounded-md border-2 border-border bg-background shadow-lg sm:absolute sm:inset-x-auto sm:left-auto sm:right-0 sm:top-full sm:mt-1 sm:w-80 sm:max-w-[calc(100vw-1rem)]"
             style={{
-              transform: `translateX(-50%) translateY(${swipeOffset}px)`,
+              transform: `translateY(${swipeOffset}px)`,
               transition: isSwiping ? "none" : "transform 0.2s ease-out",
             }}
             onTouchStart={(e) => {
