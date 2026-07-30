@@ -205,6 +205,9 @@ export function NotificationsBell() {
                 </button>
               </div>
             </div>
+            <div className="flex justify-center pt-2 pb-1 sm:hidden">
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" aria-hidden="true" />
+            </div>
             <ul className="max-h-96 overflow-auto">
               {notifs.length === 0 && (
                 <li className="px-3 py-6 text-center text-xs text-muted-foreground">Aucune notification pour l'instant.</li>
