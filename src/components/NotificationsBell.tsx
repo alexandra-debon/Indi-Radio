@@ -23,6 +23,10 @@ export function NotificationsBell() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const swipeStartY = useRef(0);
+  const swipeCurrentY = useRef(0);
 
   const { data: notifs = [] } = useQuery<Notif[]>({
     queryKey: ["notifications", session?.user.id],
