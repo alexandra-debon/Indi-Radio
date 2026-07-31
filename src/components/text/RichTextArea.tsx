@@ -61,7 +61,7 @@ export function RichTextArea({ value, onChange, placeholder, rows = 6, className
 
   return (
     <div className="space-y-1.5">
-      <div className="flex flex-wrap items-center gap-1">
+      <div className="sticky top-0 z-10 -mx-1 flex flex-nowrap gap-1 overflow-x-auto rounded-md bg-background/95 px-1 py-1 backdrop-blur-sm scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible">
         {FORMATS.map((f) => (
           <button
             key={f.title}
@@ -70,8 +70,8 @@ export function RichTextArea({ value, onChange, placeholder, rows = 6, className
             aria-label={f.title}
             onClick={() => wrap(f)}
             className={cn(
-              "inline-flex h-7 min-w-7 items-center justify-center rounded border border-border px-1.5 font-bold text-foreground hover:bg-muted",
-              f.cls ?? "text-xs",
+              "inline-flex h-10 min-w-10 shrink-0 items-center justify-center rounded border border-border px-2 font-bold text-foreground hover:bg-muted sm:h-7 sm:min-w-7",
+              f.cls ?? "text-sm sm:text-xs",
             )}
           >
             {f.icon ?? f.label}
