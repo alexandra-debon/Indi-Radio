@@ -314,6 +314,7 @@ function FavoritesAdmin() {
   const [form, setForm] = useState(EMPTY_FAV);
   const [social, setSocial] = useState<SocialLinks>({});
   const [editId, setEditId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
 
   const { data: items = [] } = useQuery({
     queryKey: ["admin-coups-de-coeur"],
