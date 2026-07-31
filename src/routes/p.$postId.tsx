@@ -22,7 +22,7 @@ export const Route = createFileRoute("/p/$postId")({
     const { data, error } = await supabase
       .from("posts")
       .select(
-        "id, content, image_url, image_urls, created_at, author:profiles!posts_author_id_fkey(id, pseudo)"
+        "id, content, image_url, image_urls, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified)"
       )
       .eq("id", params.postId)
       .maybeSingle();
