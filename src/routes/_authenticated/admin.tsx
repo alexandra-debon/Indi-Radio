@@ -618,6 +618,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
   const [social, setSocial] = useState<SocialLinks>(
     (row.social_links as SocialLinks | null) ?? {},
   );
+  const [preview, setPreview] = useState(true);
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
@@ -680,11 +681,16 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
           <Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} />
           Publié
         </label>
+        <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setPreview((v) => !v)}>
+          {preview ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          {preview ? "Masquer l'aperçu" : "Aperçu"}
+        </Button>
         <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
           {save.isPending ? "Enregistrement…" : "Enregistrer"}
         </Button>
         <Button size="sm" variant="ghost" onClick={onDone}>Annuler</Button>
       </div>
+      {preview && <FavoritePreview data={f} social={social} />}
     </div>
   );
 }
