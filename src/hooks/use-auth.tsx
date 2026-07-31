@@ -53,7 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(
+          "id, pseudo, role, is_certified, avatar_url, points, level, created_at, is_team_indi, badges, quarantined_at, bio, website, social_links, lang, updated_at, stage_name, gallery_visible, gallery_cover_url, gallery_summary",
+        )
         .eq("id", session!.user.id)
         .maybeSingle();
       if (error) throw error;
