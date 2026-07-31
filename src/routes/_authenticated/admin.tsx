@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
@@ -22,7 +22,8 @@ import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions"
 import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
-import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { SocialLinksEditor, SocialLinksBar, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { renderRich } from "@/lib/rich-text";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
 import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
 import { ImageUploader } from "@/components/media/ImageUploader";
