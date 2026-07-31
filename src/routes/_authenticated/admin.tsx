@@ -533,12 +533,22 @@ function FavoritesAdmin() {
           </label>
           <Button
             size="sm"
+            variant="outline"
+            onClick={() => setShowPreview((v) => !v)}
+            className="gap-1.5"
+          >
+            {showPreview ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showPreview ? "Masquer l'aperçu" : "Aperçu"}
+          </Button>
+          <Button
+            size="sm"
             onClick={() => create.mutate()}
             disabled={!form.artist || !form.title || !form.comment || create.isPending}
           >
             {create.isPending ? "Publication…" : "Publier le coup de cœur"}
           </Button>
         </div>
+        {showPreview && <FavoritePreview data={form} social={social} />}
       </div>
 
       <ul className="space-y-2">
