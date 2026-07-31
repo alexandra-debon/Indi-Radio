@@ -304,9 +304,9 @@
 @utility scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
-}
-@utility scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Mention @xxx dans les posts */
