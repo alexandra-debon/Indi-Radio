@@ -1,7 +1,39 @@
 import { createHash } from "crypto";
+import { z } from "zod";
+
+const InputSchema = z.object({
+  entityType: z.string().min(1).max(64),
+  entityKey: z.string().min(1).max(128),
+  field: z.string().min(1).max(64),
+  text: z.string().min(1).max(20000),
+  targetLang: z.enum(["en", "fr"]),
+  sourceLang: z.enum(["fr", "en", "auto"]).default("auto"),
+});
+
+type TranslationInput = z.infer<typeof InputSchema>;
+
+const QUOTED_WORK_RE = /([«“"])([^«»“”"\n]+)([»”"])/g;
+
+function protectQuotedWorks(text: string) {
+  const originals: string[] = [];
+  const protectedText = text.replace(QUOTED_WORK_RE, (match) => {
+    const index = originals.push(match) - 1;
+    return `⟦INDI_ORIGINAL_${index}⟧`;
+  });
+  return { protectedText, originals };
+}
+
+function restoreQuotedWorks(text: string, originals: string[]) {
+  return originals.reduce(
+    (result, original, index) =>
+      result.replace(new RegExp(`⟦INDI_ORIGINAL_${index}⟧`, "g"), original),
+    text,
+  );
+}
 
 export function hashText(t: string) {
-  return createHash("sha256").update(t).digest("hex").slice(0, 24);
+  // Versioned so translations cached before title protection are regenerated.
+  return createHash("sha256").update(`quoted-works-v1:${t}`).digest("hex").slice(0, 24);
 }
 
 const BACKOFF_MINUTES = [1, 5, 15, 60, 240];
@@ -79,6 +111,7 @@ export async function callTranslationGateway(
   if (!key) throw new Error("Missing LOVABLE_API_KEY");
   const targetName = target === "en" ? "English" : "French";
   const sourceName = source === "auto" ? "the detected source language" : source === "fr" ? "French" : "English";
+  const { protectedText, originals } = protectQuotedWorks(text);
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
@@ -91,9 +124,10 @@ export async function callTranslationGateway(
             `You are a professional translator. Translate the user's message from ${sourceName} into ${targetName}. ` +
             `If the message is already in ${targetName}, return it unchanged. ` +
             `Preserve tone, hashtags (#tag), @mentions, emojis, URLs and line breaks. ` +
+            `Never alter placeholders such as ⟦INDI_ORIGINAL_0⟧: they represent song, album or other work titles that must remain exactly as originally written. ` +
             `Return ONLY the translated text, no quotes, no explanation.`,
         },
-        { role: "user", content: text },
+        { role: "user", content: protectedText },
       ],
       temperature: 0.2,
     }),
@@ -105,7 +139,62 @@ export async function callTranslationGateway(
   const json = await res.json();
   const out = json?.choices?.[0]?.message?.content;
   if (typeof out !== "string" || !out.trim()) throw new Error("Empty translation");
-  return out.trim();
+  return restoreQuotedWorks(out.trim(), originals);
+}
+
+export async function translateContentHandler(input: unknown) {
+  const data: TranslationInput = InputSchema.parse(input);
+  const { entityType, entityKey, field, text, targetLang, sourceLang } = data;
+  const sourceHash = hashText(text);
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const existing = await supabaseAdmin
+    .from("content_translations")
+    .select("translated_text, source_hash")
+    .eq("entity_type", entityType)
+    .eq("entity_key", entityKey)
+    .eq("field", field)
+    .eq("lang", targetLang)
+    .maybeSingle();
+
+  if (existing.data?.source_hash === sourceHash) {
+    void logTranslation({ entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang, source_hash: sourceHash, status: "cache_hit", duration_ms: 0, text_length: text.length });
+    return { text: existing.data.translated_text as string, cached: true };
+  }
+
+  const shared = await supabaseAdmin
+    .from("content_translations")
+    .select("translated_text")
+    .eq("lang", targetLang)
+    .eq("source_hash", sourceHash)
+    .limit(1)
+    .maybeSingle();
+
+  const started = Date.now();
+  let translated: string;
+  if (shared.data?.translated_text) {
+    translated = shared.data.translated_text as string;
+    void logTranslation({ entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang, source_hash: sourceHash, status: "shared_hit", duration_ms: Date.now() - started, text_length: text.length });
+  } else {
+    try {
+      translated = await callTranslationGateway(text, targetLang, sourceLang);
+      void logTranslation({ entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang, source_hash: sourceHash, status: "success", duration_ms: Date.now() - started, text_length: text.length });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      void logTranslation({ entity_type: entityType, entity_key: entityKey, field, target_lang: targetLang, source_hash: sourceHash, status: "failed", duration_ms: Date.now() - started, error: message, text_length: text.length });
+      void enqueueRetry({ entityType, entityKey, field, targetLang, text, sourceHash, error: message });
+      throw error;
+    }
+  }
+
+  await supabaseAdmin.from("content_translations").upsert({
+    entity_type: entityType, entity_key: entityKey, field, lang: targetLang,
+    source_hash: sourceHash, translated_text: translated, updated_at: new Date().toISOString(),
+  }, { onConflict: "entity_type,entity_key,field,lang" });
+  await supabaseAdmin.from("translation_retry_queue").delete()
+    .eq("entity_type", entityType).eq("entity_key", entityKey).eq("field", field).eq("target_lang", targetLang);
+
+  return { text: translated, cached: !!shared.data };
 }
 
 export type PrewarmItem = {

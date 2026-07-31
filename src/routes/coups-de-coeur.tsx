@@ -275,13 +275,7 @@ function CoupsDeCoeurPage() {
                         : "Album"}
                   </div>
                   <h2 className="text-xl font-bold leading-tight">
-                    <TranslatedText
-                      entityType="coup_de_coeur"
-                      entityKey={c.id}
-                      field="title"
-                      text={c.title}
-                      as="span"
-                    />
+                    {c.title}
                   </h2>
                   <div className="text-sm text-muted-foreground">
                     par <span className="font-medium text-foreground">{c.artist}</span>
