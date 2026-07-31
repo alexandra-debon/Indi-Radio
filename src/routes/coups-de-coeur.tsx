@@ -10,6 +10,7 @@ import { StarRating } from "@/components/rating/StarRating";
 import { toast } from "sonner";
 import { CoupComments } from "@/components/coups/CoupComments";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { renderRich } from "@/lib/rich-text";
 
 type CoupRow = {
   id: string;
@@ -300,9 +301,13 @@ function CoupsDeCoeurPage() {
                   entityKey={c.id}
                   field="comment"
                   text={c.comment}
-                  as="div"
-                  className="whitespace-pre-wrap text-sm leading-relaxed"
-                />
+                >
+                  {(rendered) => (
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                      {renderRich(rendered)}
+                    </div>
+                  )}
+                </TranslatedText>
 
                 {c.discovery_story && (
                   <div className="rounded-md border-l-4 border-primary bg-muted/40 p-3">
@@ -314,9 +319,13 @@ function CoupsDeCoeurPage() {
                       entityKey={c.id}
                       field="discovery_story"
                       text={c.discovery_story}
-                      as="div"
-                      className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"
-                    />
+                    >
+                      {(rendered) => (
+                        <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                          {renderRich(rendered)}
+                        </div>
+                      )}
+                    </TranslatedText>
                   </div>
                 )}
 
