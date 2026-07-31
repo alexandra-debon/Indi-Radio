@@ -110,6 +110,7 @@ function AdminPage() {
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
     { key: "diffuseurs" as const, label: "Diffuseurs", icon: Globe, desc: "Plateformes qui rediffusent la radio" },
+    { key: "seo" as const, label: "SEO", icon: Search, desc: "Titres, descriptions et indexation Google" },
     { key: "deploy" as const, label: "Déploiement", icon: Rocket, desc: "Publier et vérifier le site en ligne" },
   ];
   return (
@@ -150,6 +151,7 @@ function AdminPage() {
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
           <TabsTrigger value="diffuseurs">Diffuseurs</TabsTrigger>
+          <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="deploy">Déploiement</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
@@ -163,6 +165,7 @@ function AdminPage() {
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
         <TabsContent value="diffuseurs" className="mt-4"><BroadcastPartnersAdmin /></TabsContent>
+        <TabsContent value="seo" className="mt-4"><SeoAdminPanel /></TabsContent>
         <TabsContent value="deploy" className="mt-4"><DeployCheckPanel /></TabsContent>
       </Tabs>
     </div>
