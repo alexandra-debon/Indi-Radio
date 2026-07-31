@@ -55,7 +55,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails", "diffuseurs"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails", "diffuseurs", "seo"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
