@@ -106,7 +106,7 @@ function ChroniquesPage() {
                 )}
               </div>
               <div className="flex min-w-0 flex-1 flex-col">
-                <TranslatedText as="div" className="truncate text-sm font-bold" entityType="album_review" entityKey={r.id} field="title" text={r.title} />
+                <div className="truncate text-sm font-bold">{r.title}</div>
                 <div className="truncate text-xs text-muted-foreground">
                   {r.artist}{r.label ? ` · ${r.label}` : ""}
                 </div>
