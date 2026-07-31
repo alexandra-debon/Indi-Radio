@@ -13,6 +13,11 @@ import appCss from "../styles.css?url";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import { appleTouchStartupImages } from "@/lib/apple-touch-startup-images";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import {
+  attemptChunkReload,
+  isChunkLoadError,
+  installChunkReloadListener,
+} from "@/lib/chunk-reload";
 import { AuthProvider } from "@/hooks/use-auth";
 import { RadioPlayerProvider } from "@/components/radio/RadioPlayerProvider";
 import { MiniPlayer } from "@/components/radio/MiniPlayer";
@@ -96,12 +101,35 @@ function NotFoundComponent() {
   );
 }
 
+let lastAutoRetryAt = 0;
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const chunkError = isChunkLoadError(error);
   useEffect(() => {
+    // Asset/chunk failures (typically right after a deploy) heal themselves
+    // with a single silent reload — no error screen for the user.
+    if (chunkError && attemptChunkReload()) return;
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error, chunkError]);
+
+  useEffect(() => {
+    if (chunkError) return;
+    // Only one automatic retry per 15s, otherwise a deterministic error would loop.
+    if (Date.now() - lastAutoRetryAt < 15_000) return;
+    lastAutoRetryAt = Date.now();
+    // Transparent one-shot recovery: re-run the failed route once before
+    // bothering the user with the error screen.
+    const id = window.setTimeout(() => {
+      router.invalidate();
+      reset();
+    }, 400);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
+
+  if (chunkError) return null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -232,6 +260,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    installChunkReloadListener();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
