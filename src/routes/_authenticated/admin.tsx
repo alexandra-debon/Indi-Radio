@@ -140,7 +140,7 @@ function AdminPage() {
         })}
       </div>
       <Tabs value={tab} onValueChange={goToTab} ref={tabsRef}>
-        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-11">
+        <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-5 lg:grid-cols-7">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
           <TabsTrigger value="news">Publier</TabsTrigger>
