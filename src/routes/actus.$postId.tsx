@@ -17,7 +17,7 @@ export const Route = createFileRoute("/actus/$postId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("news_posts")
-      .select("id,title,content,image_url,created_at,updated_at, author:profiles!news_posts_author_id_fkey(id,pseudo)")
+      .select("id,title,content,image_url,created_at,updated_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified)")
       .eq("id", params.postId)
       .maybeSingle();
     if (error || !data) throw notFound();

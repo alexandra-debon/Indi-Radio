@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
@@ -27,6 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
 import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -282,6 +283,34 @@ function MagazinesAdmin() {
 
 // ---------- Coups de cœur ----------
 
+/** Indicateur d'enregistrement automatique du brouillon. */
+function DraftStatus({
+  savedAt,
+  restoredAt,
+  onDiscard,
+}: {
+  savedAt: number | null;
+  restoredAt: number | null;
+  onDiscard: () => void;
+}) {
+  if (!savedAt && !restoredAt) return null;
+  const time = new Date(savedAt ?? restoredAt ?? Date.now()).toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded border border-primary/30 bg-primary/5 px-2 py-1 text-[11px] text-muted-foreground">
+      <Save className="size-3.5 text-primary" />
+      <span>
+        {restoredAt ? "Brouillon restauré" : "Brouillon enregistré"} · {time}
+      </span>
+      <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={onDiscard}>
+        Effacer le brouillon
+      </Button>
+    </div>
+  );
+}
+
 function formatFavDate(d: string): string {
   try {
     return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -408,6 +437,23 @@ function FavoritesAdmin() {
   const [editId, setEditId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
 
+  const draft = useLocalDraft(
+    "indi:draft:coup-de-coeur:new",
+    { form, social },
+    (v) => {
+      if (v.form) setForm({ ...EMPTY_FAV, ...v.form });
+      if (v.social) setSocial(v.social);
+    },
+    {
+      isEmpty: (v) =>
+        !v.form.artist &&
+        !v.form.title &&
+        !v.form.comment &&
+        !v.form.discovery_story &&
+        !v.form.cover_url,
+    },
+  );
+
   const { data: items = [] } = useQuery({
     queryKey: ["admin-coups-de-coeur"],
     queryFn: async () => {
@@ -444,6 +490,7 @@ function FavoritesAdmin() {
       toast.success("Coup de cœur publié");
       setForm(EMPTY_FAV);
       setSocial({});
+      draft.clear();
       qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
       qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
     },
@@ -468,6 +515,15 @@ function FavoritesAdmin() {
         <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
           Nouveau coup de cœur
         </h3>
+        <DraftStatus
+          savedAt={draft.savedAt}
+          restoredAt={draft.restoredAt}
+          onDiscard={() => {
+            setForm(EMPTY_FAV);
+            setSocial({});
+            draft.clear();
+          }}
+        />
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Input
             type="date"
@@ -619,6 +675,14 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     (row.social_links as SocialLinks | null) ?? {},
   );
   const [preview, setPreview] = useState(true);
+  const draft = useLocalDraft(
+    `indi:draft:coup-de-coeur:${row.id}`,
+    { f, social },
+    (v) => {
+      if (v.f) setF((prev) => ({ ...prev, ...v.f }));
+      if (v.social) setSocial(v.social);
+    },
+  );
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
@@ -640,6 +704,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     },
     onSuccess: () => {
       toast.success("Mis à jour");
+      draft.clear();
       qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
       qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
       onDone();
@@ -648,6 +713,25 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
   });
   return (
     <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <DraftStatus
+        savedAt={draft.savedAt}
+        restoredAt={draft.restoredAt}
+        onDiscard={() => {
+          setF({
+            featured_date: row.featured_date,
+            cover_url: row.cover_url ?? "",
+            artist: row.artist,
+            title: row.title,
+            kind: row.kind,
+            comment: row.comment,
+            discovery_story: row.discovery_story ?? "",
+            published: row.published,
+            editorial_rating: row.editorial_rating ?? null,
+          });
+          setSocial((row.social_links as SocialLinks | null) ?? {});
+          draft.clear();
+        }}
+      />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Input type="date" value={f.featured_date} onChange={(e) => setF({ ...f, featured_date: e.target.value })} />
         <Select value={f.kind} onValueChange={(v) => setF({ ...f, kind: v })}>
