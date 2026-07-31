@@ -27,6 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
 import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { useLocalDraft } from "@/hooks/use-local-draft";
 
 /** Accept "mm:ss", "hh:mm:ss" or a raw number of seconds. Returns null on empty/invalid. */
 function parseDuration(v: string): number | null {
@@ -281,6 +282,34 @@ function MagazinesAdmin() {
 }
 
 // ---------- Coups de cœur ----------
+
+/** Indicateur d'enregistrement automatique du brouillon. */
+function DraftStatus({
+  savedAt,
+  restoredAt,
+  onDiscard,
+}: {
+  savedAt: number | null;
+  restoredAt: number | null;
+  onDiscard: () => void;
+}) {
+  if (!savedAt && !restoredAt) return null;
+  const time = new Date(savedAt ?? restoredAt ?? Date.now()).toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded border border-primary/30 bg-primary/5 px-2 py-1 text-[11px] text-muted-foreground">
+      <Save className="size-3.5 text-primary" />
+      <span>
+        {restoredAt ? "Brouillon restauré" : "Brouillon enregistré"} · {time}
+      </span>
+      <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={onDiscard}>
+        Effacer le brouillon
+      </Button>
+    </div>
+  );
+}
 
 function formatFavDate(d: string): string {
   try {
