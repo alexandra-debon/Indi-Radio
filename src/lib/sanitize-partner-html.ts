@@ -86,6 +86,10 @@ function ensureHooks() {
 
 export function sanitizePartnerHtml(input: string | null | undefined): string {
   if (!input) return "";
+  // DOMPurify needs a real DOM: during SSR / worker rendering there is none,
+  // and calling it throws (which surfaced as the generic 500 error page).
+  if (typeof window === "undefined" || typeof document === "undefined") return "";
+  if (typeof (DOMPurify as unknown as { sanitize?: unknown }).sanitize !== "function") return "";
   ensureHooks();
   return DOMPurify.sanitize(input, {
     ALLOWED_TAGS: [...ALLOWED_TAGS],
