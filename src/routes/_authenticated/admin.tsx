@@ -591,7 +591,13 @@ function UserAdmin() {
   const { data: profiles = [] } = useQuery({
     queryKey: ["admin-profiles", q],
     queryFn: async () => {
-      let query = supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(50);
+      let query = supabase
+        .from("profiles")
+        .select(
+          "id, pseudo, role, is_certified, avatar_url, points, level, created_at, is_team_indi, badges, quarantined_at, bio, website, social_links, lang, updated_at, stage_name, gallery_visible, gallery_cover_url, gallery_summary",
+        )
+        .order("created_at", { ascending: false })
+        .limit(50);
       if (q.trim()) query = query.ilike("pseudo", `%${q.trim()}%`);
       const { data } = await query;
       return data ?? [];
@@ -600,6 +606,12 @@ function UserAdmin() {
 
   const fetchEmails = useServerFn(listUserEmails);
   const profileIds = profiles.map((p) => p.id);
+  const fetchReasons = useServerFn(listQuarantineReasons);
+  const { data: reasonsMap = {} } = useQuery({
+    queryKey: ["admin-quarantine-reasons", profileIds],
+    enabled: profileIds.length > 0,
+    queryFn: async () => (await fetchReasons({ data: { userIds: profileIds } })) as Record<string, string | null>,
+  });
   const { data: emailsMap = {} } = useQuery({
     queryKey: ["admin-user-emails", profileIds],
     queryFn: async () => {
