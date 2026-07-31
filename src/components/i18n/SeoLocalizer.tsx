@@ -1,8 +1,14 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useLang } from "@/lib/i18n";
 import { resolveSeo } from "@/lib/i18n/seo-meta";
 import { translateContent } from "@/lib/translate.functions";
+import {
+  fetchSeoOverrides,
+  indexOverrides,
+  findOverride,
+} from "@/lib/seo-overrides";
 
 const SITE_ORIGIN = "https://radio.indi-art-culture.com";
 
@@ -36,6 +42,11 @@ function upsertLink(rel: string, hreflang: string, href: string) {
 export function SeoLocalizer() {
   const { lang } = useLang();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { data: overrideRows } = useQuery({
+    queryKey: ["seo-overrides"],
+    queryFn: fetchSeoOverrides,
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -167,6 +178,55 @@ export function SeoLocalizer() {
       canonical.setAttribute("href", selfUrl);
     } catch {}
 
+    // ── Admin overrides (panneau admin → onglet SEO) ────────────────────
+    // Applied last so a hand-written title/description/image always wins
+    // over both the code defaults and the auto-translated values.
+    try {
+      const ov = overrideRows
+        ? findOverride(indexOverrides(overrideRows), pathname, lang)
+        : null;
+      const put = (selector: string, attrName: "name" | "property", attrValue: string, content: string) => {
+        setMeta(selector, "content", content, () => {
+          const m = document.createElement("meta");
+          m.setAttribute(attrName, attrValue);
+          return m;
+        });
+      };
+      if (ov?.title) {
+        document.title = ov.title;
+        put('meta[property="og:title"]', "property", "og:title", ov.title);
+        put('meta[name="twitter:title"]', "name", "twitter:title", ov.title);
+      }
+      if (ov?.description) {
+        put('meta[name="description"]', "name", "description", ov.description);
+        put('meta[property="og:description"]', "property", "og:description", ov.description);
+        put('meta[name="twitter:description"]', "name", "twitter:description", ov.description);
+      }
+      if (ov?.og_image_url) {
+        put('meta[property="og:image"]', "property", "og:image", ov.og_image_url);
+        put('meta[name="twitter:image"]', "name", "twitter:image", ov.og_image_url);
+      }
+      if (ov?.keywords) {
+        put('meta[name="keywords"]', "name", "keywords", ov.keywords);
+      }
+      if (ov?.canonical_url) {
+        let c = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+        if (!c) {
+          c = document.createElement("link");
+          c.setAttribute("rel", "canonical");
+          document.head.appendChild(c);
+        }
+        c.setAttribute("href", ov.canonical_url);
+        put('meta[property="og:url"]', "property", "og:url", ov.canonical_url);
+      }
+      const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+      if (ov?.noindex) {
+        put('meta[name="robots"]', "name", "robots", "noindex, nofollow");
+      } else if (robots && /noindex/i.test(robots.getAttribute("content") ?? "")) {
+        robots.setAttribute("content", "index, follow");
+      }
+    } catch {}
+
     // hreflang alternates — same URL with a hl query param so each language has its own indexable URL.
     try {
       const base = SITE_ORIGIN + pathname;
@@ -176,7 +236,7 @@ export function SeoLocalizer() {
     } catch {}
 
     try { document.documentElement.lang = lang; } catch {}
-  }, [lang, pathname]);
+  }, [lang, pathname, overrideRows]);
 
   return null;
 }

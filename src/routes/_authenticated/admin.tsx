@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save, Search } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
@@ -26,6 +26,7 @@ import { SocialLinksEditor, SocialLinksBar, sanitizeLinks, type SocialLinks } fr
 import { renderRich } from "@/lib/rich-text";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
 import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
+import { SeoAdminPanel } from "@/components/admin/SeoAdminPanel";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 
@@ -110,6 +111,7 @@ function AdminPage() {
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
     { key: "diffuseurs" as const, label: "Diffuseurs", icon: Globe, desc: "Plateformes qui rediffusent la radio" },
+    { key: "seo" as const, label: "SEO", icon: Search, desc: "Titres, descriptions et indexation Google" },
     { key: "deploy" as const, label: "Déploiement", icon: Rocket, desc: "Publier et vérifier le site en ligne" },
   ];
   return (
@@ -150,6 +152,7 @@ function AdminPage() {
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
           <TabsTrigger value="diffuseurs">Diffuseurs</TabsTrigger>
+          <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="deploy">Déploiement</TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-4"><UserAdmin /></TabsContent>
@@ -163,6 +166,7 @@ function AdminPage() {
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
         <TabsContent value="diffuseurs" className="mt-4"><BroadcastPartnersAdmin /></TabsContent>
+        <TabsContent value="seo" className="mt-4"><SeoAdminPanel /></TabsContent>
         <TabsContent value="deploy" className="mt-4"><DeployCheckPanel /></TabsContent>
       </Tabs>
     </div>
