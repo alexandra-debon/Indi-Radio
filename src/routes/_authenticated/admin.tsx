@@ -408,6 +408,23 @@ function FavoritesAdmin() {
   const [editId, setEditId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
 
+  const draft = useLocalDraft(
+    "indi:draft:coup-de-coeur:new",
+    { form, social },
+    (v) => {
+      if (v.form) setForm({ ...EMPTY_FAV, ...v.form });
+      if (v.social) setSocial(v.social);
+    },
+    {
+      isEmpty: (v) =>
+        !v.form.artist &&
+        !v.form.title &&
+        !v.form.comment &&
+        !v.form.discovery_story &&
+        !v.form.cover_url,
+    },
+  );
+
   const { data: items = [] } = useQuery({
     queryKey: ["admin-coups-de-coeur"],
     queryFn: async () => {
@@ -444,6 +461,7 @@ function FavoritesAdmin() {
       toast.success("Coup de cœur publié");
       setForm(EMPTY_FAV);
       setSocial({});
+      draft.clear();
       qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
       qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
     },
@@ -468,6 +486,15 @@ function FavoritesAdmin() {
         <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
           Nouveau coup de cœur
         </h3>
+        <DraftStatus
+          savedAt={draft.savedAt}
+          restoredAt={draft.restoredAt}
+          onDiscard={() => {
+            setForm(EMPTY_FAV);
+            setSocial({});
+            draft.clear();
+          }}
+        />
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Input
             type="date"
