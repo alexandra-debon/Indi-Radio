@@ -102,20 +102,21 @@ export function SeoAdminPanel() {
         </p>
       </div>
 
+      <div className="card-brut space-y-2 p-3">
+        <h3 className="text-sm font-bold">Ce que voit Google — Sitemap & robots.txt</h3>
+        <SitemapRobotsPreview />
+      </div>
+
       <Tabs defaultValue="pages">
         <TabsList className="flex-wrap">
           <TabsTrigger value="pages">Pages</TabsTrigger>
           <TabsTrigger value="articles">Articles & contenus</TabsTrigger>
-          <TabsTrigger value="sitemap">Sitemap & robots.txt</TabsTrigger>
         </TabsList>
         <TabsContent value="pages" className="mt-3">
           <TargetList targets={staticTargets()} map={map} onEdit={setEditing} />
         </TabsContent>
         <TabsContent value="articles" className="mt-3">
           <ArticlesList map={map} onEdit={setEditing} />
-        </TabsContent>
-        <TabsContent value="sitemap" className="mt-3">
-          <SitemapRobotsPreview />
         </TabsContent>
       </Tabs>
 
