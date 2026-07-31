@@ -17,7 +17,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 
-export const Route = createFileRoute("/magazines")({
+export const Route = createFileRoute("/magazines/")({
   head: () => ({
     meta: [
       { title: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },

@@ -25,21 +25,20 @@ import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as McpRouteImport } from './routes/mcp'
-import { Route as MagazinesRouteImport } from './routes/magazines'
-import { Route as EmissionsRouteImport } from './routes/emissions'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
 import { Route as CoupsDeCoeurRouteImport } from './routes/coups-de-coeur'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as ClipsRouteImport } from './routes/clips'
-import { Route as ChroniquesRouteImport } from './routes/chroniques'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArtistesRouteImport } from './routes/artistes'
-import { Route as ActusRouteImport } from './routes/actus'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UPseudoRouteImport } from './routes/u.$pseudo'
+import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
+import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
+import { Route as ClipsIndexRouteImport } from './routes/clips.index'
+import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
+import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
@@ -53,6 +52,7 @@ import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as UPseudoIndexRouteImport } from './routes/u.$pseudo.index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
@@ -157,16 +157,6 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MagazinesRoute = MagazinesRouteImport.update({
-  id: '/magazines',
-  path: '/magazines',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EmissionsRoute = EmissionsRouteImport.update({
-  id: '/emissions',
-  path: '/emissions',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DedicacesRoute = DedicacesRouteImport.update({
   id: '/dedicaces',
   path: '/dedicaces',
@@ -180,16 +170,6 @@ const CoupsDeCoeurRoute = CoupsDeCoeurRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClipsRoute = ClipsRouteImport.update({
-  id: '/clips',
-  path: '/clips',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChroniquesRoute = ChroniquesRouteImport.update({
-  id: '/chroniques',
-  path: '/chroniques',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChartRoute = ChartRouteImport.update({
@@ -207,11 +187,6 @@ const ArtistesRoute = ArtistesRouteImport.update({
   path: '/artistes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ActusRoute = ActusRouteImport.update({
-  id: '/actus',
-  path: '/actus',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -226,9 +201,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UPseudoRoute = UPseudoRouteImport.update({
-  id: '/u/$pseudo',
-  path: '/u/$pseudo',
+const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
+  id: '/magazines/',
+  path: '/magazines/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
+  id: '/emissions/',
+  path: '/emissions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsIndexRoute = ClipsIndexRouteImport.update({
+  id: '/clips/',
+  path: '/clips/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChroniquesIndexRoute = ChroniquesIndexRouteImport.update({
+  id: '/chroniques/',
+  path: '/chroniques/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActusIndexRoute = ActusIndexRouteImport.update({
+  id: '/actus/',
+  path: '/actus/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagTagRoute = TagTagRouteImport.update({
@@ -242,9 +237,9 @@ const PPostIdRoute = PPostIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
-  id: '/$magazineId',
-  path: '/$magazineId',
-  getParentRoute: () => MagazinesRoute,
+  id: '/magazines/$magazineId',
+  path: '/magazines/$magazineId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
   id: '/episodes/$episodeId',
@@ -252,24 +247,24 @@ const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
-  id: '/$showId',
-  path: '/$showId',
-  getParentRoute: () => EmissionsRoute,
+  id: '/emissions/$showId',
+  path: '/emissions/$showId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
-  id: '/$clipId',
-  path: '/$clipId',
-  getParentRoute: () => ClipsRoute,
+  id: '/clips/$clipId',
+  path: '/clips/$clipId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ChroniquesRoute,
+  id: '/chroniques/$slug',
+  path: '/chroniques/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ActusPostIdRoute = ActusPostIdRouteImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => ActusRoute,
+  id: '/actus/$postId',
+  path: '/actus/$postId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedNotificationsRoute =
   AuthenticatedNotificationsRouteImport.update({
@@ -299,6 +294,11 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const UPseudoIndexRoute = UPseudoIndexRouteImport.update({
+  id: '/u/$pseudo/',
+  path: '/u/$pseudo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileIndexRoute =
   AuthenticatedProfileIndexRouteImport.update({
     id: '/profile/',
@@ -393,9 +393,9 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
-  id: '/albums/$albumId',
-  path: '/albums/$albumId',
-  getParentRoute: () => UPseudoRoute,
+  id: '/u/$pseudo/albums/$albumId',
+  path: '/u/$pseudo/albums/$albumId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
@@ -432,17 +432,12 @@ const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRouteWithChildren
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
-  '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRouteWithChildren
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
@@ -472,7 +467,11 @@ export interface FileRoutesByFullPath {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
-  '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/actus/': typeof ActusIndexRoute
+  '/chroniques/': typeof ChroniquesIndexRoute
+  '/clips/': typeof ClipsIndexRoute
+  '/emissions/': typeof EmissionsIndexRoute
+  '/magazines/': typeof MagazinesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -489,6 +488,7 @@ export interface FileRoutesByFullPath {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
+  '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -500,17 +500,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRouteWithChildren
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
-  '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRouteWithChildren
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
@@ -540,7 +535,11 @@ export interface FileRoutesByTo {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
-  '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/actus': typeof ActusIndexRoute
+  '/chroniques': typeof ChroniquesIndexRoute
+  '/clips': typeof ClipsIndexRoute
+  '/emissions': typeof EmissionsIndexRoute
+  '/magazines': typeof MagazinesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -557,6 +556,7 @@ export interface FileRoutesByTo {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/u/$pseudo': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -570,17 +570,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/actus': typeof ActusRouteWithChildren
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/chart': typeof ChartRoute
-  '/chroniques': typeof ChroniquesRouteWithChildren
-  '/clips': typeof ClipsRouteWithChildren
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
-  '/emissions': typeof EmissionsRouteWithChildren
-  '/magazines': typeof MagazinesRouteWithChildren
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
@@ -610,7 +605,11 @@ export interface FileRoutesById {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/tag/$tag': typeof TagTagRoute
-  '/u/$pseudo': typeof UPseudoRouteWithChildren
+  '/actus/': typeof ActusIndexRoute
+  '/chroniques/': typeof ChroniquesIndexRoute
+  '/clips/': typeof ClipsIndexRoute
+  '/emissions/': typeof EmissionsIndexRoute
+  '/magazines/': typeof MagazinesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -627,6 +626,7 @@ export interface FileRoutesById {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
@@ -640,17 +640,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/actus'
     | '/artistes'
     | '/auth'
     | '/chart'
-    | '/chroniques'
-    | '/clips'
     | '/contact'
     | '/coups-de-coeur'
     | '/dedicaces'
-    | '/emissions'
-    | '/magazines'
     | '/mcp'
     | '/moderation'
     | '/newsletter'
@@ -680,7 +675,11 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/tag/$tag'
-    | '/u/$pseudo'
+    | '/actus/'
+    | '/chroniques/'
+    | '/clips/'
+    | '/emissions/'
+    | '/magazines/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
@@ -697,6 +696,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile/'
+    | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -708,17 +708,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/actus'
     | '/artistes'
     | '/auth'
     | '/chart'
-    | '/chroniques'
-    | '/clips'
     | '/contact'
     | '/coups-de-coeur'
     | '/dedicaces'
-    | '/emissions'
-    | '/magazines'
     | '/mcp'
     | '/moderation'
     | '/newsletter'
@@ -748,7 +743,11 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/tag/$tag'
-    | '/u/$pseudo'
+    | '/actus'
+    | '/chroniques'
+    | '/clips'
+    | '/emissions'
+    | '/magazines'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
@@ -765,6 +764,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/profile'
+    | '/u/$pseudo'
     | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -777,17 +777,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
-    | '/actus'
     | '/artistes'
     | '/auth'
     | '/chart'
-    | '/chroniques'
-    | '/clips'
     | '/contact'
     | '/coups-de-coeur'
     | '/dedicaces'
-    | '/emissions'
-    | '/magazines'
     | '/mcp'
     | '/moderation'
     | '/newsletter'
@@ -817,7 +812,11 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/tag/$tag'
-    | '/u/$pseudo'
+    | '/actus/'
+    | '/chroniques/'
+    | '/clips/'
+    | '/emissions/'
+    | '/magazines/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/diagnostics-pseudos'
@@ -834,6 +833,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/_authenticated/profile/'
+    | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
@@ -847,17 +847,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  ActusRoute: typeof ActusRouteWithChildren
   ArtistesRoute: typeof ArtistesRoute
   AuthRoute: typeof AuthRoute
   ChartRoute: typeof ChartRoute
-  ChroniquesRoute: typeof ChroniquesRouteWithChildren
-  ClipsRoute: typeof ClipsRouteWithChildren
   ContactRoute: typeof ContactRoute
   CoupsDeCoeurRoute: typeof CoupsDeCoeurRoute
   DedicacesRoute: typeof DedicacesRoute
-  EmissionsRoute: typeof EmissionsRouteWithChildren
-  MagazinesRoute: typeof MagazinesRouteWithChildren
   McpRoute: typeof McpRoute
   ModerationRoute: typeof ModerationRoute
   NewsletterRoute: typeof NewsletterRoute
@@ -876,10 +871,19 @@ export interface RootRouteChildren {
   TopUsersRoute: typeof TopUsersRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ActusPostIdRoute: typeof ActusPostIdRoute
+  ChroniquesSlugRoute: typeof ChroniquesSlugRoute
+  ClipsClipIdRoute: typeof ClipsClipIdRoute
+  EmissionsShowIdRoute: typeof EmissionsShowIdRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
+  MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
   TagTagRoute: typeof TagTagRoute
-  UPseudoRoute: typeof UPseudoRouteWithChildren
+  ActusIndexRoute: typeof ActusIndexRoute
+  ChroniquesIndexRoute: typeof ChroniquesIndexRoute
+  ClipsIndexRoute: typeof ClipsIndexRoute
+  EmissionsIndexRoute: typeof EmissionsIndexRoute
+  MagazinesIndexRoute: typeof MagazinesIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
@@ -888,12 +892,14 @@ export interface RootRouteChildren {
   ApiPublicMentionEmailRoute: typeof ApiPublicMentionEmailRoute
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
+  UPseudoIndexRoute: typeof UPseudoIndexRoute
   ApiPublicHooksIndexnowRoute: typeof ApiPublicHooksIndexnowRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  UPseudoAlbumsAlbumIdRoute: typeof UPseudoAlbumsAlbumIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1010,20 +1016,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/magazines': {
-      id: '/magazines'
-      path: '/magazines'
-      fullPath: '/magazines'
-      preLoaderRoute: typeof MagazinesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/emissions': {
-      id: '/emissions'
-      path: '/emissions'
-      fullPath: '/emissions'
-      preLoaderRoute: typeof EmissionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dedicaces': {
       id: '/dedicaces'
       path: '/dedicaces'
@@ -1043,20 +1035,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clips': {
-      id: '/clips'
-      path: '/clips'
-      fullPath: '/clips'
-      preLoaderRoute: typeof ClipsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chroniques': {
-      id: '/chroniques'
-      path: '/chroniques'
-      fullPath: '/chroniques'
-      preLoaderRoute: typeof ChroniquesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chart': {
@@ -1080,13 +1058,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArtistesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/actus': {
-      id: '/actus'
-      path: '/actus'
-      fullPath: '/actus'
-      preLoaderRoute: typeof ActusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -1108,11 +1079,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u/$pseudo': {
-      id: '/u/$pseudo'
-      path: '/u/$pseudo'
-      fullPath: '/u/$pseudo'
-      preLoaderRoute: typeof UPseudoRouteImport
+    '/magazines/': {
+      id: '/magazines/'
+      path: '/magazines'
+      fullPath: '/magazines/'
+      preLoaderRoute: typeof MagazinesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emissions/': {
+      id: '/emissions/'
+      path: '/emissions'
+      fullPath: '/emissions/'
+      preLoaderRoute: typeof EmissionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips/': {
+      id: '/clips/'
+      path: '/clips'
+      fullPath: '/clips/'
+      preLoaderRoute: typeof ClipsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chroniques/': {
+      id: '/chroniques/'
+      path: '/chroniques'
+      fullPath: '/chroniques/'
+      preLoaderRoute: typeof ChroniquesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/actus/': {
+      id: '/actus/'
+      path: '/actus'
+      fullPath: '/actus/'
+      preLoaderRoute: typeof ActusIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tag/$tag': {
@@ -1131,10 +1130,10 @@ declare module '@tanstack/react-router' {
     }
     '/magazines/$magazineId': {
       id: '/magazines/$magazineId'
-      path: '/$magazineId'
+      path: '/magazines/$magazineId'
       fullPath: '/magazines/$magazineId'
       preLoaderRoute: typeof MagazinesMagazineIdRouteImport
-      parentRoute: typeof MagazinesRoute
+      parentRoute: typeof rootRouteImport
     }
     '/episodes/$episodeId': {
       id: '/episodes/$episodeId'
@@ -1145,31 +1144,31 @@ declare module '@tanstack/react-router' {
     }
     '/emissions/$showId': {
       id: '/emissions/$showId'
-      path: '/$showId'
+      path: '/emissions/$showId'
       fullPath: '/emissions/$showId'
       preLoaderRoute: typeof EmissionsShowIdRouteImport
-      parentRoute: typeof EmissionsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/clips/$clipId': {
       id: '/clips/$clipId'
-      path: '/$clipId'
+      path: '/clips/$clipId'
       fullPath: '/clips/$clipId'
       preLoaderRoute: typeof ClipsClipIdRouteImport
-      parentRoute: typeof ClipsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/chroniques/$slug': {
       id: '/chroniques/$slug'
-      path: '/$slug'
+      path: '/chroniques/$slug'
       fullPath: '/chroniques/$slug'
       preLoaderRoute: typeof ChroniquesSlugRouteImport
-      parentRoute: typeof ChroniquesRoute
+      parentRoute: typeof rootRouteImport
     }
     '/actus/$postId': {
       id: '/actus/$postId'
-      path: '/$postId'
+      path: '/actus/$postId'
       fullPath: '/actus/$postId'
       preLoaderRoute: typeof ActusPostIdRouteImport
-      parentRoute: typeof ActusRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
@@ -1204,6 +1203,13 @@ declare module '@tanstack/react-router' {
       path: '/.mcp/list-tools'
       fullPath: '/.mcp/list-tools'
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$pseudo/': {
+      id: '/u/$pseudo/'
+      path: '/u/$pseudo'
+      fullPath: '/u/$pseudo/'
+      preLoaderRoute: typeof UPseudoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/profile/': {
@@ -1320,10 +1326,10 @@ declare module '@tanstack/react-router' {
     }
     '/u/$pseudo/albums/$albumId': {
       id: '/u/$pseudo/albums/$albumId'
-      path: '/albums/$albumId'
+      path: '/u/$pseudo/albums/$albumId'
       fullPath: '/u/$pseudo/albums/$albumId'
       preLoaderRoute: typeof UPseudoAlbumsAlbumIdRouteImport
-      parentRoute: typeof UPseudoRoute
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
@@ -1411,88 +1417,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface ActusRouteChildren {
-  ActusPostIdRoute: typeof ActusPostIdRoute
-}
-
-const ActusRouteChildren: ActusRouteChildren = {
-  ActusPostIdRoute: ActusPostIdRoute,
-}
-
-const ActusRouteWithChildren = ActusRoute._addFileChildren(ActusRouteChildren)
-
-interface ChroniquesRouteChildren {
-  ChroniquesSlugRoute: typeof ChroniquesSlugRoute
-}
-
-const ChroniquesRouteChildren: ChroniquesRouteChildren = {
-  ChroniquesSlugRoute: ChroniquesSlugRoute,
-}
-
-const ChroniquesRouteWithChildren = ChroniquesRoute._addFileChildren(
-  ChroniquesRouteChildren,
-)
-
-interface ClipsRouteChildren {
-  ClipsClipIdRoute: typeof ClipsClipIdRoute
-}
-
-const ClipsRouteChildren: ClipsRouteChildren = {
-  ClipsClipIdRoute: ClipsClipIdRoute,
-}
-
-const ClipsRouteWithChildren = ClipsRoute._addFileChildren(ClipsRouteChildren)
-
-interface EmissionsRouteChildren {
-  EmissionsShowIdRoute: typeof EmissionsShowIdRoute
-}
-
-const EmissionsRouteChildren: EmissionsRouteChildren = {
-  EmissionsShowIdRoute: EmissionsShowIdRoute,
-}
-
-const EmissionsRouteWithChildren = EmissionsRoute._addFileChildren(
-  EmissionsRouteChildren,
-)
-
-interface MagazinesRouteChildren {
-  MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
-}
-
-const MagazinesRouteChildren: MagazinesRouteChildren = {
-  MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
-}
-
-const MagazinesRouteWithChildren = MagazinesRoute._addFileChildren(
-  MagazinesRouteChildren,
-)
-
-interface UPseudoRouteChildren {
-  UPseudoAlbumsAlbumIdRoute: typeof UPseudoAlbumsAlbumIdRoute
-}
-
-const UPseudoRouteChildren: UPseudoRouteChildren = {
-  UPseudoAlbumsAlbumIdRoute: UPseudoAlbumsAlbumIdRoute,
-}
-
-const UPseudoRouteWithChildren =
-  UPseudoRoute._addFileChildren(UPseudoRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  ActusRoute: ActusRouteWithChildren,
   ArtistesRoute: ArtistesRoute,
   AuthRoute: AuthRoute,
   ChartRoute: ChartRoute,
-  ChroniquesRoute: ChroniquesRouteWithChildren,
-  ClipsRoute: ClipsRouteWithChildren,
   ContactRoute: ContactRoute,
   CoupsDeCoeurRoute: CoupsDeCoeurRoute,
   DedicacesRoute: DedicacesRoute,
-  EmissionsRoute: EmissionsRouteWithChildren,
-  MagazinesRoute: MagazinesRouteWithChildren,
   McpRoute: McpRoute,
   ModerationRoute: ModerationRoute,
   NewsletterRoute: NewsletterRoute,
@@ -1512,10 +1446,19 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ActusPostIdRoute: ActusPostIdRoute,
+  ChroniquesSlugRoute: ChroniquesSlugRoute,
+  ClipsClipIdRoute: ClipsClipIdRoute,
+  EmissionsShowIdRoute: EmissionsShowIdRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
+  MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
   TagTagRoute: TagTagRoute,
-  UPseudoRoute: UPseudoRouteWithChildren,
+  ActusIndexRoute: ActusIndexRoute,
+  ChroniquesIndexRoute: ChroniquesIndexRoute,
+  ClipsIndexRoute: ClipsIndexRoute,
+  EmissionsIndexRoute: EmissionsIndexRoute,
+  MagazinesIndexRoute: MagazinesIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
@@ -1525,12 +1468,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPrewarmTranslationRoute: ApiPublicPrewarmTranslationRoute,
   ApiPublicProcessTranslationRetriesRoute:
     ApiPublicProcessTranslationRetriesRoute,
+  UPseudoIndexRoute: UPseudoIndexRoute,
   ApiPublicHooksIndexnowRoute: ApiPublicHooksIndexnowRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  UPseudoAlbumsAlbumIdRoute: UPseudoAlbumsAlbumIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

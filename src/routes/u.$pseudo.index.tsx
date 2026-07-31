@@ -12,7 +12,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
-export const Route = createFileRoute("/u/$pseudo")({
+export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
