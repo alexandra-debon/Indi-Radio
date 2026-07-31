@@ -102,15 +102,19 @@ export function SeoAdminPanel() {
       </div>
 
       <Tabs defaultValue="pages">
-        <TabsList>
+        <TabsList className="flex-wrap">
           <TabsTrigger value="pages">Pages</TabsTrigger>
           <TabsTrigger value="articles">Articles & contenus</TabsTrigger>
+          <TabsTrigger value="sitemap">Sitemap & robots.txt</TabsTrigger>
         </TabsList>
         <TabsContent value="pages" className="mt-3">
           <TargetList targets={staticTargets()} map={map} onEdit={setEditing} />
         </TabsContent>
         <TabsContent value="articles" className="mt-3">
           <ArticlesList map={map} onEdit={setEditing} />
+        </TabsContent>
+        <TabsContent value="sitemap" className="mt-3">
+          <SitemapRobotsPreview />
         </TabsContent>
       </Tabs>
 
