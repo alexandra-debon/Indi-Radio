@@ -17,11 +17,42 @@ export function extractHashtags(text: string): string[] {
 }
 
 /**
- * Render a plain string with clickable #hashtags and highlighted @mentions.
- * Emojis pass through natively (Unicode text). Safe: no HTML injection.
+ * Lightweight formatting markup:
+ *  **gras**, *italique*, __souligné__, [big]…[/big], [small]…[/small]
+ */
+const FORMAT_RULES: Array<{ re: RegExp; render: (inner: ReactNode, key: number) => ReactNode }> = [
+  { re: /\[big\]([\s\S]+?)\[\/big\]/, render: (i, k) => <span key={k} className="text-lg">{i}</span> },
+  { re: /\[small\]([\s\S]+?)\[\/small\]/, render: (i, k) => <span key={k} className="text-xs">{i}</span> },
+  { re: /\*\*([\s\S]+?)\*\*/, render: (i, k) => <strong key={k} className="font-bold">{i}</strong> },
+  { re: /__([\s\S]+?)__/, render: (i, k) => <span key={k} className="underline">{i}</span> },
+  { re: /\*([^*\n]+)\*/, render: (i, k) => <em key={k} className="italic">{i}</em> },
+];
+
+/**
+ * Render a plain string with clickable #hashtags, highlighted @mentions and
+ * simple text formatting. Emojis pass through natively. Safe: no HTML injection.
  */
 export function renderRich(text: string | null | undefined): ReactNode {
   if (!text) return null;
+  // Find the earliest formatting marker and recurse around it.
+  let best: { index: number; len: number; inner: string; render: (i: ReactNode, k: number) => ReactNode } | null = null;
+  for (const rule of FORMAT_RULES) {
+    const m = rule.re.exec(text);
+    if (m && (best === null || m.index < best.index)) {
+      best = { index: m.index, len: m[0].length, inner: m[1], render: rule.render };
+    }
+  }
+  if (best) {
+    const before = text.slice(0, best.index);
+    const after = text.slice(best.index + best.len);
+    return (
+      <>
+        {renderRich(before)}
+        {best.render(renderRich(best.inner), 0)}
+        {renderRich(after)}
+      </>
+    );
+  }
   const parts = text.split(TOKEN_RE);
   return parts.map((p, i) => {
     if (!p) return null;
