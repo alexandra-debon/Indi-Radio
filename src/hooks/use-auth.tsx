@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("id", session!.user.id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return data ? ({ ...data, quarantine_reason: null } as any) : null;
     },
   });
 
