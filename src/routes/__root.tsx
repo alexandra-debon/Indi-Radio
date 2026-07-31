@@ -101,6 +101,8 @@ function NotFoundComponent() {
   );
 }
 
+let lastAutoRetryAt = 0;
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
@@ -114,6 +116,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
   useEffect(() => {
     if (chunkError) return;
+    // Only one automatic retry per 15s, otherwise a deterministic error would loop.
+    if (Date.now() - lastAutoRetryAt < 15_000) return;
+    lastAutoRetryAt = Date.now();
     // Transparent one-shot recovery: re-run the failed route once before
     // bothering the user with the error screen.
     const id = window.setTimeout(() => {
