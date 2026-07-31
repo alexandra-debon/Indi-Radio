@@ -675,6 +675,14 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     (row.social_links as SocialLinks | null) ?? {},
   );
   const [preview, setPreview] = useState(true);
+  const draft = useLocalDraft(
+    `indi:draft:coup-de-coeur:${row.id}`,
+    { f, social },
+    (v) => {
+      if (v.f) setF((prev) => ({ ...prev, ...v.f }));
+      if (v.social) setSocial(v.social);
+    },
+  );
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
@@ -696,6 +704,7 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
     },
     onSuccess: () => {
       toast.success("Mis à jour");
+      draft.clear();
       qc.invalidateQueries({ queryKey: ["admin-coups-de-coeur"] });
       qc.invalidateQueries({ queryKey: ["coups-de-coeur"] });
       onDone();
@@ -704,6 +713,25 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
   });
   return (
     <div className="mt-3 space-y-2 border-t border-border pt-3">
+      <DraftStatus
+        savedAt={draft.savedAt}
+        restoredAt={draft.restoredAt}
+        onDiscard={() => {
+          setF({
+            featured_date: row.featured_date,
+            cover_url: row.cover_url ?? "",
+            artist: row.artist,
+            title: row.title,
+            kind: row.kind,
+            comment: row.comment,
+            discovery_story: row.discovery_story ?? "",
+            published: row.published,
+            editorial_rating: row.editorial_rating ?? null,
+          });
+          setSocial((row.social_links as SocialLinks | null) ?? {});
+          draft.clear();
+        }}
+      />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Input type="date" value={f.featured_date} onChange={(e) => setF({ ...f, featured_date: e.target.value })} />
         <Select value={f.kind} onValueChange={(v) => setF({ ...f, kind: v })}>
