@@ -83,6 +83,19 @@ export function BroadcastPartners() {
 }
 
 export function PartnerItem({ p }: { p: Partner }) {
+  const t = useT();
+  const inner = renderPartnerMedia(p);
+  if (!inner) return null;
+  return (
+    <figure className="flex flex-col items-center gap-1.5 text-center">
+      <figcaption className="text-base font-bold text-white sm:text-lg">{p.name}</figcaption>
+      {inner}
+      <span className="text-[11px] leading-tight text-white/80">{t("page.about.broadcasters.cta")}</span>
+    </figure>
+  );
+}
+
+function renderPartnerMedia(p: Partner) {
   if (p.kind === "logo" && p.logo_url) {
     const altText = (p.alt_text?.trim() || `${p.name} — diffuseur InDi RaDio`);
     const img = (
