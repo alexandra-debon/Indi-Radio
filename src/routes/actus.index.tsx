@@ -34,7 +34,7 @@ import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
-export const Route = createFileRoute("/actus")({
+export const Route = createFileRoute("/actus/")({
   head: () => ({
     meta: [
       { title: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },

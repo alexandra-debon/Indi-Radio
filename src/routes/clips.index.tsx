@@ -18,7 +18,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CLIPS = `${BASE_URL}${ogClips}`;
 
-export const Route = createFileRoute("/clips")({
+export const Route = createFileRoute("/clips/")({
   head: () => ({
     meta: [
       { title: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio" },

@@ -20,7 +20,7 @@ function ArchiveHeading() {
 
 const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 
-export const Route = createFileRoute("/emissions")({
+export const Route = createFileRoute("/emissions/")({
   head: () => ({
     meta: [
       { title: "Émissions & Animateurs — Radio 24/7 de la musique indépendante InDi RaDio" },

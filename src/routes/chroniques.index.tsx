@@ -12,7 +12,7 @@ import { SmartImg } from "@/components/media/SmartImg";
 
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
-export const Route = createFileRoute("/chroniques")({
+export const Route = createFileRoute("/chroniques/")({
   head: () => ({
     meta: [
       { title: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
