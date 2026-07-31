@@ -300,6 +300,15 @@
   border-radius: var(--radius);
 }
 
+/* Hide scrollbar utility (Firefox + WebKit) */
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+@utility scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mention @xxx dans les posts */
 @utility mention {
   color: var(--color-foreground);
