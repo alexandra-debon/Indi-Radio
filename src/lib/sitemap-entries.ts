@@ -168,7 +168,26 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
   } catch {
     /* fail-soft */
   }
-  return entries;
+  return await filterNoindex(entries);
+}
+
+/** Remove paths the admin marked as "non indexé" in the SEO panel. */
+async function filterNoindex(entries: SitemapEntry[]): Promise<SitemapEntry[]> {
+  try {
+    const sb = createClient<Database>(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+    );
+    const { data } = await sb.from("seo_overrides").select("path").eq("noindex", true);
+    if (!data?.length) return entries;
+    const blocked = new Set(
+      data.map((r) => (r.path.replace(/\/+$/, "") || "/")),
+    );
+    return entries.filter((e) => !blocked.has(e.path.replace(/\/+$/, "") || "/"));
+  } catch {
+    return entries;
+  }
 }
 
 /**
