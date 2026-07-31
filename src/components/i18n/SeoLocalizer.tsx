@@ -1,8 +1,14 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useLang } from "@/lib/i18n";
 import { resolveSeo } from "@/lib/i18n/seo-meta";
 import { translateContent } from "@/lib/translate.functions";
+import {
+  fetchSeoOverrides,
+  indexOverrides,
+  findOverride,
+} from "@/lib/seo-overrides";
 
 const SITE_ORIGIN = "https://radio.indi-art-culture.com";
 
@@ -36,6 +42,11 @@ function upsertLink(rel: string, hreflang: string, href: string) {
 export function SeoLocalizer() {
   const { lang } = useLang();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { data: overrideRows } = useQuery({
+    queryKey: ["seo-overrides"],
+    queryFn: fetchSeoOverrides,
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (typeof document === "undefined") return;
