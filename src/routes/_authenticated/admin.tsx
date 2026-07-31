@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
@@ -79,6 +79,13 @@ function AdminPage() {
   const { isAdmin } = useAuth();
   const { tab } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const goToTab = (key: string) => {
+    navigate({ search: { tab: key as never } });
+    requestAnimationFrame(() => {
+      tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
   if (!isAdmin) {
     return (
       <div className="card-brut flex flex-col items-center gap-3 p-6 text-center">
@@ -99,6 +106,7 @@ function AdminPage() {
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
+    { key: "diffuseurs" as const, label: "Diffuseurs", icon: Globe, desc: "Plateformes qui rediffusent la radio" },
     { key: "deploy" as const, label: "Déploiement", icon: Rocket, desc: "Publier et vérifier le site en ligne" },
   ];
   return (
@@ -114,7 +122,7 @@ function AdminPage() {
           return (
             <button
               key={s.key}
-              onClick={() => navigate({ search: { tab: s.key } })}
+              onClick={() => goToTab(s.key)}
               className={`card-brut flex items-start gap-3 p-3 text-left transition ${active ? "border-primary bg-primary/10" : "hover:bg-muted"}`}
             >
               <Icon className={`size-5 shrink-0 ${active ? "text-primary" : ""}`} />
@@ -126,7 +134,7 @@ function AdminPage() {
           );
         })}
       </div>
-      <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v as any } })}>
+      <Tabs value={tab} onValueChange={goToTab} ref={tabsRef}>
         <TabsList className="grid h-auto grid-cols-3 gap-1 sm:grid-cols-11">
           <TabsTrigger value="users">Profils</TabsTrigger>
           <TabsTrigger value="requests">Dédicaces</TabsTrigger>
