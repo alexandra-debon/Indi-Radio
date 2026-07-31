@@ -18,7 +18,7 @@ import { StarRating } from "@/components/rating/StarRating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
-import { listUserEmails } from "@/lib/admin-users.functions";
+import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
@@ -591,7 +591,13 @@ function UserAdmin() {
   const { data: profiles = [] } = useQuery({
     queryKey: ["admin-profiles", q],
     queryFn: async () => {
-      let query = supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(50);
+      let query = supabase
+        .from("profiles")
+        .select(
+          "id, pseudo, role, is_certified, avatar_url, points, level, created_at, is_team_indi, badges, quarantined_at, bio, website, social_links, lang, updated_at, stage_name, gallery_visible, gallery_cover_url, gallery_summary",
+        )
+        .order("created_at", { ascending: false })
+        .limit(50);
       if (q.trim()) query = query.ilike("pseudo", `%${q.trim()}%`);
       const { data } = await query;
       return data ?? [];
@@ -600,6 +606,12 @@ function UserAdmin() {
 
   const fetchEmails = useServerFn(listUserEmails);
   const profileIds = profiles.map((p) => p.id);
+  const fetchReasons = useServerFn(listQuarantineReasons);
+  const { data: reasonsMap = {} } = useQuery({
+    queryKey: ["admin-quarantine-reasons", profileIds],
+    enabled: profileIds.length > 0,
+    queryFn: async () => (await fetchReasons({ data: { userIds: profileIds } })) as Record<string, string | null>,
+  });
   const { data: emailsMap = {} } = useQuery({
     queryKey: ["admin-user-emails", profileIds],
     queryFn: async () => {
@@ -707,9 +719,9 @@ function UserAdmin() {
                 <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold text-destructive">En quarantaine</div>
-                  {(p as any).quarantine_reason && (
+                  {reasonsMap[p.id] && (
                     <div className="mt-1 whitespace-pre-wrap text-muted-foreground">
-                      {(p as any).quarantine_reason}
+                      {reasonsMap[p.id]}
                     </div>
                   )}
                 </div>
