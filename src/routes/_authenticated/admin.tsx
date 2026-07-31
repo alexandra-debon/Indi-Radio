@@ -407,17 +407,17 @@ function FavoritesAdmin() {
             />
           </div>
         </div>
-        <Textarea
+        <RichTextArea
           rows={6}
           placeholder="Notre coup de cœur — pourquoi on aime *"
           value={form.comment}
-          onChange={(e) => setForm({ ...form, comment: e.target.value })}
+          onChange={(v) => setForm({ ...form, comment: v })}
         />
-        <Textarea
+        <RichTextArea
           rows={4}
           placeholder="Comment on a découvert cet·te artiste (optionnel)"
           value={form.discovery_story}
-          onChange={(e) => setForm({ ...form, discovery_story: e.target.value })}
+          onChange={(v) => setForm({ ...form, discovery_story: v })}
         />
         <SocialLinksEditor value={social} onChange={setSocial} />
         <div className="flex items-center gap-3">
@@ -559,8 +559,8 @@ function FavoriteEdit({ row, onDone }: { row: FavoriteRow; onDone: () => void })
           <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
         </div>
       </div>
-      <Textarea rows={6} value={f.comment} onChange={(e) => setF({ ...f, comment: e.target.value })} />
-      <Textarea rows={4} placeholder="Comment on a découvert…" value={f.discovery_story} onChange={(e) => setF({ ...f, discovery_story: e.target.value })} />
+      <RichTextArea rows={6} placeholder="Notre coup de cœur" value={f.comment} onChange={(v) => setF({ ...f, comment: v })} />
+      <RichTextArea rows={4} placeholder="Comment on a découvert…" value={f.discovery_story} onChange={(v) => setF({ ...f, discovery_story: v })} />
       <SocialLinksEditor value={social} onChange={setSocial} />
       <div className="flex items-center gap-3">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
