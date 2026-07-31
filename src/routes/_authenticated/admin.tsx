@@ -282,6 +282,98 @@ function MagazinesAdmin() {
 
 // ---------- Coups de cœur ----------
 
+function formatFavDate(d: string): string {
+  try {
+    return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  } catch {
+    return d;
+  }
+}
+
+/** Rendu fidèle à la page publique « Coups de Cœur », pour prévisualiser avant publication. */
+function FavoritePreview({
+  data,
+  social,
+}: {
+  data: {
+    featured_date: string;
+    cover_url: string;
+    artist: string;
+    title: string;
+    kind: string;
+    comment: string;
+    discovery_story: string;
+    editorial_rating: number | null;
+  };
+  social: SocialLinks;
+}) {
+  const links = sanitizeLinks(social);
+  const hasLinks = links && Object.keys(links).length > 0;
+  return (
+    <div className="rounded-md border-2 border-dashed border-primary/60 p-3">
+      <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-primary">
+        Aperçu avant publication
+      </div>
+      <div className="card-brut p-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="w-full shrink-0 sm:w-40">
+            <div className="aspect-square overflow-hidden rounded-md bg-muted">
+              {data.cover_url ? (
+                <img src={data.cover_url} alt={`${data.title} — ${data.artist}`} className="size-full object-cover" />
+              ) : (
+                <div className="grid size-full place-items-center">
+                  <Disc3 className="size-10 text-muted-foreground" />
+                </div>
+              )}
+            </div>
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Calendar className="size-3.5" />
+              <time dateTime={data.featured_date}>{formatFavDate(data.featured_date)}</time>
+            </div>
+          </div>
+          <div className="min-w-0 flex-1 space-y-3">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-widest text-primary">
+                {data.kind === "single" ? "Chanson" : data.kind === "ep" ? "EP" : "Album"}
+              </div>
+              <h2 className="text-xl font-bold leading-tight">
+                {data.title || <span className="text-muted-foreground">Titre…</span>}
+              </h2>
+              <div className="text-sm text-muted-foreground">
+                par <span className="font-medium text-foreground">{data.artist || "Artiste…"}</span>
+              </div>
+              {data.editorial_rating != null && data.editorial_rating > 0 && (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                    Note rédaction
+                  </span>
+                  <StarRating value={data.editorial_rating} size={16} />
+                </div>
+              )}
+            </div>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">
+              {data.comment ? renderRich(data.comment) : (
+                <span className="text-muted-foreground">Notre coup de cœur…</span>
+              )}
+            </div>
+            {data.discovery_story && (
+              <div className="rounded-md border-l-4 border-primary bg-muted/40 p-3">
+                <div className="mb-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                  Comment on l'a découvert·e
+                </div>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                  {renderRich(data.discovery_story)}
+                </div>
+              </div>
+            )}
+            {hasLinks && <SocialLinksBar links={links as SocialLinks} className="pt-1" />}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type FavoriteRow = {
   id: string;
   featured_date: string;
