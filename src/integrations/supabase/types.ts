@@ -1406,6 +1406,51 @@ export type Database = {
           },
         ]
       }
+      seo_overrides: {
+        Row: {
+          canonical_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          keywords: string | null
+          lang: string
+          noindex: boolean
+          og_image_url: string | null
+          path: string
+          title: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          canonical_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          keywords?: string | null
+          lang: string
+          noindex?: boolean
+          og_image_url?: string | null
+          path: string
+          title?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          canonical_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          keywords?: string | null
+          lang?: string
+          noindex?: boolean
+          og_image_url?: string | null
+          path?: string
+          title?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       shows: {
         Row: {
           cover_url: string | null
