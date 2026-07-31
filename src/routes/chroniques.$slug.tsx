@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Disc3, Star, ArrowLeft, ExternalLink } from "lucide-react";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { renderRich } from "@/lib/rich-text";
 import { ShareButton } from "@/components/share/ShareButton";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { ContentLikeButton, ContentCommentsSection, ContentRatingSection } from "@/components/content/ContentReactions";
@@ -181,13 +182,13 @@ function ChroniqueDetailPage() {
               {Number(r.rating).toFixed(1)}/5
             </div>
           )}
-          {r.excerpt && <p className="text-sm text-foreground">{r.excerpt}</p>}
+          {r.excerpt && <p className="text-sm text-foreground">{renderRich(r.excerpt)}</p>}
         </div>
       </header>
 
       <section className="card-brut space-y-3 p-4">
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">La chronique</h2>
-        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{stripMediaUrls(r.content)}</div>
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{renderRich(stripMediaUrls(r.content))}</div>
         <UrlEmbeds text={r.content} />
       </section>
 

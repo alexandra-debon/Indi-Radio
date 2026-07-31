@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextArea } from "@/components/text/RichTextArea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
@@ -1225,7 +1226,7 @@ function NewsPublisher() {
     <div className="card-brut space-y-2 p-3">
       <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
       <Input placeholder="Image URL (optionnel)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-      <Textarea rows={4} placeholder="Contenu…" value={content} onChange={(e) => setContent(e.target.value)} />
+      <RichTextArea rows={4} placeholder="Contenu…" value={content} onChange={setContent} />
       <Button onClick={() => create.mutate()} disabled={!title || !content}>Publier sur Indi Rézo</Button>
     </div>
   );
@@ -1781,8 +1782,8 @@ function ChroniquesAdmin() {
           <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
           <ImageUploader value={form.cover_url} onChange={(v) => setForm({ ...form, cover_url: v })} folder="covers" label="Pochette" />
         </div>
-        <Textarea rows={2} placeholder="Extrait / résumé court" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
-        <Textarea rows={6} placeholder="Chronique complète *" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+        <RichTextArea rows={2} preview={false} placeholder="Extrait / résumé court" value={form.excerpt} onChange={(v) => setForm({ ...form, excerpt: v })} />
+        <RichTextArea rows={6} placeholder="Chronique complète *" value={form.content} onChange={(v) => setForm({ ...form, content: v })} />
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Input placeholder="Spotify URL" value={form.spotify_url} onChange={(e) => setForm({ ...form, spotify_url: e.target.value })} />
           <Input placeholder="Bandcamp URL" value={form.bandcamp_url} onChange={(e) => setForm({ ...form, bandcamp_url: e.target.value })} />
@@ -1888,8 +1889,8 @@ function ChroniqueEdit({ review, onDone }: { review: ReviewRow; onDone: () => vo
         <Input type="number" step="0.1" min="0" max="5" placeholder="Note /5" value={f.rating} onChange={(e) => setF({ ...f, rating: e.target.value })} />
         <ImageUploader value={f.cover_url} onChange={(v) => setF({ ...f, cover_url: v })} folder="covers" label="Pochette" />
       </div>
-      <Textarea rows={2} placeholder="Extrait" value={f.excerpt} onChange={(e) => setF({ ...f, excerpt: e.target.value })} />
-      <Textarea rows={6} placeholder="Chronique" value={f.content} onChange={(e) => setF({ ...f, content: e.target.value })} />
+      <RichTextArea rows={2} preview={false} placeholder="Extrait" value={f.excerpt} onChange={(v) => setF({ ...f, excerpt: v })} />
+      <RichTextArea rows={6} placeholder="Chronique" value={f.content} onChange={(v) => setF({ ...f, content: v })} />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Input placeholder="Spotify" value={f.spotify_url} onChange={(e) => setF({ ...f, spotify_url: e.target.value })} />
         <Input placeholder="Bandcamp" value={f.bandcamp_url} onChange={(e) => setF({ ...f, bandcamp_url: e.target.value })} />
