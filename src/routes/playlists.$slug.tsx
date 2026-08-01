@@ -125,6 +125,7 @@ function PlaylistDetail() {
         </h1>
         <ShareButton
           variant="chip"
+          contentType="playlist"
           target={{
             url: canonicalUrl(`/playlists/${slug}`),
             title: `${title} — Playlist InDi RaDio`,
