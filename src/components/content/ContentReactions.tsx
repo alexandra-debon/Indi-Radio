@@ -13,6 +13,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { renderRich } from "@/lib/rich-text";
 import { useT } from "@/lib/i18n";
+import { trackEvent } from "@/lib/plausible";
 
 type Props = { contentType: string; contentId: string };
 
@@ -52,6 +53,7 @@ export function ContentLikeButton({ contentType, contentId }: Props) {
         await supabase.from("content_likes").delete().eq("content_type", contentType).eq("content_id", contentId).eq("user_id", uid);
       } else {
         await supabase.from("content_likes").insert({ content_type: contentType, content_id: contentId, user_id: uid });
+        trackEvent("like", { type: contentType });
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["content-likes", contentType, contentId] }),
@@ -129,6 +131,7 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {
+      trackEvent("comment", { type: contentType, reply: !!vars?.parentId });
       if (vars?.parentId) { setReplyText(""); setReplyImages([]); setReplyTo(null); }
       else { setText(""); setImages([]); }
       qc.invalidateQueries({ queryKey: key });
@@ -286,6 +289,7 @@ export function ContentRatingSection({ contentType, contentId }: Props) {
       if (error) throw error;
     },
     onSuccess: () => {
+      trackEvent("vote", { type: contentType, stars });
       toast.success("Merci pour ta note !");
       qc.invalidateQueries({ queryKey: key });
     },
