@@ -23,7 +23,7 @@ export const Route = createFileRoute("/podcast.xml")({
           },
           items,
         );
-        return feedResponse(request, body);
+        return feedResponse(request, body, feedLastBuild(items));
       },
     },
   },

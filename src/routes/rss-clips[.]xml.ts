@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rss-clips.xml")({
           },
           items,
         );
-        return feedResponse(request, body);
+        return feedResponse(request, body, feedLastBuild(items));
       },
     },
   },

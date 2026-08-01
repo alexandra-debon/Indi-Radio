@@ -7,6 +7,7 @@ import {
   loadEpisodes,
   loadShows,
   renderFeed,
+  feedLastBuild,
   feedResponse,
   sortByDate,
   FEED_LIMIT,
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/rss.xml")({
           },
           items,
         );
-        return feedResponse(request, body);
+        return feedResponse(request, body, feedLastBuild(items));
       },
     },
   },

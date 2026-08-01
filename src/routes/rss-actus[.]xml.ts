@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rss-actus.xml")({
           },
           items,
         );
-        return feedResponse(request, body);
+        return feedResponse(request, body, feedLastBuild(items));
       },
     },
   },
