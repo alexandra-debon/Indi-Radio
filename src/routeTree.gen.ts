@@ -39,6 +39,7 @@ import { Route as ArtistesRouteImport } from './routes/artistes'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
@@ -229,6 +230,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
+  id: '/playlists/',
+  path: '/playlists/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
@@ -507,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -580,6 +587,7 @@ export interface FileRoutesByTo {
   '/clips': typeof ClipsIndexRoute
   '/emissions': typeof EmissionsIndexRoute
   '/magazines': typeof MagazinesIndexRoute
+  '/playlists': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -655,6 +663,7 @@ export interface FileRoutesById {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
@@ -730,6 +739,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
@@ -803,6 +813,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/emissions'
     | '/magazines'
+    | '/playlists'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/diagnostics-pseudos'
@@ -877,6 +888,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/diagnostics-pseudos'
@@ -949,6 +961,7 @@ export interface RootRouteChildren {
   ClipsIndexRoute: typeof ClipsIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
+  PlaylistsIndexRoute: typeof PlaylistsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
@@ -1177,6 +1190,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/playlists/': {
+      id: '/playlists/'
+      path: '/playlists'
+      fullPath: '/playlists/'
+      preLoaderRoute: typeof PlaylistsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magazines/': {
@@ -1564,6 +1584,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsIndexRoute: ClipsIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
+  PlaylistsIndexRoute: PlaylistsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
