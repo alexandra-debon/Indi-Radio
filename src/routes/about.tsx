@@ -3,6 +3,7 @@ import { RADIO_CONFIG } from "@/config/radio";
 import sacemLogo from "@/assets/sacem-logo.png.asset.json";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 import { BroadcastPartners } from "@/components/about/BroadcastPartners";
+import { RssFeedsSection } from "@/components/about/RssFeedsSection";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
@@ -68,6 +69,7 @@ function AboutPage() {
         </div>
       </section>
       <BroadcastPartners />
+      <RssFeedsSection />
     </div>
   );
 }

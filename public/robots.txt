@@ -114,3 +114,12 @@ Sitemap: https://radio.indi-art-culture.com/sitemap-en.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-users.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-images.xml
 Sitemap: https://radio.indi-art-culture.com/sitemap-video.xml
+
+# ============================================================
+# Flux RSS (découverte + syndication)
+# ============================================================
+Allow: /rss.xml
+Allow: /rss-chroniques.xml
+Allow: /rss-actus.xml
+Allow: /rss-clips.xml
+Allow: /podcast.xml

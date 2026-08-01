@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart, Rss } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -285,6 +285,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <FileText className="size-3" />
                 {t("footer.privacy")}
               </Link>
+              <a
+                href="/rss.xml"
+                title="Flux RSS — S'abonner aux nouveautés d'InDi RaDio"
+                className="inline-flex items-center gap-1 hover:text-primary"
+              >
+                <Rss className="size-3" />
+                RSS
+              </a>
             </div>
           </div>
         </footer>

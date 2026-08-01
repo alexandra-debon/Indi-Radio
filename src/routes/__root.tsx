@@ -206,6 +206,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ...appleTouchStartupImages,
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      // Découverte automatique des flux RSS par les navigateurs et lecteurs.
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — toutes les nouveautés", href: "https://radio.indi-art-culture.com/rss.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Chroniques d'albums", href: "https://radio.indi-art-culture.com/rss-chroniques.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Actus", href: "https://radio.indi-art-culture.com/rss-actus.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Clip Addict", href: "https://radio.indi-art-culture.com/rss-clips.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Émissions & Podcasts", href: "https://radio.indi-art-culture.com/podcast.xml" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Inter:wght@400;500;600;700&display=swap",
