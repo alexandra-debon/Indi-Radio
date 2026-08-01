@@ -11,6 +11,9 @@ import { SITE_ORIGIN, canonicalUrl } from "@/lib/canonical";
 
 export const FEED_LIMIT = 50;
 
+/** Illustration par défaut des flux (logo carré). */
+export const SITE_ORIGIN_ICON = `${SITE_ORIGIN}/icons/apple-touch-icon.png`;
+
 export interface FeedItem {
   title: string;
   path: string;
