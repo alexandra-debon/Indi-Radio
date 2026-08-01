@@ -28,6 +28,7 @@ import { IosInstallHint } from "@/components/IosInstallHint";
 import { LanguageProvider } from "@/lib/i18n";
 import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { CookieConsent } from "@/components/CookieConsent";
 import { redirect } from "@tanstack/react-router";
 import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
