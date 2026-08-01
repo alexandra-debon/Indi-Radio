@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PlaylistEmbedPair } from "@/components/playlists/PlaylistEmbedPair";
 import { SpotifyNotice, useSpotifyNotice } from "@/components/playlists/SpotifyNotice";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useLang } from "@/lib/i18n";
 import { ShareButton } from "@/components/share/ShareButton";
 import { renderRich } from "@/lib/rich-text";
 import { canonicalUrl } from "@/lib/canonical";
@@ -37,6 +38,8 @@ interface PlaylistRow {
   id: string;
   title: string;
   description: string | null;
+  title_en: string | null;
+  description_en: string | null;
   category: string;
   year: number | null;
   spotify_embed: string | null;
@@ -46,22 +49,37 @@ interface PlaylistRow {
 }
 
 function PlaylistCard({ row, featured = false }: { row: PlaylistRow; featured?: boolean }) {
+  const { lang } = useLang();
+  // Version manuelle saisie par l'admin pour la langue active : elle a priorité
+  // sur la traduction automatique.
+  const manualTitle = lang === "en" ? row.title_en?.trim() : null;
+  const manualDescription = lang === "en" ? row.description_en?.trim() : null;
+  const title = manualTitle || row.title;
+
   return (
     <article className={`card-brut space-y-3 p-4 ${featured ? "border-2 border-primary" : ""}`}>
       <header className="flex items-start justify-between gap-2">
         <h3 className={featured ? "text-xl font-black uppercase tracking-tight text-primary" : "text-base font-bold"}>
-          <TranslatedText entityType="playlist_entries" entityKey={row.id} field="title" text={row.title} as="span" />
+          {manualTitle ? (
+            <span>{manualTitle}</span>
+          ) : (
+            <TranslatedText entityType="playlist_entries" entityKey={row.id} field="title" text={row.title} as="span" />
+          )}
         </h3>
         <ShareButton
           target={{
             url: canonicalUrl("/playlists"),
-            title: `${row.title} — Playlists InDi RaDio`,
-            text: row.description ?? DESCRIPTION,
+            title: `${title} — Playlists InDi RaDio`,
+            text: manualDescription || row.description || DESCRIPTION,
           }}
         />
       </header>
 
-      {row.description && (
+      {manualDescription ? (
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+          {renderRich(manualDescription)}
+        </div>
+      ) : row.description ? (
         <TranslatedText
           entityType="playlist_entries"
           entityKey={row.id}
@@ -74,9 +92,9 @@ function PlaylistCard({ row, featured = false }: { row: PlaylistRow; featured?: 
             </div>
           )}
         </TranslatedText>
-      )}
+      ) : null}
 
-      <PlaylistEmbedPair title={row.title} spotify={row.spotify_embed} apple={row.apple_embed} />
+      <PlaylistEmbedPair title={title} spotify={row.spotify_embed} apple={row.apple_embed} />
     </article>
   );
 }
