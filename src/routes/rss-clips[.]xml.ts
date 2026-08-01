@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { loadClips, renderFeed, feedResponse } from "@/lib/rss";
+import { loadClips, renderFeed, feedResponse, feedLastBuild } from "@/lib/rss";
 
 export const Route = createFileRoute("/rss-clips.xml")({
   server: {
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rss-clips.xml")({
           },
           items,
         );
-        return feedResponse(request, body);
+        return feedResponse(request, body, feedLastBuild(items));
       },
     },
   },
