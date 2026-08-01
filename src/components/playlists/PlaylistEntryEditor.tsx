@@ -15,6 +15,7 @@ export type PlaylistCategory = "indegraal" | "indiscovery" | "thematique";
 
 export interface PlaylistEntryDraft {
   id?: string;
+  slug?: string;
   title: string;
   description: string | null;
   title_en: string | null;
@@ -43,6 +44,7 @@ export function PlaylistEntryEditor({
   const { session } = useAuth();
   const qc = useQueryClient();
   const [title, setTitle] = useState(initial?.title ?? "");
+  const [slug, setSlug] = useState(initial?.slug ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [titleEn, setTitleEn] = useState(initial?.title_en ?? "");
   const [descriptionEn, setDescriptionEn] = useState(initial?.description_en ?? "");
@@ -67,6 +69,7 @@ export function PlaylistEntryEditor({
 
       const payload = {
         title: trimmedTitle,
+        slug: slug.trim(),
         description: description.trim() || null,
         title_en: titleEn.trim() || null,
         description_en: descriptionEn.trim() || null,
