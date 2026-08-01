@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save, Search } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save, Search, ListMusic } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
