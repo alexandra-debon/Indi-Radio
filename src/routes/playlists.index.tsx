@@ -133,6 +133,20 @@ function PlaylistsPage() {
   const [activeYear, setActiveYear] = useState<number | null>(null);
   const currentYear = activeYear ?? years[0] ?? null;
 
+  // Lien profond : /playlists#playlist-<slug> défile jusqu'à la bonne carte
+  // une fois les données chargées.
+  useEffect(() => {
+    if (isLoading || typeof window === "undefined") return;
+    const hash = window.location.hash.replace("#", "");
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.classList.add("ring-2", "ring-primary");
+    const timer = window.setTimeout(() => el.classList.remove("ring-2", "ring-primary"), 2500);
+    return () => window.clearTimeout(timer);
+  }, [isLoading, rows.length]);
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-3 py-6 sm:px-6">
       <SpotifyNotice open={open} onOpenChange={setOpen} />
