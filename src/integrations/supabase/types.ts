@@ -1033,6 +1033,7 @@ export type Database = {
           id: string
           is_published: boolean
           position: number
+          slug: string
           spotify_embed: string | null
           title: string
           title_en: string | null
@@ -1049,6 +1050,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           position?: number
+          slug: string
           spotify_embed?: string | null
           title: string
           title_en?: string | null
@@ -1065,6 +1067,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           position?: number
+          slug?: string
           spotify_embed?: string | null
           title?: string
           title_en?: string | null
@@ -1770,6 +1773,8 @@ export type Database = {
         Returns: Json
       }
       resolve_pseudo_alias: { Args: { _alias: string }; Returns: string }
+      slugify_playlist_title: { Args: { _title: string }; Returns: string }
+      unaccent_fallback: { Args: { _t: string }; Returns: string }
     }
     Enums: {
       app_role: "auditeur" | "artiste" | "animateur" | "admin"
