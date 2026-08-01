@@ -232,7 +232,9 @@ export function matchesConditional(request: Request, lastModified: string, etag:
   return false;
 }
 
-export const BASE_URL = "https://radio.indi-art-culture.com";
+import { SITE_ORIGIN, canonicalUrl } from "@/lib/canonical";
+
+export const BASE_URL = SITE_ORIGIN;
 
 /**
  * Build a language-scoped sitemap that cross-references its counterpart via
@@ -243,9 +245,11 @@ export function renderLocalizedSitemap(entries: SitemapEntry[], lang: "fr" | "en
   const other: "fr" | "en" = lang === "fr" ? "en" : "fr";
   const urls = entries
     .map((e) => {
-      const self = `${BASE_URL}${e.path}?hl=${lang}`;
-      const alt = `${BASE_URL}${e.path}?hl=${other}`;
-      const xDefault = `${BASE_URL}${e.path}`;
+      // Même règle que les balises <link rel="canonical"> du site :
+      // le français est l'URL nue, l'anglais porte ?hl=en.
+      const self = canonicalUrl(e.path, { lang });
+      const alt = canonicalUrl(e.path, { lang: other });
+      const xDefault = canonicalUrl(e.path);
       return [
         `  <url>`,
         `    <loc>${self}</loc>`,
