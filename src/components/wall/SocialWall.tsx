@@ -243,6 +243,7 @@ export function SocialWall() {
       } else {
         const { error } = await supabase.from("post_likes").insert({ post_id: postId, user_id: uid });
         if (error) throw error;
+        trackEvent("like", { type: "wall_post" });
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["wall-likes"] }),
@@ -269,6 +270,7 @@ export function SocialWall() {
       if (error) throw error;
     },
     onSuccess: (_d, v) => {
+      trackEvent("comment", { type: "wall_post" });
       setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
       setReplyImages((r) => ({ ...r, [v.postId]: [] }));
       setReplyVideo((r) => ({ ...r, [v.postId]: "" }));
