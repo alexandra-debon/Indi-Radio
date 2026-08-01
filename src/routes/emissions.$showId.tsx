@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { EpisodeRow } from "@/components/EpisodeRow";
@@ -7,6 +8,7 @@ import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from 
 import { ArrowLeft, Mic2 } from "lucide-react";
 import ogEmissions from "@/assets/og-emissions.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { trackEvent } from "@/lib/plausible";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogEmissions}`;
@@ -84,6 +86,14 @@ function ShowDetailPage() {
   const { showId } = Route.useParams();
   const url = `${BASE_URL}/emissions/${showId}`;
   const label = show.type === "chronique" ? "Chronique" : show.type === "animateur" ? "Animateur" : "Émission";
+
+  useEffect(() => {
+    trackEvent(show.type === "animateur" ? "host_profile_click" : "show_page_view", {
+      type: show.type ?? "emission",
+      title: show.title,
+      source: "show_page",
+    });
+  }, [show.id, show.type, show.title]);
 
   const { data: episodes = [] } = useQuery({
     queryKey: ["show-episodes", showId],
