@@ -210,8 +210,9 @@ export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
 }
 
 /** En-têtes cache + conditional GET, alignés sur ceux des sitemaps. */
-export function feedResponse(request: Request, body: string): Response {
-  const lastModified = new Date().toUTCString();
+export function feedResponse(request: Request, body: string, lastBuild?: Date): Response {
+  const lastModifiedDate = lastBuild ?? new Date();
+  const lastModified = lastModifiedDate.toUTCString();
   const headers = new Headers();
   headers.set("Content-Type", "application/rss+xml; charset=utf-8");
   headers.set(
@@ -223,6 +224,13 @@ export function feedResponse(request: Request, body: string): Response {
   headers.set("Last-Modified", lastModified);
   if (request.headers.get("if-none-match") === etag) {
     return new Response(null, { status: 304, headers });
+  }
+  const ims = request.headers.get("if-modified-since");
+  if (ims) {
+    const since = Date.parse(ims);
+    if (!Number.isNaN(since) && Math.floor(lastModifiedDate.getTime() / 1000) <= Math.floor(since / 1000)) {
+      return new Response(null, { status: 304, headers });
+    }
   }
   return new Response(body, { headers });
 }
@@ -245,7 +253,7 @@ export async function loadChroniques(): Promise<FeedItem[]> {
     const sb = publicClient();
     const { data } = await sb
       .from("album_reviews")
-      .select("slug, title, artist, excerpt, content, cover_url, created_at, updated_at")
+      .select("slug, title, artist, excerpt, content, cover_url, created_at")
       .eq("published", true)
       .order("created_at", { ascending: false })
       .limit(FEED_LIMIT);
@@ -350,7 +358,5 @@ export async function loadShows(): Promise<FeedItem[]> {
 }
 
 export function sortByDate(items: FeedItem[]): FeedItem[] {
-  return [...items].sort(
-    (a, b) => (b.date ? Date.parse(b.date) : 0) - (a.date ? Date.parse(a.date) : 0),
-  );
+  return [...items].sort((a, b) => itemDate(b) - itemDate(a));
 }
