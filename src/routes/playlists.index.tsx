@@ -73,6 +73,7 @@ function PlaylistCard({ row, featured = false }: { row: PlaylistRow; featured?: 
           </Link>
         </h3>
         <ShareButton
+          contentType="playlist"
           target={{
             url: canonicalUrl(`/playlists/${row.slug}`),
             title: `${title} — Playlists InDi RaDio`,

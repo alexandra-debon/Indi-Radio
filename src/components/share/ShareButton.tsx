@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { shareNative, isNative } from "@/lib/native";
 import { useT } from "@/lib/i18n";
+import { trackEvent } from "@/lib/plausible";
 
 export type ShareTarget = {
   /**
@@ -44,11 +45,14 @@ export function ShareButton({
   className = "",
   label = "Partager",
   variant = "icon",
+  contentType,
 }: {
   target: ShareTarget;
   className?: string;
   label?: string;
   variant?: "icon" | "chip";
+  /** Type de contenu partagé (playlist, post, episode…) pour les statistiques. */
+  contentType?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [nativeShare, setNativeShare] = useState(false);
@@ -64,9 +68,13 @@ export function ShareButton({
   const title = target.title ?? (typeof document !== "undefined" ? document.title : "Indi Radio");
   const text = target.text ?? title;
 
+  const trackShare = (network: string) =>
+    trackEvent("share", { network, type: contentType ?? "page", url });
+
   async function copy() {
     try {
       await navigator.clipboard.writeText(url);
+      trackShare("copy_link");
       toast.success(t("share.copied"));
     } catch {
       toast.error(t("share.copyError"));
@@ -76,6 +84,7 @@ export function ShareButton({
   async function triggerNative() {
     try {
       await shareNative({ title, text, url });
+      trackShare("native");
     } catch {
       // Native share refused (permissions, iframe, etc.) → open the menu.
       setNativeShare(false);
@@ -121,32 +130,32 @@ export function ShareButton({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem asChild>
-          <a href={links.facebook} target="_blank" rel="noopener noreferrer">
+          <a href={links.facebook} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("facebook")}>
             <Facebook className="size-4" /> Facebook
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={links.linkedin} target="_blank" rel="noopener noreferrer">
+          <a href={links.linkedin} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("linkedin")}>
             <Linkedin className="size-4" /> LinkedIn
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={links.whatsapp} target="_blank" rel="noopener noreferrer">
+          <a href={links.whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("whatsapp")}>
             <MessageCircle className="size-4" /> WhatsApp
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={links.telegram} target="_blank" rel="noopener noreferrer">
+          <a href={links.telegram} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("telegram")}>
             <Send className="size-4" /> Telegram
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={links.reddit} target="_blank" rel="noopener noreferrer">
+          <a href={links.reddit} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("reddit")}>
             <LinkIcon className="size-4" /> Reddit
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={links.email}>
+          <a href={links.email} onClick={() => trackShare("email")}>
             <Mail className="size-4" /> Email
           </a>
         </DropdownMenuItem>

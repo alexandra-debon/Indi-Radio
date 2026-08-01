@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { toast } from "@/lib/toast";
+import { trackEvent } from "@/lib/plausible";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
@@ -243,6 +244,7 @@ export function SocialWall() {
       } else {
         const { error } = await supabase.from("post_likes").insert({ post_id: postId, user_id: uid });
         if (error) throw error;
+        trackEvent("like", { type: "wall_post" });
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["wall-likes"] }),
@@ -269,6 +271,7 @@ export function SocialWall() {
       if (error) throw error;
     },
     onSuccess: (_d, v) => {
+      trackEvent("comment", { type: "wall_post" });
       setReplyDraft((r) => ({ ...r, [v.postId]: "" }));
       setReplyImages((r) => ({ ...r, [v.postId]: [] }));
       setReplyVideo((r) => ({ ...r, [v.postId]: "" }));

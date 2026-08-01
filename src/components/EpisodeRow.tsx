@@ -11,6 +11,7 @@ import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { ShareButton } from "@/components/share/ShareButton";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT } from "@/lib/i18n";
+import { trackEvent } from "@/lib/plausible";
 
 export type EpisodeLike = {
   id: string;
@@ -100,7 +101,9 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
       }, { onConflict: "episode_id,user_id" });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
+      trackEvent("vote", { type: "episode", stars: vars?.stars ?? 0 });
+      if (vars?.comment?.trim()) trackEvent("comment", { type: "episode" });
       toast.success("Merci pour ta note !");
       qc.invalidateQueries({ queryKey: ["ep-ratings", ep.id] });
       qc.invalidateQueries({ queryKey: ["ep-comments", ep.id] });
@@ -110,8 +113,15 @@ export function EpisodeRow({ ep }: { ep: EpisodeLike }) {
 
   function toggle() {
     if (!audio) return;
-    if (audio.paused) { audio.play(); setPlaying(true); }
-    else { audio.pause(); setPlaying(false); }
+    if (audio.paused) {
+      audio.play();
+      setPlaying(true);
+      trackEvent("episode_play", { title: ep.title });
+    } else {
+      audio.pause();
+      setPlaying(false);
+      trackEvent("episode_pause", { title: ep.title });
+    }
   }
 
   return (
