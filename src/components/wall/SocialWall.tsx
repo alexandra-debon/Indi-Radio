@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { toast } from "@/lib/toast";
+import { trackEvent } from "@/lib/plausible";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
