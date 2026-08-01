@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { z } from "zod";
+import { protectQuotedWorks, restoreQuotedWorks } from "@/lib/quoted-works";
 
 const InputSchema = z.object({
   entityType: z.string().min(1).max(64),
@@ -11,25 +12,6 @@ const InputSchema = z.object({
 });
 
 type TranslationInput = z.infer<typeof InputSchema>;
-
-const QUOTED_WORK_RE = /([«“"])([^«»“”"\n]+)([»”"])/g;
-
-function protectQuotedWorks(text: string) {
-  const originals: string[] = [];
-  const protectedText = text.replace(QUOTED_WORK_RE, (match) => {
-    const index = originals.push(match) - 1;
-    return `⟦INDI_ORIGINAL_${index}⟧`;
-  });
-  return { protectedText, originals };
-}
-
-function restoreQuotedWorks(text: string, originals: string[]) {
-  return originals.reduce(
-    (result, original, index) =>
-      result.replace(new RegExp(`⟦INDI_ORIGINAL_${index}⟧`, "g"), original),
-    text,
-  );
-}
 
 export function hashText(t: string) {
   // Versioned so translations cached before title protection are regenerated.
