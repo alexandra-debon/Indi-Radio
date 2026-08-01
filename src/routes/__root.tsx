@@ -28,6 +28,7 @@ import { IosInstallHint } from "@/components/IosInstallHint";
 import { LanguageProvider } from "@/lib/i18n";
 import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { CookieConsent } from "@/components/CookieConsent";
 import { redirect } from "@tanstack/react-router";
 import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
@@ -242,11 +243,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
-      // Privacy-friendly analytics by Plausible
-      { src: "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js", async: true },
-      {
-        children: "window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()",
-      },
+      // Analytics Plausible : chargé uniquement après consentement (voir CookieConsent)
     ],
   }),
   shellComponent: RootShell,
@@ -288,6 +285,7 @@ function RootComponent() {
           <Toaster />
           <SeoLocalizer />
           <OnboardingTour />
+          <CookieConsent />
         </RadioPlayerProvider>
         </LanguageProvider>
       </AuthProvider>
