@@ -94,7 +94,10 @@ export function setAnalyticsConsent(choice: "accepted" | "refused") {
 export function loadPlausible(): Promise<Tracker> | null {
   // Garde-fou : aucune initialisation (donc aucune requête) sans consentement explicite.
   if (typeof window === "undefined") return null;
-  if (getAnalyticsConsent() !== "accepted") return null;
+  if (getAnalyticsConsent() !== "accepted") {
+    debugLog("consentement absent → aucun envoi");
+    return null;
+  }
   if (!configIsUsable()) return null;
   if (!trackerPromise) {
     trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
@@ -106,6 +109,10 @@ export function loadPlausible(): Promise<Tracker> | null {
         outboundLinks: true,
         fileDownloads: true,
       });
+      debugLog("tracker initialisé", {
+        domain: PLAUSIBLE_DOMAIN,
+        endpoint: PLAUSIBLE_ENDPOINT ?? "(défaut Plausible)",
+      });
       return mod;
     });
   }
@@ -115,7 +122,10 @@ export function loadPlausible(): Promise<Tracker> | null {
 /** Envoie une page vue pour l'URL courante (ex. /playlists/<slug>). */
 export function trackPageview(url?: string) {
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
-  loadPlausible()?.then((mod) => mod.track("pageview", url ? { url } : {}));
+  loadPlausible()?.then((mod) => {
+    debugLog("pageview", { url: url ?? window.location.href });
+    mod.track("pageview", url ? { url } : {});
+  });
 }
 
 /** Noms d'événements suivis (actions clés de l'app). */
