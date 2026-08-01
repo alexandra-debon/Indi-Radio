@@ -12,6 +12,7 @@ import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
+import { trackEvent } from "@/lib/plausible";
 
 function ArchiveHeading() {
   const t = useT();
@@ -74,7 +75,14 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
           {data.map((s, i) => (
             <CarouselItem key={s.id} className="basis-1/2 md:basis-1/3">
               <button
-                onClick={() => setIdx(i)}
+                onClick={() => {
+                  setIdx(i);
+                  trackEvent(type === "animateur" ? "host_profile_click" : "show_open", {
+                    type,
+                    title: s.title,
+                    source: "emissions_carousel",
+                  });
+                }}
                 className={`card-brut relative block aspect-square w-full overflow-hidden ${i === idx ? "ring-2 ring-primary" : ""}`}
               >
                 {s.cover_url ? (
