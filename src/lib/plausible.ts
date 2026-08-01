@@ -12,6 +12,41 @@ const PLAUSIBLE_ENDPOINT = import.meta.env.VITE_PLAUSIBLE_ENDPOINT as
   | undefined;
 export const ANALYTICS_STORAGE_KEY = "indi-analytics-consent";
 export const ANALYTICS_CONSENT_EVENT = "indi-analytics-consent-change";
+export const ANALYTICS_DEBUG_KEY = "indi-analytics-debug";
+
+/**
+ * Mode debug : activé par VITE_PLAUSIBLE_DEBUG=true, par ?plausible_debug=1
+ * dans l'URL, ou en posant localStorage["indi-analytics-debug"] = "1".
+ */
+export function isPlausibleDebug(): boolean {
+  if (typeof window === "undefined") return false;
+  if (String(import.meta.env.VITE_PLAUSIBLE_DEBUG) === "true") return true;
+  try {
+    if (new URLSearchParams(window.location.search).get("plausible_debug") === "1") {
+      localStorage.setItem(ANALYTICS_DEBUG_KEY, "1");
+      return true;
+    }
+    return localStorage.getItem(ANALYTICS_DEBUG_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Active/désactive le mode debug depuis la console : setPlausibleDebug(true). */
+export function setPlausibleDebug(on: boolean) {
+  try {
+    if (on) localStorage.setItem(ANALYTICS_DEBUG_KEY, "1");
+    else localStorage.removeItem(ANALYTICS_DEBUG_KEY);
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function debugLog(message: string, data?: unknown) {
+  if (!isPlausibleDebug()) return;
+  if (data !== undefined) console.info("[Plausible]", message, data);
+  else console.info("[Plausible]", message);
+}
 
 /** Résultat de la validation des variables d'environnement analytics. */
 export type PlausibleConfigCheck = { valid: boolean; errors: string[] };
