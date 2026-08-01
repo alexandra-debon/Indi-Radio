@@ -1029,11 +1029,13 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          description_en: string | null
           id: string
           is_published: boolean
           position: number
           spotify_embed: string | null
           title: string
+          title_en: string | null
           updated_at: string
           year: number | null
         }
@@ -1043,11 +1045,13 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
           id?: string
           is_published?: boolean
           position?: number
           spotify_embed?: string | null
           title: string
+          title_en?: string | null
           updated_at?: string
           year?: number | null
         }
@@ -1057,11 +1061,13 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
           id?: string
           is_published?: boolean
           position?: number
           spotify_embed?: string | null
           title?: string
+          title_en?: string | null
           updated_at?: string
           year?: number | null
         }
