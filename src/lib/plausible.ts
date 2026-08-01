@@ -60,3 +60,29 @@ export function trackPageview(url?: string) {
   if (!w || getAnalyticsConsent() !== "accepted") return;
   w.plausible?.("pageview", url ? { u: url } : undefined);
 }
+
+/** Noms d'événements suivis (actions clés de l'app). */
+export type PlausibleEvent =
+  | "radio_play"
+  | "radio_pause"
+  | "episode_play"
+  | "episode_pause"
+  | "share"
+  | "like"
+  | "comment"
+  | "vote";
+
+/**
+ * Envoie un événement personnalisé Plausible (ignoré sans consentement).
+ * Ex: trackEvent("share", { network: "facebook", type: "playlist" })
+ */
+export function trackEvent(
+  name: PlausibleEvent,
+  props?: Record<string, string | number | boolean | undefined>,
+) {
+  const w = win();
+  if (!w || getAnalyticsConsent() !== "accepted") return;
+  const clean: Record<string, string | number | boolean> = {};
+  for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = v;
+  w.plausible?.(name, Object.keys(clean).length ? { props: clean } : undefined);
+}
