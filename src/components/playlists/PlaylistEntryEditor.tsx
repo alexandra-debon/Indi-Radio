@@ -17,6 +17,8 @@ export interface PlaylistEntryDraft {
   id?: string;
   title: string;
   description: string | null;
+  title_en: string | null;
+  description_en: string | null;
   category: string;
   year: number | null;
   spotify_embed: string | null;
@@ -42,6 +44,8 @@ export function PlaylistEntryEditor({
   const qc = useQueryClient();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
+  const [titleEn, setTitleEn] = useState(initial?.title_en ?? "");
+  const [descriptionEn, setDescriptionEn] = useState(initial?.description_en ?? "");
   const [category, setCategory] = useState<string>(initial?.category ?? "thematique");
   const [year, setYear] = useState(initial?.year ? String(initial.year) : String(new Date().getFullYear()));
   const [spotify, setSpotify] = useState(initial?.spotify_embed ?? "");
@@ -64,6 +68,8 @@ export function PlaylistEntryEditor({
       const payload = {
         title: trimmedTitle,
         description: description.trim() || null,
+        title_en: titleEn.trim() || null,
+        description_en: descriptionEn.trim() || null,
         category,
         year: category === "indiscovery" ? Number(year) || null : null,
         spotify_embed: spotify.trim() || null,
@@ -96,7 +102,17 @@ export function PlaylistEntryEditor({
         {initial?.id ? "Modifier la playlist" : "Nouvelle playlist"}
       </div>
 
-      <Input placeholder="Titre (ex. IndéGraal)" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <div className="space-y-2 rounded-lg border border-border p-2">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">🇫🇷 Version française</div>
+        <Input placeholder="Titre (ex. IndéGraal)" value={title} onChange={(e) => setTitle(e.target.value)} />
+      </div>
+
+      <div className="space-y-2 rounded-lg border border-dashed border-border p-2">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          🇬🇧 English version (optionnel — traduction auto si vide)
+        </div>
+        <Input placeholder="Title (English)" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} />
+      </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <select
@@ -128,8 +144,16 @@ export function PlaylistEntryEditor({
         value={description}
         onChange={setDescription}
         rows={5}
-        ariaLabel="Présentation de la playlist"
-        placeholder="Présentation de la playlist (commune aux deux lecteurs)"
+        ariaLabel="Présentation de la playlist (français)"
+        placeholder="Présentation FR de la playlist (commune aux deux lecteurs)"
+      />
+
+      <RichTextArea
+        value={descriptionEn}
+        onChange={setDescriptionEn}
+        rows={5}
+        ariaLabel="Playlist description (English)"
+        placeholder="English description (optional — auto-translated if left empty)"
       />
 
       <Textarea
