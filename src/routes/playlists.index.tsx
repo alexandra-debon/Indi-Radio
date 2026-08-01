@@ -53,9 +53,11 @@ function PlaylistCard({ row, featured = false }: { row: PlaylistRow; featured?: 
           <TranslatedText entityType="playlist_entries" entityKey={row.id} field="title" text={row.title} as="span" />
         </h3>
         <ShareButton
-          url={canonicalUrl("/playlists")}
-          title={`${row.title} — Playlists InDi RaDio`}
-          text={row.description ?? DESCRIPTION}
+          target={{
+            url: canonicalUrl("/playlists"),
+            title: `${row.title} — Playlists InDi RaDio`,
+            text: row.description ?? DESCRIPTION,
+          }}
         />
       </header>
 
