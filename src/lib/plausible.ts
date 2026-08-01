@@ -56,9 +56,7 @@ export function loadPlausible(): Promise<Tracker> | null {
 /** Envoie une page vue pour l'URL courante (ex. /playlists/<slug>). */
 export function trackPageview(url?: string) {
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
-  loadPlausible()?.then((mod) =>
-    mod.track("pageview", url ? { url } : undefined),
-  );
+  loadPlausible()?.then((mod) => mod.track("pageview", url ? { url } : {}));
 }
 
 /** Noms d'événements suivis (actions clés de l'app). */
@@ -84,9 +82,9 @@ export function trackEvent(
   props?: Record<string, string | number | boolean | undefined>,
 ) {
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
-  const clean: Record<string, string | number | boolean> = {};
-  for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = v;
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = String(v);
   loadPlausible()?.then((mod) =>
-    mod.track(name, Object.keys(clean).length ? { props: clean } : undefined),
+    mod.track(name, Object.keys(clean).length ? { props: clean } : {}),
   );
 }
