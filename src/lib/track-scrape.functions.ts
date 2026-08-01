@@ -27,18 +27,13 @@ export const scrapeCurrentTrack = createServerFn({ method: "POST" }).handler(asy
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const { data: last } = await supabaseAdmin
-    .from("track_history")
-    .select("id,title,artist")
-    .order("played_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (last && last.title === title && last.artist === artist) {
-    return { ok: true, changed: false as const };
-  }
-
-  const { error } = await supabaseAdmin.from("track_history").insert({ title, artist });
+  // Atomic: the DB function takes an advisory lock so concurrent scrapes from
+  // multiple listeners can never insert the same track twice.
+  const { data, error } = await supabaseAdmin.rpc("record_current_track", {
+    _title: title,
+    _artist: artist,
+  });
   if (error) return { ok: false, reason: error.message };
-  return { ok: true, changed: true as const, title, artist };
+  const changed = (data as { changed?: boolean } | null)?.changed === true;
+  return { ok: true, changed, title, artist };
 });
