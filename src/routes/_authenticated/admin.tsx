@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserBadge } from "@/components/UserBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/lib/toast";
-import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save, Search } from "lucide-react";
+import { ShieldAlert, Users, Send, Newspaper, Headphones, Mic2, Trash2, Pencil, Disc3, BookOpen, Ban, ShieldOff, Undo2, AlertTriangle, Flag, Rocket, Mail, Heart, Globe, Eye, EyeOff, Calendar, Save, Search, ListMusic } from "lucide-react";
 import { z } from "zod";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
 import { StarRating } from "@/components/rating/StarRating";
@@ -27,6 +27,7 @@ import { renderRich } from "@/lib/rich-text";
 import { DeployCheckPanel } from "@/components/admin/DeployCheckPanel";
 import { BroadcastPartnersAdmin } from "@/components/admin/BroadcastPartnersAdmin";
 import { SeoAdminPanel } from "@/components/admin/SeoAdminPanel";
+import { PlaylistsAdmin } from "@/components/admin/PlaylistsAdmin";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { useLocalDraft } from "@/hooks/use-local-draft";
 
@@ -55,7 +56,7 @@ function formatDuration(sec: number | null | undefined): string {
 }
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "reports", "deploy", "emails", "diffuseurs", "seo"]).catch("users"),
+  tab: z.enum(["users", "requests", "news", "podcasts", "shows", "chroniques", "favorites", "magazines", "playlists", "reports", "deploy", "emails", "diffuseurs", "seo"]).catch("users"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -108,6 +109,7 @@ function AdminPage() {
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
     { key: "favorites" as const, label: "Coups de cœur", icon: Heart, desc: "Nos artistes chouchous" },
     { key: "magazines" as const, label: "Magazine Indi Art", icon: BookOpen, desc: "Articles interactifs FlipHTML5" },
+    { key: "playlists" as const, label: "Playlists", icon: ListMusic, desc: "IndéGraal, InDiscovery & thématiques" },
     { key: "reports" as const, label: "Signalements", icon: Flag, desc: "Modérer les commentaires signalés" },
     { key: "emails" as const, label: "Emails", icon: Mail, desc: "Statut DNS & test d'envoi" },
     { key: "diffuseurs" as const, label: "Diffuseurs", icon: Globe, desc: "Plateformes qui rediffusent la radio" },
@@ -149,6 +151,7 @@ function AdminPage() {
           <TabsTrigger value="chroniques">Chroniques</TabsTrigger>
           <TabsTrigger value="favorites">Coups de cœur</TabsTrigger>
           <TabsTrigger value="magazines">Magazines</TabsTrigger>
+          <TabsTrigger value="playlists">Playlists</TabsTrigger>
           <TabsTrigger value="reports">Signalements</TabsTrigger>
           <TabsTrigger value="emails">Emails</TabsTrigger>
           <TabsTrigger value="diffuseurs">Diffuseurs</TabsTrigger>
@@ -163,6 +166,7 @@ function AdminPage() {
         <TabsContent value="chroniques" className="mt-4"><ChroniquesAdmin /></TabsContent>
         <TabsContent value="favorites" className="mt-4"><FavoritesAdmin /></TabsContent>
         <TabsContent value="magazines" className="mt-4"><MagazinesAdmin /></TabsContent>
+        <TabsContent value="playlists" className="mt-4"><PlaylistsAdmin /></TabsContent>
         <TabsContent value="reports" className="mt-4"><ReportsAdmin /></TabsContent>
         <TabsContent value="emails" className="mt-4"><EmailStatusPanel /></TabsContent>
         <TabsContent value="diffuseurs" className="mt-4"><BroadcastPartnersAdmin /></TabsContent>

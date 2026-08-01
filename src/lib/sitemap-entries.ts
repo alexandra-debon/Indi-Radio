@@ -16,6 +16,7 @@ export const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/podcasts", changefreq: "weekly", priority: "0.7" },
   { path: "/chroniques", changefreq: "weekly", priority: "0.8" },
   { path: "/magazines", changefreq: "weekly", priority: "0.6" },
+  { path: "/playlists", changefreq: "weekly", priority: "0.6" },
   { path: "/artistes", changefreq: "weekly", priority: "0.7" },
   { path: "/clips", changefreq: "weekly", priority: "0.6" },
   { path: "/top", changefreq: "daily", priority: "0.6" },
