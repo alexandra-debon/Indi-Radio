@@ -30,6 +30,7 @@ import { useLang, useT } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
+import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
