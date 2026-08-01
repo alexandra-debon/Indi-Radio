@@ -242,6 +242,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
+      // Privacy-friendly analytics by Plausible
+      { src: "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js", async: true },
+      {
+        children: "window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()",
+      },
     ],
   }),
   shellComponent: RootShell,
