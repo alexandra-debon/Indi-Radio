@@ -13,6 +13,62 @@ const PLAUSIBLE_ENDPOINT = import.meta.env.VITE_PLAUSIBLE_ENDPOINT as
 export const ANALYTICS_STORAGE_KEY = "indi-analytics-consent";
 export const ANALYTICS_CONSENT_EVENT = "indi-analytics-consent-change";
 
+/** Résultat de la validation des variables d'environnement analytics. */
+export type PlausibleConfigCheck = { valid: boolean; errors: string[] };
+
+const DOMAIN_RE = /^(?!-)[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
+
+/**
+ * Vérifie en runtime la configuration Plausible :
+ * - VITE_PLAUSIBLE_DOMAIN doit être un nom de domaine (pas d'URL, pas de slash)
+ * - VITE_PLAUSIBLE_ENDPOINT, si défini, doit être une URL http(s) absolue
+ */
+export function validatePlausibleConfig(): PlausibleConfigCheck {
+  const errors: string[] = [];
+  const raw = import.meta.env.VITE_PLAUSIBLE_DOMAIN as string | undefined;
+
+  if (raw !== undefined && raw.trim() === "") {
+    errors.push(
+      "VITE_PLAUSIBLE_DOMAIN est vide. Indiquez le domaine déclaré dans Plausible (ex. radio.indi-art-culture.com) ou supprimez la variable pour utiliser la valeur par défaut.",
+    );
+  } else if (!DOMAIN_RE.test(PLAUSIBLE_DOMAIN)) {
+    errors.push(
+      `VITE_PLAUSIBLE_DOMAIN invalide ("${PLAUSIBLE_DOMAIN}") : attendu un nom de domaine seul, sans "https://" ni chemin (ex. radio.indi-art-culture.com).`,
+    );
+  }
+
+  if (PLAUSIBLE_ENDPOINT !== undefined) {
+    if (PLAUSIBLE_ENDPOINT.trim() === "") {
+      errors.push(
+        "VITE_PLAUSIBLE_ENDPOINT est vide. Renseignez l'URL complète du proxy (ex. https://plausible.io/api/event) ou supprimez la variable.",
+      );
+    } else {
+      try {
+        const u = new URL(PLAUSIBLE_ENDPOINT);
+        if (u.protocol !== "https:" && u.protocol !== "http:") throw new Error("protocol");
+      } catch {
+        errors.push(
+          `VITE_PLAUSIBLE_ENDPOINT invalide ("${PLAUSIBLE_ENDPOINT}") : attendu une URL absolue http(s) (ex. https://plausible.io/api/event).`,
+        );
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+let configLogged = false;
+function configIsUsable(): boolean {
+  const { valid, errors } = validatePlausibleConfig();
+  if (!valid && !configLogged) {
+    configLogged = true;
+    console.error(
+      "[Plausible] Configuration analytics invalide, suivi désactivé :\n- " + errors.join("\n- "),
+    );
+  }
+  return valid;
+}
+
 type Tracker = typeof import("@plausible-analytics/tracker");
 let trackerPromise: Promise<Tracker> | null = null;
 
@@ -39,6 +95,7 @@ export function loadPlausible(): Promise<Tracker> | null {
   // Garde-fou : aucune initialisation (donc aucune requête) sans consentement explicite.
   if (typeof window === "undefined") return null;
   if (getAnalyticsConsent() !== "accepted") return null;
+  if (!configIsUsable()) return null;
   if (!trackerPromise) {
     trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
       mod.init({
