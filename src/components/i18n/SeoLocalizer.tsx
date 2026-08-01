@@ -9,8 +9,9 @@ import {
   indexOverrides,
   findOverride,
 } from "@/lib/seo-overrides";
+import { SITE_ORIGIN as CANONICAL_ORIGIN, canonicalPath, canonicalUrl, hreflangUrls } from "@/lib/canonical";
 
-const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+const SITE_ORIGIN = CANONICAL_ORIGIN;
 
 function setMeta(selector: string, attr: "content", value: string, create?: () => HTMLElement) {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
@@ -41,7 +42,11 @@ function upsertLink(rel: string, hreflang: string, href: string) {
  */
 export function SeoLocalizer() {
   const { lang } = useLang();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const rawPathname = useRouterState({ select: (s) => s.location.pathname });
+  const pageParam = useRouterState({
+    select: (s) => Number((s.location.search as Record<string, unknown> | undefined)?.["page"] ?? 0),
+  });
+  const pathname = canonicalPath(rawPathname);
   const { data: overrideRows } = useQuery({
     queryKey: ["seo-overrides"],
     queryFn: fetchSeoOverrides,
