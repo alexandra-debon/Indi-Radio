@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useLang } from "@/lib/i18n";
 import { translateContent } from "@/lib/translate.functions";
+import { preserveQuotedWorks } from "@/lib/quoted-works";
 import { Languages } from "lucide-react";
 
 type Props = {
@@ -94,9 +95,10 @@ export function TranslatedText({
 
   const rendered = useMemo(() => {
     if (!shouldTranslate) return text ?? "";
-    if (query.data) return query.data;
+    // Quoted work titles keep their original wording when rendering in French.
+    if (query.data) return preserveQuotedWorks(text, query.data, lang);
     return t("translate.loading");
-  }, [shouldTranslate, query.data, text, t]);
+  }, [shouldTranslate, query.data, text, t, lang]);
 
   const showButton = manual && langsDiffer;
   const label = lang === "fr" ? "Traduire" : "Translate";
