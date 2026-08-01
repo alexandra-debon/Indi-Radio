@@ -15,6 +15,7 @@ export type PlaylistCategory = "indegraal" | "indiscovery" | "thematique";
 
 export interface PlaylistEntryDraft {
   id?: string;
+  slug?: string;
   title: string;
   description: string | null;
   title_en: string | null;
@@ -43,6 +44,7 @@ export function PlaylistEntryEditor({
   const { session } = useAuth();
   const qc = useQueryClient();
   const [title, setTitle] = useState(initial?.title ?? "");
+  const [slug, setSlug] = useState(initial?.slug ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [titleEn, setTitleEn] = useState(initial?.title_en ?? "");
   const [descriptionEn, setDescriptionEn] = useState(initial?.description_en ?? "");
@@ -67,6 +69,7 @@ export function PlaylistEntryEditor({
 
       const payload = {
         title: trimmedTitle,
+        slug: slug.trim(),
         description: description.trim() || null,
         title_en: titleEn.trim() || null,
         description_en: descriptionEn.trim() || null,
@@ -105,6 +108,19 @@ export function PlaylistEntryEditor({
       <div className="space-y-2 rounded-lg border border-border p-2">
         <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">🇫🇷 Version française</div>
         <Input placeholder="Titre (ex. IndéGraal)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input
+          placeholder="Adresse de partage (laisser vide = générée depuis le titre)"
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+        />
+        <p className="text-[10px] text-muted-foreground">
+          Page de partage : /playlists/{(slug.trim() || title.trim() || "titre-de-la-playlist")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")}
+        </p>
       </div>
 
       <div className="space-y-2 rounded-lg border border-dashed border-border p-2">

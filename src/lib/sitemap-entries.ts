@@ -134,6 +134,22 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       });
     }
     // Social wall posts (publications)
+    // Playlists (publiées)
+    const { data: playlists } = await sb
+      .from("playlist_entries")
+      .select("slug, updated_at")
+      .eq("is_published", true)
+      .order("updated_at", { ascending: false })
+      .limit(500);
+    for (const r of playlists ?? []) {
+      if (!r.slug) continue;
+      entries.push({
+        path: `/playlists/${r.slug}`,
+        changefreq: "monthly",
+        priority: "0.5",
+        lastmod: normalizeDate(r.updated_at),
+      });
+    }
     const { data: posts } = await sb
       .from("posts")
       .select("id, updated_at")

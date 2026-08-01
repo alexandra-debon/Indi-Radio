@@ -1,0 +1,1 @@
+ALTER TABLE public.playlist_entries ALTER COLUMN slug SET DEFAULT '';

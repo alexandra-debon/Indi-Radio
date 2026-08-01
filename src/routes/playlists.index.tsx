@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PlaylistEmbedPair } from "@/components/playlists/PlaylistEmbedPair";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/playlists/")({
 
 interface PlaylistRow {
   id: string;
+  slug: string;
   title: string;
   description: string | null;
   title_en: string | null;
@@ -57,18 +58,23 @@ function PlaylistCard({ row, featured = false }: { row: PlaylistRow; featured?: 
   const title = manualTitle || row.title;
 
   return (
-    <article className={`card-brut space-y-3 p-4 ${featured ? "border-2 border-primary" : ""}`}>
+    <article
+      id={`playlist-${row.slug}`}
+      className={`card-brut scroll-mt-24 space-y-3 p-4 ${featured ? "border-2 border-primary" : ""}`}
+    >
       <header className="flex items-start justify-between gap-2">
         <h3 className={featured ? "text-xl font-black uppercase tracking-tight text-primary" : "text-base font-bold"}>
-          {manualTitle ? (
-            <span>{manualTitle}</span>
-          ) : (
-            <TranslatedText entityType="playlist_entries" entityKey={row.id} field="title" text={row.title} as="span" />
-          )}
+          <Link to="/playlists/$slug" params={{ slug: row.slug }} className="hover:underline">
+            {manualTitle ? (
+              <span>{manualTitle}</span>
+            ) : (
+              <TranslatedText entityType="playlist_entries" entityKey={row.id} field="title" text={row.title} as="span" />
+            )}
+          </Link>
         </h3>
         <ShareButton
           target={{
-            url: canonicalUrl("/playlists"),
+            url: canonicalUrl(`/playlists/${row.slug}`),
             title: `${title} — Playlists InDi RaDio`,
             text: manualDescription || row.description || DESCRIPTION,
           }}
@@ -126,6 +132,20 @@ function PlaylistsPage() {
   );
   const [activeYear, setActiveYear] = useState<number | null>(null);
   const currentYear = activeYear ?? years[0] ?? null;
+
+  // Lien profond : /playlists#playlist-<slug> défile jusqu'à la bonne carte
+  // une fois les données chargées.
+  useEffect(() => {
+    if (isLoading || typeof window === "undefined") return;
+    const hash = window.location.hash.replace("#", "");
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.classList.add("ring-2", "ring-primary");
+    const timer = window.setTimeout(() => el.classList.remove("ring-2", "ring-primary"), 2500);
+    return () => window.clearTimeout(timer);
+  }, [isLoading, rows.length]);
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-3 py-6 sm:px-6">

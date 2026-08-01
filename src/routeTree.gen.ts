@@ -46,6 +46,7 @@ import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
 import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
+import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
@@ -265,6 +266,11 @@ const ActusIndexRoute = ActusIndexRouteImport.update({
 const TagTagRoute = TagTagRouteImport.update({
   id: '/tag/$tag',
   path: '/tag/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
+  id: '/playlists/$slug',
+  path: '/playlists/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPostIdRoute = PPostIdRouteImport.update({
@@ -507,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/playlists/$slug': typeof PlaylistsSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -581,6 +588,7 @@ export interface FileRoutesByTo {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/playlists/$slug': typeof PlaylistsSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus': typeof ActusIndexRoute
   '/chroniques': typeof ChroniquesIndexRoute
@@ -657,6 +665,7 @@ export interface FileRoutesById {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/playlists/$slug': typeof PlaylistsSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -733,6 +742,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/playlists/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -807,6 +817,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/playlists/$slug'
     | '/tag/$tag'
     | '/actus'
     | '/chroniques'
@@ -882,6 +893,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/playlists/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -955,6 +967,7 @@ export interface RootRouteChildren {
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
+  PlaylistsSlugRoute: typeof PlaylistsSlugRoute
   TagTagRoute: typeof TagTagRoute
   ActusIndexRoute: typeof ActusIndexRoute
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
@@ -1239,6 +1252,13 @@ declare module '@tanstack/react-router' {
       path: '/tag/$tag'
       fullPath: '/tag/$tag'
       preLoaderRoute: typeof TagTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/playlists/$slug': {
+      id: '/playlists/$slug'
+      path: '/playlists/$slug'
+      fullPath: '/playlists/$slug'
+      preLoaderRoute: typeof PlaylistsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$postId': {
@@ -1578,6 +1598,7 @@ const rootRouteChildren: RootRouteChildren = {
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
+  PlaylistsSlugRoute: PlaylistsSlugRoute,
   TagTagRoute: TagTagRoute,
   ActusIndexRoute: ActusIndexRoute,
   ChroniquesIndexRoute: ChroniquesIndexRoute,
