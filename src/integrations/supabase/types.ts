@@ -1050,7 +1050,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           position?: number
-          slug: string
+          slug?: string
           spotify_embed?: string | null
           title: string
           title_en?: string | null
