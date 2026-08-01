@@ -13,15 +13,35 @@ const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 const BodySchema = z.object({
   pseudos: z.array(z.string().min(1).max(64)).max(20).optional(),
   extraUrls: z.array(z.string().url()).max(20).optional(),
+  // Site-relative paths (e.g. "/chroniques/mon-slug") pushed by DB triggers
+  // whenever new content is published.
+  paths: z.array(z.string().min(1).max(512)).max(50).optional(),
 });
 
-function buildUrlList(pseudos: string[], extras: string[]): string[] {
+function buildUrlList(pseudos: string[], extras: string[], paths: string[]): string[] {
   const urls = new Set<string>();
-  urls.add(`${CANONICAL_ORIGIN}/sitemap-users.xml`);
+  if (pseudos.length > 0) urls.add(`${CANONICAL_ORIGIN}/sitemap-users.xml`);
+  if (paths.length > 0) {
+    urls.add(`${CANONICAL_ORIGIN}/sitemap.xml`);
+    urls.add(`${CANONICAL_ORIGIN}/sitemap-fr.xml`);
+    urls.add(`${CANONICAL_ORIGIN}/sitemap-en.xml`);
+  }
+  if (pseudos.length === 0 && paths.length === 0) {
+    urls.add(`${CANONICAL_ORIGIN}/sitemap-users.xml`);
+  }
   for (const p of pseudos) {
     const trimmed = p.trim();
     if (!trimmed) continue;
     urls.add(`${CANONICAL_ORIGIN}/u/${encodeURIComponent(trimmed)}`);
+  }
+  for (const raw of paths) {
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith("/")) continue;
+    try {
+      urls.add(new URL(trimmed, CANONICAL_ORIGIN).toString());
+    } catch {
+      /* ignore */
+    }
   }
   for (const u of extras) {
     try {
@@ -63,6 +83,7 @@ export const Route = createFileRoute("/api/public/hooks/indexnow")({
         const urlList = buildUrlList(
           parsed.data.pseudos ?? [],
           parsed.data.extraUrls ?? [],
+          parsed.data.paths ?? [],
         );
 
         const body = {
