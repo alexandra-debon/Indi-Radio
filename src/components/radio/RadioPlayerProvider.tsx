@@ -528,6 +528,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el) return;
     if (el.paused) {
+      trackEvent("radio_play", { source: "live_stream" });
       // iOS Safari: prime the AudioContext + media element synchronously
       // inside this gesture BEFORE assigning src / calling load(). If we
       // wait until after load(), the gesture is considered consumed and
@@ -549,6 +550,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
         .finally(() => setLoading(false));
     } else {
       el.pause();
+      trackEvent("radio_pause", { source: "live_stream" });
       el.src = ""; // stop network usage
       setPlaying(false);
       setLoading(false);
