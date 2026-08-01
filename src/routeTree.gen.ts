@@ -19,9 +19,14 @@ import { Route as SitemapUsersDotxmlRouteImport } from './routes/sitemap-users[.
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
+import { Route as RssChroniquesDotxmlRouteImport } from './routes/rss-chroniques[.]xml'
+import { Route as RssActusDotxmlRouteImport } from './routes/rss-actus[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
+import { Route as PodcastDotxmlRouteImport } from './routes/podcast[.]xml'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -127,6 +132,26 @@ const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
   path: '/sitemap-en.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssClipsDotxmlRoute = RssClipsDotxmlRouteImport.update({
+  id: '/rss-clips.xml',
+  path: '/rss-clips.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssChroniquesDotxmlRoute = RssChroniquesDotxmlRouteImport.update({
+  id: '/rss-chroniques.xml',
+  path: '/rss-chroniques.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssActusDotxmlRoute = RssActusDotxmlRouteImport.update({
+  id: '/rss-actus.xml',
+  path: '/rss-actus.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -140,6 +165,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PodcastsRoute = PodcastsRouteImport.update({
   id: '/podcasts',
   path: '/podcasts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastDotxmlRoute = PodcastDotxmlRouteImport.update({
+  id: '/podcast.xml',
+  path: '/podcast.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsletterRoute = NewsletterRouteImport.update({
@@ -441,9 +471,14 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/rss-actus.xml': typeof RssActusDotxmlRoute
+  '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
+  '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
@@ -509,9 +544,14 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/rss-actus.xml': typeof RssActusDotxmlRoute
+  '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
+  '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
@@ -579,9 +619,14 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
   '/newsletter': typeof NewsletterRoute
+  '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/rss-actus.xml': typeof RssActusDotxmlRoute
+  '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
+  '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
@@ -649,9 +694,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/moderation'
     | '/newsletter'
+    | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/rss-actus.xml'
+    | '/rss-chroniques.xml'
+    | '/rss-clips.xml'
+    | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
@@ -717,9 +767,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/moderation'
     | '/newsletter'
+    | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/rss-actus.xml'
+    | '/rss-chroniques.xml'
+    | '/rss-clips.xml'
+    | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
@@ -786,9 +841,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/moderation'
     | '/newsletter'
+    | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
     | '/reset-password'
+    | '/rss-actus.xml'
+    | '/rss-chroniques.xml'
+    | '/rss-clips.xml'
+    | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
     | '/sitemap-images.xml'
@@ -856,9 +916,14 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   ModerationRoute: typeof ModerationRoute
   NewsletterRoute: typeof NewsletterRoute
+  PodcastDotxmlRoute: typeof PodcastDotxmlRoute
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RssActusDotxmlRoute: typeof RssActusDotxmlRoute
+  RssChroniquesDotxmlRoute: typeof RssChroniquesDotxmlRoute
+  RssClipsDotxmlRoute: typeof RssClipsDotxmlRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapFrDotxmlRoute: typeof SitemapFrDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
@@ -974,6 +1039,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapEnDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss-clips.xml': {
+      id: '/rss-clips.xml'
+      path: '/rss-clips.xml'
+      fullPath: '/rss-clips.xml'
+      preLoaderRoute: typeof RssClipsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss-chroniques.xml': {
+      id: '/rss-chroniques.xml'
+      path: '/rss-chroniques.xml'
+      fullPath: '/rss-chroniques.xml'
+      preLoaderRoute: typeof RssChroniquesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss-actus.xml': {
+      id: '/rss-actus.xml'
+      path: '/rss-actus.xml'
+      fullPath: '/rss-actus.xml'
+      preLoaderRoute: typeof RssActusDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -993,6 +1086,13 @@ declare module '@tanstack/react-router' {
       path: '/podcasts'
       fullPath: '/podcasts'
       preLoaderRoute: typeof PodcastsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/podcast.xml': {
+      id: '/podcast.xml'
+      path: '/podcast.xml'
+      fullPath: '/podcast.xml'
+      preLoaderRoute: typeof PodcastDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/newsletter': {
@@ -1430,9 +1530,14 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   ModerationRoute: ModerationRoute,
   NewsletterRoute: NewsletterRoute,
+  PodcastDotxmlRoute: PodcastDotxmlRoute,
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RssActusDotxmlRoute: RssActusDotxmlRoute,
+  RssChroniquesDotxmlRoute: RssChroniquesDotxmlRoute,
+  RssClipsDotxmlRoute: RssClipsDotxmlRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapFrDotxmlRoute: SitemapFrDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
