@@ -70,7 +70,10 @@ export type PlausibleEvent =
   | "share"
   | "like"
   | "comment"
-  | "vote";
+  | "vote"
+  | "host_profile_click"
+  | "show_open"
+  | "show_page_view";
 
 /**
  * Envoie un événement personnalisé Plausible (ignoré sans consentement).
