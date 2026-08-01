@@ -163,7 +163,7 @@ export function SeoLocalizer() {
     // og:url + canonical follow the active language so crawlers see the
     // localized page as the authoritative one.
     try {
-      const selfUrl = `${SITE_ORIGIN}${pathname}${lang === "fr" ? "" : `?hl=${lang}`}`;
+      const selfUrl = canonicalUrl(pathname, { lang, page: pageParam });
       setMeta('meta[property="og:url"]', "content", selfUrl, () => {
         const m = document.createElement("meta");
         m.setAttribute("property", "og:url");
@@ -174,7 +174,12 @@ export function SeoLocalizer() {
         m.setAttribute("name", "twitter:url");
         return m;
       });
-      let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+      // Dédoublonnage : une seule balise canonical dans le document.
+      const existing = Array.from(
+        document.head.querySelectorAll<HTMLLinkElement>('link[rel="canonical"]'),
+      );
+      existing.slice(1).forEach((el) => el.remove());
+      let canonical = existing[0] ?? null;
       if (!canonical) {
         canonical = document.createElement("link");
         canonical.setAttribute("rel", "canonical");
@@ -234,14 +239,14 @@ export function SeoLocalizer() {
 
     // hreflang alternates — same URL with a hl query param so each language has its own indexable URL.
     try {
-      const base = SITE_ORIGIN + pathname;
-      upsertLink("alternate", "fr", `${base}?hl=fr`);
-      upsertLink("alternate", "en", `${base}?hl=en`);
-      upsertLink("alternate", "x-default", base);
+      const alts = hreflangUrls(pathname, pageParam);
+      upsertLink("alternate", "fr", alts.fr);
+      upsertLink("alternate", "en", alts.en);
+      upsertLink("alternate", "x-default", alts.xDefault);
     } catch {}
 
     try { document.documentElement.lang = lang; } catch {}
-  }, [lang, pathname, overrideRows]);
+  }, [lang, pathname, pageParam, overrideRows]);
 
   return null;
 }
