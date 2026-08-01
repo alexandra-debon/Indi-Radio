@@ -1022,6 +1022,51 @@ export type Database = {
         }
         Relationships: []
       }
+      playlist_entries: {
+        Row: {
+          apple_embed: string | null
+          author_id: string | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          position: number
+          spotify_embed: string | null
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          apple_embed?: string | null
+          author_id?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          position?: number
+          spotify_embed?: string | null
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          apple_embed?: string | null
+          author_id?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          position?: number
+          spotify_embed?: string | null
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
       podcasts: {
         Row: {
           cover_url: string | null
