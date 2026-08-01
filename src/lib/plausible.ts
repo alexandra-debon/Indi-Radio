@@ -36,7 +36,9 @@ export function setAnalyticsConsent(choice: "accepted" | "refused") {
 }
 
 export function loadPlausible(): Promise<Tracker> | null {
+  // Garde-fou : aucune initialisation (donc aucune requête) sans consentement explicite.
   if (typeof window === "undefined") return null;
+  if (getAnalyticsConsent() !== "accepted") return null;
   if (!trackerPromise) {
     trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
       mod.init({
