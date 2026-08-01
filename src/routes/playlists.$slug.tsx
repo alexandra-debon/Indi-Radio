@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ListMusic } from "lucide-react";
 import { PlaylistEmbedPair } from "@/components/playlists/PlaylistEmbedPair";
@@ -24,7 +24,31 @@ export const Route = createFileRoute("/playlists/$slug")({
       .eq("is_published", true)
       .maybeSingle();
     if (error) throw error;
-    if (!data) throw notFound();
+    if (!data) {
+      // L'admin a peut-être renommé l'adresse : on redirige l'ancien lien
+      // vers la nouvelle adresse (permanent, pour préserver le SEO).
+      const { data: legacy } = await supabase
+        .from("playlist_slug_history")
+        .select("playlist_id")
+        .eq("old_slug", params.slug)
+        .maybeSingle();
+      if (legacy?.playlist_id) {
+        const { data: current } = await supabase
+          .from("playlist_entries")
+          .select("slug")
+          .eq("id", legacy.playlist_id)
+          .eq("is_published", true)
+          .maybeSingle();
+        if (current?.slug && current.slug !== params.slug) {
+          throw redirect({
+            to: "/playlists/$slug",
+            params: { slug: current.slug },
+            statusCode: 301,
+          });
+        }
+      }
+      throw notFound();
+    }
     return data;
   },
   head: ({ loaderData, params }) => {
