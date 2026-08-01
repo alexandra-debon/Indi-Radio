@@ -99,7 +99,7 @@ export function PlaylistsAdmin() {
       {isLoading && <p className="text-sm text-muted-foreground">Chargement…</p>}
 
       <div className="space-y-2">
-        {rows.map((r, idx) => (
+        {rows.map((r) => (
           <div key={r.id} className="card-brut flex items-center justify-between gap-3 p-3">
             <div className="min-w-0">
               <div className="truncate text-sm font-bold">{r.title}</div>
