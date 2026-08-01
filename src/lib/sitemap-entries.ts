@@ -230,7 +230,9 @@ export function computeMaxLastmod(entries: SitemapEntry[]): string {
 export function sitemapHeaders(body: string, lastModified: string): Headers {
   const h = new Headers();
   h.set("Content-Type", "application/xml");
-  h.set("Cache-Control", "public, max-age=300, s-maxage=300, stale-while-revalidate=86400");
+  // Revalidation quasi immédiate : un slug modifié doit apparaître tout de
+  // suite dans le sitemap (le CDN sert la version en cache pendant ce temps).
+  h.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=600, must-revalidate");
   h.set("Last-Modified", lastModified);
   // Weak ETag from body length + lastmod (cheap, stable)
   h.set("ETag", `W/"${body.length.toString(16)}-${Date.parse(lastModified).toString(16)}"`);

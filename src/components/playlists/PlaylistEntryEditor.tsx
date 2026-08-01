@@ -6,6 +6,7 @@ import { toast } from "@/lib/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { RichTextArea } from "@/components/text/RichTextArea";
 import { PlaylistEmbedPair } from "@/components/playlists/PlaylistEmbedPair";
 import { extractEmbedUrl } from "@/lib/playlist-embed";
@@ -43,6 +44,7 @@ export function PlaylistEntryEditor({
 }) {
   const { session } = useAuth();
   const qc = useQueryClient();
+  const router = useRouter();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
@@ -94,6 +96,8 @@ export function PlaylistEntryEditor({
       toast.success(initial?.id ? "Playlist modifiée" : "Playlist publiée");
       qc.invalidateQueries({ queryKey: ["playlist-entries"] });
       qc.invalidateQueries({ queryKey: ["admin-playlist-entries"] });
+      // Recharge les loaders de /playlists et /playlists/$slug
+      router.invalidate();
       onDone();
     },
     onError: (e) => toast.error((e as Error).message),
