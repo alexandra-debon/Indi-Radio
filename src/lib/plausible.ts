@@ -188,7 +188,8 @@ export function trackEvent(
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
   const clean: Record<string, string> = {};
   for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = String(v);
-  loadPlausible()?.then((mod) =>
-    mod.track(name, Object.keys(clean).length ? { props: clean } : {}),
-  );
+  loadPlausible()?.then((mod) => {
+    debugLog(`event "${name}"`, clean);
+    mod.track(name, Object.keys(clean).length ? { props: clean } : {});
+  });
 }
