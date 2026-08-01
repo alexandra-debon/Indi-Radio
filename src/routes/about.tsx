@@ -68,6 +68,7 @@ function AboutPage() {
         </div>
       </section>
       <BroadcastPartners />
+      <RssFeedsSection />
     </div>
   );
 }
