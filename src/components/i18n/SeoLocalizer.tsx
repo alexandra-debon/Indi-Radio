@@ -9,8 +9,9 @@ import {
   indexOverrides,
   findOverride,
 } from "@/lib/seo-overrides";
+import { SITE_ORIGIN as CANONICAL_ORIGIN, canonicalPath, canonicalUrl, hreflangUrls } from "@/lib/canonical";
 
-const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+const SITE_ORIGIN = CANONICAL_ORIGIN;
 
 function setMeta(selector: string, attr: "content", value: string, create?: () => HTMLElement) {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
@@ -41,7 +42,11 @@ function upsertLink(rel: string, hreflang: string, href: string) {
  */
 export function SeoLocalizer() {
   const { lang } = useLang();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const rawPathname = useRouterState({ select: (s) => s.location.pathname });
+  const pageParam = useRouterState({
+    select: (s) => Number((s.location.search as Record<string, unknown> | undefined)?.["page"] ?? 0),
+  });
+  const pathname = canonicalPath(rawPathname);
   const { data: overrideRows } = useQuery({
     queryKey: ["seo-overrides"],
     queryFn: fetchSeoOverrides,
@@ -158,7 +163,7 @@ export function SeoLocalizer() {
     // og:url + canonical follow the active language so crawlers see the
     // localized page as the authoritative one.
     try {
-      const selfUrl = `${SITE_ORIGIN}${pathname}${lang === "fr" ? "" : `?hl=${lang}`}`;
+      const selfUrl = canonicalUrl(pathname, { lang, page: pageParam });
       setMeta('meta[property="og:url"]', "content", selfUrl, () => {
         const m = document.createElement("meta");
         m.setAttribute("property", "og:url");
@@ -169,7 +174,12 @@ export function SeoLocalizer() {
         m.setAttribute("name", "twitter:url");
         return m;
       });
-      let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+      // Dédoublonnage : une seule balise canonical dans le document.
+      const existing = Array.from(
+        document.head.querySelectorAll<HTMLLinkElement>('link[rel="canonical"]'),
+      );
+      existing.slice(1).forEach((el) => el.remove());
+      let canonical = existing[0] ?? null;
       if (!canonical) {
         canonical = document.createElement("link");
         canonical.setAttribute("rel", "canonical");
@@ -229,14 +239,14 @@ export function SeoLocalizer() {
 
     // hreflang alternates — same URL with a hl query param so each language has its own indexable URL.
     try {
-      const base = SITE_ORIGIN + pathname;
-      upsertLink("alternate", "fr", `${base}?hl=fr`);
-      upsertLink("alternate", "en", `${base}?hl=en`);
-      upsertLink("alternate", "x-default", base);
+      const alts = hreflangUrls(pathname, pageParam);
+      upsertLink("alternate", "fr", alts.fr);
+      upsertLink("alternate", "en", alts.en);
+      upsertLink("alternate", "x-default", alts.xDefault);
     } catch {}
 
     try { document.documentElement.lang = lang; } catch {}
-  }, [lang, pathname, overrideRows]);
+  }, [lang, pathname, pageParam, overrideRows]);
 
   return null;
 }

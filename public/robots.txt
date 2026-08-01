@@ -37,6 +37,20 @@ Disallow: /api
 Disallow: /api/
 
 # ============================================================
+# Cohérence des URL (anti-doublons)
+# ============================================================
+# Une seule forme d'URL est canonique : apex https, sans slash final,
+# sans paramètre — sauf `?hl=en` (version anglaise) et `?page=N` (pagination).
+# Les paramètres de tracking créent des doublons : on les bloque.
+Disallow: /*?*utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+Disallow: /*?*mc_cid=
+Disallow: /*?*ref=
+Allow: /*?hl=
+Allow: /*?page=
+
+# ============================================================
 # Googlebot (règles spécifiques)
 # ============================================================
 User-agent: Googlebot
