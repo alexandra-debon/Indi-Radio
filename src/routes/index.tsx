@@ -167,8 +167,15 @@ function LivePage() {
         .from("track_history")
         .select("id,title,artist,played_at")
         .order("played_at", { ascending: false })
-        .limit(8);
-      return data ?? [];
+        .limit(30);
+      // Filet de sécurité : masque les doublons consécutifs (même titre/artiste)
+      // qui pourraient subsister d'anciens relevés concurrents.
+      const rows = data ?? [];
+      const deduped = rows.filter((r, i) => {
+        const prev = rows[i - 1];
+        return !prev || prev.title !== r.title || prev.artist !== r.artist;
+      });
+      return deduped.slice(0, 8);
     },
     refetchInterval: 30_000,
     refetchIntervalInBackground: false,
