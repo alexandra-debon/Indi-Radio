@@ -10,6 +10,8 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    // URLs canoniques : jamais de slash final (sauf "/") pour éviter les doublons.
+    trailingSlash: "never",
   });
 
   return router;
