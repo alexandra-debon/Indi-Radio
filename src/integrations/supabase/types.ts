@@ -1076,6 +1076,35 @@ export type Database = {
         }
         Relationships: []
       }
+      playlist_slug_history: {
+        Row: {
+          created_at: string
+          id: string
+          old_slug: string
+          playlist_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          old_slug: string
+          playlist_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          old_slug?: string
+          playlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "playlist_slug_history_playlist_id_fkey"
+            columns: ["playlist_id"]
+            isOneToOne: false
+            referencedRelation: "playlist_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       podcasts: {
         Row: {
           cover_url: string | null
