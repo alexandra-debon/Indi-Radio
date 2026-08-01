@@ -1713,6 +1713,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      notify_search_engines: { Args: { _path: string }; Returns: undefined }
       record_current_track: {
         Args: { _artist: string; _title: string }
         Returns: Json
