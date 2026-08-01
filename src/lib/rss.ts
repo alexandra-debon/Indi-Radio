@@ -59,11 +59,33 @@ export function toExcerpt(input: string | null | undefined, max = 400): string {
   return text.slice(0, max).replace(/\s+\S*$/, "") + "…";
 }
 
-function rfc822(value: string | null | undefined): string | null {
+function parseDate(value: string | null | undefined): number | null {
   if (!value) return null;
   const t = Date.parse(value);
-  if (Number.isNaN(t)) return null;
-  return new Date(t).toUTCString();
+  return Number.isNaN(t) ? null : t;
+}
+
+/**
+ * Date de repli déterministe pour un contenu sans date exploitable :
+ * dérivée du chemin canonique, donc stable d'une génération à l'autre.
+ * Les agrégateurs ne verront jamais ces items "réapparaître" comme neufs.
+ */
+const FALLBACK_EPOCH = Date.UTC(2024, 0, 1, 12, 0, 0);
+
+function fallbackDate(path: string): number {
+  // Étale les items sans date sur ~2 ans, de façon reproductible.
+  return FALLBACK_EPOCH + (hash(path) % 730) * 86_400_000;
+}
+
+/** Date de publication canonique d'un item (jamais la date de modification). */
+export function itemDate(item: FeedItem): number {
+  return parseDate(item.date) ?? fallbackDate(item.path);
+}
+
+/** lastBuildDate du flux : date du contenu le plus récent, sinon l'heure de génération. */
+export function feedLastBuild(items: FeedItem[]): Date {
+  const max = items.reduce((acc, i) => Math.max(acc, itemDate(i)), 0);
+  return new Date(max || Date.now());
 }
 
 function absolute(url: string | null | undefined): string | null {
@@ -111,21 +133,21 @@ export interface FeedOptions {
 
 export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
   const self = `${SITE_ORIGIN}${opts.selfPath}`;
-  const lastBuild =
-    items.map((i) => (i.date ? Date.parse(i.date) : 0)).reduce((a, b) => (b > a ? b : a), 0) || null;
+  const lastBuild = feedLastBuild(items);
 
   const xmlItems = items
     .map((item) => {
       const url = canonicalUrl(item.path);
       const img = absolute(item.image);
       const audio = absolute(item.audioUrl);
-      const pub = rfc822(item.date);
+      const pub = new Date(itemDate(item)).toUTCString();
       const lines: (string | null)[] = [
         "    <item>",
         `      <title>${escapeXml(item.title)}</title>`,
         `      <link>${escapeXml(url)}</link>`,
         `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
-        pub ? `      <pubDate>${pub}</pubDate>` : null,
+        `      <pubDate>${pub}</pubDate>`,
+        opts.podcast ? `      <itunes:episodeType>full</itunes:episodeType>` : null,
         item.author ? `      <dc:creator>${escapeXml(item.author)}</dc:creator>` : null,
         item.description
           ? `      <description>${escapeXml(item.description)}</description>`
@@ -157,7 +179,8 @@ export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
     `    <description>${escapeXml(opts.description)}</description>`,
     `    <language>${opts.language ?? "fr-FR"}</language>`,
     `    <atom:link href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>`,
-    lastBuild ? `    <lastBuildDate>${new Date(lastBuild).toUTCString()}</lastBuildDate>` : null,
+    `    <lastBuildDate>${lastBuild.toUTCString()}</lastBuildDate>`,
+    `    <pubDate>${lastBuild.toUTCString()}</pubDate>`,
     `    <generator>InDi RaDio</generator>`,
     `    <image>`,
     `      <url>${SITE_ORIGIN}/icons/apple-touch-icon.png</url>`,
