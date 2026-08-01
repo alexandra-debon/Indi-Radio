@@ -147,7 +147,6 @@ export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
         `      <link>${escapeXml(url)}</link>`,
         `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
         `      <pubDate>${pub}</pubDate>`,
-        opts.podcast ? `      <itunes:episodeType>full</itunes:episodeType>` : null,
         item.author ? `      <dc:creator>${escapeXml(item.author)}</dc:creator>` : null,
         item.description
           ? `      <description>${escapeXml(item.description)}</description>`
