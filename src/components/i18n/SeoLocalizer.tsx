@@ -253,7 +253,6 @@ export function SeoLocalizer() {
       upsertLink("alternate", "x-default", alts.xDefault);
     } catch {}
 
-    try { document.documentElement.lang = lang; } catch {}
   }, [lang, pathname, pageParam, overrideRows]);
 
   return null;
