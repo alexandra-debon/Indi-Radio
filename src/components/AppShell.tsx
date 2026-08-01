@@ -285,6 +285,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <FileText className="size-3" />
                 {t("footer.privacy")}
               </Link>
+              <a
+                href="/rss.xml"
+                title="Flux RSS — S'abonner aux nouveautés d'InDi RaDio"
+                className="inline-flex items-center gap-1 hover:text-primary"
+              >
+                <Rss className="size-3" />
+                RSS
+              </a>
             </div>
           </div>
         </footer>
