@@ -108,6 +108,19 @@ export function PlaylistEntryEditor({
       <div className="space-y-2 rounded-lg border border-border p-2">
         <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">🇫🇷 Version française</div>
         <Input placeholder="Titre (ex. IndéGraal)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input
+          placeholder="Adresse de partage (laisser vide = générée depuis le titre)"
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+        />
+        <p className="text-[10px] text-muted-foreground">
+          Page de partage : /playlists/{(slug.trim() || title.trim() || "titre-de-la-playlist")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")}
+        </p>
       </div>
 
       <div className="space-y-2 rounded-lg border border-dashed border-border p-2">
