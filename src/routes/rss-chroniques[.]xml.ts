@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { loadChroniques, renderFeed, feedResponse } from "@/lib/rss";
+import { loadChroniques, renderFeed, feedResponse, feedLastBuild } from "@/lib/rss";
 
 export const Route = createFileRoute("/rss-chroniques.xml")({
   server: {

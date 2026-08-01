@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { loadEpisodes, renderFeed, feedResponse, SITE_ORIGIN_ICON } from "@/lib/rss";
+import { loadEpisodes, renderFeed, feedResponse, feedLastBuild, SITE_ORIGIN_ICON } from "@/lib/rss";
 
 export const Route = createFileRoute("/podcast.xml")({
   server: {
