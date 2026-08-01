@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/plausible";
 
 export function LikeButton({ trackId }: { trackId: string }) {
   const { session, requireAuth } = useAuth();
@@ -28,6 +29,7 @@ export function LikeButton({ trackId }: { trackId: string }) {
         await supabase.from("track_likes").delete().eq("track_history_id", trackId).eq("user_id", session.user.id);
       } else {
         await supabase.from("track_likes").insert({ track_history_id: trackId, user_id: session.user.id });
+        trackEvent("like", { type: "track" });
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["track-likes", trackId] }),
