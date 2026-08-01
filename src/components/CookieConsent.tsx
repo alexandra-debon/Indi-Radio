@@ -3,31 +3,12 @@ import { Button } from "@/components/ui/button";
 import { ShieldCheck } from "lucide-react";
 import { isNative } from "@/lib/native";
 import { useLang } from "@/lib/i18n";
-
-const STORAGE_KEY = "indi-analytics-consent";
-const PLAUSIBLE_SRC = "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js";
-
-function loadPlausible() {
-  if (typeof document === "undefined") return;
-  if (document.querySelector(`script[src="${PLAUSIBLE_SRC}"]`)) return;
-  const s = document.createElement("script");
-  s.src = PLAUSIBLE_SRC;
-  s.async = true;
-  document.head.appendChild(s);
-  const w = window as unknown as {
-    plausible?: ((...args: unknown[]) => void) & { q?: unknown[]; init?: (i?: unknown) => void; o?: unknown };
-  };
-  if (!w.plausible) {
-    const fn = function (...args: unknown[]) {
-      (fn.q = fn.q || []).push(args);
-    } as ((...args: unknown[]) => void) & { q?: unknown[]; init?: (i?: unknown) => void; o?: unknown };
-    fn.init = (i?: unknown) => {
-      fn.o = i || {};
-    };
-    w.plausible = fn;
-  }
-  w.plausible.init?.();
-}
+import {
+  getAnalyticsConsent,
+  loadPlausible,
+  setAnalyticsConsent,
+  trackPageview,
+} from "@/lib/plausible";
 
 /** Bandeau de consentement analytics (web uniquement, Plausible chargé après acceptation). */
 export function CookieConsent() {
@@ -36,25 +17,18 @@ export function CookieConsent() {
 
   useEffect(() => {
     if (isNative()) return;
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem(STORAGE_KEY);
-    } catch {
-      stored = null;
-    }
-    if (stored === "accepted") loadPlausible();
-    else if (stored !== "refused") setVisible(true);
+    const stored = getAnalyticsConsent();
+    if (stored === "accepted") {
+      loadPlausible();
+      trackPageview();
+    } else if (stored !== "refused") setVisible(true);
   }, []);
 
   if (!visible) return null;
 
   const decide = (choice: "accepted" | "refused") => {
-    try {
-      localStorage.setItem(STORAGE_KEY, choice);
-    } catch {
-      /* stockage indisponible */
-    }
-    if (choice === "accepted") loadPlausible();
+    setAnalyticsConsent(choice);
+    if (choice === "accepted") trackPageview();
     setVisible(false);
   };
 
