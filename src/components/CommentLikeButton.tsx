@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useT } from "@/lib/i18n";
+import { trackEvent } from "@/lib/plausible";
 
 type Kind = "post" | "news";
 
@@ -61,6 +62,7 @@ export function CommentLikeButton({ commentId, kind }: { commentId: string; kind
         await supabase.from(table as any).delete().eq("comment_id", commentId).eq("user_id", uid);
       } else {
         await supabase.from(table as any).insert({ comment_id: commentId, user_id: uid } as any);
+        trackEvent("like", { type: `${kind}_comment` });
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["comment-likes", kind, commentId] }),
