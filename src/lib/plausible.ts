@@ -1,29 +1,20 @@
 /** Chargement + suivi Plausible côté client (web uniquement, après consentement). */
 /**
- * Compte/script Plausible paramétrable sans toucher au code :
- * - VITE_PLAUSIBLE_SCRIPT_ID : identifiant du script (ex. "pa-XXXXXXXX")
- * - VITE_PLAUSIBLE_HOST      : hôte Plausible (défaut https://plausible.io)
- * - VITE_PLAUSIBLE_SRC       : URL complète du script (prioritaire si définie)
+ * Utilise le paquet officiel @plausible-analytics/tracker (navigateur uniquement).
+ * Paramétrable sans toucher au code :
+ * - VITE_PLAUSIBLE_DOMAIN   : domaine déclaré dans Plausible
+ * - VITE_PLAUSIBLE_ENDPOINT : endpoint API (proxy éventuel)
  */
-const PLAUSIBLE_HOST = (
-  import.meta.env.VITE_PLAUSIBLE_HOST ?? "https://plausible.io"
-).replace(/\/+$/, "");
-const PLAUSIBLE_SCRIPT_ID =
-  import.meta.env.VITE_PLAUSIBLE_SCRIPT_ID ?? "pa-TX5XYkmAdUGR_zI1ikO77";
-export const PLAUSIBLE_SRC =
-  import.meta.env.VITE_PLAUSIBLE_SRC ?? `${PLAUSIBLE_HOST}/js/${PLAUSIBLE_SCRIPT_ID}.js`;
+export const PLAUSIBLE_DOMAIN =
+  import.meta.env.VITE_PLAUSIBLE_DOMAIN ?? "radio.indi-art-culture.com";
+const PLAUSIBLE_ENDPOINT = import.meta.env.VITE_PLAUSIBLE_ENDPOINT as
+  | string
+  | undefined;
 export const ANALYTICS_STORAGE_KEY = "indi-analytics-consent";
 export const ANALYTICS_CONSENT_EVENT = "indi-analytics-consent-change";
 
-type PlausibleFn = ((...args: unknown[]) => void) & {
-  q?: unknown[];
-  init?: (i?: unknown) => void;
-  o?: unknown;
-};
-
-function win(): (Window & { plausible?: PlausibleFn }) | null {
-  return typeof window === "undefined" ? null : (window as Window & { plausible?: PlausibleFn });
-}
+type Tracker = typeof import("@plausible-analytics/tracker");
+let trackerPromise: Promise<Tracker> | null = null;
 
 export function getAnalyticsConsent(): "accepted" | "refused" | null {
   try {
@@ -44,33 +35,30 @@ export function setAnalyticsConsent(choice: "accepted" | "refused") {
   window.dispatchEvent(new CustomEvent(ANALYTICS_CONSENT_EVENT, { detail: choice }));
 }
 
-export function loadPlausible() {
-  const w = win();
-  if (!w || typeof document === "undefined") return;
-  if (!w.plausible) {
-    const fn = function (...args: unknown[]) {
-      (fn.q = fn.q || []).push(args);
-    } as PlausibleFn;
-    fn.init = (i?: unknown) => {
-      fn.o = i || {};
-    };
-    w.plausible = fn;
+export function loadPlausible(): Promise<Tracker> | null {
+  if (typeof window === "undefined") return null;
+  if (!trackerPromise) {
+    trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
+      mod.init({
+        domain: PLAUSIBLE_DOMAIN,
+        ...(PLAUSIBLE_ENDPOINT ? { endpoint: PLAUSIBLE_ENDPOINT } : {}),
+        // Les pages vues sont envoyées manuellement à chaque changement de route SPA.
+        autoCapturePageviews: false,
+        outboundLinks: true,
+        fileDownloads: true,
+      });
+      return mod;
+    });
   }
-  if (!document.querySelector(`script[src="${PLAUSIBLE_SRC}"]`)) {
-    const s = document.createElement("script");
-    s.src = PLAUSIBLE_SRC;
-    s.async = true;
-    document.head.appendChild(s);
-  }
-  // Les pages vues sont envoyées manuellement à chaque changement de route SPA.
-  w.plausible.init?.({ autoCapturePageviews: false });
+  return trackerPromise;
 }
 
 /** Envoie une page vue pour l'URL courante (ex. /playlists/<slug>). */
 export function trackPageview(url?: string) {
-  const w = win();
-  if (!w || getAnalyticsConsent() !== "accepted") return;
-  w.plausible?.("pageview", url ? { u: url } : undefined);
+  if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
+  loadPlausible()?.then((mod) =>
+    mod.track("pageview", url ? { url } : undefined),
+  );
 }
 
 /** Noms d'événements suivis (actions clés de l'app). */
@@ -95,9 +83,10 @@ export function trackEvent(
   name: PlausibleEvent,
   props?: Record<string, string | number | boolean | undefined>,
 ) {
-  const w = win();
-  if (!w || getAnalyticsConsent() !== "accepted") return;
+  if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
   const clean: Record<string, string | number | boolean> = {};
   for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = v;
-  w.plausible?.(name, Object.keys(clean).length ? { props: clean } : undefined);
+  loadPlausible()?.then((mod) =>
+    mod.track(name, Object.keys(clean).length ? { props: clean } : undefined),
+  );
 }
