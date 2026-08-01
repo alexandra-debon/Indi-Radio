@@ -1,8 +1,28 @@
 import { useLang } from "@/lib/i18n";
+import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 export function LanguageToggle({ className }: { className?: string }) {
   const { lang, setLang } = useLang();
+  const navigate = useNavigate();
+  // La langue est aussi portée par l'URL (?hl=en) : c'est elle qui décide du
+  // référencement, donc la bascule doit changer l'URL et pas seulement l'UI.
+  const switchTo = (value: "fr" | "en") => {
+    setLang(value);
+    try {
+      void navigate({
+        to: ".",
+        search: (prev: Record<string, unknown>) => {
+          const next = { ...(prev ?? {}) };
+          if (value === "en") next["hl"] = "en";
+          else delete next["hl"];
+          return next;
+        },
+        replace: true,
+        resetScroll: false,
+      } as never);
+    } catch {}
+  };
   const options = [
     { value: "fr" as const, label: "FR", aria: "Passer l'application en français" },
     { value: "en" as const, label: "EN", aria: "Switch the app to English" },
@@ -23,7 +43,7 @@ export function LanguageToggle({ className }: { className?: string }) {
           <button
             key={option.value}
             type="button"
-            onClick={() => setLang(option.value)}
+            onClick={() => switchTo(option.value)}
             aria-label={option.aria}
             aria-pressed={active}
             className={cn(
