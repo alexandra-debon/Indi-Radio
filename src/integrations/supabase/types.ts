@@ -1713,6 +1713,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_current_track: {
+        Args: { _artist: string; _title: string }
+        Returns: Json
+      }
       resolve_pseudo_alias: { Args: { _alias: string }; Returns: string }
     }
     Enums: {
