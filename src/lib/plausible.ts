@@ -12,6 +12,41 @@ const PLAUSIBLE_ENDPOINT = import.meta.env.VITE_PLAUSIBLE_ENDPOINT as
   | undefined;
 export const ANALYTICS_STORAGE_KEY = "indi-analytics-consent";
 export const ANALYTICS_CONSENT_EVENT = "indi-analytics-consent-change";
+export const ANALYTICS_DEBUG_KEY = "indi-analytics-debug";
+
+/**
+ * Mode debug : activé par VITE_PLAUSIBLE_DEBUG=true, par ?plausible_debug=1
+ * dans l'URL, ou en posant localStorage["indi-analytics-debug"] = "1".
+ */
+export function isPlausibleDebug(): boolean {
+  if (typeof window === "undefined") return false;
+  if (String(import.meta.env.VITE_PLAUSIBLE_DEBUG) === "true") return true;
+  try {
+    if (new URLSearchParams(window.location.search).get("plausible_debug") === "1") {
+      localStorage.setItem(ANALYTICS_DEBUG_KEY, "1");
+      return true;
+    }
+    return localStorage.getItem(ANALYTICS_DEBUG_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Active/désactive le mode debug depuis la console : setPlausibleDebug(true). */
+export function setPlausibleDebug(on: boolean) {
+  try {
+    if (on) localStorage.setItem(ANALYTICS_DEBUG_KEY, "1");
+    else localStorage.removeItem(ANALYTICS_DEBUG_KEY);
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function debugLog(message: string, data?: unknown) {
+  if (!isPlausibleDebug()) return;
+  if (data !== undefined) console.info("[Plausible]", message, data);
+  else console.info("[Plausible]", message);
+}
 
 /** Résultat de la validation des variables d'environnement analytics. */
 export type PlausibleConfigCheck = { valid: boolean; errors: string[] };
@@ -94,7 +129,10 @@ export function setAnalyticsConsent(choice: "accepted" | "refused") {
 export function loadPlausible(): Promise<Tracker> | null {
   // Garde-fou : aucune initialisation (donc aucune requête) sans consentement explicite.
   if (typeof window === "undefined") return null;
-  if (getAnalyticsConsent() !== "accepted") return null;
+  if (getAnalyticsConsent() !== "accepted") {
+    debugLog("consentement absent → aucun envoi");
+    return null;
+  }
   if (!configIsUsable()) return null;
   if (!trackerPromise) {
     trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
@@ -106,6 +144,10 @@ export function loadPlausible(): Promise<Tracker> | null {
         outboundLinks: true,
         fileDownloads: true,
       });
+      debugLog("tracker initialisé", {
+        domain: PLAUSIBLE_DOMAIN,
+        endpoint: PLAUSIBLE_ENDPOINT ?? "(défaut Plausible)",
+      });
       return mod;
     });
   }
@@ -115,7 +157,10 @@ export function loadPlausible(): Promise<Tracker> | null {
 /** Envoie une page vue pour l'URL courante (ex. /playlists/<slug>). */
 export function trackPageview(url?: string) {
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
-  loadPlausible()?.then((mod) => mod.track("pageview", url ? { url } : {}));
+  loadPlausible()?.then((mod) => {
+    debugLog("pageview", { url: url ?? window.location.href });
+    mod.track("pageview", url ? { url } : {});
+  });
 }
 
 /** Noms d'événements suivis (actions clés de l'app). */
@@ -143,7 +188,8 @@ export function trackEvent(
   if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
   const clean: Record<string, string> = {};
   for (const [k, v] of Object.entries(props ?? {})) if (v !== undefined) clean[k] = String(v);
-  loadPlausible()?.then((mod) =>
-    mod.track(name, Object.keys(clean).length ? { props: clean } : {}),
-  );
+  loadPlausible()?.then((mod) => {
+    debugLog(`event "${name}"`, clean);
+    mod.track(name, Object.keys(clean).length ? { props: clean } : {});
+  });
 }
