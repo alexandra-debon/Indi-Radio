@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useLang } from "@/lib/i18n";
 import { resolveSeo } from "@/lib/i18n/seo-meta";
+import type { Lang } from "@/lib/i18n/dict";
 import { translateContent } from "@/lib/translate.functions";
 import {
   fetchSeoOverrides,
@@ -41,8 +41,16 @@ function upsertLink(rel: string, hreflang: string, href: string) {
  * - Advertises English SEO via <link rel="alternate" hreflang="en">.
  */
 export function SeoLocalizer() {
-  const { lang } = useLang();
   const rawPathname = useRouterState({ select: (s) => s.location.pathname });
+  // Langue SEO : dictée par l'URL (?hl=en), jamais par le navigateur.
+  // Googlebot explore en `en-US` même pour Google France : si les métadonnées
+  // suivaient la langue détectée, l'URL nue serait indexée en anglais.
+  const lang = useRouterState({
+    select: (s) => {
+      const hl = (s.location.search as Record<string, unknown> | undefined)?.["hl"];
+      return (hl === "en" ? "en" : "fr") as Lang;
+    },
+  });
   const pageParam = useRouterState({
     select: (s) => Number((s.location.search as Record<string, unknown> | undefined)?.["page"] ?? 0),
   });
