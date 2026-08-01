@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
@@ -14,6 +15,7 @@ const LABELS: Record<string, string> = {
 
 export function PlaylistsAdmin() {
   const qc = useQueryClient();
+  const router = useRouter();
   const [editing, setEditing] = useState<PlaylistEntryDraft | null | undefined>(undefined);
 
   const { data: rows = [], isLoading } = useQuery({
@@ -36,8 +38,7 @@ export function PlaylistsAdmin() {
     },
     onSuccess: () => {
       toast.success("Playlist supprimée");
-      qc.invalidateQueries({ queryKey: ["admin-playlist-entries"] });
-      qc.invalidateQueries({ queryKey: ["playlist-entries"] });
+      invalidate();
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -45,6 +46,7 @@ export function PlaylistsAdmin() {
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["admin-playlist-entries"] });
     qc.invalidateQueries({ queryKey: ["playlist-entries"] });
+    router.invalidate();
   };
 
   const togglePublish = useMutation({
