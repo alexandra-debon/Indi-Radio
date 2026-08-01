@@ -44,6 +44,21 @@ export const Route = createFileRoute("/emissions/$showId")({
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
+        {
+          type: "application/ld+json" as const,
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": ["PodcastSeries", "RadioSeries"],
+            name: loaderData.title,
+            description: desc,
+            url,
+            image,
+            inLanguage: "fr-FR",
+            webFeed: url,
+            publisher: { "@id": `${BASE_URL}/#org` },
+            ...(loaderData.schedule ? { schedule: loaderData.schedule } : {}),
+          }),
+        },
         breadcrumbLd([
           HOME_CRUMB,
           { name: "Émissions", url: `${SITE_ORIGIN}/emissions` },

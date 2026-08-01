@@ -56,6 +56,23 @@ export const Route = createFileRoute("/coups-de-coeur")({
         href: "https://radio.indi-art-culture.com/coups-de-coeur",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json" as const,
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Coups de Cœur InDi RaDiO",
+          description:
+            "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte.",
+          url: "https://radio.indi-art-culture.com/coups-de-coeur",
+          inLanguage: "fr-FR",
+          isAccessibleForFree: true,
+          about: { "@type": "Thing", name: "Musique indépendante" },
+          publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+        }),
+      },
+    ],
   }),
   component: CoupsDeCoeurPage,
 });

@@ -5,6 +5,7 @@ import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { parseMediaUrl } from "@/lib/media-embed";
 import { ArrowLeft } from "lucide-react";
 import ogClips from "@/assets/og-clips.jpg";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogClips}`;
@@ -73,7 +74,7 @@ export const Route = createFileRoute("/clips/$clipId")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "VideoObject",
+            "@type": ["VideoObject", "MusicVideoObject"],
             name: loaderData.title,
             description: desc,
             thumbnailUrl: image,
@@ -85,6 +86,11 @@ export const Route = createFileRoute("/clips/$clipId")({
             publisher: { "@id": `${BASE_URL}/#org` },
           }),
         },
+        breadcrumbLd([
+          HOME_CRUMB,
+          { name: "Clip Addict", url: `${SITE_ORIGIN}/clips` },
+          { name: loaderData.title, url },
+        ]),
       ],
     };
   },

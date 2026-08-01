@@ -6,6 +6,7 @@ import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import ogHome from "@/assets/og-home.jpg";
 import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -51,6 +52,30 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json" as const,
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: loaderData.title.slice(0, 110),
+            description: desc,
+            image: [image],
+            url,
+            mainEntityOfPage: { "@type": "WebPage", "@id": url },
+            datePublished: loaderData.created_at,
+            inLanguage: "fr-FR",
+            isAccessibleForFree: true,
+            author: { "@type": "Organization", name: "Indi Art Culture" },
+            publisher: { "@id": `${BASE_URL}/#org` },
+          }),
+        },
+        breadcrumbLd([
+          HOME_CRUMB,
+          { name: "Magazine", url: `${SITE_ORIGIN}/magazines` },
+          { name: loaderData.title, url },
+        ]),
+      ],
     };
   },
   notFoundComponent: () => (
