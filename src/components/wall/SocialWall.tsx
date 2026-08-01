@@ -455,6 +455,7 @@ export function SocialWall() {
         <p className="mt-1.5 text-[11px] italic leading-tight text-primary">
           {t("wall.mentionHint")}
         </p>
+        <QuotedTitlesHint />
         <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
