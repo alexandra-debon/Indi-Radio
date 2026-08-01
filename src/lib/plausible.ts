@@ -1,5 +1,17 @@
 /** Chargement + suivi Plausible côté client (web uniquement, après consentement). */
-const PLAUSIBLE_SRC = "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js";
+/**
+ * Compte/script Plausible paramétrable sans toucher au code :
+ * - VITE_PLAUSIBLE_SCRIPT_ID : identifiant du script (ex. "pa-XXXXXXXX")
+ * - VITE_PLAUSIBLE_HOST      : hôte Plausible (défaut https://plausible.io)
+ * - VITE_PLAUSIBLE_SRC       : URL complète du script (prioritaire si définie)
+ */
+const PLAUSIBLE_HOST = (
+  import.meta.env.VITE_PLAUSIBLE_HOST ?? "https://plausible.io"
+).replace(/\/+$/, "");
+const PLAUSIBLE_SCRIPT_ID =
+  import.meta.env.VITE_PLAUSIBLE_SCRIPT_ID ?? "pa-TX5XYkmAdUGR_zI1ikO77";
+export const PLAUSIBLE_SRC =
+  import.meta.env.VITE_PLAUSIBLE_SRC ?? `${PLAUSIBLE_HOST}/js/${PLAUSIBLE_SCRIPT_ID}.js`;
 export const ANALYTICS_STORAGE_KEY = "indi-analytics-consent";
 export const ANALYTICS_CONSENT_EVENT = "indi-analytics-consent-change";
 
