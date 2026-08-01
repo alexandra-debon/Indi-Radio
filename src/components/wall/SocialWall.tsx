@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
+import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { toast } from "@/lib/toast";
 import { Pencil, Trash2, Check, X, Heart, MessageCircle, Pin, PinOff, ArrowUpRight, Image as ImageIcon, Plus, PenSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -455,6 +456,7 @@ export function SocialWall() {
         <p className="mt-1.5 text-[11px] italic leading-tight text-primary">
           {t("wall.mentionHint")}
         </p>
+        <QuotedTitlesHint />
         <MentionTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

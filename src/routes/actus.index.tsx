@@ -30,6 +30,7 @@ import { useLang, useT } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
+import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
@@ -172,6 +173,7 @@ function ActusPage() {
           <p className="mt-1.5 text-[11px] italic leading-tight text-primary">
             {t("wall.mentionHint")}
           </p>
+          <QuotedTitlesHint />
           <MentionTextarea
             value={content}
             onChange={(e) => setContent(e.target.value)}

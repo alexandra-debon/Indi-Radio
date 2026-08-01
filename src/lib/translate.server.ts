@@ -33,7 +33,7 @@ function restoreQuotedWorks(text: string, originals: string[]) {
 
 export function hashText(t: string) {
   // Versioned so translations cached before title protection are regenerated.
-  return createHash("sha256").update(`quoted-works-v1:${t}`).digest("hex").slice(0, 24);
+  return createHash("sha256").update(`quoted-works-v2:${t}`).digest("hex").slice(0, 24);
 }
 
 const BACKOFF_MINUTES = [1, 5, 15, 60, 240];
@@ -111,7 +111,13 @@ export async function callTranslationGateway(
   if (!key) throw new Error("Missing LOVABLE_API_KEY");
   const targetName = target === "en" ? "English" : "French";
   const sourceName = source === "auto" ? "the detected source language" : source === "fr" ? "French" : "English";
-  const { protectedText, originals } = protectQuotedWorks(text);
+  // Quoted work titles (songs, albums) are only preserved when translating INTO French:
+  // an English title must stay original for French readers. Translating into English
+  // stays a full, unrestricted translation.
+  const protectTitles = target === "fr";
+  const { protectedText, originals } = protectTitles
+    ? protectQuotedWorks(text)
+    : { protectedText: text, originals: [] as string[] };
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
@@ -124,7 +130,9 @@ export async function callTranslationGateway(
             `You are a professional translator. Translate the user's message from ${sourceName} into ${targetName}. ` +
             `If the message is already in ${targetName}, return it unchanged. ` +
             `Preserve tone, hashtags (#tag), @mentions, emojis, URLs and line breaks. ` +
-            `Never alter placeholders such as ⟦INDI_ORIGINAL_0⟧: they represent song, album or other work titles that must remain exactly as originally written. ` +
+            (protectTitles
+              ? `Never alter placeholders such as ⟦INDI_ORIGINAL_0⟧: they represent song, album or other work titles that must remain exactly as originally written. `
+              : "") +
             `Return ONLY the translated text, no quotes, no explanation.`,
         },
         { role: "user", content: protectedText },
