@@ -210,7 +210,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       // Découverte automatique des flux RSS par les navigateurs et lecteurs.
       { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — toutes les nouveautés", href: "https://radio.indi-art-culture.com/rss.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Magazine InDi Art Culture", href: "https://radio.indi-art-culture.com/rss-magazine.xml" },
       { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Chroniques d'albums", href: "https://radio.indi-art-culture.com/rss-chroniques.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Coups de cœur", href: "https://radio.indi-art-culture.com/rss-coups-de-coeur.xml" },
       { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Actus", href: "https://radio.indi-art-culture.com/rss-actus.xml" },
       { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Clip Addict", href: "https://radio.indi-art-culture.com/rss-clips.xml" },
       { rel: "alternate", type: "application/rss+xml", title: "InDi RaDio — Émissions & Podcasts", href: "https://radio.indi-art-culture.com/podcast.xml" },
