@@ -60,7 +60,7 @@ export const Route = createFileRoute("/playlists/$slug")({
         ],
       };
     }
-    const title = `${loaderData.title} — Playlist InDi RaDio, la radio 24/7 de la musique indépendante`;
+    const title = `${loaderData.title} · Playlist — InDi RaDio, radio 24/7 indé`;
     const description = plainText(
       loaderData.description,
       `Écoutez la playlist « ${loaderData.title} » de InDi RaDio, la radio 24/7 de la musique indépendante, sur Spotify et Apple Music.`,
