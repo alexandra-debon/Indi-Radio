@@ -134,6 +134,34 @@ function guessImageType(url: string): string {
   return "image/jpeg";
 }
 
+/**
+ * Nettoie le HTML éditorial avant de l'exposer dans <content:encoded>.
+ * Apple News refuse les flux contenant scripts, iframes ou styles inline.
+ */
+export function sanitizeFeedHtml(input: string | null | undefined): string {
+  if (!input) return "";
+  return input
+    .replace(/<\s*(script|style|iframe|object|embed|form)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
+    .replace(/<\s*(script|style|iframe|object|embed|form)[^>]*\/?>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/\sstyle\s*=\s*("[^"]*"|'[^']*')/gi, "")
+    .replace(/javascript:/gi, "")
+    .replace(/]]>/g, "]]&gt;")
+    .trim();
+}
+
+/** Corps HTML d'un item : contenu éditorial, avec l'image en tête si connue. */
+function itemContentHtml(item: FeedItem, image: string | null): string | null {
+  const body = sanitizeFeedHtml(item.contentHtml) || (item.description ? `<p>${escapeXml(item.description)}</p>` : "");
+  if (!body && !image) return null;
+  const figure = image
+    ? `<figure><img src="${escapeXml(image)}" alt="${escapeXml(item.title)}"${
+        item.imageWidth ? ` width="${item.imageWidth}"` : ""
+      }${item.imageHeight ? ` height="${item.imageHeight}"` : ""}/></figure>`
+    : "";
+  return `${figure}${body}`;
+}
+
 /* ------------------------------------------------------------------ */
 /*                 Vérification des médias (enclosures)                */
 /* ------------------------------------------------------------------ */
