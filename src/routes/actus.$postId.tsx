@@ -33,8 +33,11 @@ export const Route = createFileRoute("/actus/$postId")({
         ],
       };
     }
-    const title = `${loaderData.title} — Indi Rézo`;
-    const desc = (stripMediaUrls(loaderData.content ?? "").slice(0, 200) || loaderData.title).replace(/\s+/g, " ");
+    const title = `${loaderData.title} · Actu — Indi Rézo, InDi RaDio`;
+    const desc = clampDescription(
+      stripMediaUrls(loaderData.content ?? "") ||
+        `${loaderData.title} — actualité de la scène indépendante sur InDi RaDio, la radio 24/7 de la musique indépendante.`,
+    );
     const image = loaderData.image_url || OG_FALLBACK;
     return {
       meta: [
