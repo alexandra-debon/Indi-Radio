@@ -26,11 +26,14 @@ export const Route = createFileRoute("/emissions/$showId")({
   head: ({ params, loaderData }) => {
     const url = `${BASE_URL}/emissions/${params.showId}`;
     if (!loaderData) {
-      return { meta: [{ title: "Émission introuvable — Indi Radio" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Émission introuvable — InDi RaDio" }, { name: "robots", content: "noindex" }] };
     }
     const label = loaderData.type === "chronique" ? "Chronique" : loaderData.type === "animateur" ? "Animateur" : "Émission";
-    const title = `${loaderData.title} — ${label} · Indi Radio`;
-    const desc = (loaderData.description ?? loaderData.title).slice(0, 200);
+    const title = `${loaderData.title} · ${label} — InDi RaDio`;
+    const desc = clampDescription(
+      loaderData.description ||
+        `${loaderData.title} : ${label.toLowerCase()} d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub.`,
+    );
     const image = loaderData.cover_url || OG_FALLBACK;
     return {
       meta: [
