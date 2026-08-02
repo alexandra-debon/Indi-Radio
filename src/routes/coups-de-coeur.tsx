@@ -235,7 +235,7 @@ function CoupsDeCoeurPage() {
           const count = likeStats.counts.get(c.id) ?? 0;
           const liked = likeStats.mine.has(c.id);
           return (
-          <li key={c.id} className="card-brut relative p-4">
+          <li key={c.id} id={`coup-${c.id}`} className="card-brut relative p-4 scroll-mt-24">
             <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
               <Button
                 size="sm"

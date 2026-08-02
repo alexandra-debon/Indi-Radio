@@ -5,12 +5,22 @@ const FEEDS = [
   {
     href: "/rss.xml",
     label: "Toutes les nouveautés",
-    desc: "Chroniques, actus, clips, émissions et épisodes réunis dans un seul flux.",
+    desc: "Magazine, chroniques, coups de cœur, actus, clips, émissions et épisodes réunis dans un seul flux.",
+  },
+  {
+    href: "/rss-magazine.xml",
+    label: "Magazine InDi Art Culture",
+    desc: "Chaque nouveau numéro du magazine interactif.",
   },
   {
     href: "/rss-chroniques.xml",
     label: "Chroniques d'albums",
     desc: "Chaque nouvelle chronique d'album publiée sur InDi RaDio.",
+  },
+  {
+    href: "/rss-coups-de-coeur.xml",
+    label: "Coups de cœur",
+    desc: "Les coups de cœur de la rédaction d'InDi RaDio.",
   },
   {
     href: "/rss-actus.xml",
