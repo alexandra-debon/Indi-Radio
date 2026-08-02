@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rss-actus.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = await loadActus();
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "Actus — InDi RaDio",
             description:

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/podcast.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = await loadEpisodes(true);
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "InDi RaDio — Émissions & Podcasts",
             description:

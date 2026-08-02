@@ -37,7 +37,7 @@ export const Route = createFileRoute("/rss.xml")({
           ...magazines,
           ...coups,
         ]).slice(0, FEED_LIMIT);
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "InDi RaDio — 24/7 de la musique indépendante",
             description:

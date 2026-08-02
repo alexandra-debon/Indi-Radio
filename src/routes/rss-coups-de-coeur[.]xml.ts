@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rss-coups-de-coeur.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = sortByDate(await loadCoupsDeCoeur()).slice(0, FEED_LIMIT);
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "Coups de cœur — InDi RaDio 24/7 de la musique indépendante",
             description:

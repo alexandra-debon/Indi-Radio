@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rss-chroniques.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = await loadChroniques();
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "Chroniques d'albums — InDi RaDio",
             description:
