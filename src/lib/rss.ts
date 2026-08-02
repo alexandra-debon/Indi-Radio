@@ -360,3 +360,48 @@ export async function loadShows(): Promise<FeedItem[]> {
 export function sortByDate(items: FeedItem[]): FeedItem[] {
   return [...items].sort((a, b) => itemDate(b) - itemDate(a));
 }
+
+/** Numéros du Magazine InDi Art Culture. */
+export async function loadMagazines(): Promise<FeedItem[]> {
+  try {
+    const sb = publicClient();
+    const { data } = await sb
+      .from("magazine_entries")
+      .select("id, title, body, cover_url, created_at")
+      .order("created_at", { ascending: false })
+      .limit(FEED_LIMIT);
+    return (data ?? []).map((r) => ({
+      title: r.title,
+      path: `/magazines/${r.id}`,
+      date: r.created_at ?? undefined,
+      description: toExcerpt(r.body),
+      image: r.cover_url ?? undefined,
+      categories: ["Magazine"],
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/** Coups de cœur InDi RaDio (ancre stable sur la page publique). */
+export async function loadCoupsDeCoeur(): Promise<FeedItem[]> {
+  try {
+    const sb = publicClient();
+    const { data } = await sb
+      .from("coups_de_coeur" as never)
+      .select("id, title, artist, comment, discovery_story, cover_url, featured_date")
+      .eq("published", true)
+      .order("featured_date", { ascending: false })
+      .limit(FEED_LIMIT);
+    return ((data ?? []) as unknown as Array<Record<string, string | null>>).map((r) => ({
+      title: r["artist"] ? `${r["artist"]} — ${r["title"]}` : String(r["title"] ?? ""),
+      path: `/coups-de-coeur#coup-${r["id"]}`,
+      date: r["featured_date"] ?? undefined,
+      description: toExcerpt(r["comment"] || r["discovery_story"]),
+      image: r["cover_url"] ?? undefined,
+      categories: ["Coups de cœur"],
+    }));
+  } catch {
+    return [];
+  }
+}
