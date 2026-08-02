@@ -436,6 +436,8 @@ export async function loadChroniques(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.excerpt || r.content),
       image: r.cover_url ?? undefined,
+      contentHtml: r.content ?? r.excerpt ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Chroniques"],
     }));
   } catch {
@@ -457,6 +459,8 @@ export async function loadActus(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.content),
       image: r.image_url ?? (r.image_urls?.[0] as string | undefined),
+      contentHtml: r.content ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Actus"],
     }));
   } catch {
@@ -491,6 +495,10 @@ export async function loadClips(): Promise<FeedItem[]> {
         date: r.created_at ?? undefined,
         description: toExcerpt(r.body),
         image: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
+        imageWidth: yt ? 480 : undefined,
+        imageHeight: yt ? 360 : undefined,
+        contentHtml: r.body ?? undefined,
+        author: FEED_PUBLISHER,
         videoPageUrl: video ?? undefined,
         categories: ["Clips"],
       };
@@ -517,6 +525,8 @@ export async function loadEpisodes(onlyAudio = true): Promise<FeedItem[]> {
       description: toExcerpt(r.description),
       image: r.cover_url ?? undefined,
       audioUrl: r.audio_url ?? undefined,
+      contentHtml: r.description ?? undefined,
+      author: FEED_PUBLISHER,
       durationSeconds: r.duration_seconds ?? undefined,
       categories: ["Épisodes"],
     }));
@@ -539,6 +549,8 @@ export async function loadShows(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.description),
       image: r.cover_url ?? undefined,
+      contentHtml: r.description ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Émissions"],
     }));
   } catch {
@@ -565,6 +577,8 @@ export async function loadMagazines(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.body),
       image: r.cover_url ?? undefined,
+      contentHtml: r.body ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Magazine"],
     }));
   } catch {
@@ -588,6 +602,8 @@ export async function loadCoupsDeCoeur(): Promise<FeedItem[]> {
       date: r["featured_date"] ?? undefined,
       description: toExcerpt(r["comment"] || r["discovery_story"]),
       image: r["cover_url"] ?? undefined,
+      contentHtml: [r["comment"], r["discovery_story"]].filter(Boolean).join("\n") || undefined,
+      author: FEED_PUBLISHER,
       categories: ["Coups de cœur"],
     }));
   } catch {
