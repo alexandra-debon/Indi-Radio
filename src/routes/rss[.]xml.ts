@@ -6,6 +6,8 @@ import {
   loadClips,
   loadEpisodes,
   loadShows,
+  loadMagazines,
+  loadCoupsDeCoeur,
   renderFeed,
   feedLastBuild,
   feedResponse,
@@ -17,12 +19,14 @@ export const Route = createFileRoute("/rss.xml")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const [chroniques, actus, clips, episodes, shows] = await Promise.all([
+        const [chroniques, actus, clips, episodes, shows, magazines, coups] = await Promise.all([
           loadChroniques(),
           loadActus(),
           loadClips(),
           loadEpisodes(false),
           loadShows(),
+          loadMagazines(),
+          loadCoupsDeCoeur(),
         ]);
         const items = sortByDate([
           ...chroniques,
@@ -30,12 +34,14 @@ export const Route = createFileRoute("/rss.xml")({
           ...clips,
           ...episodes,
           ...shows,
+          ...magazines,
+          ...coups,
         ]).slice(0, FEED_LIMIT);
         const body = renderFeed(
           {
             title: "InDi RaDio — 24/7 de la musique indépendante",
             description:
-              "Toutes les nouveautés d'InDi RaDio : chroniques d'albums, actus, clips, émissions et épisodes de la scène indépendante.",
+              "Toutes les nouveautés d'InDi RaDio : magazine, chroniques d'albums, coups de cœur, actus, clips, émissions et épisodes de la scène indépendante.",
             link: "/",
             selfPath: "/rss.xml",
           },

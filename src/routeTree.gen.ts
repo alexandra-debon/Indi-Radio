@@ -21,6 +21,7 @@ import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RssMagazineDotxmlRouteImport } from './routes/rss-magazine[.]xml'
+import { Route as RssCoupsDeCoeurDotxmlRouteImport } from './routes/rss-coups-de-coeur[.]xml'
 import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
 import { Route as RssChroniquesDotxmlRouteImport } from './routes/rss-chroniques[.]xml'
 import { Route as RssActusDotxmlRouteImport } from './routes/rss-actus[.]xml'
@@ -143,6 +144,11 @@ const RssDotxmlRoute = RssDotxmlRouteImport.update({
 const RssMagazineDotxmlRoute = RssMagazineDotxmlRouteImport.update({
   id: '/rss-magazine.xml',
   path: '/rss-magazine.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssCoupsDeCoeurDotxmlRoute = RssCoupsDeCoeurDotxmlRouteImport.update({
+  id: '/rss-coups-de-coeur.xml',
+  path: '/rss-coups-de-coeur.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RssClipsDotxmlRoute = RssClipsDotxmlRouteImport.update({
@@ -496,6 +502,7 @@ export interface FileRoutesByFullPath {
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByTo {
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -650,6 +658,7 @@ export interface FileRoutesById {
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
+  '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -728,6 +737,7 @@ export interface FileRouteTypes {
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
     | '/rss-clips.xml'
+    | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
     | '/rss.xml'
     | '/sitemap-en.xml'
@@ -804,6 +814,7 @@ export interface FileRouteTypes {
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
     | '/rss-clips.xml'
+    | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
     | '/rss.xml'
     | '/sitemap-en.xml'
@@ -881,6 +892,7 @@ export interface FileRouteTypes {
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
     | '/rss-clips.xml'
+    | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
     | '/rss.xml'
     | '/sitemap-en.xml'
@@ -959,6 +971,7 @@ export interface RootRouteChildren {
   RssActusDotxmlRoute: typeof RssActusDotxmlRoute
   RssChroniquesDotxmlRoute: typeof RssChroniquesDotxmlRoute
   RssClipsDotxmlRoute: typeof RssClipsDotxmlRoute
+  RssCoupsDeCoeurDotxmlRoute: typeof RssCoupsDeCoeurDotxmlRoute
   RssMagazineDotxmlRoute: typeof RssMagazineDotxmlRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
@@ -1090,6 +1103,13 @@ declare module '@tanstack/react-router' {
       path: '/rss-magazine.xml'
       fullPath: '/rss-magazine.xml'
       preLoaderRoute: typeof RssMagazineDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss-coups-de-coeur.xml': {
+      id: '/rss-coups-de-coeur.xml'
+      path: '/rss-coups-de-coeur.xml'
+      fullPath: '/rss-coups-de-coeur.xml'
+      preLoaderRoute: typeof RssCoupsDeCoeurDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rss-clips.xml': {
@@ -1597,6 +1617,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssActusDotxmlRoute: RssActusDotxmlRoute,
   RssChroniquesDotxmlRoute: RssChroniquesDotxmlRoute,
   RssClipsDotxmlRoute: RssClipsDotxmlRoute,
+  RssCoupsDeCoeurDotxmlRoute: RssCoupsDeCoeurDotxmlRoute,
   RssMagazineDotxmlRoute: RssMagazineDotxmlRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
