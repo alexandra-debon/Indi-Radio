@@ -27,6 +27,8 @@
     "test:e2e:tour-visual": "playwright test tests/e2e/onboarding-tour-visual.spec.ts",
     "test:e2e:tour-visual:update": "playwright test tests/e2e/onboarding-tour-visual.spec.ts --update-snapshots",
     "publish:verify": "node scripts/publish-verify.mjs",
+    "verify:rss-diff": "node scripts/rss-diff.mjs",
+    "verify:rss-diff:update": "node scripts/rss-diff.mjs --update",
     "verify:hreflang": "node scripts/verify-hreflang.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
     "verify:seo": "node scripts/verify-seo-sync.mjs",

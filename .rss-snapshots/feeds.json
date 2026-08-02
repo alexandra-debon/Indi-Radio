@@ -1,0 +1,135 @@
+{
+  "base": "http://localhost:8080",
+  "generatedAt": "2026-08-02T13:45:50.024Z",
+  "feeds": {
+    "/rss.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/chroniques/ren-vincent-s-tale",
+          "link": "https://radio.indi-art-culture.com/chroniques/ren-vincent-s-tale",
+          "title": "REN — \"Vincent's Tale\"",
+          "pubDate": "Fri, 31 Jul 2026 18:06:10 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/coups-de-coeur",
+          "link": "https://radio.indi-art-culture.com/coups-de-coeur",
+          "title": "Eon Awa  — « Dick on the floor »",
+          "pubDate": "Fri, 31 Jul 2026 00:00:00 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/actus/0578c4b0-d838-4b6f-922a-a0a425c437c7",
+          "link": "https://radio.indi-art-culture.com/actus/0578c4b0-d838-4b6f-922a-a0a425c437c7",
+          "title": "Nous y étions et ce fut un moment de bonheur inouï… Asaf Avidan… Live in Carcassonne 2026",
+          "pubDate": "Thu, 30 Jul 2026 07:19:31 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/717638c6-1a5b-4fff-ae91-31d9729f7ff9",
+          "link": "https://radio.indi-art-culture.com/clips/717638c6-1a5b-4fff-ae91-31d9729f7ff9",
+          "title": "Le chef-d’œuvre : Human de bEss",
+          "pubDate": "Thu, 23 Jul 2026 17:51:48 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/actus/54f4301c-21ff-47cc-91d9-fc9eecadd26a",
+          "link": "https://radio.indi-art-culture.com/actus/54f4301c-21ff-47cc-91d9-fc9eecadd26a",
+          "title": "Les « Jeune Senior Weekend » en concert dans le sud de la France ! À vos agendas !",
+          "pubDate": "Tue, 21 Jul 2026 07:59:55 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/e467cf41-fae7-4f00-8bb1-f33410bebc18",
+          "link": "https://radio.indi-art-culture.com/clips/e467cf41-fae7-4f00-8bb1-f33410bebc18",
+          "title": "Les clips extraordinaires…",
+          "pubDate": "Thu, 16 Jul 2026 21:46:48 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/magazines/8b223256-5858-4bca-b7d6-7fa45173437f",
+          "link": "https://radio.indi-art-culture.com/magazines/8b223256-5858-4bca-b7d6-7fa45173437f",
+          "title": "Damien Rice - L’architecture du silence",
+          "pubDate": "Thu, 16 Jul 2026 19:53:09 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/8d5ea4d5-9e68-4f07-a09b-791fdc33bd89",
+          "link": "https://radio.indi-art-culture.com/clips/8d5ea4d5-9e68-4f07-a09b-791fdc33bd89",
+          "title": "Moses Concas et l’Hymne de Planète Indi tous vos lundis !",
+          "pubDate": "Wed, 15 Jul 2026 07:45:30 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/emissions/9196120d-1308-4a3d-b0ac-f5dee15a4de1",
+          "link": "https://radio.indi-art-culture.com/emissions/9196120d-1308-4a3d-b0ac-f5dee15a4de1",
+          "title": "Planète Indî’",
+          "pubDate": "Tue, 14 Jul 2026 16:37:51 GMT"
+        }
+      ]
+    },
+    "/rss-chroniques.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/chroniques/ren-vincent-s-tale",
+          "link": "https://radio.indi-art-culture.com/chroniques/ren-vincent-s-tale",
+          "title": "REN — \"Vincent's Tale\"",
+          "pubDate": "Fri, 31 Jul 2026 18:06:10 GMT"
+        }
+      ]
+    },
+    "/rss-actus.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/actus/0578c4b0-d838-4b6f-922a-a0a425c437c7",
+          "link": "https://radio.indi-art-culture.com/actus/0578c4b0-d838-4b6f-922a-a0a425c437c7",
+          "title": "Nous y étions et ce fut un moment de bonheur inouï… Asaf Avidan… Live in Carcassonne 2026",
+          "pubDate": "Thu, 30 Jul 2026 07:19:31 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/actus/54f4301c-21ff-47cc-91d9-fc9eecadd26a",
+          "link": "https://radio.indi-art-culture.com/actus/54f4301c-21ff-47cc-91d9-fc9eecadd26a",
+          "title": "Les « Jeune Senior Weekend » en concert dans le sud de la France ! À vos agendas !",
+          "pubDate": "Tue, 21 Jul 2026 07:59:55 GMT"
+        }
+      ]
+    },
+    "/rss-clips.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/717638c6-1a5b-4fff-ae91-31d9729f7ff9",
+          "link": "https://radio.indi-art-culture.com/clips/717638c6-1a5b-4fff-ae91-31d9729f7ff9",
+          "title": "Le chef-d’œuvre : Human de bEss",
+          "pubDate": "Thu, 23 Jul 2026 17:51:48 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/e467cf41-fae7-4f00-8bb1-f33410bebc18",
+          "link": "https://radio.indi-art-culture.com/clips/e467cf41-fae7-4f00-8bb1-f33410bebc18",
+          "title": "Les clips extraordinaires…",
+          "pubDate": "Thu, 16 Jul 2026 21:46:48 GMT"
+        },
+        {
+          "guid": "https://radio.indi-art-culture.com/clips/8d5ea4d5-9e68-4f07-a09b-791fdc33bd89",
+          "link": "https://radio.indi-art-culture.com/clips/8d5ea4d5-9e68-4f07-a09b-791fdc33bd89",
+          "title": "Moses Concas et l’Hymne de Planète Indi tous vos lundis !",
+          "pubDate": "Wed, 15 Jul 2026 07:45:30 GMT"
+        }
+      ]
+    },
+    "/rss-magazine.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/magazines/8b223256-5858-4bca-b7d6-7fa45173437f",
+          "link": "https://radio.indi-art-culture.com/magazines/8b223256-5858-4bca-b7d6-7fa45173437f",
+          "title": "Damien Rice - L’architecture du silence",
+          "pubDate": "Thu, 16 Jul 2026 19:53:09 GMT"
+        }
+      ]
+    },
+    "/rss-coups-de-coeur.xml": {
+      "items": [
+        {
+          "guid": "https://radio.indi-art-culture.com/coups-de-coeur",
+          "link": "https://radio.indi-art-culture.com/coups-de-coeur",
+          "title": "Eon Awa  — « Dick on the floor »",
+          "pubDate": "Fri, 31 Jul 2026 00:00:00 GMT"
+        }
+      ]
+    },
+    "/podcast.xml": {
+      "items": []
+    }
+  }
+}
