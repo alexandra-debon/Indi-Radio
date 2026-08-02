@@ -14,6 +14,10 @@ export const FEED_LIMIT = 50;
 /** Illustration par défaut des flux (logo carré). */
 export const SITE_ORIGIN_ICON = `${SITE_ORIGIN}/icons/apple-touch-icon.png`;
 
+/** Éditeur / contact utilisés par Apple News et Google Publisher Center. */
+export const FEED_PUBLISHER = "InDi RaDio";
+export const FEED_CONTACT_EMAIL = "contact@indi-art-culture.com";
+
 export interface FeedItem {
   title: string;
   path: string;
@@ -21,6 +25,11 @@ export interface FeedItem {
   date?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
+  /** Contenu HTML complet (Apple News lit <content:encoded>). */
+  contentHtml?: string | undefined;
+  /** Dimensions connues de l'illustration (Apple News : ≥ 1024px conseillé). */
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
   author?: string | undefined;
   /** Fichier audio joint (podcast). */
   audioUrl?: string | undefined;
@@ -123,6 +132,41 @@ function guessImageType(url: string): string {
   if (clean.endsWith(".avif")) return "image/avif";
   if (clean.endsWith(".svg")) return "image/svg+xml";
   return "image/jpeg";
+}
+
+/**
+ * Nettoie le HTML éditorial avant de l'exposer dans <content:encoded>.
+ * Apple News refuse les flux contenant scripts, iframes ou styles inline.
+ */
+export function sanitizeFeedHtml(input: string | null | undefined): string {
+  if (!input) return "";
+  const cleaned = input
+    .replace(/<\s*(script|style|iframe|object|embed|form)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
+    .replace(/<\s*(script|style|iframe|object|embed|form)[^>]*\/?>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/\sstyle\s*=\s*("[^"]*"|'[^']*')/gi, "")
+    .replace(/javascript:/gi, "")
+    .replace(/]]>/g, "]]&gt;")
+    .trim();
+  if (!cleaned || /<(p|div|h[1-6]|ul|ol|blockquote|figure|img|br)\b/i.test(cleaned)) return cleaned;
+  // Texte brut : paragraphes conformes attendus par Apple News.
+  return cleaned
+    .split(/\n{2,}/)
+    .map((para) => `<p>${escapeXml(para.trim()).replace(/\n/g, "<br/>")}</p>`)
+    .filter((p) => p !== "<p></p>")
+    .join("");
+}
+
+/** Corps HTML d'un item : contenu éditorial, avec l'image en tête si connue. */
+function itemContentHtml(item: FeedItem, image: string | null): string | null {
+  const body = sanitizeFeedHtml(item.contentHtml) || (item.description ? `<p>${escapeXml(item.description)}</p>` : "");
+  if (!body && !image) return null;
+  const figure = image
+    ? `<figure><img src="${escapeXml(image)}" alt="${escapeXml(item.title)}"${
+        item.imageWidth ? ` width="${item.imageWidth}"` : ""
+      }${item.imageHeight ? ` height="${item.imageHeight}"` : ""}/></figure>`
+    : "";
+  return `${figure}${body}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -237,25 +281,33 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
       const imageInfo = item._image ?? null;
       const video = absolute(item.videoPageUrl);
       const pub = new Date(itemDate(item)).toUTCString();
+      const contentHtml = itemContentHtml(item, img);
       const lines: (string | null)[] = [
         "    <item>",
         `      <title>${escapeXml(item.title)}</title>`,
         `      <link>${escapeXml(url)}</link>`,
         `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
         `      <pubDate>${pub}</pubDate>`,
-        item.author ? `      <dc:creator>${escapeXml(item.author)}</dc:creator>` : null,
+        `      <dc:creator>${escapeXml(item.author || FEED_PUBLISHER)}</dc:creator>`,
         item.description
           ? `      <description>${escapeXml(item.description)}</description>`
           : null,
+        contentHtml ? `      <content:encoded><![CDATA[${contentHtml}]]></content:encoded>` : null,
         ...(item.categories ?? []).map((c) => `      <category>${escapeXml(c)}</category>`),
         img
           ? `      <media:content url="${escapeXml(img)}" medium="image"${
               imageInfo
                 ? ` type="${escapeXml(imageInfo.type)}"${imageInfo.length ? ` fileSize="${imageInfo.length}"` : ""}`
                 : ""
+            }${item.imageWidth ? ` width="${item.imageWidth}"` : ""}${
+              item.imageHeight ? ` height="${item.imageHeight}"` : ""
+            }>\n        <media:title type="plain">${escapeXml(item.title)}</media:title>\n      </media:content>`
+          : null,
+        img
+          ? `      <media:thumbnail url="${escapeXml(img)}"${item.imageWidth ? ` width="${item.imageWidth}"` : ""}${
+              item.imageHeight ? ` height="${item.imageHeight}"` : ""
             }/>`
           : null,
-        img ? `      <media:thumbnail url="${escapeXml(img)}"/>` : null,
         // Vidéo hébergée sur une plateforme (YouTube…) : pas un fichier
         // téléchargeable, donc media:content + player, jamais d'enclosure.
         video
@@ -290,6 +342,7 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
     .join("\n");
 
   const p = opts.podcast;
+  const year = new Date().getFullYear();
   const head: (string | null)[] = [
     `    <title>${escapeXml(opts.title)}</title>`,
     `    <link>${escapeXml(canonicalUrl(opts.link))}</link>`,
@@ -299,11 +352,20 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
     `    <lastBuildDate>${lastBuild.toUTCString()}</lastBuildDate>`,
     `    <pubDate>${lastBuild.toUTCString()}</pubDate>`,
     `    <generator>InDi RaDio</generator>`,
+    `    <copyright>© ${year} ${escapeXml(FEED_PUBLISHER)}</copyright>`,
+    `    <managingEditor>${escapeXml(FEED_CONTACT_EMAIL)} (${escapeXml(FEED_PUBLISHER)})</managingEditor>`,
+    `    <webMaster>${escapeXml(FEED_CONTACT_EMAIL)} (${escapeXml(FEED_PUBLISHER)})</webMaster>`,
+    `    <docs>https://www.rssboard.org/rss-specification</docs>`,
+    `    <ttl>60</ttl>`,
+    `    <dc:publisher>${escapeXml(FEED_PUBLISHER)}</dc:publisher>`,
+    `    <dc:language>${opts.language ?? "fr-FR"}</dc:language>`,
+    `    <dc:rights>© ${year} ${escapeXml(FEED_PUBLISHER)}</dc:rights>`,
     `    <image>`,
     `      <url>${SITE_ORIGIN}/icons/apple-touch-icon.png</url>`,
     `      <title>${escapeXml(opts.title)}</title>`,
     `      <link>${escapeXml(canonicalUrl(opts.link))}</link>`,
     `    </image>`,
+    `    <media:thumbnail url="${SITE_ORIGIN}/icons/apple-touch-icon.png"/>`,
     p ? `    <itunes:author>${escapeXml(p.author)}</itunes:author>` : null,
     p ? `    <itunes:summary>${escapeXml(opts.description)}</itunes:summary>` : null,
     p ? `    <itunes:type>episodic</itunes:type>` : null,
@@ -381,6 +443,8 @@ export async function loadChroniques(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.excerpt || r.content),
       image: r.cover_url ?? undefined,
+      contentHtml: r.content ?? r.excerpt ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Chroniques"],
     }));
   } catch {
@@ -402,6 +466,8 @@ export async function loadActus(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.content),
       image: r.image_url ?? (r.image_urls?.[0] as string | undefined),
+      contentHtml: r.content ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Actus"],
     }));
   } catch {
@@ -436,6 +502,10 @@ export async function loadClips(): Promise<FeedItem[]> {
         date: r.created_at ?? undefined,
         description: toExcerpt(r.body),
         image: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
+        imageWidth: yt ? 480 : undefined,
+        imageHeight: yt ? 360 : undefined,
+        contentHtml: r.body ?? undefined,
+        author: FEED_PUBLISHER,
         videoPageUrl: video ?? undefined,
         categories: ["Clips"],
       };
@@ -462,6 +532,8 @@ export async function loadEpisodes(onlyAudio = true): Promise<FeedItem[]> {
       description: toExcerpt(r.description),
       image: r.cover_url ?? undefined,
       audioUrl: r.audio_url ?? undefined,
+      contentHtml: r.description ?? undefined,
+      author: FEED_PUBLISHER,
       durationSeconds: r.duration_seconds ?? undefined,
       categories: ["Épisodes"],
     }));
@@ -484,6 +556,8 @@ export async function loadShows(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.description),
       image: r.cover_url ?? undefined,
+      contentHtml: r.description ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Émissions"],
     }));
   } catch {
@@ -510,6 +584,8 @@ export async function loadMagazines(): Promise<FeedItem[]> {
       date: r.created_at ?? undefined,
       description: toExcerpt(r.body),
       image: r.cover_url ?? undefined,
+      contentHtml: r.body ?? undefined,
+      author: FEED_PUBLISHER,
       categories: ["Magazine"],
     }));
   } catch {
@@ -533,6 +609,8 @@ export async function loadCoupsDeCoeur(): Promise<FeedItem[]> {
       date: r["featured_date"] ?? undefined,
       description: toExcerpt(r["comment"] || r["discovery_story"]),
       image: r["cover_url"] ?? undefined,
+      contentHtml: [r["comment"], r["discovery_story"]].filter(Boolean).join("\n") || undefined,
+      author: FEED_PUBLISHER,
       categories: ["Coups de cœur"],
     }));
   } catch {
