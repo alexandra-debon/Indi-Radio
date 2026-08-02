@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -141,7 +141,7 @@ function StatusPill({ result }: { result: FeedResult }) {
   );
 }
 
-function FeedPanel({ path, label }: { path: string; label: string }) {
+function FeedPanel({ path }: { path: string }) {
   const [showRaw, setShowRaw] = useState(false);
   const [sample, setSample] = useState(5);
   const { data, error, isLoading, isFetching, refetch } = useQuery({
@@ -322,11 +322,14 @@ function FeedPanel({ path, label }: { path: string; label: string }) {
 }
 
 function Overview() {
-  const results = FEEDS.map((f) => ({
-    feed: f,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    query: useQuery({ queryKey: ["rss-test", f.path], queryFn: () => loadFeed(f.path), staleTime: 15_000 }),
-  }));
+  const queries = useQueries({
+    queries: FEEDS.map((f) => ({
+      queryKey: ["rss-test", f.path],
+      queryFn: () => loadFeed(f.path),
+      staleTime: 15_000,
+    })),
+  });
+  const results = FEEDS.map((feed, i) => ({ feed, query: queries[i] }));
 
   return (
     <div className="overflow-x-auto rounded border border-border">
@@ -415,7 +418,7 @@ function RssTestPage() {
         </TabsList>
         {FEEDS.map((f) => (
           <TabsContent key={f.path} value={f.path} className="mt-4">
-            <FeedPanel path={f.path} label={f.label} />
+            <FeedPanel path={f.path} />
           </TabsContent>
         ))}
       </Tabs>
