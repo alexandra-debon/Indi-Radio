@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rss-clips.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = await loadClips();
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "Clip Addict — InDi RaDio",
             description:

@@ -24,6 +24,8 @@ export interface FeedItem {
   author?: string | undefined;
   /** Fichier audio joint (podcast). */
   audioUrl?: string | undefined;
+  /** Page vidéo externe (YouTube…) : pas un fichier, donc pas d'enclosure. */
+  videoPageUrl?: string | undefined;
   durationSeconds?: number | undefined;
   categories?: string[];
 }
@@ -113,6 +115,97 @@ function guessAudioType(url: string): string {
   return "audio/mpeg";
 }
 
+function guessImageType(url: string): string {
+  const clean = url.split("?")[0]!.toLowerCase();
+  if (clean.endsWith(".png")) return "image/png";
+  if (clean.endsWith(".webp")) return "image/webp";
+  if (clean.endsWith(".gif")) return "image/gif";
+  if (clean.endsWith(".avif")) return "image/avif";
+  if (clean.endsWith(".svg")) return "image/svg+xml";
+  return "image/jpeg";
+}
+
+/* ------------------------------------------------------------------ */
+/*                 Vérification des médias (enclosures)                */
+/* ------------------------------------------------------------------ */
+
+export interface MediaInfo {
+  url: string;
+  type: string;
+  length: number;
+}
+
+const mediaCache = new Map<string, MediaInfo | null>();
+
+/**
+ * Vérifie qu'un média est réellement accessible et récupère son MIME type
+ * et sa taille en octets (HEAD, puis GET Range en repli). Retourne null si
+ * l'URL n'est pas joignable : aucune enclosure ne sera alors émise.
+ */
+export async function probeMedia(
+  rawUrl: string,
+  fallbackType: string,
+): Promise<MediaInfo | null> {
+  const url = absolute(rawUrl);
+  if (!url) return null;
+  if (mediaCache.has(url)) return mediaCache.get(url) ?? null;
+
+  let info: MediaInfo | null = null;
+  try {
+    const read = (res: Response): MediaInfo | null => {
+      if (!res.ok && res.status !== 206) return null;
+      const range = res.headers.get("content-range");
+      const total = range?.split("/")[1];
+      const len = Number(
+        total && total !== "*" ? total : (res.headers.get("content-length") ?? ""),
+      );
+      const type =
+        (res.headers.get("content-type") ?? "").split(";")[0]!.trim() || fallbackType;
+      return {
+        url: res.url || url,
+        type: type.startsWith("application/octet-stream") ? fallbackType : type,
+        length: Number.isFinite(len) && len > 0 ? Math.floor(len) : 0,
+      };
+    };
+
+    const signal = AbortSignal.timeout(6000);
+    let res = await fetch(url, { method: "HEAD", redirect: "follow", signal });
+    info = read(res);
+    if (!info || info.length === 0) {
+      res = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+        headers: { Range: "bytes=0-0" },
+        signal: AbortSignal.timeout(6000),
+      });
+      info = read(res) ?? info;
+    }
+  } catch {
+    info = null;
+  }
+
+  mediaCache.set(url, info);
+  return info;
+}
+
+interface ResolvedItem extends FeedItem {
+  _audio?: MediaInfo | null;
+  _image?: MediaInfo | null;
+}
+
+/** Résout en parallèle les enclosures (audio + image) de tous les items. */
+async function resolveMedia(items: FeedItem[]): Promise<ResolvedItem[]> {
+  return Promise.all(
+    items.map(async (item) => {
+      const [audio, image] = await Promise.all([
+        item.audioUrl ? probeMedia(item.audioUrl, guessAudioType(item.audioUrl)) : null,
+        item.image ? probeMedia(item.image, guessImageType(item.image)) : null,
+      ]);
+      return { ...item, _audio: audio, _image: image };
+    }),
+  );
+}
+
 export interface FeedOptions {
   title: string;
   description: string;
@@ -131,15 +224,18 @@ export interface FeedOptions {
   };
 }
 
-export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
+export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promise<string> {
   const self = `${SITE_ORIGIN}${opts.selfPath}`;
-  const lastBuild = feedLastBuild(items);
+  const lastBuild = feedLastBuild(rawItems);
+  const items = await resolveMedia(rawItems);
 
   const xmlItems = items
     .map((item) => {
       const url = canonicalUrl(item.path);
       const img = absolute(item.image);
-      const audio = absolute(item.audioUrl);
+      const audioInfo = item._audio ?? null;
+      const imageInfo = item._image ?? null;
+      const video = absolute(item.videoPageUrl);
       const pub = new Date(itemDate(item)).toUTCString();
       const lines: (string | null)[] = [
         "    <item>",
@@ -152,11 +248,33 @@ export function renderFeed(opts: FeedOptions, items: FeedItem[]): string {
           ? `      <description>${escapeXml(item.description)}</description>`
           : null,
         ...(item.categories ?? []).map((c) => `      <category>${escapeXml(c)}</category>`),
-        img ? `      <media:content url="${escapeXml(img)}" medium="image"/>` : null,
-        img && !audio ? `      <enclosure url="${escapeXml(img)}" type="image/jpeg" length="0"/>` : null,
-        audio
-          ? `      <enclosure url="${escapeXml(audio)}" type="${guessAudioType(audio)}" length="0"/>`
+        img
+          ? `      <media:content url="${escapeXml(img)}" medium="image"${
+              imageInfo
+                ? ` type="${escapeXml(imageInfo.type)}"${imageInfo.length ? ` fileSize="${imageInfo.length}"` : ""}`
+                : ""
+            }/>`
           : null,
+        img ? `      <media:thumbnail url="${escapeXml(img)}"/>` : null,
+        // Vidéo hébergée sur une plateforme (YouTube…) : pas un fichier
+        // téléchargeable, donc media:content + player, jamais d'enclosure.
+        video
+          ? `      <media:content url="${escapeXml(video)}" medium="video" type="text/html" isDefault="true"${
+              item.durationSeconds ? ` duration="${Math.floor(item.durationSeconds)}"` : ""
+            }/>`
+          : null,
+        video ? `      <media:player url="${escapeXml(video)}"/>` : null,
+        // Enclosure audio : uniquement si le fichier répond réellement.
+        audioInfo
+          ? `      <media:content url="${escapeXml(audioInfo.url)}" medium="audio" type="${escapeXml(audioInfo.type)}"${
+              audioInfo.length ? ` fileSize="${audioInfo.length}"` : ""
+            }${item.durationSeconds ? ` duration="${Math.floor(item.durationSeconds)}"` : ""}/>`
+          : null,
+        audioInfo
+          ? `      <enclosure url="${escapeXml(audioInfo.url)}" type="${escapeXml(audioInfo.type)}" length="${audioInfo.length}"/>`
+          : imageInfo && !video
+            ? `      <enclosure url="${escapeXml(imageInfo.url)}" type="${escapeXml(imageInfo.type)}" length="${imageInfo.length}"/>`
+            : null,
         opts.podcast && img ? `      <itunes:image href="${escapeXml(img)}"/>` : null,
         opts.podcast && item.durationSeconds
           ? `      <itunes:duration>${hhmmss(item.durationSeconds)}</itunes:duration>`
@@ -291,21 +409,37 @@ export async function loadActus(): Promise<FeedItem[]> {
   }
 }
 
+/** Identifiant YouTube depuis une URL watch/youtu.be/embed/shorts. */
+function youtubeId(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const m =
+    url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/) ??
+    null;
+  return m?.[1] ?? null;
+}
+
 export async function loadClips(): Promise<FeedItem[]> {
   try {
     const sb = publicClient();
     const { data } = await sb
       .from("clip_entries")
-      .select("id, title, body, created_at")
+      .select("id, title, body, video_url, video_urls, created_at")
       .order("created_at", { ascending: false })
       .limit(FEED_LIMIT);
-    return (data ?? []).map((r) => ({
-      title: r.title,
-      path: `/clips/${r.id}`,
-      date: r.created_at ?? undefined,
-      description: toExcerpt(r.body),
-      categories: ["Clips"],
-    }));
+    return (data ?? []).map((r) => {
+      const video =
+        r.video_url ?? ((r.video_urls as string[] | null)?.[0] ?? null);
+      const yt = youtubeId(video);
+      return {
+        title: r.title,
+        path: `/clips/${r.id}`,
+        date: r.created_at ?? undefined,
+        description: toExcerpt(r.body),
+        image: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
+        videoPageUrl: video ?? undefined,
+        categories: ["Clips"],
+      };
+    });
   } catch {
     return [];
   }

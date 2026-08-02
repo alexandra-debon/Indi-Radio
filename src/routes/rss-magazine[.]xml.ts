@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rss-magazine.xml")({
     handlers: {
       GET: async ({ request }) => {
         const items = sortByDate(await loadMagazines()).slice(0, FEED_LIMIT);
-        const body = renderFeed(
+        const body = await renderFeed(
           {
             title: "Magazine InDi Art Culture — InDi RaDio 24/7 de la musique indépendante",
             description:
