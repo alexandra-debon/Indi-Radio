@@ -15,9 +15,9 @@ const base = process.env.CHECK_BASE_URL ?? "https://radio.indi-art-culture.com";
 console.log(`[publish:verify] waiting ${waitSec}s for deploy to propagate on ${base}…`);
 await new Promise((r) => setTimeout(r, waitSec * 1000));
 
-function run(cmd, args) {
+function run(cmd, args, extraEnv = {}) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: "inherit", env: process.env });
+    const child = spawn(cmd, args, { stdio: "inherit", env: { ...process.env, ...extraEnv } });
     child.on("exit", (code) => resolve(code ?? 1));
   });
 }
