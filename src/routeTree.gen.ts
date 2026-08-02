@@ -20,6 +20,7 @@ import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images
 import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RssTestRouteImport } from './routes/rss-test'
 import { Route as RssMagazineDotxmlRouteImport } from './routes/rss-magazine[.]xml'
 import { Route as RssCoupsDeCoeurDotxmlRouteImport } from './routes/rss-coups-de-coeur[.]xml'
 import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
@@ -139,6 +140,11 @@ const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
 const RssDotxmlRoute = RssDotxmlRouteImport.update({
   id: '/rss.xml',
   path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssTestRoute = RssTestRouteImport.update({
+  id: '/rss-test',
+  path: '/rss-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RssMagazineDotxmlRoute = RssMagazineDotxmlRouteImport.update({
@@ -504,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
   '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
+  '/rss-test': typeof RssTestRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
@@ -581,6 +588,7 @@ export interface FileRoutesByTo {
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
   '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
+  '/rss-test': typeof RssTestRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
@@ -660,6 +668,7 @@ export interface FileRoutesById {
   '/rss-clips.xml': typeof RssClipsDotxmlRoute
   '/rss-coups-de-coeur.xml': typeof RssCoupsDeCoeurDotxmlRoute
   '/rss-magazine.xml': typeof RssMagazineDotxmlRoute
+  '/rss-test': typeof RssTestRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-fr.xml': typeof SitemapFrDotxmlRoute
@@ -739,6 +748,7 @@ export interface FileRouteTypes {
     | '/rss-clips.xml'
     | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
+    | '/rss-test'
     | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
@@ -816,6 +826,7 @@ export interface FileRouteTypes {
     | '/rss-clips.xml'
     | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
+    | '/rss-test'
     | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
@@ -894,6 +905,7 @@ export interface FileRouteTypes {
     | '/rss-clips.xml'
     | '/rss-coups-de-coeur.xml'
     | '/rss-magazine.xml'
+    | '/rss-test'
     | '/rss.xml'
     | '/sitemap-en.xml'
     | '/sitemap-fr.xml'
@@ -973,6 +985,7 @@ export interface RootRouteChildren {
   RssClipsDotxmlRoute: typeof RssClipsDotxmlRoute
   RssCoupsDeCoeurDotxmlRoute: typeof RssCoupsDeCoeurDotxmlRoute
   RssMagazineDotxmlRoute: typeof RssMagazineDotxmlRoute
+  RssTestRoute: typeof RssTestRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapFrDotxmlRoute: typeof SitemapFrDotxmlRoute
@@ -1096,6 +1109,13 @@ declare module '@tanstack/react-router' {
       path: '/rss.xml'
       fullPath: '/rss.xml'
       preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss-test': {
+      id: '/rss-test'
+      path: '/rss-test'
+      fullPath: '/rss-test'
+      preLoaderRoute: typeof RssTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rss-magazine.xml': {
@@ -1619,6 +1639,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssClipsDotxmlRoute: RssClipsDotxmlRoute,
   RssCoupsDeCoeurDotxmlRoute: RssCoupsDeCoeurDotxmlRoute,
   RssMagazineDotxmlRoute: RssMagazineDotxmlRoute,
+  RssTestRoute: RssTestRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapFrDotxmlRoute: SitemapFrDotxmlRoute,
