@@ -248,6 +248,7 @@ export function SeoLocalizer() {
     // hreflang alternates — same URL with a hl query param so each language has its own indexable URL.
     try {
       const alts = hreflangUrls(pathname, pageParam);
+      upsertLink("alternate", "fr-FR", alts.frFR);
       upsertLink("alternate", "fr", alts.fr);
       upsertLink("alternate", "en", alts.en);
       upsertLink("alternate", "x-default", alts.xDefault);

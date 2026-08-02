@@ -267,16 +267,19 @@ export function renderLocalizedSitemap(entries: SitemapEntry[], lang: "fr" | "en
       // Même règle que les balises <link rel="canonical"> du site :
       // le français est l'URL nue, l'anglais porte ?hl=en.
       const self = canonicalUrl(e.path, { lang });
-      const alt = canonicalUrl(e.path, { lang: other });
+      const frUrl = canonicalUrl(e.path, { lang: "fr" });
+      const enUrl = canonicalUrl(e.path, { lang: "en" });
       const xDefault = canonicalUrl(e.path);
+      void other;
       return [
         `  <url>`,
         `    <loc>${self}</loc>`,
         e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
         `    <changefreq>${e.changefreq}</changefreq>`,
         `    <priority>${e.priority}</priority>`,
-        `    <xhtml:link rel="alternate" hreflang="${lang}" href="${self}"/>`,
-        `    <xhtml:link rel="alternate" hreflang="${other}" href="${alt}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="fr-FR" href="${frUrl}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="fr" href="${frUrl}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>`,
         `    <xhtml:link rel="alternate" hreflang="x-default" href="${xDefault}"/>`,
         `  </url>`,
       ]
@@ -287,6 +290,24 @@ export function renderLocalizedSitemap(entries: SitemapEntry[], lang: "fr" | "en
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>`;
 }
 
-export function renderSitemapIndex(): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${BASE_URL}/sitemap-fr.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-en.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-users.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-images.xml</loc></sitemap>\n  <sitemap><loc>${BASE_URL}/sitemap-video.xml</loc></sitemap>\n</sitemapindex>`;
+/**
+ * Index de sitemaps. `lastmod` (ISO) est propagé aux sitemaps dont le
+ * contenu dépend des publications, pour que Google/Bing sachent lequel
+ * recrawler en priorité.
+ */
+export function renderSitemapIndex(lastmod?: string): string {
+  const child = (name: string, withLastmod = true) =>
+    `  <sitemap><loc>${BASE_URL}/${name}</loc>${
+      lastmod && withLastmod ? `<lastmod>${lastmod}</lastmod>` : ""
+    }</sitemap>`;
+  return [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+    child("sitemap-fr.xml"),
+    child("sitemap-en.xml"),
+    child("sitemap-users.xml"),
+    child("sitemap-images.xml"),
+    child("sitemap-video.xml"),
+    `</sitemapindex>`,
+  ].join("\n");
 }

@@ -110,7 +110,7 @@ function validate(path, lang, snap) {
   }
 
   // hreflang set
-  const need = new Set(["fr", "en", "x-default"]);
+  const need = new Set(["fr-FR", "fr", "en", "x-default"]);
   const seen = new Map();
   for (const l of snap.hreflangs) {
     if (seen.has(l.hreflang)) errs.push(`duplicate hreflang=${l.hreflang}`);
