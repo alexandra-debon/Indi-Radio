@@ -1,5 +1,5 @@
 # robots.txt — InDi RaDio
-# Dernière mise à jour : 2026-07-27
+# Dernière mise à jour : 2026-08-02
 # Site principal : https://radio.indi-art-culture.com
 
 # ============================================================
@@ -27,6 +27,8 @@ Disallow: /notifications
 Disallow: /notifications/
 Disallow: /notif-test
 Disallow: /notif-test/
+Disallow: /rss-test
+Disallow: /rss-test/
 
 # Routes internes Lovable (outils de preview, webhooks email)
 Disallow: /lovable
@@ -41,18 +43,23 @@ Disallow: /api/
 # ============================================================
 # Une seule forme d'URL est canonique : apex https, sans slash final,
 # sans paramètre — sauf `?hl=en` (version anglaise) et `?page=N` (pagination).
+# `?hl=en` est la version anglaise déclarée en hreflang et listée dans
+# /sitemap-en.xml : ces URL DOIVENT rester crawlables, sinon le hreflang
+# est cassé. Ne pas supprimer les lignes `Allow: /*?hl=`.
 # Les paramètres de tracking créent des doublons : on les bloque.
+Allow: /*?hl=
+Allow: /*?page=
 Disallow: /*?*utm_
 Disallow: /*?*fbclid=
 Disallow: /*?*gclid=
 Disallow: /*?*mc_cid=
 Disallow: /*?*ref=
-Allow: /*?hl=
-Allow: /*?page=
 
 # ============================================================
 # Googlebot (règles spécifiques)
 # ============================================================
+# Un robot n'applique QUE le bloc le plus spécifique le concernant :
+# les règles du bloc `*` doivent donc être répétées ici.
 User-agent: Googlebot
 Allow: /
 Disallow: /auth
@@ -67,10 +74,19 @@ Disallow: /notifications
 Disallow: /notifications/
 Disallow: /notif-test
 Disallow: /notif-test/
+Disallow: /rss-test
+Disallow: /rss-test/
 Disallow: /lovable
 Disallow: /lovable/
 Disallow: /api
 Disallow: /api/
+Allow: /*?hl=
+Allow: /*?page=
+Disallow: /*?*utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+Disallow: /*?*mc_cid=
+Disallow: /*?*ref=
 
 # ============================================================
 # Bingbot / Microsoft Bing (règles spécifiques)
@@ -89,10 +105,19 @@ Disallow: /notifications
 Disallow: /notifications/
 Disallow: /notif-test
 Disallow: /notif-test/
+Disallow: /rss-test
+Disallow: /rss-test/
 Disallow: /lovable
 Disallow: /lovable/
 Disallow: /api
 Disallow: /api/
+Allow: /*?hl=
+Allow: /*?page=
+Disallow: /*?*utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+Disallow: /*?*mc_cid=
+Disallow: /*?*ref=
 
 # ============================================================
 # Profils publics (/u/$pseudo)
