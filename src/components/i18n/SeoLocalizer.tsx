@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { resolveSeo } from "@/lib/i18n/seo-meta";
+import { resolveSeoMatch, clampDescription } from "@/lib/i18n/seo-meta";
 import type { Lang } from "@/lib/i18n/dict";
 import { translateContent } from "@/lib/translate.functions";
 import {
@@ -63,9 +63,13 @@ export function SeoLocalizer() {
 
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const bundle = resolveSeo(pathname);
+    const match = resolveSeoMatch(pathname);
+    // Un libellé de repli (route dynamique) ne doit jamais écraser le
+    // titre/description que la page a construits depuis son contenu réel.
+    const bundle = match && !match.fallback ? match.bundle : null;
+    const fallbackEntry = match?.fallback ? match.bundle[lang] : null;
     if (bundle) {
-      const entry = bundle[lang];
+      const entry = { title: bundle[lang].title, description: clampDescription(bundle[lang].description) };
       document.title = entry.title;
       setMeta('meta[name="description"]', "content", entry.description, () => {
         const m = document.createElement("meta");
@@ -119,8 +123,12 @@ export function SeoLocalizer() {
         if (el && !el.dataset.origContent) el.dataset.origContent = el.getAttribute("content") ?? "";
       };
       capture(titleEl); capture(descEl); capture(twTitle); capture(twDesc);
-      const origTitle = titleEl?.dataset.origContent ?? document.title;
-      const origDesc = descEl?.dataset.origContent ?? "";
+      const origTitle = titleEl?.dataset.origContent || document.title || fallbackEntry?.title || "";
+      const origDesc =
+        descEl?.dataset.origContent ||
+        document.head.querySelector<HTMLMetaElement>('meta[name="description"]')?.getAttribute("content") ||
+        fallbackEntry?.description ||
+        "";
       const docTitleOrig = (document.documentElement.dataset.origTitle ??= document.title);
 
       if (lang === "fr") {
@@ -130,6 +138,11 @@ export function SeoLocalizer() {
         if (twDesc && origDesc) twDesc.setAttribute("content", origDesc);
         if (docTitleOrig) document.title = docTitleOrig;
       } else {
+        // Repli immédiat en anglais le temps que la traduction arrive.
+        if (fallbackEntry) {
+          if (titleEl && !titleEl.dataset.origContent) titleEl.setAttribute("content", fallbackEntry.title);
+          if (descEl && !descEl.dataset.origContent) descEl.setAttribute("content", fallbackEntry.description);
+        }
         let cancelled = false;
         const run = async (text: string, field: string) => {
           if (!text || text.trim().length < 2) return null;
@@ -159,8 +172,11 @@ export function SeoLocalizer() {
             document.title = tTitle;
           }
           if (tDesc) {
-            if (descEl) descEl.setAttribute("content", tDesc);
-            if (twDesc) twDesc.setAttribute("content", tDesc);
+            const clamped = clampDescription(tDesc);
+            if (descEl) descEl.setAttribute("content", clamped);
+            if (twDesc) twDesc.setAttribute("content", clamped);
+            const nameDesc = document.head.querySelector<HTMLMetaElement>('meta[name="description"]');
+            if (nameDesc) nameDesc.setAttribute("content", clamped);
           }
         })();
         // best-effort; nothing to cancel besides the flag
