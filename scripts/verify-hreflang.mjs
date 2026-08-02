@@ -52,7 +52,7 @@ function collect(document) {
 
 function validate(path, lang, snapshot) {
   const errs = [];
-  const wanted = new Set(["fr", "en", "x-default"]);
+  const wanted = new Set(["fr-FR", "fr", "en", "x-default"]);
   const seen = new Map();
   for (const l of snapshot.links) {
     if (!wanted.has(l.hreflang)) errs.push(`unexpected hreflang="${l.hreflang}"`);
@@ -61,7 +61,8 @@ function validate(path, lang, snapshot) {
     if (!l.href || !/^https?:\/\//.test(l.href)) errs.push(`hreflang="${l.hreflang}" has invalid href="${l.href}"`);
   }
   for (const k of wanted) if (!seen.has(k)) errs.push(`missing hreflang="${k}"`);
-  if (seen.get("fr") && !seen.get("fr").includes("hl=fr")) errs.push(`hreflang=fr must carry ?hl=fr (got ${seen.get("fr")})`);
+  if (seen.get("fr") && /\?hl=/.test(seen.get("fr"))) errs.push(`hreflang=fr must be the bare URL (got ${seen.get("fr")})`);
+  if (seen.get("fr-FR") && /\?hl=/.test(seen.get("fr-FR"))) errs.push(`hreflang=fr-FR must be the bare URL (got ${seen.get("fr-FR")})`);
   if (seen.get("en") && !seen.get("en").includes("hl=en")) errs.push(`hreflang=en must carry ?hl=en (got ${seen.get("en")})`);
   if (seen.get("x-default") && /\?hl=/.test(seen.get("x-default"))) errs.push(`x-default should not carry ?hl (got ${seen.get("x-default")})`);
 
