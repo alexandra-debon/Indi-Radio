@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:8080",
-  "generatedAt": "2026-08-02T13:45:50.024Z",
+  "generatedAt": "2026-08-02T14:37:49.233Z",
   "feeds": {
     "/rss.xml": {
       "items": [

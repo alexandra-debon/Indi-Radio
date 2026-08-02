@@ -33,13 +33,19 @@ const rssCode = await run("bunx", ["vitest", "run", "tests/rss-feeds.test.ts"], 
   RSS_BASE_URL: base,
 });
 
+console.log("[publish:verify] running RSS platform compatibility test suite…");
+const rssPlatformCode = await run("bunx", ["vitest", "run", "tests/rss-platforms.test.ts"], {
+  RSS_BASE_URL: base,
+});
+
 console.log("[publish:verify] comparing RSS feeds with previous snapshot…");
 const diffCode = await run("node", ["scripts/rss-diff.mjs"], { RSS_BASE_URL: base });
 
-const failed = checkCode !== 0 || testCode !== 0 || rssCode !== 0 || diffCode !== 0;
+const failed =
+  checkCode !== 0 || testCode !== 0 || rssCode !== 0 || rssPlatformCode !== 0 || diffCode !== 0;
 if (failed) {
   console.error(
-    `[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}, rss=${rssCode}, rssDiff=${diffCode}) — treat this deployment as broken.`,
+    `[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}, rss=${rssCode}, rssPlatform=${rssPlatformCode}, rssDiff=${diffCode}) — treat this deployment as broken.`,
   );
   process.exit(1);
 }

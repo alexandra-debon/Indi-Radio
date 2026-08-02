@@ -496,14 +496,15 @@ export async function loadClips(): Promise<FeedItem[]> {
       const video =
         r.video_url ?? ((r.video_urls as string[] | null)?.[0] ?? null);
       const yt = youtubeId(video);
+      const thumb = yt ? `https://i.ytimg.com/vi/${yt}/maxresdefault.jpg` : null;
       return {
         title: r.title,
         path: `/clips/${r.id}`,
         date: r.created_at ?? undefined,
         description: toExcerpt(r.body),
-        image: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
-        imageWidth: yt ? 480 : undefined,
-        imageHeight: yt ? 360 : undefined,
+        image: thumb ?? undefined,
+        imageWidth: yt ? 1280 : undefined,
+        imageHeight: yt ? 720 : undefined,
         contentHtml: r.body ?? undefined,
         author: FEED_PUBLISHER,
         videoPageUrl: video ?? undefined,
