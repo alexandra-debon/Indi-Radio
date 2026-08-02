@@ -28,9 +28,16 @@ const checkCode = await run("node", ["scripts/post-publish-check.mjs", base]);
 console.log("[publish:verify] running routes availability test suite…");
 const testCode = await run("bunx", ["vitest", "run", "tests/routes-availability.test.ts"]);
 
-const failed = checkCode !== 0 || testCode !== 0;
+console.log("[publish:verify] running RSS structure test suite…");
+const rssCode = await run("bunx", ["vitest", "run", "tests/rss-feeds.test.ts"], {
+  RSS_BASE_URL: base,
+});
+
+const failed = checkCode !== 0 || testCode !== 0 || rssCode !== 0;
 if (failed) {
-  console.error(`[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}) — treat this deployment as broken.`);
+  console.error(
+    `[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}, rss=${rssCode}) — treat this deployment as broken.`,
+  );
   process.exit(1);
 }
 console.log("[publish:verify] ✅ deployment verified");
