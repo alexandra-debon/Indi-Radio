@@ -8,6 +8,7 @@ import { ContentLikeButton, ContentRatingSection, ContentCommentsSection } from 
 import { ArrowLeft, Mic2 } from "lucide-react";
 import ogEmissions from "@/assets/og-emissions.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 import { trackEvent } from "@/lib/plausible";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
