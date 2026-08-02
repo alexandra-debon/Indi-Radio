@@ -15,8 +15,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         // Sitemap index — points to per-language sitemaps that carry
         // <xhtml:link rel="alternate" hreflang="..."> entries.
         const entries = await loadAllEntries();
-        const body = renderSitemapIndex();
         const lastModified = computeMaxLastmod(entries);
+        const body = renderSitemapIndex(new Date(lastModified).toISOString());
         const headers = sitemapHeaders(body, lastModified);
         if (matchesConditional(request, lastModified, headers.get("ETag")!)) {
           return new Response(null, { status: 304, headers });
