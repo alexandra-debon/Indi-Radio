@@ -9,6 +9,7 @@ import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLink
 import { ContentLikeButton, ContentCommentsSection, ContentRatingSection } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
@@ -29,15 +30,16 @@ export const Route = createFileRoute("/chroniques/$slug")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Chronique introuvable — Indi Radio" },
+          { title: "Chronique introuvable — InDi RaDio" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const title = `${loaderData.title} — ${loaderData.artist} · Chronique Indi Radio`;
-    const description =
-      loaderData.excerpt ??
-      `Chronique de l'album « ${loaderData.title} » de ${loaderData.artist} sur Indi Radio.`;
+    const title = `${loaderData.artist} — ${loaderData.title} · Chronique album — InDi RaDio`;
+    const description = clampDescription(
+      loaderData.excerpt ||
+        `Chronique de l'album « ${loaderData.title} » de ${loaderData.artist} sur InDi RaDio, la radio 24/7 de la musique indépendante.`,
+    );
     const url = `${BASE_URL}/chroniques/${params.slug}`;
     const meta = [
       { title },
