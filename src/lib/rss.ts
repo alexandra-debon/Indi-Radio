@@ -140,7 +140,7 @@ function guessImageType(url: string): string {
  */
 export function sanitizeFeedHtml(input: string | null | undefined): string {
   if (!input) return "";
-  return input
+  const cleaned = input
     .replace(/<\s*(script|style|iframe|object|embed|form)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
     .replace(/<\s*(script|style|iframe|object|embed|form)[^>]*\/?>/gi, "")
     .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
@@ -148,6 +148,13 @@ export function sanitizeFeedHtml(input: string | null | undefined): string {
     .replace(/javascript:/gi, "")
     .replace(/]]>/g, "]]&gt;")
     .trim();
+  if (!cleaned || /<(p|div|h[1-6]|ul|ol|blockquote|figure|img|br)\b/i.test(cleaned)) return cleaned;
+  // Texte brut : paragraphes conformes attendus par Apple News.
+  return cleaned
+    .split(/\n{2,}/)
+    .map((para) => `<p>${escapeXml(para.trim()).replace(/\n/g, "<br/>")}</p>`)
+    .filter((p) => p !== "<p></p>")
+    .join("");
 }
 
 /** Corps HTML d'un item : contenu éditorial, avec l'image en tête si connue. */
