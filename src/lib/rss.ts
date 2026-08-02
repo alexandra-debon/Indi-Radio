@@ -14,6 +14,10 @@ export const FEED_LIMIT = 50;
 /** Illustration par défaut des flux (logo carré). */
 export const SITE_ORIGIN_ICON = `${SITE_ORIGIN}/icons/apple-touch-icon.png`;
 
+/** Éditeur / contact utilisés par Apple News et Google Publisher Center. */
+export const FEED_PUBLISHER = "InDi RaDio";
+export const FEED_CONTACT_EMAIL = "contact@indi-art-culture.com";
+
 export interface FeedItem {
   title: string;
   path: string;
@@ -21,6 +25,11 @@ export interface FeedItem {
   date?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
+  /** Contenu HTML complet (Apple News lit <content:encoded>). */
+  contentHtml?: string | undefined;
+  /** Dimensions connues de l'illustration (Apple News : ≥ 1024px conseillé). */
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
   author?: string | undefined;
   /** Fichier audio joint (podcast). */
   audioUrl?: string | undefined;
