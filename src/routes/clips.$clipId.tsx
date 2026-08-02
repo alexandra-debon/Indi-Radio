@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
