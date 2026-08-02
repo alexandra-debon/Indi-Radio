@@ -409,21 +409,37 @@ export async function loadActus(): Promise<FeedItem[]> {
   }
 }
 
+/** Identifiant YouTube depuis une URL watch/youtu.be/embed/shorts. */
+function youtubeId(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const m =
+    url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/) ??
+    null;
+  return m?.[1] ?? null;
+}
+
 export async function loadClips(): Promise<FeedItem[]> {
   try {
     const sb = publicClient();
     const { data } = await sb
       .from("clip_entries")
-      .select("id, title, body, created_at")
+      .select("id, title, body, video_url, video_urls, created_at")
       .order("created_at", { ascending: false })
       .limit(FEED_LIMIT);
-    return (data ?? []).map((r) => ({
-      title: r.title,
-      path: `/clips/${r.id}`,
-      date: r.created_at ?? undefined,
-      description: toExcerpt(r.body),
-      categories: ["Clips"],
-    }));
+    return (data ?? []).map((r) => {
+      const video =
+        r.video_url ?? ((r.video_urls as string[] | null)?.[0] ?? null);
+      const yt = youtubeId(video);
+      return {
+        title: r.title,
+        path: `/clips/${r.id}`,
+        date: r.created_at ?? undefined,
+        description: toExcerpt(r.body),
+        image: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
+        videoPageUrl: video ?? undefined,
+        categories: ["Clips"],
+      };
+    });
   } catch {
     return [];
   }
