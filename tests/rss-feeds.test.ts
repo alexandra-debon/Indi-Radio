@@ -23,7 +23,9 @@ const FEEDS = [
   { path: "/rss-clips.xml", label: "Clip Addict", podcast: false },
   { path: "/rss-magazine.xml", label: "magazine", podcast: false },
   { path: "/rss-coups-de-coeur.xml", label: "coups de cœur", podcast: false },
-  { path: "/podcast.xml", label: "podcast (émissions)", podcast: true },
+  // Le flux podcast dépend de la table `episodes` : il peut être
+  // légitimement vide tant qu'aucun épisode audio n'est publié.
+  { path: "/podcast.xml", label: "podcast (émissions)", podcast: true, allowEmpty: true },
 ] as const;
 
 const TIMEOUT = 45_000;
@@ -143,7 +145,12 @@ describe("Structure des flux RSS", () => {
         }
       });
 
-      it("contient au moins un <item>", () => {
+      it("contient des <item> (ou est légitimement vide)", () => {
+        if ("allowEmpty" in feed && feed.allowEmpty && items.length === 0) {
+          // eslint-disable-next-line no-console
+          console.warn(`[rss-feeds] ${feed.path} est vide — aucun contenu publié.`);
+          return;
+        }
         expect(items.length).toBeGreaterThan(0);
       });
 
