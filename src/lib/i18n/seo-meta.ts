@@ -99,9 +99,25 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     fr: { title: "Réinitialiser le mot de passe — InDi RaDio", description: "Réinitialise ton mot de passe InDi RaDio." },
     en: { title: "Reset password — InDi RaDio", description: "Reset your InDi RaDio password." },
   },
+  "/playlists": {
+    fr: { title: "Playlists InDi RaDio — Radio 24/7 de la musique indépendante", description: "IndéGraal, InDiscovery et playlists thématiques : les sélections Spotify et Apple Music de la radio 24/7 de la musique indépendante." },
+    en: { title: "InDi RaDio Playlists — 24/7 Independent Music Radio", description: "IndéGraal, InDiscovery and themed playlists: the Spotify and Apple Music selections of the 24/7 independent music radio." },
+  },
+  "/coups-de-coeur": {
+    fr: { title: "Coups de cœur — Radio 24/7 de la musique indépendante InDi RaDio", description: "Les coups de cœur de la rédaction InDi RaDio : titres et albums indépendants à découvrir sur la radio 24/7 de la musique indépendante." },
+    en: { title: "Editor's Picks — 24/7 Independent Music Radio InDi RaDio", description: "InDi RaDio editorial favorites: independent tracks and albums to discover on the 24/7 independent music radio, ad-free." },
+  },
+  "/artistes": {
+    fr: { title: "Galerie des artistes — Radio 24/7 de la musique indépendante InDi RaDio", description: "Découvre les artistes indépendants certifiés présents sur InDi RaDio, la radio 24/7 de la musique indépendante et son réseau social musique." },
+    en: { title: "Artist Gallery — 24/7 Independent Music Radio InDi RaDio", description: "Meet the certified independent artists featured on InDi RaDio, the 24/7 independent music radio and its music social network." },
+  },
 };
 
-// Prefix map for dynamic routes (nearest-longest-prefix match).
+/**
+ * Repli pour les routes dynamiques (correspondance par plus long préfixe).
+ * Ces libellés sont volontairement génériques : ils ne servent QUE si la page
+ * n'a pas fourni son propre titre/description issus du contenu réel.
+ */
 export const PREFIX_SEO: Array<{ prefix: string; bundle: SeoBundle }> = [
   { prefix: "/actus/", bundle: {
     fr: { title: "Actualité — InDi RaDio", description: "Article d'actualité indépendant publié sur InDi RaDio." },
@@ -139,11 +155,32 @@ export const PREFIX_SEO: Array<{ prefix: string; bundle: SeoBundle }> = [
     fr: { title: "Profil — InDi RaDio", description: "Profil public d'un membre de la communauté InDi RaDio." },
     en: { title: "Profile — InDi RaDio", description: "Public profile of an InDi RaDio community member." },
   } },
+  { prefix: "/playlists/", bundle: {
+    fr: { title: "Playlist — InDi RaDio", description: "Playlist de la scène indépendante sélectionnée par InDi RaDio." },
+    en: { title: "Playlist — InDi RaDio", description: "Independent scene playlist curated by InDi RaDio." },
+  } },
 ];
 
-export function resolveSeo(pathname: string): SeoBundle | null {
+export interface SeoMatch {
+  bundle: SeoBundle;
+  /** true = libellé générique de repli (route dynamique). */
+  fallback: boolean;
+}
+
+/** Longueur maximale affichée par Google pour une description. */
+export const DESCRIPTION_MAX = 155;
+
+/** Tronque proprement une description sur une frontière de mot. */
+export function clampDescription(input: string, max = DESCRIPTION_MAX): string {
+  const text = input.replace(/\s+/g, " ").trim();
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1).replace(/\s+\S*$/, "") + "…";
+}
+
+export function resolveSeoMatch(pathname: string): SeoMatch | null {
   const clean = pathname.replace(/\/+$/, "") || "/";
-  if (STATIC_SEO[clean]) return STATIC_SEO[clean];
+  const exact = STATIC_SEO[clean];
+  if (exact) return { bundle: exact, fallback: false };
   // longest prefix wins
   let best: SeoBundle | null = null;
   let bestLen = -1;
@@ -153,5 +190,9 @@ export function resolveSeo(pathname: string): SeoBundle | null {
       bestLen = prefix.length;
     }
   }
-  return best;
+  return best ? { bundle: best, fallback: true } : null;
+}
+
+export function resolveSeo(pathname: string): SeoBundle | null {
+  return resolveSeoMatch(pathname)?.bundle ?? null;
 }

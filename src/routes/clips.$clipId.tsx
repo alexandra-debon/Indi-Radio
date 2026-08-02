@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ExplicitVideoEmbed, UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -50,10 +51,13 @@ export const Route = createFileRoute("/clips/$clipId")({
   head: ({ params, loaderData }) => {
     const url = `${BASE_URL}/clips/${params.clipId}`;
     if (!loaderData) {
-      return { meta: [{ title: "Clip introuvable — Clip Addict" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Clip introuvable — Clip Addict, InDi RaDio" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.title} — Clip Addict · Indi Radio`;
-    const desc = (loaderData.body ?? loaderData.title).slice(0, 200);
+    const title = `${loaderData.title} · Clip Addict — InDi RaDio`;
+    const desc = clampDescription(
+      loaderData.body ||
+        `Découvre le clip « ${loaderData.title} » sélectionné par InDi RaDio, la radio 24/7 de la musique indépendante.`,
+    );
     const media = pickMedia(loaderData);
     const image = media.thumb || OG_FALLBACK;
     return {

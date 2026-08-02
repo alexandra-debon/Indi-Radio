@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -31,8 +32,11 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         ],
       };
     }
-    const title = `${loaderData.title} — Magazine Indi Art Culture`;
-    const desc = (loaderData.body ?? loaderData.title).slice(0, 200);
+    const title = `${loaderData.title} · Magazine Indi Art Culture — InDi RaDio`;
+    const desc = clampDescription(
+      loaderData.body ||
+        `Feuillette « ${loaderData.title} », numéro du magazine interactif Indi Art Culture publié par InDi RaDio.`,
+    );
     // Priorité : miniature FlipHTML5 (dérivée automatiquement du lien),
     // puis couverture personnalisée si renseignée, sinon fallback Indi Radio.
     const image =
