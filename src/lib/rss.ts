@@ -335,6 +335,7 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
     .join("\n");
 
   const p = opts.podcast;
+  const year = new Date().getFullYear();
   const head: (string | null)[] = [
     `    <title>${escapeXml(opts.title)}</title>`,
     `    <link>${escapeXml(canonicalUrl(opts.link))}</link>`,
@@ -344,11 +345,20 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
     `    <lastBuildDate>${lastBuild.toUTCString()}</lastBuildDate>`,
     `    <pubDate>${lastBuild.toUTCString()}</pubDate>`,
     `    <generator>InDi RaDio</generator>`,
+    `    <copyright>© ${year} ${escapeXml(FEED_PUBLISHER)}</copyright>`,
+    `    <managingEditor>${escapeXml(FEED_CONTACT_EMAIL)} (${escapeXml(FEED_PUBLISHER)})</managingEditor>`,
+    `    <webMaster>${escapeXml(FEED_CONTACT_EMAIL)} (${escapeXml(FEED_PUBLISHER)})</webMaster>`,
+    `    <docs>https://www.rssboard.org/rss-specification</docs>`,
+    `    <ttl>60</ttl>`,
+    `    <dc:publisher>${escapeXml(FEED_PUBLISHER)}</dc:publisher>`,
+    `    <dc:language>${opts.language ?? "fr-FR"}</dc:language>`,
+    `    <dc:rights>© ${year} ${escapeXml(FEED_PUBLISHER)}</dc:rights>`,
     `    <image>`,
     `      <url>${SITE_ORIGIN}/icons/apple-touch-icon.png</url>`,
     `      <title>${escapeXml(opts.title)}</title>`,
     `      <link>${escapeXml(canonicalUrl(opts.link))}</link>`,
     `    </image>`,
+    `    <media:thumbnail url="${SITE_ORIGIN}/icons/apple-touch-icon.png"/>`,
     p ? `    <itunes:author>${escapeXml(p.author)}</itunes:author>` : null,
     p ? `    <itunes:summary>${escapeXml(opts.description)}</itunes:summary>` : null,
     p ? `    <itunes:type>episodic</itunes:type>` : null,
