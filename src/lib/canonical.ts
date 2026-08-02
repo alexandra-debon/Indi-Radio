@@ -38,10 +38,17 @@ export function canonicalUrl(path: string, opts: CanonicalOptions = {}): string 
   return `${SITE_ORIGIN}${p === "/" ? "/" : p}${params.length ? `?${params.join("&")}` : ""}`;
 }
 
-/** Alternates hreflang cohérents avec la canonique. */
+/**
+ * Alternates hreflang cohérents avec la canonique.
+ *  - `fr-FR`     : ciblage France (URL nue)
+ *  - `fr`        : repli francophone (Belgique, Suisse, Canada…)
+ *  - `en`        : anglais international (« en-XX »), porte ?hl=en
+ *  - `x-default` : URL nue
+ */
 export function hreflangUrls(path: string, page?: number | null) {
   const base = canonicalUrl(path, { page });
   return {
+    frFR: canonicalUrl(path, { lang: "fr", page }),
     fr: canonicalUrl(path, { lang: "fr", page }),
     en: canonicalUrl(path, { lang: "en", page }),
     xDefault: base,
