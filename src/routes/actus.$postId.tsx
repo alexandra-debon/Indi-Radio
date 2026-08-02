@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import ogActus from "@/assets/og-actus.jpg";
