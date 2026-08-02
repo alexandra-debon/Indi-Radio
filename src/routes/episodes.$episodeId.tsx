@@ -5,6 +5,7 @@ import { EpisodeRow } from "@/components/EpisodeRow";
 import { ArrowLeft } from "lucide-react";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { clampDescription } from "@/lib/i18n/seo-meta";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogPodcasts}`;
@@ -35,11 +36,14 @@ export const Route = createFileRoute("/episodes/$episodeId")({
   head: ({ params, loaderData }) => {
     const url = `${BASE_URL}/episodes/${params.episodeId}`;
     if (!loaderData) {
-      return { meta: [{ title: "Épisode introuvable — Indi Radio" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Épisode introuvable — InDi RaDio" }, { name: "robots", content: "noindex" }] };
     }
     const { ep, parentCover, parentTitle } = loaderData;
-    const title = `${ep.title}${parentTitle ? ` — ${parentTitle}` : ""} · Indi Radio`;
-    const desc = (ep.description ?? ep.title).slice(0, 200);
+    const title = `${ep.title}${parentTitle ? ` · ${parentTitle}` : ""} — InDi RaDio`;
+    const desc = clampDescription(
+      ep.description ||
+        `Écoute l'épisode « ${ep.title} » en replay sur InDi RaDio, la radio 24/7 de la musique indépendante, sans pub.`,
+    );
     const image = ep.cover_url || parentCover || OG_FALLBACK;
     return {
       meta: [
