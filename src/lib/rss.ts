@@ -274,25 +274,33 @@ export async function renderFeed(opts: FeedOptions, rawItems: FeedItem[]): Promi
       const imageInfo = item._image ?? null;
       const video = absolute(item.videoPageUrl);
       const pub = new Date(itemDate(item)).toUTCString();
+      const contentHtml = itemContentHtml(item, img);
       const lines: (string | null)[] = [
         "    <item>",
         `      <title>${escapeXml(item.title)}</title>`,
         `      <link>${escapeXml(url)}</link>`,
         `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
         `      <pubDate>${pub}</pubDate>`,
-        item.author ? `      <dc:creator>${escapeXml(item.author)}</dc:creator>` : null,
+        `      <dc:creator>${escapeXml(item.author || FEED_PUBLISHER)}</dc:creator>`,
         item.description
           ? `      <description>${escapeXml(item.description)}</description>`
           : null,
+        contentHtml ? `      <content:encoded><![CDATA[${contentHtml}]]></content:encoded>` : null,
         ...(item.categories ?? []).map((c) => `      <category>${escapeXml(c)}</category>`),
         img
           ? `      <media:content url="${escapeXml(img)}" medium="image"${
               imageInfo
                 ? ` type="${escapeXml(imageInfo.type)}"${imageInfo.length ? ` fileSize="${imageInfo.length}"` : ""}`
                 : ""
+            }${item.imageWidth ? ` width="${item.imageWidth}"` : ""}${
+              item.imageHeight ? ` height="${item.imageHeight}"` : ""
+            }>\n        <media:title type="plain">${escapeXml(item.title)}</media:title>\n      </media:content>`
+          : null,
+        img
+          ? `      <media:thumbnail url="${escapeXml(img)}"${item.imageWidth ? ` width="${item.imageWidth}"` : ""}${
+              item.imageHeight ? ` height="${item.imageHeight}"` : ""
             }/>`
           : null,
-        img ? `      <media:thumbnail url="${escapeXml(img)}"/>` : null,
         // Vidéo hébergée sur une plateforme (YouTube…) : pas un fichier
         // téléchargeable, donc media:content + player, jamais d'enclosure.
         video
