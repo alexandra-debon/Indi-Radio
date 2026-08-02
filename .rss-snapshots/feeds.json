@@ -1,6 +1,6 @@
 {
-  "base": "https://radio.indi-art-culture.com",
-  "generatedAt": "2026-08-02T14:37:28.713Z",
+  "base": "http://localhost:8080",
+  "generatedAt": "2026-08-02T14:37:49.233Z",
   "feeds": {
     "/rss.xml": {
       "items": [
