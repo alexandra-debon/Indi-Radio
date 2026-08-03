@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Heart, ShieldCheck, Music, Gift, Users } from "lucide-react";
 import ogSoumission from "@/assets/og-soumission-artistes.jpg";
@@ -8,8 +9,8 @@ const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
 
 export const Route = createFileRoute("/soumission-artistes")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/soumission-artistes", match.search, [
       { title: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/soumission-artistes")({
       { name: "twitter:title", content: "Soumission artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite." },
       { name: "twitter:image", content: OG_SOUMISSION },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/soumission-artistes" }],
   }),
   component: ArtistSubmissionPage,

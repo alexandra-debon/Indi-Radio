@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,8 +14,8 @@ import { SmartImg } from "@/components/media/SmartImg";
 const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
 
 export const Route = createFileRoute("/chroniques/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/chroniques", match.search, [
       { title: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio musique indépendante, radio sans pub, chroniques albums indépendants, découvertes musicales, InDi RaDio" },
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/chroniques/")({
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_CHRONIQUES },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chroniques" }],
     scripts: [
       breadcrumbLd([

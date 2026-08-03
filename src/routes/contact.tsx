@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Users, HelpCircle } from "lucide-react";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
@@ -8,8 +9,8 @@ const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CONTACT = `${BASE_URL}${ogContact}`;
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/contact", match.search, [
       { title: "Contact — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:title", content: "Contact — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire." },
       { name: "twitter:image", content: OG_CONTACT },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/contact" }],
   }),
   component: ContactPage,

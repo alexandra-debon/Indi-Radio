@@ -1,10 +1,11 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { RADIO_CONFIG } from "@/config/radio";
 import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/privacy", match.search, [
       { title: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/privacy")({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Confidentialité — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Politique de confidentialité d'InDi RaDio, la radio 24/7 de la musique indépendante : données collectées, notifications, cookies et exercice des droits." },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/privacy" }],
   }),
   component: PrivacyPage,

@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { RADIO_CONFIG } from "@/config/radio";
 import sacemLogo from "@/assets/sacem-logo.png.asset.json";
@@ -7,8 +8,8 @@ import { RssFeedsSection } from "@/components/about/RssFeedsSection";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/about", match.search, [
       { title: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "À propos — Radio gratuite 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Découvre la mission, l'équipe et le réseau social musique d'InDi ArT CulTuRe." },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/about" }],
   }),
   component: AboutPage,

@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,8 +23,8 @@ function ArchiveHeading() {
 const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
 
 export const Route = createFileRoute("/emissions/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/emissions", match.search, [
       { title: "Émissions & Animateurs — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay sur la radio 24/7 de la musique indépendante, sans pub." },
       { name: "keywords", content: "radio gratuite, radio sans pub, émissions radio indépendante, animateurs indépendants, replay InDi RaDio" },
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/emissions/")({
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_EMISSIONS },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/emissions" }],
     scripts: [
       breadcrumbLd([

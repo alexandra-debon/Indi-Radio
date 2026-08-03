@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,8 +10,8 @@ import { toast } from "@/lib/toast";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dedicaces")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/dedicaces", match.search, [
       { title: "Dédicaces — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub." },
       { name: "keywords", content: "radio gratuite, radio musique indépendante, radio sans pub, dédicaces radio, musique à la demande, InDi RaDio" },
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/dedicaces")({
       { name: "twitter:description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/dedicaces" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/dedicaces" }],
   }),
   component: DedicacesPage,

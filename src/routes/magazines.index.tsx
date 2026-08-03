@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,8 +19,8 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 const BASE_URL = "https://radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/magazines/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/magazines", match.search, [
       { title: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/magazines/")({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante." },
-    ],
+    ]),
     links: [{ rel: "canonical", href: `${BASE_URL}/magazines` }],
   }),
   component: MagazinesPage,
