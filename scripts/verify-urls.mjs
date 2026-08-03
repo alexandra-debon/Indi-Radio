@@ -90,10 +90,12 @@ function extractHreflang(html) {
     .filter((l) => l.hreflang);
 }
 
+/** Même URL à la variante d'hôte près (apex ⇄ www) et au slash final près. */
 const normalize = (u) => {
   try {
     const p = new URL(u, BASE);
     p.hash = "";
+    p.hostname = p.hostname.replace(/^www\./i, "");
     if (p.pathname !== "/" && p.pathname.endsWith("/")) p.pathname = p.pathname.slice(0, -1);
     return p.toString();
   } catch {
@@ -108,6 +110,20 @@ async function checkUrl(url) {
   } catch (e) {
     fail(url, `requête échouée: ${e.message}`);
     return;
+  }
+
+  if (res.status >= 300 && res.status < 400 && res.location) {
+    if (normalize(res.location) === normalize(url)) {
+      // Redirection de normalisation d'hôte (apex ⇄ www) gérée par l'hébergeur :
+      // non bloquante, on suit et on contrôle la page cible.
+      warn(url, `redirection de normalisation d'hôte → ${res.location}`);
+      try {
+        res = await getText(res.location, { follow: true });
+      } catch (e) {
+        fail(url, `cible de redirection injoignable: ${e.message}`);
+        return;
+      }
+    }
   }
 
   if (res.status !== 200) {
