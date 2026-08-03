@@ -11,6 +11,8 @@ import ogChroniques from "@/assets/og-chroniques.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -28,7 +30,8 @@ export const Route = createFileRoute("/chroniques/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData, params }) => {
+  head: async ({ loaderData, params, match }) => {
+    const lang = hlFromSearch(match.search);
     if (!loaderData) {
       return {
         meta: [
@@ -37,12 +40,20 @@ export const Route = createFileRoute("/chroniques/$slug")({
         ],
       };
     }
-    const title = `${loaderData.artist} — ${loaderData.title} · Chronique album — InDi RaDio`;
-    const description = clampDescription(
+    const baseTitle = `${loaderData.artist} — ${loaderData.title} · Chronique album — InDi RaDio`;
+    const baseDesc = clampDescription(
       loaderData.excerpt ||
         `Chronique de l'album « ${loaderData.title} » de ${loaderData.artist} sur InDi RaDio, la radio 24/7 de la musique indépendante.`,
     );
-    const url = `${BASE_URL}/chroniques/${params.slug}`;
+    const localized = await localizedOgText(lang, {
+      entityType: "album_review",
+      entityKey: loaderData.id,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const description = clampDescription(localized.description);
+    const url = withHl(`${BASE_URL}/chroniques/${params.slug}`, lang);
     const meta = [
       { title },
       { name: "description", content: description },
@@ -50,7 +61,7 @@ export const Route = createFileRoute("/chroniques/$slug")({
       { property: "og:description", content: description },
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
-      ...ogCommonTags(),
+      ...ogLocaleTags(lang),
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageTags(loaderData.cover_url || OG_FALLBACK, {
         baseUrl: BASE_URL,
