@@ -44,7 +44,7 @@ function resolveUrl(url?: string): string {
 export function ShareButton({
   target,
   className = "",
-  label = "Partager",
+  label,
   variant = "icon",
   contentType,
 }: {
@@ -59,6 +59,8 @@ export function ShareButton({
   const [nativeShare, setNativeShare] = useState(false);
   const t = useT();
   const { lang } = useLang();
+  // Libellé traduit par défaut, surchargeable par la prop `label`.
+  const shareLabel = label ?? (lang === "en" ? "Share" : "Partager");
   useEffect(() => {
     // Only use the native sheet inside a real native wrapper (Capacitor).
     // In browsers (including mobile Safari inside an iframe/preview),
