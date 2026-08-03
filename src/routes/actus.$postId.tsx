@@ -48,9 +48,9 @@ export const Route = createFileRoute("/actus/$postId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        { property: "og:image", content: image },
+        ...ogCommonTags(),
+        ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
