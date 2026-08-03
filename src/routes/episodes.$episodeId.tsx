@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import ogPodcasts from "@/assets/og-podcasts.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
+import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogPodcasts}`;
@@ -53,9 +54,9 @@ export const Route = createFileRoute("/episodes/$episodeId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        { property: "og:image", content: image },
+        ...ogCommonTags(),
+        ...ogImageTags(image, { baseUrl: BASE_URL, alt: ep.title }),
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [

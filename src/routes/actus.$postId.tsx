@@ -4,6 +4,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { clampDescription } from "@/lib/i18n/seo-meta";
+import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import ogActus from "@/assets/og-actus.jpg";
@@ -48,9 +49,9 @@ export const Route = createFileRoute("/actus/$postId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        { property: "og:image", content: image },
+        ...ogCommonTags(),
+        ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [

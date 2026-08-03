@@ -7,6 +7,7 @@ import { parseMediaUrl } from "@/lib/media-embed";
 import { ArrowLeft } from "lucide-react";
 import ogClips from "@/assets/og-clips.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { ogCommonTags, ogImageTags, ogVideoTags } from "@/lib/og-tags";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogClips}`;
@@ -15,13 +16,14 @@ function pickMedia(row: {
   video_url: string | null;
   playlist_url: string | null;
   video_urls: string[] | null;
-}): { thumb: string | null; embed: string | null; content: string | null } {
+}): { thumb: string | null; hqThumb: string | null; embed: string | null; content: string | null } {
   const candidates = [row.video_url, row.playlist_url, ...(row.video_urls ?? [])].filter(Boolean) as string[];
   for (const u of candidates) {
     const m = parseMediaUrl(u);
     if (m?.kind === "youtube" && m.type === "video") {
       return {
-        thumb: `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg`,
+        thumb: `https://i.ytimg.com/vi/${m.id}/maxresdefault.jpg`,
+        hqThumb: `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg`,
         embed: `https://www.youtube.com/embed/${m.id}`,
         content: `https://www.youtube.com/watch?v=${m.id}`,
       };
@@ -29,13 +31,26 @@ function pickMedia(row: {
     if (m?.kind === "vimeo") {
       return {
         thumb: null,
+        hqThumb: null,
         embed: `https://player.vimeo.com/video/${m.id}`,
         content: `https://vimeo.com/${m.id}`,
       };
     }
   }
   const first = candidates[0] ?? null;
-  return { thumb: null, embed: null, content: first };
+  return { thumb: null, hqThumb: null, embed: null, content: first };
+}
+
+/** Vérifie que la miniature YouTube haute résolution existe réellement. */
+async function resolveThumb(media: ReturnType<typeof pickMedia>) {
+  if (!media.thumb) return null;
+  try {
+    const res = await fetch(media.thumb, { method: "HEAD" });
+    if (res.ok) return { url: media.thumb, width: 1280, height: 720 };
+  } catch {
+    /* réseau indisponible : on retombe sur hqdefault */
+  }
+  return media.hqThumb ? { url: media.hqThumb, width: 480, height: 360 } : null;
 }
 
 export const Route = createFileRoute("/clips/$clipId")({
@@ -46,7 +61,8 @@ export const Route = createFileRoute("/clips/$clipId")({
       .eq("id", params.clipId)
       .maybeSingle();
     if (error || !data) throw notFound();
-    return data;
+    const thumb = await resolveThumb(pickMedia(data));
+    return { ...data, thumb };
   },
   head: ({ params, loaderData }) => {
     const url = `${BASE_URL}/clips/${params.clipId}`;
@@ -59,7 +75,8 @@ export const Route = createFileRoute("/clips/$clipId")({
         `Découvre le clip « ${loaderData.title} » sélectionné par InDi RaDio, la radio 24/7 de la musique indépendante.`,
     );
     const media = pickMedia(loaderData);
-    const image = media.thumb || OG_FALLBACK;
+    const thumb = loaderData.thumb;
+    const image = thumb?.url || OG_FALLBACK;
     return {
       meta: [
         { title },
@@ -67,10 +84,16 @@ export const Route = createFileRoute("/clips/$clipId")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
-        { property: "og:type", content: "video.other" },
-        { property: "og:image", content: image },
+        { property: "og:type", content: media.embed ? "video.other" : "article" },
+        ...ogCommonTags(),
+        ...(media.embed ? ogVideoTags(media.embed) : []),
+        ...ogImageTags(image, {
+          baseUrl: BASE_URL,
+          width: thumb?.width ?? 1200,
+          height: thumb?.height ?? 630,
+          alt: loaderData.title,
+        }),
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
