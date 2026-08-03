@@ -110,12 +110,12 @@ export function ShareButton({
       <button
         type="button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerNative(); }}
-        aria-label={label}
-        title={label}
+        aria-label={shareLabel}
+        title={shareLabel}
         className={`${triggerClass} ${className}`}
       >
         <Share2 className="size-3.5" />
-        {variant === "chip" && <span>{label}</span>}
+        {variant === "chip" && <span>{shareLabel}</span>}
       </button>
     );
   }
@@ -125,13 +125,13 @@ export function ShareButton({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={label}
-          title={label}
+          aria-label={shareLabel}
+          title={shareLabel}
           onClick={(e) => { e.stopPropagation(); }}
           className={`${triggerClass} ${className}`}
         >
           <Share2 className="size-3.5" />
-          {variant === "chip" && <span>{label}</span>}
+          {variant === "chip" && <span>{shareLabel}</span>}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
