@@ -108,9 +108,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of reviews ?? []) {
       entries.push({
         path: `/chroniques/${r.slug}`,
-        changefreq: "monthly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.7, normalizeDate(r.updated_at)),
       });
     }
     // News posts (Indi Rézo)
@@ -122,9 +120,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of news ?? []) {
       entries.push({
         path: `/actus/${r.id}`,
-        changefreq: "weekly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.65, normalizeDate(r.updated_at)),
       });
     }
     // Shows (emissions, podcasts, chroniques hosts, animateurs)
@@ -136,9 +132,8 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of shows ?? []) {
       entries.push({
         path: `/emissions/${r.id}`,
-        changefreq: "weekly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        // Une émission reçoit de nouveaux épisodes : plancher "monthly".
+        ...contentMeta(0.7, normalizeDate(r.updated_at), "monthly"),
       });
     }
     // Episodes
@@ -150,9 +145,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of episodes ?? []) {
       entries.push({
         path: `/episodes/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate((r as any).updated_at ?? r.published_at),
+        ...contentMeta(0.6, normalizeDate((r as any).updated_at ?? r.published_at)),
       });
     }
     // Magazines
@@ -164,9 +157,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of mags ?? []) {
       entries.push({
         path: `/magazines/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.created_at),
+        ...contentMeta(0.55, normalizeDate(r.created_at)),
       });
     }
     // Clips
@@ -178,9 +169,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of clips ?? []) {
       entries.push({
         path: `/clips/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.created_at),
+        ...contentMeta(0.55, normalizeDate(r.created_at)),
       });
     }
     // Social wall posts (publications)
@@ -195,9 +184,8 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       if (!r.slug) continue;
       entries.push({
         path: `/playlists/${r.slug}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.updated_at),
+        // Une playlist est régulièrement retouchée : plancher "monthly".
+        ...contentMeta(0.6, normalizeDate(r.updated_at), "monthly"),
       });
     }
     const { data: posts } = await sb
@@ -208,9 +196,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of posts ?? []) {
       entries.push({
         path: `/p/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.45, normalizeDate(r.updated_at)),
       });
     }
     // Public user profiles are served by /sitemap-users.xml so canonical
@@ -227,9 +213,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       if (!owner) continue;
       entries.push({
         path: `/u/${encodeURIComponent(owner)}/albums/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.4",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.4, normalizeDate(r.updated_at)),
       });
     }
   } catch {
