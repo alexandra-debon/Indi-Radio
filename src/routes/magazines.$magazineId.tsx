@@ -9,6 +9,8 @@ import ogHome from "@/assets/og-home.jpg";
 import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -24,8 +26,9 @@ export const Route = createFileRoute("/magazines/$magazineId")({
     if (error || !data) throw notFound();
     return data;
   },
-  head: ({ params, loaderData }) => {
-    const url = `${BASE_URL}/magazines/${params.magazineId}`;
+  head: async ({ params, loaderData, match }) => {
+    const lang = hlFromSearch(match.search);
+    const url = withHl(`${BASE_URL}/magazines/${params.magazineId}`, lang);
     if (!loaderData) {
       return {
         meta: [
@@ -34,11 +37,19 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         ],
       };
     }
-    const title = `${loaderData.title} · Magazine Indi Art Culture — InDi RaDio`;
-    const desc = clampDescription(
+    const baseTitle = `${loaderData.title} · Magazine Indi Art Culture — InDi RaDio`;
+    const baseDesc = clampDescription(
       loaderData.body ||
         `Feuillette « ${loaderData.title} », numéro du magazine interactif Indi Art Culture publié par InDi RaDio.`,
     );
+    const localized = await localizedOgText(lang, {
+      entityType: "magazine_entry",
+      entityKey: loaderData.id,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const desc = clampDescription(localized.description);
     // Priorité : miniature FlipHTML5 (dérivée automatiquement du lien),
     // puis couverture personnalisée si renseignée, sinon fallback Indi Radio.
     const image =
@@ -53,7 +64,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        ...ogCommonTags(),
+        ...ogLocaleTags(lang),
         ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
         { name: "twitter:card", content: "summary_large_image" },
       ],
