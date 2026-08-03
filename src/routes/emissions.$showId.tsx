@@ -10,6 +10,8 @@ import ogEmissions from "@/assets/og-emissions.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 import { trackEvent } from "@/lib/plausible";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -25,17 +27,26 @@ export const Route = createFileRoute("/emissions/$showId")({
     if (error || !data) throw notFound();
     return data;
   },
-  head: ({ params, loaderData }) => {
-    const url = `${BASE_URL}/emissions/${params.showId}`;
+  head: async ({ params, loaderData, match }) => {
+    const lang = hlFromSearch(match.search);
+    const url = withHl(`${BASE_URL}/emissions/${params.showId}`, lang);
     if (!loaderData) {
       return { meta: [{ title: "Émission introuvable — InDi RaDio" }, { name: "robots", content: "noindex" }] };
     }
     const label = loaderData.type === "chronique" ? "Chronique" : loaderData.type === "animateur" ? "Animateur" : "Émission";
-    const title = `${loaderData.title} · ${label} — InDi RaDio`;
-    const desc = clampDescription(
+    const baseTitle = `${loaderData.title} · ${label} — InDi RaDio`;
+    const baseDesc = clampDescription(
       loaderData.description ||
         `${loaderData.title} : ${label.toLowerCase()} d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub.`,
     );
+    const localized = await localizedOgText(lang, {
+      entityType: "show",
+      entityKey: loaderData.id,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const desc = clampDescription(localized.description);
     const image = loaderData.cover_url || OG_FALLBACK;
     return {
       meta: [
@@ -45,7 +56,7 @@ export const Route = createFileRoute("/emissions/$showId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        ...ogCommonTags(),
+        ...ogLocaleTags(lang),
         ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
         { name: "twitter:card", content: "summary_large_image" },
       ],
