@@ -25,7 +25,10 @@ const BASE = (process.env.BASE_URL ?? flag("base", "https://www.radio.indi-art-c
 const LIMIT = Number(flag("limit", process.env.URL_CHECK_LIMIT ?? 120));
 const CONCURRENCY = Number(flag("concurrency", 6));
 const SITEMAP_OVERRIDE = flag("sitemap", "");
-const STRICT_HREFLANG = !args.includes("--no-hreflang");
+// hreflang est déclaré au niveau du sitemap (xhtml:link) : la présence dans le
+// <head> HTML est un bonus, signalée en avertissement sauf --strict-hreflang.
+const CHECK_HREFLANG = !args.includes("--no-hreflang");
+const STRICT_HREFLANG = args.includes("--strict-hreflang");
 
 const errors = [];
 const warnings = [];
@@ -44,7 +47,31 @@ function matchAll(xml, tag) {
 }
 
 /** Résout la liste des sitemaps enfants depuis l'index. */
-async function collectSitemaps() {
+async /** Contrôle des alternates hreflang déclarés dans le sitemap lui-même. */
+function checkSitemapAlternates(sitemapUrl, xml) {
+  const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
+  for (const block of blocks) {
+    const loc = block.match(/<loc>\s*([^<]+?)\s*<\/loc>/)?.[1];
+    if (!loc) continue;
+    const alts = [...block.matchAll(/hreflang=["']([^"']+)["'][^>]*href=["']([^"']+)["']/g)].map((m) => ({
+      lang: m[1].toLowerCase(),
+      href: m[2],
+    }));
+    if (!alts.length) continue; // sitemaps images/vidéos/profils sans alternates
+    for (const required of ["fr", "en", "x-default"]) {
+      if (!alts.some((a) => a.lang === required || a.lang.startsWith(`${required}-`))) {
+        fail(loc, `sitemap ${sitemapUrl}: hreflang "${required}" manquant`);
+      }
+    }
+    const selfRef = alts.some((a) => normalize(a.href) === normalize(loc));
+    if (!selfRef) fail(loc, `sitemap ${sitemapUrl}: aucun alternate auto-référent`);
+    for (const a of alts) {
+      if (!/^https?:\/\//i.test(a.href)) fail(loc, `sitemap: hreflang ${a.lang} non absolu (${a.href})`);
+    }
+  }
+}
+
+function collectSitemaps() {
   if (SITEMAP_OVERRIDE) return [SITEMAP_OVERRIDE];
   const indexUrl = `${BASE}/sitemap.xml`;
   const { status, body, contentType } = await getText(indexUrl, { follow: true });
@@ -68,6 +95,7 @@ async function collectUrls(sitemapUrl) {
     fail(sitemapUrl, `sitemap inaccessible (HTTP ${status})`);
     return [];
   }
+  checkSitemapAlternates(sitemapUrl, body);
   const locs = matchAll(body, "loc").filter((u) => !u.endsWith(".xml"));
   if (!locs.length) warn(sitemapUrl, "aucune URL listée");
   return locs;
@@ -148,21 +176,22 @@ async function checkUrl(url) {
     }
   }
 
-  if (STRICT_HREFLANG) {
-    const alts = extractHreflang(html);
+  if (CHECK_HREFLANG) {
+    const report = STRICT_HREFLANG ? fail : warn;
+    const alts = extractHreflang(html).filter((a) => a.hreflang);
     if (!alts.length) {
-      fail(url, "aucun alternate hreflang");
+      report(url, "aucun alternate hreflang dans le <head> (déclaré côté sitemap uniquement)");
     } else {
       const langs = alts.map((a) => a.hreflang.toLowerCase());
       for (const required of ["fr", "en", "x-default"]) {
         if (!langs.some((l) => l === required || l.startsWith(`${required}-`))) {
-          fail(url, `hreflang "${required}" manquant`);
+          report(url, `hreflang "${required}" manquant dans le <head>`);
         }
       }
       const seen = new Set();
       for (const a of alts) {
         const key = a.hreflang.toLowerCase();
-        if (seen.has(key)) fail(url, `hreflang dupliqué: ${a.hreflang}`);
+        if (seen.has(key)) fail(url, `hreflang dupliqué dans le <head>: ${a.hreflang}`);
         seen.add(key);
         if (!a.href || !/^https?:\/\//i.test(a.href)) fail(url, `hreflang ${a.hreflang}: href non absolue (${a.href})`);
       }
