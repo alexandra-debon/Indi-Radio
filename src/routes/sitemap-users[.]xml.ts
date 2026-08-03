@@ -9,6 +9,7 @@ import {
   matchesConditional,
   type SitemapEntry,
 } from "@/lib/sitemap-entries";
+import { canonicalUrl } from "@/lib/canonical";
 
 const MAX_PROFILES = 5000;
 
@@ -54,6 +55,10 @@ export const Route = createFileRoute("/sitemap-users.xml")({
               e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
               `    <changefreq>${e.changefreq}</changefreq>`,
               `    <priority>${e.priority}</priority>`,
+              `    <xhtml:link rel="alternate" hreflang="fr-FR" href="${canonicalUrl(e.path, { lang: "fr" })}"/>`,
+              `    <xhtml:link rel="alternate" hreflang="fr" href="${canonicalUrl(e.path, { lang: "fr" })}"/>`,
+              `    <xhtml:link rel="alternate" hreflang="en" href="${canonicalUrl(e.path, { lang: "en" })}"/>`,
+              `    <xhtml:link rel="alternate" hreflang="x-default" href="${canonicalUrl(e.path)}"/>`,
               `  </url>`,
             ]
               .filter(Boolean)
@@ -61,7 +66,7 @@ export const Route = createFileRoute("/sitemap-users.xml")({
           )
           .join("\n");
 
-        const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
+        const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>`;
         const lastModified = computeMaxLastmod(entries);
         const headers = sitemapHeaders(body, lastModified);
         // Fast to serve, quick to update. Browsers/crawlers always

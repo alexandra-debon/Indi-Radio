@@ -85,6 +85,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
 import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
+import { Route as ApiPublicHooksPingSitemapsRouteImport } from './routes/api/public/hooks/ping-sitemaps'
 import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
 
 const TopUsersRoute = TopUsersRouteImport.update({
@@ -483,6 +484,12 @@ const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
   path: '/api/public/radio/artwork',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksPingSitemapsRoute =
+  ApiPublicHooksPingSitemapsRouteImport.update({
+    id: '/api/public/hooks/ping-sitemaps',
+    path: '/api/public/hooks/ping-sitemaps',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
   id: '/api/public/hooks/indexnow',
   path: '/api/public/hooks/indexnow',
@@ -560,6 +567,7 @@ export interface FileRoutesByFullPath {
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
+  '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -638,6 +646,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/u/$pseudo': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
+  '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -718,6 +727,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
+  '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
   '/api/public/radio/artwork': typeof ApiPublicRadioArtworkRoute
   '/api/public/radio/stream': typeof ApiPublicRadioStreamRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -798,6 +808,7 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
+    | '/api/public/hooks/ping-sitemaps'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -876,6 +887,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/u/$pseudo'
     | '/api/public/hooks/indexnow'
+    | '/api/public/hooks/ping-sitemaps'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -955,6 +967,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/'
     | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
+    | '/api/public/hooks/ping-sitemaps'
     | '/api/public/radio/artwork'
     | '/api/public/radio/stream'
     | '/lovable/email/auth/preview'
@@ -1024,6 +1037,7 @@ export interface RootRouteChildren {
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
   UPseudoIndexRoute: typeof UPseudoIndexRoute
   ApiPublicHooksIndexnowRoute: typeof ApiPublicHooksIndexnowRoute
+  ApiPublicHooksPingSitemapsRoute: typeof ApiPublicHooksPingSitemapsRoute
   ApiPublicRadioArtworkRoute: typeof ApiPublicRadioArtworkRoute
   ApiPublicRadioStreamRoute: typeof ApiPublicRadioStreamRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1566,6 +1580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/ping-sitemaps': {
+      id: '/api/public/hooks/ping-sitemaps'
+      path: '/api/public/hooks/ping-sitemaps'
+      fullPath: '/api/public/hooks/ping-sitemaps'
+      preLoaderRoute: typeof ApiPublicHooksPingSitemapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/indexnow': {
       id: '/api/public/hooks/indexnow'
       path: '/api/public/hooks/indexnow'
@@ -1680,6 +1701,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicProcessTranslationRetriesRoute,
   UPseudoIndexRoute: UPseudoIndexRoute,
   ApiPublicHooksIndexnowRoute: ApiPublicHooksIndexnowRoute,
+  ApiPublicHooksPingSitemapsRoute: ApiPublicHooksPingSitemapsRoute,
   ApiPublicRadioArtworkRoute: ApiPublicRadioArtworkRoute,
   ApiPublicRadioStreamRoute: ApiPublicRadioStreamRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
