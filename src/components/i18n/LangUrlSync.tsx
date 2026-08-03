@@ -16,8 +16,11 @@ export function LangUrlSync() {
   const { lang } = useLang();
   const navigate = useNavigate();
   const hl = useRouterState({
-    select: (s) => (s.location.search as Record<string, unknown> | undefined)?.["hl"],
-  });
+    select: (s) =>
+      ((s.location.search as Record<string, unknown> | undefined)?.["hl"] ?? null) as
+        | string
+        | null,
+  }) as string | null;
 
   useEffect(() => {
     const desired = lang === "en" ? "en" : undefined;
