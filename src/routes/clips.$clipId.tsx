@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import ogClips from "@/assets/og-clips.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags, ogVideoTags } from "@/lib/og-tags";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogClips}`;
@@ -149,13 +150,29 @@ function ClipDetailPage() {
       </Link>
       <article className="card-brut space-y-3 p-4">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-2xl font-bold">{entry.title}</h1>
+          <TranslatedText
+            as="h1"
+            className="text-2xl font-bold"
+            entityType="clip_entry"
+            entityKey={entry.id}
+            field="title"
+            text={entry.title}
+          />
           <ShareButton
             variant="chip"
             target={{ url, title: `${entry.title} — Clip Addict · Indi Radio`, text: entry.body?.slice(0, 200) || entry.title }}
           />
         </div>
-        {entry.body && <p className="whitespace-pre-wrap text-sm">{entry.body}</p>}
+        {entry.body && (
+          <TranslatedText
+            as="p"
+            className="whitespace-pre-wrap text-sm"
+            entityType="clip_entry"
+            entityKey={entry.id}
+            field="body"
+            text={entry.body}
+          />
+        )}
         {entry.body && <UrlEmbeds text={entry.body} />}
         <div className="space-y-3">
           {videos.map((v) => <ExplicitVideoEmbed key={v} url={v} />)}

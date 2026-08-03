@@ -11,6 +11,7 @@ import ogChroniques from "@/assets/og-chroniques.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
@@ -169,7 +170,14 @@ function ChroniqueDetailPage() {
               variant="chip"
             />
           </div>
-          <h1 className="section-title text-xl leading-tight">{r.title}</h1>
+          <TranslatedText
+            as="h1"
+            className="section-title text-xl leading-tight"
+            entityType="album_review"
+            entityKey={r.id}
+            field="title"
+            text={r.title}
+          />
           <div className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{r.artist}</span>
             {r.label ? <> · {r.label}</> : null}
@@ -187,7 +195,16 @@ function ChroniqueDetailPage() {
 
       <section className="card-brut space-y-3 p-4">
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">La chronique</h2>
-        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{renderRich(stripMediaUrls(r.content))}</div>
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+          <TranslatedText
+            entityType="album_review"
+            entityKey={r.id}
+            field="content"
+            text={stripMediaUrls(r.content)}
+          >
+            {(rendered) => renderRich(rendered)}
+          </TranslatedText>
+        </div>
         <UrlEmbeds text={r.content} />
       </section>
 

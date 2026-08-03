@@ -9,6 +9,7 @@ import ogHome from "@/assets/og-home.jpg";
 import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -109,7 +110,13 @@ function MagazineDetailPage() {
         <div className="flex items-start justify-between gap-2">
           <h1 className="flex items-start gap-2 text-2xl font-bold">
             <BookOpen className="mt-1 size-5 shrink-0 text-primary" />
-            <span>{entry.title}</span>
+            <TranslatedText
+              as="span"
+              entityType="magazine_entry"
+              entityKey={entry.id}
+              field="title"
+              text={entry.title}
+            />
           </h1>
           <ShareButton
             variant="chip"
@@ -120,7 +127,16 @@ function MagazineDetailPage() {
             }}
           />
         </div>
-        {entry.body && <p className="whitespace-pre-wrap text-sm">{entry.body}</p>}
+        {entry.body && (
+          <TranslatedText
+            as="p"
+            className="whitespace-pre-wrap text-sm"
+            entityType="magazine_entry"
+            entityKey={entry.id}
+            field="body"
+            text={entry.body}
+          />
+        )}
         {entry.body && <UrlEmbeds text={entry.body} />}
         <FlipbookViewer url={entry.magazine_url} title={entry.title} coverUrl={entry.cover_url} />
       </article>
