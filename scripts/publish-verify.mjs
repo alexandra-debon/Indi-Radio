@@ -41,11 +41,19 @@ const rssPlatformCode = await run("bunx", ["vitest", "run", "tests/rss-platforms
 console.log("[publish:verify] comparing RSS feeds with previous snapshot…");
 const diffCode = await run("node", ["scripts/rss-diff.mjs"], { RSS_BASE_URL: base });
 
+console.log("[publish:verify] running sitemap URL validity checks (200 / canonical / hreflang)…");
+const urlsCode = await run("node", ["scripts/verify-urls.mjs"], { BASE_URL: base });
+
 const failed =
-  checkCode !== 0 || testCode !== 0 || rssCode !== 0 || rssPlatformCode !== 0 || diffCode !== 0;
+  checkCode !== 0 ||
+  testCode !== 0 ||
+  rssCode !== 0 ||
+  rssPlatformCode !== 0 ||
+  diffCode !== 0 ||
+  urlsCode !== 0;
 if (failed) {
   console.error(
-    `[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}, rss=${rssCode}, rssPlatform=${rssPlatformCode}, rssDiff=${diffCode}) — treat this deployment as broken.`,
+    `[publish:verify] ❌ FAILED (checks=${checkCode}, tests=${testCode}, rss=${rssCode}, rssPlatform=${rssPlatformCode}, rssDiff=${diffCode}, urls=${urlsCode}) — treat this deployment as broken.`,
   );
   process.exit(1);
 }
