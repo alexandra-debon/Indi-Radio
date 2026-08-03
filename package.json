@@ -33,7 +33,9 @@
     "verify:hreflang": "node scripts/verify-hreflang.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
     "verify:seo": "node scripts/verify-seo-sync.mjs",
-    "verify:all": "bun run verify:i18n && bun run verify:hreflang && bun run verify:seo"
+    "verify:urls": "node scripts/verify-urls.mjs",
+    "verify:urls:local": "BASE_URL=http://localhost:8080 node scripts/verify-urls.mjs --no-hreflang",
+    "verify:all": "bun run verify:i18n && bun run verify:hreflang && bun run verify:seo && bun run verify:urls"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
