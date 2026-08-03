@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,8 +37,8 @@ import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
 
 export const Route = createFileRoute("/actus/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/actus", match.search, [
       { title: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
       { name: "keywords", content: "radio musique indé, réseau social musique, radio musique indépendante, actus indépendantes, InDi RaDio, Indi Rézo" },
@@ -52,7 +53,7 @@ export const Route = createFileRoute("/actus/")({
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_ACTUS },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/actus" }],
     scripts: [
       {

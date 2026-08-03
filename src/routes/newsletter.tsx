@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
@@ -19,8 +20,8 @@ export const Route = createFileRoute("/newsletter")({
   validateSearch: (search: Record<string, unknown>) => ({
     source: typeof search.source === "string" ? search.source : undefined,
   }),
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/newsletter", match.search, [
       { title: "Newsletter — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
       { name: "keywords", content: "radio gratuite, radio musique indépendante, radio sans pub, newsletter musique indé, InDi RaDio" },
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/newsletter")({
       { name: "twitter:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/newsletter" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/newsletter" }],
   }),
   component: NewsletterPage,

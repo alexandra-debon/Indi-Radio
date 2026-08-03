@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -16,8 +17,8 @@ const DESCRIPTION =
   "IndéGraal, InDiscovery et playlists thématiques : les sélections de InDi RaDio, la radio 24/7 de la musique indépendante, à écouter sur Spotify et Apple Music.";
 
 export const Route = createFileRoute("/playlists/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/playlists", match.search, [
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { name: "keywords", content: "playlists musique indé, IndéGraal, InDiscovery, playlist Spotify, playlist Apple Music, InDi RaDio" },
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/playlists/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
-    ],
+    ]),
     links: [{ rel: "canonical", href: canonicalUrl("/playlists") }],
   }),
   component: PlaylistsPage,

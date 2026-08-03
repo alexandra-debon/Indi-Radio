@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -10,8 +11,8 @@ import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 export const Route = createFileRoute("/artistes")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/artistes", match.search, [
       { title: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio. Découvre leurs profils et échange avec eux." },
       { property: "og:title", content: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/artistes")({
       { name: "twitter:description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/artistes" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/artistes" }],
   }),
   component: ArtistesPage,

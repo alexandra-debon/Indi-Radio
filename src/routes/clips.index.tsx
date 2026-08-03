@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,8 +20,8 @@ const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_CLIPS = `${BASE_URL}${ogClips}`;
 
 export const Route = createFileRoute("/clips/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/clips", match.search, [
       { title: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub. YouTube et Vimeo directement." },
       { name: "keywords", content: "radio gratuite, clips musique indépendante, radio sans pub, playlists vidéo indé, InDi RaDio" },
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/clips/")({
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_CLIPS },
-    ],
+    ]),
     links: [{ rel: "canonical", href: `${BASE_URL}/clips` }],
   }),
   component: ClipsPage,

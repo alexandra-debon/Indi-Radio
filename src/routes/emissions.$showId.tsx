@@ -54,6 +54,8 @@ export const Route = createFileRoute("/emissions/$showId")({
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
         ...ogLocaleTags(lang),

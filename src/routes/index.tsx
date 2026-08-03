@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -30,8 +31,8 @@ const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_HOME = `${BASE_URL}${ogHome}`;
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/", match.search, [
       { title: "Radio gratuite 24/7 de la musique indépendante — InDi RaDio" },
       {
         name: "description",
@@ -58,7 +59,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Radio gratuite 24/7 de la musique indépendante — InDi RaDio" },
       { name: "twitter:description", content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante." },
       { name: "twitter:image", content: OG_HOME },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],
     scripts: [
       {

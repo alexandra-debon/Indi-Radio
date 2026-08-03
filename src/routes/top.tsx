@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,8 +12,8 @@ import { SmartImg } from "@/components/media/SmartImg";
 const TOP_THREAD_ID = "00000000-0000-4000-8000-000000000t0p".replace(/[^0-9a-f-]/gi, "0");
 
 export const Route = createFileRoute("/top")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/top", match.search, [
       { title: "Top — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio musique indé, réseau social musique, top podcasts, top chroniques, radio musique indépendante, InDi RaDio" },
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/top")({
       { name: "twitter:description", content: "Les podcasts et chroniques d'albums les mieux notés et les plus likés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/top" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/top" }],
   }),
   component: TopPage,

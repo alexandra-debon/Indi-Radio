@@ -57,6 +57,8 @@ export const Route = createFileRoute("/u/$pseudo/")({
       { name: "description", content: desc },
       { property: "og:title", content: title },
       { property: "og:description", content: desc },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: desc },
       { property: "og:url", content: canonicalUrl },
       { property: "og:type", content: "profile" },
       { property: "profile:username", content: pseudo },

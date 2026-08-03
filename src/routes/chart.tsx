@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,8 +7,8 @@ import { Heart, Trophy, Medal, Radio } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/chart")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/chart", match.search, [
       { title: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "keywords", content: "radio sans pub, top 25 musique indépendante, classement radio gratuite, musique indé, InDi RaDio" },
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/chart")({
       { name: "twitter:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/chart" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chart" }],
   }),
   component: ChartPage,

@@ -169,7 +169,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   // La langue est portée par l'URL (?hl=en). On la valide au niveau racine et
   // on la conserve à chaque navigation interne pour que le lien cliqué en
   // anglais reste en anglais jusqu'à la page détail (SSR + head() inclus).
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { hl?: "en" | "fr" } => {
     const hl = search["hl"];
     return hl === "en" || hl === "fr" ? { hl: hl as "en" | "fr" } : {};
   },

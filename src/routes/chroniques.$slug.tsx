@@ -60,6 +60,8 @@ export const Route = createFileRoute("/chroniques/$slug")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
       ...ogLocaleTags(lang),

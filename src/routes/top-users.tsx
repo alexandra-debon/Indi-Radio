@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,8 +7,8 @@ import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 export const Route = createFileRoute("/top-users")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/top-users", match.search, [
       { title: "Top 25 utilisateurs — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique de la radio 24/7 de la musique indépendante." },
       { name: "keywords", content: "réseau social musique, top utilisateurs, radio musique indé, communauté artistes indépendants, InDi RaDio" },
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/top-users")({
       { name: "twitter:description", content: "Les 25 utilisateurs les plus actifs de la communauté InDi RaDio, le réseau social musique de la radio 24/7 de la musique indépendante." },
       { property: "og:url", content: "https://radio.indi-art-culture.com/top-users" },
       { property: "og:type", content: "website" },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/top-users" }],
   }),
   component: TopUsersPage,

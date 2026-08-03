@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -28,8 +29,8 @@ type CoupRow = {
 type LikeRow = { coup_id: string; user_id: string };
 
 export const Route = createFileRoute("/coups-de-coeur")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/coups-de-coeur", match.search, [
       { title: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },
       {
         name: "description",
@@ -49,7 +50,7 @@ export const Route = createFileRoute("/coups-de-coeur")({
         property: "og:url",
         content: "https://radio.indi-art-culture.com/coups-de-coeur",
       },
-    ],
+    ]),
     links: [
       {
         rel: "canonical",

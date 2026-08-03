@@ -1,3 +1,4 @@
+import { localizedStaticMeta } from "@/lib/og-static-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,8 +17,8 @@ const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
 const SITE = "https://radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/podcasts")({
-  head: () => ({
-    meta: [
+  head: async ({ match }) => ({
+    meta: await localizedStaticMeta("/podcasts", match.search, [
       { title: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "keywords", content: "radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/podcasts")({
       { name: "twitter:title", content: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "twitter:image", content: OG_PODCASTS },
-    ],
+    ]),
     links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/podcasts" }],
     scripts: [
       breadcrumbLd([
