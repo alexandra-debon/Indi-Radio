@@ -41,6 +41,56 @@ function normalizeDate(d: string | null | undefined): string | undefined {
   }
 }
 
+/**
+ * Métadonnées de fraîcheur.
+ *
+ * `changefreq` reflète la vitesse réelle de changement d'une page :
+ * un contenu publié il y a 3 jours bouge encore (corrections, likes,
+ * commentaires), un contenu d'il y a 2 ans ne bouge plus. `priority`
+ * part d'une base propre au type de contenu puis décroît avec l'âge,
+ * ce qui concentre le budget de crawl sur les publications récentes.
+ */
+const DAY = 86_400_000;
+
+function ageInDays(lastmod?: string): number | undefined {
+  if (!lastmod) return undefined;
+  const t = Date.parse(lastmod);
+  if (Number.isNaN(t)) return undefined;
+  return Math.max(0, (Date.now() - t) / DAY);
+}
+
+/** changefreq dérivé de l'âge du contenu (pas d'une valeur figée). */
+function freqForAge(days: number | undefined, floor: string = "yearly"): string {
+  if (days === undefined) return "monthly";
+  if (days <= 2) return "hourly";
+  if (days <= 7) return "daily";
+  if (days <= 45) return "weekly";
+  if (days <= 365) return "monthly";
+  return floor;
+}
+
+/** Priorité = base du type de page, atténuée par l'ancienneté. */
+function priorityForAge(base: number, days: number | undefined): string {
+  let p = base;
+  if (days !== undefined) {
+    if (days <= 7) p += 0.1;
+    else if (days <= 30) p += 0.05;
+    else if (days > 365) p -= 0.2;
+    else if (days > 180) p -= 0.1;
+  }
+  return Math.min(0.9, Math.max(0.1, Math.round(p * 100) / 100)).toFixed(1);
+}
+
+/** Métadonnées combinées pour une entrée de contenu daté. */
+function contentMeta(
+  base: number,
+  lastmod: string | undefined,
+  floor?: string,
+): Pick<SitemapEntry, "changefreq" | "priority" | "lastmod"> {
+  const days = ageInDays(lastmod);
+  return { changefreq: freqForAge(days, floor), priority: priorityForAge(base, days), lastmod };
+}
+
 export async function loadAllEntries(): Promise<SitemapEntry[]> {
   const entries = [...STATIC_ENTRIES];
   try {
