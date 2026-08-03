@@ -109,6 +109,11 @@ export const Route = createFileRoute("/chroniques/$slug")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Review",
+          name: `${loaderData.title} — ${loaderData.artist}`,
+          author: { "@type": "Organization", name: "La rédaction Indi Radio" },
+          ...((loaderData as { created_at?: string }).created_at
+            ? { datePublished: (loaderData as { created_at?: string }).created_at }
+            : {}),
           itemReviewed: {
             "@type": "MusicAlbum",
             name: loaderData.title,
@@ -117,7 +122,7 @@ export const Route = createFileRoute("/chroniques/$slug")({
             ...(loaderData.release_date ? { datePublished: loaderData.release_date } : {}),
           },
           ...(loaderData.rating != null ? {
-            reviewRating: { "@type": "Rating", ratingValue: Number(loaderData.rating), bestRating: 5 },
+            reviewRating: { "@type": "Rating", ratingValue: Number(loaderData.rating), bestRating: 5, worstRating: 1 },
           } : {}),
           ...(loaderData.excerpt ? { reviewBody: loaderData.excerpt } : {}),
           publisher: { "@type": "Organization", name: "Indi Radio" },
