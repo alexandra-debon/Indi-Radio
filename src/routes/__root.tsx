@@ -27,6 +27,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { IosInstallHint } from "@/components/IosInstallHint";
 import { LanguageProvider } from "@/lib/i18n";
 import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
+import { LangUrlSync } from "@/components/i18n/LangUrlSync";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
@@ -295,6 +296,7 @@ function RootComponent() {
           <IosInstallHint />
           <Toaster />
           <SeoLocalizer />
+          <LangUrlSync />
           <OnboardingTour />
           <CookieConsent />
           <PlausibleRouteTracker />
