@@ -15,20 +15,20 @@ export const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/chart", changefreq: "daily", priority: "0.7" },
   { path: "/podcasts", changefreq: "weekly", priority: "0.7" },
   { path: "/chroniques", changefreq: "weekly", priority: "0.8" },
-  { path: "/magazines", changefreq: "weekly", priority: "0.6" },
+  { path: "/magazines", changefreq: "monthly", priority: "0.6" },
   { path: "/playlists", changefreq: "weekly", priority: "0.6" },
   { path: "/artistes", changefreq: "weekly", priority: "0.7" },
   { path: "/clips", changefreq: "weekly", priority: "0.6" },
   { path: "/top", changefreq: "daily", priority: "0.6" },
   { path: "/top-users", changefreq: "daily", priority: "0.5" },
-  { path: "/dedicaces", changefreq: "monthly", priority: "0.5" },
-  { path: "/about", changefreq: "monthly", priority: "0.5" },
-  { path: "/newsletter", changefreq: "monthly", priority: "0.4" },
-  { path: "/soumission-artistes", changefreq: "monthly", priority: "0.5" },
-  { path: "/contact", changefreq: "monthly", priority: "0.5" },
-  { path: "/privacy", changefreq: "monthly", priority: "0.5" },
-  { path: "/terms", changefreq: "monthly", priority: "0.5" },
-  { path: "/moderation", changefreq: "monthly", priority: "0.5" },
+  { path: "/dedicaces", changefreq: "weekly", priority: "0.5" },
+  { path: "/about", changefreq: "yearly", priority: "0.5" },
+  { path: "/newsletter", changefreq: "yearly", priority: "0.4" },
+  { path: "/soumission-artistes", changefreq: "monthly", priority: "0.6" },
+  { path: "/contact", changefreq: "yearly", priority: "0.5" },
+  { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+  { path: "/terms", changefreq: "yearly", priority: "0.3" },
+  { path: "/moderation", changefreq: "yearly", priority: "0.3" },
   { path: "/coups-de-coeur", changefreq: "weekly", priority: "0.7" },
 ];
 
@@ -39,6 +39,56 @@ function normalizeDate(d: string | null | undefined): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Métadonnées de fraîcheur.
+ *
+ * `changefreq` reflète la vitesse réelle de changement d'une page :
+ * un contenu publié il y a 3 jours bouge encore (corrections, likes,
+ * commentaires), un contenu d'il y a 2 ans ne bouge plus. `priority`
+ * part d'une base propre au type de contenu puis décroît avec l'âge,
+ * ce qui concentre le budget de crawl sur les publications récentes.
+ */
+const DAY = 86_400_000;
+
+function ageInDays(lastmod?: string): number | undefined {
+  if (!lastmod) return undefined;
+  const t = Date.parse(lastmod);
+  if (Number.isNaN(t)) return undefined;
+  return Math.max(0, (Date.now() - t) / DAY);
+}
+
+/** changefreq dérivé de l'âge du contenu (pas d'une valeur figée). */
+function freqForAge(days: number | undefined, floor: string = "yearly"): string {
+  if (days === undefined) return "monthly";
+  if (days <= 2) return "hourly";
+  if (days <= 7) return "daily";
+  if (days <= 45) return "weekly";
+  if (days <= 365) return "monthly";
+  return floor;
+}
+
+/** Priorité = base du type de page, atténuée par l'ancienneté. */
+function priorityForAge(base: number, days: number | undefined): string {
+  let p = base;
+  if (days !== undefined) {
+    if (days <= 7) p += 0.1;
+    else if (days <= 30) p += 0.05;
+    else if (days > 365) p -= 0.2;
+    else if (days > 180) p -= 0.1;
+  }
+  return Math.min(0.9, Math.max(0.1, Math.round(p * 100) / 100)).toFixed(1);
+}
+
+/** Métadonnées combinées pour une entrée de contenu daté. */
+function contentMeta(
+  base: number,
+  lastmod: string | undefined,
+  floor?: string,
+): Pick<SitemapEntry, "changefreq" | "priority" | "lastmod"> {
+  const days = ageInDays(lastmod);
+  return { changefreq: freqForAge(days, floor), priority: priorityForAge(base, days), lastmod };
 }
 
 export async function loadAllEntries(): Promise<SitemapEntry[]> {
@@ -58,9 +108,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of reviews ?? []) {
       entries.push({
         path: `/chroniques/${r.slug}`,
-        changefreq: "monthly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.7, normalizeDate(r.updated_at)),
       });
     }
     // News posts (Indi Rézo)
@@ -72,9 +120,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of news ?? []) {
       entries.push({
         path: `/actus/${r.id}`,
-        changefreq: "weekly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.65, normalizeDate(r.updated_at)),
       });
     }
     // Shows (emissions, podcasts, chroniques hosts, animateurs)
@@ -86,9 +132,8 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of shows ?? []) {
       entries.push({
         path: `/emissions/${r.id}`,
-        changefreq: "weekly",
-        priority: "0.6",
-        lastmod: normalizeDate(r.updated_at),
+        // Une émission reçoit de nouveaux épisodes : plancher "monthly".
+        ...contentMeta(0.7, normalizeDate(r.updated_at), "monthly"),
       });
     }
     // Episodes
@@ -100,9 +145,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of episodes ?? []) {
       entries.push({
         path: `/episodes/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate((r as any).updated_at ?? r.published_at),
+        ...contentMeta(0.6, normalizeDate((r as any).updated_at ?? r.published_at)),
       });
     }
     // Magazines
@@ -114,9 +157,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of mags ?? []) {
       entries.push({
         path: `/magazines/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.created_at),
+        ...contentMeta(0.55, normalizeDate(r.created_at)),
       });
     }
     // Clips
@@ -128,9 +169,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of clips ?? []) {
       entries.push({
         path: `/clips/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.created_at),
+        ...contentMeta(0.55, normalizeDate(r.created_at)),
       });
     }
     // Social wall posts (publications)
@@ -145,9 +184,8 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       if (!r.slug) continue;
       entries.push({
         path: `/playlists/${r.slug}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.updated_at),
+        // Une playlist est régulièrement retouchée : plancher "monthly".
+        ...contentMeta(0.6, normalizeDate(r.updated_at), "monthly"),
       });
     }
     const { data: posts } = await sb
@@ -158,9 +196,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
     for (const r of posts ?? []) {
       entries.push({
         path: `/p/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.5",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.45, normalizeDate(r.updated_at)),
       });
     }
     // Public user profiles are served by /sitemap-users.xml so canonical
@@ -177,9 +213,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       if (!owner) continue;
       entries.push({
         path: `/u/${encodeURIComponent(owner)}/albums/${r.id}`,
-        changefreq: "monthly",
-        priority: "0.4",
-        lastmod: normalizeDate(r.updated_at),
+        ...contentMeta(0.4, normalizeDate(r.updated_at)),
       });
     }
   } catch {
