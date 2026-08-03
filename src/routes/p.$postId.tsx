@@ -10,6 +10,8 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT } from "@/lib/i18n";
 import { renderRich } from "@/lib/rich-text";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -30,8 +32,9 @@ export const Route = createFileRoute("/p/$postId")({
     if (error || !data) throw notFound();
     return data;
   },
-  head: ({ params, loaderData }) => {
-    const url = `${BASE_URL}/p/${params.postId}`;
+  head: async ({ params, loaderData, match }) => {
+    const lang = hlFromSearch(match.search);
+    const url = withHl(`${BASE_URL}/p/${params.postId}`, lang);
     if (!loaderData) {
       return {
         meta: [
@@ -42,8 +45,16 @@ export const Route = createFileRoute("/p/$postId")({
     }
     const author = loaderData.author?.pseudo ?? "Un auditeur";
     const body = snippet(loaderData.content ?? "");
-    const title = body ? `${author} — ${body.slice(0, 60)}` : `${author} sur Indi Radio`;
-    const desc = body || `Publication de ${author} sur le mur Indi Radio.`;
+    const baseTitle = body ? `${author} — ${body.slice(0, 60)}` : `${author} sur Indi Radio`;
+    const baseDesc = body || `Publication de ${author} sur le mur Indi Radio.`;
+    const localized = await localizedOgText(lang, {
+      entityType: "post",
+      entityKey: params.postId,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const desc = localized.description;
     const firstImage =
       (loaderData.image_urls && loaderData.image_urls.length > 0
         ? loaderData.image_urls[0]
@@ -56,7 +67,7 @@ export const Route = createFileRoute("/p/$postId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        ...ogCommonTags(),
+        ...ogLocaleTags(lang),
         ...ogImageTags(firstImage, { baseUrl: BASE_URL, alt: title }),
         { name: "twitter:card", content: "summary_large_image" },
       ],

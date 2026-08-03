@@ -8,6 +8,8 @@ import { ArrowLeft } from "lucide-react";
 import ogClips from "@/assets/og-clips.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags, ogVideoTags } from "@/lib/og-tags";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
@@ -65,16 +67,25 @@ export const Route = createFileRoute("/clips/$clipId")({
     const thumb = await resolveThumb(pickMedia(data));
     return { ...data, thumb };
   },
-  head: ({ params, loaderData }) => {
-    const url = `${BASE_URL}/clips/${params.clipId}`;
+  head: async ({ params, loaderData, match }) => {
+    const lang = hlFromSearch(match.search);
+    const url = withHl(`${BASE_URL}/clips/${params.clipId}`, lang);
     if (!loaderData) {
       return { meta: [{ title: "Clip introuvable — Clip Addict, InDi RaDio" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.title} · Clip Addict — InDi RaDio`;
-    const desc = clampDescription(
+    const baseTitle = `${loaderData.title} · Clip Addict — InDi RaDio`;
+    const baseDesc = clampDescription(
       loaderData.body ||
         `Découvre le clip « ${loaderData.title} » sélectionné par InDi RaDio, la radio 24/7 de la musique indépendante.`,
     );
+    const localized = await localizedOgText(lang, {
+      entityType: "clip_entry",
+      entityKey: loaderData.id,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const desc = clampDescription(localized.description);
     const media = pickMedia(loaderData);
     const thumb = loaderData.thumb;
     const image = thumb?.url || OG_FALLBACK;
@@ -86,7 +97,7 @@ export const Route = createFileRoute("/clips/$clipId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: media.embed ? "video.other" : "article" },
-        ...ogCommonTags(),
+        ...ogLocaleTags(lang),
         ...(media.embed ? ogVideoTags(media.embed) : []),
         ...ogImageTags(image, {
           baseUrl: BASE_URL,
@@ -108,7 +119,7 @@ export const Route = createFileRoute("/clips/$clipId")({
             thumbnailUrl: image,
             uploadDate: loaderData.created_at,
             url,
-            inLanguage: "fr-FR",
+            inLanguage: lang === "en" ? "en-US" : "fr-FR",
             ...(media.embed ? { embedUrl: media.embed } : {}),
             ...(media.content ? { contentUrl: media.content } : {}),
             publisher: { "@id": `${BASE_URL}/#org` },

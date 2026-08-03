@@ -9,8 +9,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { shareNative, isNative } from "@/lib/native";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { trackEvent } from "@/lib/plausible";
+import { withHl } from "@/lib/og-lang";
 
 export type ShareTarget = {
   /**
@@ -57,6 +58,7 @@ export function ShareButton({
   const [open, setOpen] = useState(false);
   const [nativeShare, setNativeShare] = useState(false);
   const t = useT();
+  const { lang } = useLang();
   useEffect(() => {
     // Only use the native sheet inside a real native wrapper (Capacitor).
     // In browsers (including mobile Safari inside an iframe/preview),
@@ -64,7 +66,9 @@ export function ShareButton({
     // always show our own menu on the web to guarantee a working UI.
     setNativeShare(isNative());
   }, []);
-  const url = resolveUrl(target.url);
+  // L'URL partagée porte la langue active (?hl=en) pour que Facebook,
+  // LinkedIn ou Substack récupèrent l'aperçu dans la bonne langue.
+  const url = withHl(resolveUrl(target.url), lang === "en" ? "en" : "fr");
   const title = target.title ?? (typeof document !== "undefined" ? document.title : "Indi Radio");
   const text = target.text ?? title;
 
