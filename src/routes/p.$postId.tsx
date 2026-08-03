@@ -9,6 +9,7 @@ import ogHome from "@/assets/og-home.jpg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT } from "@/lib/i18n";
 import { renderRich } from "@/lib/rich-text";
+import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -55,9 +56,9 @@ export const Route = createFileRoute("/p/$postId")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        { property: "og:image", content: firstImage },
+        ...ogCommonTags(),
+        ...ogImageTags(firstImage, { baseUrl: BASE_URL, alt: title }),
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: firstImage },
       ],
       links: [{ rel: "canonical", href: url }],
     };
