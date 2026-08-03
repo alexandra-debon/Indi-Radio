@@ -21,7 +21,7 @@ const flag = (name, fallback) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
 
-const BASE = (process.env.BASE_URL ?? flag("base", "https://radio.indi-art-culture.com")).replace(/\/$/, "");
+const BASE = (process.env.BASE_URL ?? flag("base", "https://www.radio.indi-art-culture.com")).replace(/\/$/, "");
 const LIMIT = Number(flag("limit", process.env.URL_CHECK_LIMIT ?? 120));
 const CONCURRENCY = Number(flag("concurrency", 6));
 const SITEMAP_OVERRIDE = flag("sitemap", "");
@@ -34,7 +34,7 @@ const fail = (url, msg) => errors.push(`${url} → ${msg}`);
 const warn = (url, msg) => warnings.push(`${url} → ${msg}`);
 
 async function getText(url, init = {}) {
-  const res = await fetch(url, { redirect: "manual", headers: { "User-Agent": "IndiRadio-URLCheck/1.0" }, ...init });
+  const res = await fetch(url, { redirect: init.follow ? "follow" : "manual", headers: { "User-Agent": "IndiRadio-URLCheck/1.0" }, ...init });
   const body = res.status >= 200 && res.status < 400 ? await res.text() : "";
   return { status: res.status, location: res.headers.get("location"), body, contentType: res.headers.get("content-type") ?? "" };
 }
@@ -47,7 +47,7 @@ function matchAll(xml, tag) {
 async function collectSitemaps() {
   if (SITEMAP_OVERRIDE) return [SITEMAP_OVERRIDE];
   const indexUrl = `${BASE}/sitemap.xml`;
-  const { status, body, contentType } = await getText(indexUrl);
+  const { status, body, contentType } = await getText(indexUrl, { follow: true });
   if (status !== 200) {
     fail(indexUrl, `sitemap index inaccessible (HTTP ${status})`);
     return [];
@@ -63,7 +63,7 @@ async function collectSitemaps() {
 
 /** Extrait les <loc> d'un sitemap enfant. */
 async function collectUrls(sitemapUrl) {
-  const { status, body } = await getText(sitemapUrl);
+  const { status, body } = await getText(sitemapUrl, { follow: true });
   if (status !== 200) {
     fail(sitemapUrl, `sitemap inaccessible (HTTP ${status})`);
     return [];
