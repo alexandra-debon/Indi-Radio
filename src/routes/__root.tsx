@@ -30,7 +30,7 @@ import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
-import { redirect } from "@tanstack/react-router";
+import { redirect, retainSearchParams } from "@tanstack/react-router";
 import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
 function NotFoundComponent() {
@@ -165,6 +165,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // La langue est portée par l'URL (?hl=en). On la valide au niveau racine et
+  // on la conserve à chaque navigation interne pour que le lien cliqué en
+  // anglais reste en anglais jusqu'à la page détail (SSR + head() inclus).
+  validateSearch: (search: Record<string, unknown>) => {
+    const hl = search["hl"];
+    return hl === "en" || hl === "fr" ? { hl: hl as "en" | "fr" } : {};
+  },
+  search: { middlewares: [retainSearchParams(["hl"])] },
   beforeLoad: ({ location }) => {
     const target = resolveLegacyRedirect(location.pathname);
     if (target && target !== location.pathname) {
