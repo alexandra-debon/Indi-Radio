@@ -10,6 +10,7 @@ import { ContentLikeButton, ContentCommentsSection, ContentRatingSection } from 
 import ogChroniques from "@/assets/og-chroniques.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
+import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
@@ -48,17 +49,13 @@ export const Route = createFileRoute("/chroniques/$slug")({
       { property: "og:description", content: description },
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
+      ...ogCommonTags(),
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
+      ...ogImageTags(loaderData.cover_url || OG_FALLBACK, {
+        baseUrl: BASE_URL,
+        alt: `${loaderData.title} — ${loaderData.artist}`,
+      }),
     ];
-    if (loaderData.cover_url) {
-      meta.push({ property: "og:image", content: loaderData.cover_url });
-      meta.push({ name: "twitter:image", content: loaderData.cover_url });
-    } else {
-      meta.push({ property: "og:image", content: OG_FALLBACK });
-      meta.push({ name: "twitter:image", content: OG_FALLBACK });
-    }
     return {
       meta,
       links: [{ rel: "canonical", href: url }],
