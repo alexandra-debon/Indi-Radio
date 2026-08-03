@@ -191,14 +191,16 @@ function ClipCard({ entry }: { entry: ClipRow }) {
   return (
     <li id={`clip-${entry.id}`} className="card-brut scroll-mt-24 space-y-3 p-3">
       <div className="flex items-start justify-between gap-2">
-        <TranslatedText
-          as="h3"
-          className="text-lg font-bold leading-tight"
-          entityType="clip_entry"
-          entityKey={entry.id}
-          field="title"
-          text={entry.title}
-        />
+        <Link to="/clips/$clipId" params={{ clipId: entry.id }} className="min-w-0 hover:underline">
+          <TranslatedText
+            as="h3"
+            className="text-lg font-bold leading-tight"
+            entityType="clip_entry"
+            entityKey={entry.id}
+            field="title"
+            text={entry.title}
+          />
+        </Link>
         <div className="flex shrink-0 items-center gap-1">
           <span className="text-[10px] text-muted-foreground">
             {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: lang === "en" ? enUS : fr })}
