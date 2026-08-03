@@ -14,6 +14,7 @@ import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { useLang } from "@/lib/i18n";
 
 const BASE_URL = "https://radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
@@ -148,6 +149,8 @@ export const Route = createFileRoute("/chroniques/$slug")({
 
 function ChroniqueDetailPage() {
   const r = Route.useLoaderData();
+  const { lang } = useLang();
+  const en = lang === "en";
   const streamingLinks: Array<{ label: string; url: string | null }> = [
     { label: "Spotify", url: r.spotify_url },
     { label: "Bandcamp", url: r.bandcamp_url },
@@ -159,7 +162,7 @@ function ChroniqueDetailPage() {
   return (
     <article className="space-y-4">
       <Link to="/chroniques" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-3" /> Toutes les chroniques
+        <ArrowLeft className="size-3" /> {en ? "All reviews" : "Toutes les chroniques"}
       </Link>
 
       <header className="card-brut flex flex-col gap-4 p-4 sm:flex-row">
@@ -172,7 +175,9 @@ function ChroniqueDetailPage() {
         </div>
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <div className="text-[10px] uppercase tracking-widest text-primary">Chronique d'album</div>
+            <div className="text-[10px] uppercase tracking-widest text-primary">
+              {en ? "Album review" : "Chronique d'album"}
+            </div>
             <ShareButton
               target={{
                 title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
@@ -192,7 +197,13 @@ function ChroniqueDetailPage() {
           <div className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{r.artist}</span>
             {r.label ? <> · {r.label}</> : null}
-            {r.release_date ? <> · Sortie {new Date(r.release_date).toLocaleDateString("fr-FR")}</> : null}
+            {r.release_date ? (
+              <>
+                {" · "}
+                {en ? "Released " : "Sortie "}
+                {new Date(r.release_date).toLocaleDateString(en ? "en-GB" : "fr-FR")}
+              </>
+            ) : null}
           </div>
           {r.rating != null && (
             <div className="inline-flex items-center gap-1 rounded bg-primary/10 px-2 py-1 text-sm font-bold text-primary">
@@ -200,12 +211,25 @@ function ChroniqueDetailPage() {
               {Number(r.rating).toFixed(1)}/5
             </div>
           )}
-          {r.excerpt && <p className="text-sm text-foreground">{renderRich(r.excerpt)}</p>}
+          {r.excerpt && (
+            <TranslatedText
+              as="p"
+              className="text-sm text-foreground"
+              entityType="album_review"
+              entityKey={r.id}
+              field="excerpt"
+              text={r.excerpt}
+            >
+              {(rendered) => renderRich(rendered)}
+            </TranslatedText>
+          )}
         </div>
       </header>
 
       <section className="card-brut space-y-3 p-4">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">La chronique</h2>
+        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+          {en ? "The review" : "La chronique"}
+        </h2>
         <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
           <TranslatedText
             entityType="album_review"
@@ -221,7 +245,9 @@ function ChroniqueDetailPage() {
 
       {streamingLinks.length > 0 && (
         <section className="card-brut space-y-2 p-4">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Écouter</h2>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+            {en ? "Listen" : "Écouter"}
+          </h2>
           <ul className="flex flex-wrap gap-2">
             {streamingLinks.map((l) => (
               <li key={l.label}>
@@ -243,7 +269,9 @@ function ChroniqueDetailPage() {
 
       <section className="card-brut space-y-3 p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Réactions</h2>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+            {en ? "Reactions" : "Réactions"}
+          </h2>
           <ContentLikeButton contentType="album_review" contentId={r.id} />
         </div>
         <ContentRatingSection contentType="album_review" contentId={r.id} />
