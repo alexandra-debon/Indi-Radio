@@ -46,8 +46,7 @@ function matchAll(xml, tag) {
   return [...xml.matchAll(new RegExp(`<${tag}>\\s*([^<]+?)\\s*</${tag}>`, "g"))].map((m) => m[1]);
 }
 
-/** Résout la liste des sitemaps enfants depuis l'index. */
-async /** Contrôle des alternates hreflang déclarés dans le sitemap lui-même. */
+/** Contrôle des alternates hreflang déclarés dans le sitemap lui-même. */
 function checkSitemapAlternates(sitemapUrl, xml) {
   const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
   for (const block of blocks) {
@@ -71,7 +70,8 @@ function checkSitemapAlternates(sitemapUrl, xml) {
   }
 }
 
-function collectSitemaps() {
+/** Résout la liste des sitemaps enfants depuis l'index. */
+async function collectSitemaps() {
   if (SITEMAP_OVERRIDE) return [SITEMAP_OVERRIDE];
   const indexUrl = `${BASE}/sitemap.xml`;
   const { status, body, contentType } = await getText(indexUrl, { follow: true });
