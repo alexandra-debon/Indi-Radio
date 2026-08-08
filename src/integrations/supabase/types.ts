@@ -1771,6 +1771,7 @@ export type Database = {
       }
       award_presence_point: { Args: never; Returns: boolean }
       calculate_level: { Args: { pts: number }; Returns: number }
+      gallery_owner_public: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
