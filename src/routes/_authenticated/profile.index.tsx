@@ -458,7 +458,7 @@ function ProfilePage() {
       </section>
 
       {isAdmin && (
-        <Link to="/admin" className="card-brut block p-3 text-center text-sm font-semibold text-destructive">
+        <Link to="/admin" search={{}} className="card-brut block p-3 text-center text-sm font-semibold text-destructive">
           {t("profile.adminPanel")}
         </Link>
       )}

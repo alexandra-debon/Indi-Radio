@@ -178,7 +178,10 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
         : undefined;
     nativeSetter?.call(el, next);
     el.dispatchEvent(new Event("input", { bubbles: true }));
-    requestAnimationFrame(() => { el.setSelectionRange(pos, pos); el.focus(); });
+    // Keep focus on the field so iOS does not tear down and re-create the
+    // keyboard session (which would re-pick a layout) after an insertion.
+    el.focus();
+    requestAnimationFrame(() => { el.setSelectionRange(pos, pos); });
     setQuery(null);
     setTokenStart(null);
   };
@@ -201,7 +204,10 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
         : undefined;
     nativeSetter?.call(el, next);
     el.dispatchEvent(new Event("input", { bubbles: true }));
-    requestAnimationFrame(() => { el.setSelectionRange(pos, pos); el.focus(); });
+    // Keep focus on the field so iOS does not tear down and re-create the
+    // keyboard session (which would re-pick a layout) after an insertion.
+    el.focus();
+    requestAnimationFrame(() => { el.setSelectionRange(pos, pos); });
     setHashQuery(null);
     setHashStart(null);
   };
