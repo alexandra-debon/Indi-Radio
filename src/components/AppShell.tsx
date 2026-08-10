@@ -303,14 +303,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Drawer */}
       <div
         className={cn(
-          "fixed inset-0 z-50 transition-opacity",
+          "fixed inset-0 z-50 transition-opacity duration-300 ease-out motion-reduce:transition-none",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
       >
-        <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+        <div className="absolute inset-0 bg-black/60 transition-opacity duration-300 ease-out motion-reduce:transition-none" onClick={() => setOpen(false)} />
         <aside
           className={cn(
-            "absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col border-r border-border bg-sidebar transition-transform",
+            "absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col border-r border-border bg-sidebar transition-transform duration-300 ease-out motion-reduce:transition-none",
             open ? "translate-x-0" : "-translate-x-full",
           )}
         >
