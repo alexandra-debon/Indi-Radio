@@ -341,7 +341,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   aria-label={item.seo}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-colors",
+                    "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-[background-color,border-color,color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
                     active
                       ? "border-primary bg-primary/15 font-semibold text-foreground shadow-sm"
                       : "hover:bg-muted",
