@@ -189,7 +189,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    search={{}}
+                    search={{ tab: "users" }}
                     aria-label={t("nav.admin")}
                     className="hidden lg:inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
                   >
@@ -350,7 +350,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin"
-                search={{}}
+                search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
                 className={cn(
                   "mt-2 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
@@ -363,7 +363,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/messages"
-                search={{}}
+                search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
                 className={cn(
                   "mt-1 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",

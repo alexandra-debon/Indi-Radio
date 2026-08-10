@@ -140,7 +140,7 @@ function SeoPreviewPage() {
       </div>
 
       <div className="pt-6 text-sm">
-        <Link to="/admin" search={{}} className="text-primary underline">
+        <Link to="/admin" search={{ tab: "users" }} className="text-primary underline">
           ← Retour au panneau admin
         </Link>
       </div>
