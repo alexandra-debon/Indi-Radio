@@ -328,7 +328,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               <LanguageToggle />
             </div>
             {NAV.map((item) => {
-              const active = pathname === item.to;
+              const active = item.to === "/"
+                ? pathname === "/"
+                : pathname === item.to || pathname.startsWith(`${item.to}/`);
               const Icon = item.icon;
               return (
                 <Link
@@ -337,12 +339,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                   onClick={() => setOpen(false)}
                   title={item.seo}
                   aria-label={item.seo}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm",
-                    active ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+                    "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-colors",
+                    active
+                      ? "border-primary bg-primary/15 font-semibold text-foreground shadow-sm"
+                      : "hover:bg-muted",
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon className={cn("size-4", active && "text-primary")} />
                   {t(item.key)}
                 </Link>
               );
