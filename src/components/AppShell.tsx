@@ -328,7 +328,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               <LanguageToggle />
             </div>
             {NAV.map((item) => {
-              const active = pathname === item.to;
+              const active = item.to === "/"
+                ? pathname === "/"
+                : pathname === item.to || pathname.startsWith(`${item.to}/`);
               const Icon = item.icon;
               return (
                 <Link
@@ -337,12 +339,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                   onClick={() => setOpen(false)}
                   title={item.seo}
                   aria-label={item.seo}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm",
-                    active ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+                    "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-colors",
+                    active
+                      ? "border-primary bg-primary/15 font-semibold text-foreground shadow-sm"
+                      : "hover:bg-muted",
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon className={cn("size-4", active && "text-primary")} />
                   {t(item.key)}
                 </Link>
               );
@@ -352,9 +357,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 to="/admin"
                 search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin" ? "page" : undefined}
                 className={cn(
-                  "mt-2 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
-                  pathname === "/admin" && "bg-destructive text-destructive-foreground",
+                  "mt-2 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
                 )}
               >
                 <Shield className="size-4" /> {t("nav.admin")}
@@ -365,9 +373,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 to="/admin/messages"
                 search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/messages" ? "page" : undefined}
                 className={cn(
-                  "mt-1 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
-                  pathname === "/admin/messages" && "bg-destructive text-destructive-foreground",
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/messages"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
                 )}
               >
                 <MessageCircle className="size-4" /> Messages auditeurs
