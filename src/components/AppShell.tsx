@@ -47,20 +47,20 @@ const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
   { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
   { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Actus de la Radio musique indépendante & du Réseau social musique" },
   { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
-  { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
-  { to: "/top", key: "nav.top", icon: Star, seo: "Top podcasts & chroniques — Radio musique indépendante" },
-  { to: "/top-users", key: "nav.topUsers", icon: Trophy, seo: "Réseau social musique — Top membres" },
   { to: "/podcasts", key: "nav.podcasts", icon: Headphones, seo: "Podcasts Radio musique indépendante sans pub" },
-  { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
-  { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
-  { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
-  { to: "/playlists", key: "nav.playlists", icon: ListMusic, seo: "Playlists InDi RaDio — Spotify & Apple Music, musique indépendante" },
   { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
+  { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
+  { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
+  { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
   { to: "/artistes", key: "nav.gallery", icon: Mic, seo: "Galerie Artistes certifiés — Radio musique indé" },
+  { to: "/playlists", key: "nav.playlists", icon: ListMusic, seo: "Playlists InDi RaDio — Spotify & Apple Music, musique indépendante" },
+  { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
+  { to: "/top-users", key: "nav.topUsers", icon: Trophy, seo: "Réseau social musique — Top membres" },
+  { to: "/top", key: "nav.top", icon: Star, seo: "Top podcasts & chroniques — Radio musique indépendante" },
   { to: "/dedicaces", key: "nav.dedications", icon: Send, seo: "Dédicaces sur la Radio sans pub InDi RaDio" },
   { to: "/soumission-artistes", key: "nav.submissions", icon: Mic, seo: "Soumission artistes — Radio gratuite musique indépendante" },
-  { to: "/contact", key: "nav.contact", icon: Mail, seo: "Contacter InDi RaDio — Radio musique indépendante" },
   { to: "/about", key: "nav.about", icon: Info, seo: "À propos — Radio musique indé sans pub, Réseau social musique" },
+  { to: "/contact", key: "nav.contact", icon: Mail, seo: "Contacter InDi RaDio — Radio musique indépendante" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -189,7 +189,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    search={{}}
+                    search={{ tab: "users" }}
                     aria-label={t("nav.admin")}
                     className="hidden lg:inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/10 px-2.5 py-1.5 text-xs font-bold text-destructive hover:bg-destructive/20"
                   >
@@ -350,7 +350,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin"
-                search={{}}
+                search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
                 className={cn(
                   "mt-2 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
@@ -363,7 +363,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/messages"
-                search={{}}
+                search={{ tab: "users" }}
                 onClick={() => setOpen(false)}
                 className={cn(
                   "mt-1 flex items-center gap-3 rounded-md border border-destructive/40 px-3 py-2.5 text-sm text-destructive",
