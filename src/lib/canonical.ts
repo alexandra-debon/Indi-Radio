@@ -2,7 +2,7 @@
  * Source unique de vérité pour la canonisation des URL publiques.
  *
  * Règles appliquées partout (head() des routes, SeoLocalizer, sitemaps) :
- *  - origine unique : apex https (pas de www, pas de http)
+ *  - origine unique : https + www (le domaine nu redirige vers www)
  *  - pas de slash final (sauf la racine "/")
  *  - pas de fragment (#…)
  *  - aucun paramètre de requête conservé, SAUF :
