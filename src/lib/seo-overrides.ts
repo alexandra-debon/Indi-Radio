@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Lang } from "@/lib/i18n/dict";
 import { resolveSeo, type SeoEntry } from "@/lib/i18n/seo-meta";
 
-export const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+export const SITE_ORIGIN = "https://www.radio.indi-art-culture.com";
 
 export type SeoOverrideRow = {
   id: string;

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/reset-password")({
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://radio.indi-art-culture.com/reset-password" },
+      { rel: "canonical", href: "https://www.radio.indi-art-culture.com/reset-password" },
     ],
   }),
   component: ResetPasswordPage,

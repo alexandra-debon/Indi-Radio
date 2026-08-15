@@ -5,7 +5,7 @@ import ogSoumission from "@/assets/og-soumission-artistes.jpg";
 import { useT } from "@/lib/i18n";
 import type { DictKey } from "@/lib/i18n/dict";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_SOUMISSION = `${BASE_URL}${ogSoumission}`;
 
 export const Route = createFileRoute("/soumission-artistes")({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/soumission-artistes")({
         content:
           "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite."
       },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/soumission-artistes" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/soumission-artistes" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_SOUMISSION },
       { property: "og:image:width", content: "1200" },
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/soumission-artistes")({
       { name: "twitter:description", content: "Artistes indépendants : proposez vos titres à la diffusion sur la radio 24/7 de la musique indépendante InDi RaDio. Soumission 100% gratuite." },
       { name: "twitter:image", content: OG_SOUMISSION },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/soumission-artistes" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/soumission-artistes" }],
   }),
   component: ArtistSubmissionPage,
 });

@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ShieldAlert, ExternalLink } from "lucide-react";
 
-const SITE = "https://radio.indi-art-culture.com";
+const SITE = "https://www.radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/_authenticated/admin/seo-preview")({
   head: () => ({

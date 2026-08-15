@@ -31,7 +31,7 @@ const FEEDS = [
   "/podcast.xml",
 ];
 
-const PROD = "https://radio.indi-art-culture.com";
+const PROD = "https://www.radio.indi-art-culture.com";
 const BASE = (process.env.RSS_BASE_URL ?? process.env.CHECK_BASE_URL ?? PROD).replace(/\/$/, "");
 const SNAPSHOT = path.join(process.cwd(), ".rss-snapshots", "feeds.json");
 const UPDATE = process.argv.includes("--update");

@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const SITE = "https://radio.indi-art-culture.com";
+const SITE = "https://www.radio.indi-art-culture.com";
 
 const newSchema = z.object({ reportId: z.string().uuid() });
 

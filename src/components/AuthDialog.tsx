@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
 
 function getBrowserOrigin() {
-  return typeof window === "undefined" ? "https://radio.indi-art-culture.com" : window.location.origin;
+  return typeof window === "undefined" ? "https://www.radio.indi-art-culture.com" : window.location.origin;
 }
 
 export function AuthDialog() {

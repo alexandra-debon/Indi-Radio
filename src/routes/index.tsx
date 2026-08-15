@@ -27,7 +27,7 @@ import ogHome from "@/assets/og-home.jpg";
 
 import { useLang, useT } from "@/lib/i18n";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_HOME = `${BASE_URL}${ogHome}`;
 
 export const Route = createFileRoute("/")({
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/")({
         content:
           "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante.",
       },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_HOME },
       { property: "og:image:width", content: "1200" },
@@ -60,27 +60,27 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante." },
       { name: "twitter:image", content: OG_HOME },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/" }],
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "RadioStation",
-          "@id": "https://radio.indi-art-culture.com/#radio",
+          "@id": "https://www.radio.indi-art-culture.com/#radio",
           name: "InDi RaDio",
-          url: "https://radio.indi-art-culture.com/",
+          url: "https://www.radio.indi-art-culture.com/",
           image: {
             "@type": "ImageObject",
             url: OG_HOME,
             width: 1200,
             height: 630,
           },
-          logo: "https://radio.indi-art-culture.com/icons/apple-touch-icon.png",
+          logo: "https://www.radio.indi-art-culture.com/icons/apple-touch-icon.png",
           description:
             "InDi RaDio, radio gratuite 24/7 de la musique indépendante, sans pub, sans info. Écoute le live et rejoins le réseau social musique de la scène indépendante.",
           parentOrganization: {
-            "@id": "https://radio.indi-art-culture.com/#org",
+            "@id": "https://www.radio.indi-art-culture.com/#org",
           },
           audio: {
             "@type": "AudioObject",
@@ -99,7 +99,7 @@ export const Route = createFileRoute("/")({
             "@type": "ListenAction",
             target: {
               "@type": "EntryPoint",
-              urlTemplate: "https://radio.indi-art-culture.com/",
+              urlTemplate: "https://www.radio.indi-art-culture.com/",
               actionPlatform: [
                 "http://schema.org/DesktopWebPlatform",
                 "http://schema.org/MobileWebPlatform",

@@ -88,7 +88,7 @@ export async function signInWithAppleNative() {
   const res = await SignInWithApple.authorize({
     clientId: "com.indiartculture.radio",
     // redirectURI est ignoré en flow natif mais requis par le type.
-    redirectURI: "https://radio.indi-art-culture.com/",
+    redirectURI: "https://www.radio.indi-art-culture.com/",
     scopes: "email name",
     state: crypto.randomUUID(),
     nonce: crypto.randomUUID(),

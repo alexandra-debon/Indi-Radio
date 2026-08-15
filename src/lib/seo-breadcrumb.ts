@@ -4,8 +4,8 @@
  *
  * Example:
  *   breadcrumbLd([
- *     { name: "Accueil", url: "https://radio.indi-art-culture.com/" },
- *     { name: "Indi Rézo", url: "https://radio.indi-art-culture.com/actus" },
+ *     { name: "Accueil", url: "https://www.radio.indi-art-culture.com/" },
+ *     { name: "Indi Rézo", url: "https://www.radio.indi-art-culture.com/actus" },
  *   ])
  */
 export type Crumb = { name: string; url: string };
@@ -26,5 +26,5 @@ export function breadcrumbLd(items: Crumb[]) {
   };
 }
 
-export const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+export const SITE_ORIGIN = "https://www.radio.indi-art-culture.com";
 export const HOME_CRUMB: Crumb = { name: "Accueil", url: `${SITE_ORIGIN}/` };

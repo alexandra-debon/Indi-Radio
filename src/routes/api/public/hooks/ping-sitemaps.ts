@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 // (Bing, Yandex, Seznam, Naver…). Appelé quotidiennement par pg_cron et
 // manuellement depuis le panneau SEO. Google n'accepte plus de ping :
 // il recrawle via le <lastmod> de l'index déclaré dans robots.txt.
-const CANONICAL_HOST = "radio.indi-art-culture.com";
+const CANONICAL_HOST = "www.radio.indi-art-culture.com";
 const CANONICAL_ORIGIN = `https://${CANONICAL_HOST}`;
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 

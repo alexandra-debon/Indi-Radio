@@ -34,8 +34,8 @@ export const Route = createFileRoute("/u/$pseudo/")({
     // profile), so old-pseudo URLs and different-case URLs consolidate to a
     // single canonical after the loader's redirect resolves them.
     const pseudo = loaderData?.pseudo ?? params.pseudo;
-    const canonicalUrl = `https://radio.indi-art-culture.com/u/${encodeURIComponent(pseudo)}`;
-    const requestedUrl = `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
+    const canonicalUrl = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(pseudo)}`;
+    const requestedUrl = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
     const aliasedCasing =
       loaderData?.pseudo && loaderData.pseudo !== params.pseudo;
     const roleLabel = loaderData?.is_team_indi

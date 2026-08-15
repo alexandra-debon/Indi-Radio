@@ -2,7 +2,7 @@
  * Source unique de vérité pour la canonisation des URL publiques.
  *
  * Règles appliquées partout (head() des routes, SeoLocalizer, sitemaps) :
- *  - origine unique : apex https (pas de www, pas de http)
+ *  - origine unique : https + www (le domaine nu redirige vers www)
  *  - pas de slash final (sauf la racine "/")
  *  - pas de fragment (#…)
  *  - aucun paramètre de requête conservé, SAUF :
@@ -11,7 +11,7 @@
  *  - les paramètres de tracking (utm_*, fbclid, gclid, ref…) sont ignorés
  */
 
-export const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+export const SITE_ORIGIN = "https://www.radio.indi-art-culture.com";
 
 /** Chemin normalisé : sans query, sans hash, sans slash final. */
 export function canonicalPath(input: string): string {

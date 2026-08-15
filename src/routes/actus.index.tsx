@@ -34,7 +34,7 @@ import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { QuotedTitlesHint } from "@/components/i18n/QuotedTitlesHint";
 import { EmojiPickerButton } from "@/components/text/EmojiPickerButton";
 
-const OG_ACTUS = `https://radio.indi-art-culture.com${ogActus}`;
+const OG_ACTUS = `https://www.radio.indi-art-culture.com${ogActus}`;
 
 export const Route = createFileRoute("/actus/")({
   head: async ({ match }) => ({
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/actus/")({
       { property: "og:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
       { name: "twitter:title", content: "Indi Rézo — Actu de la radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/actus" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/actus" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_ACTUS },
       { property: "og:image:width", content: "1200" },
@@ -54,19 +54,19 @@ export const Route = createFileRoute("/actus/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_ACTUS },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/actus" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/actus" }],
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Blog",
-          "@id": "https://radio.indi-art-culture.com/actus#blog",
+          "@id": "https://www.radio.indi-art-culture.com/actus#blog",
           name: "Indi Rézo",
           description: "Fil d'actualités des artistes indépendants et l'actu InDi Radio, orchestré par la rédaction d'Indi Radio.",
-          url: "https://radio.indi-art-culture.com/actus",
+          url: "https://www.radio.indi-art-culture.com/actus",
           inLanguage: "fr-FR",
-          publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+          publisher: { "@id": "https://www.radio.indi-art-culture.com/#org" },
         }),
       },
       breadcrumbLd([

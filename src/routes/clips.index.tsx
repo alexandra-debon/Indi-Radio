@@ -16,7 +16,7 @@ import ogClips from "@/assets/og-clips.jpg";
 import { useT, useLang } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_CLIPS = `${BASE_URL}${ogClips}`;
 
 export const Route = createFileRoute("/clips/")({

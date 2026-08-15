@@ -20,7 +20,7 @@ function ArchiveHeading() {
   return <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.shows.old")}</h2>;
 }
 
-const OG_EMISSIONS = `https://radio.indi-art-culture.com${ogEmissions}`;
+const OG_EMISSIONS = `https://www.radio.indi-art-culture.com${ogEmissions}`;
 
 export const Route = createFileRoute("/emissions/")({
   head: async ({ match }) => ({
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/emissions/")({
       { property: "og:description", content: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay sur la radio 24/7 de la musique indépendante, sans pub." },
       { name: "twitter:title", content: "Émissions & Animateurs — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay sur la radio 24/7 de la musique indépendante, sans pub." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/emissions" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/emissions" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_EMISSIONS },
       { property: "og:image:width", content: "1200" },
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/emissions/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_EMISSIONS },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/emissions" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/emissions" }],
     scripts: [
       breadcrumbLd([
         HOME_CRUMB,

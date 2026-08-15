@@ -11,7 +11,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 
-const OG_CHRONIQUES = `https://radio.indi-art-culture.com${ogChroniques}`;
+const OG_CHRONIQUES = `https://www.radio.indi-art-culture.com${ogChroniques}`;
 
 export const Route = createFileRoute("/chroniques/")({
   head: async ({ match }) => ({
@@ -24,14 +24,14 @@ export const Route = createFileRoute("/chroniques/")({
       { name: "twitter:title", content: "Chroniques — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Chroniques d'albums de la scène indépendante française : nouvelles sorties et artistes émergents sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/chroniques" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/chroniques" },
       { property: "og:image", content: OG_CHRONIQUES },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_CHRONIQUES },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chroniques" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/chroniques" }],
     scripts: [
       breadcrumbLd([
         HOME_CRUMB,

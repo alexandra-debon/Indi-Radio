@@ -5,7 +5,7 @@
 //
 // Usage:
 //   node scripts/check-seo-tagline.mjs              # localhost:8080
-//   BASE_URL=https://radio.indi-art-culture.com node scripts/check-seo-tagline.mjs
+//   BASE_URL=https://www.radio.indi-art-culture.com node scripts/check-seo-tagline.mjs
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:8080";
 const FR_TAGLINE = "24/7 de la musique indépendante";

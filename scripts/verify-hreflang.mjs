@@ -10,7 +10,7 @@
  *
  * Usage:
  *   BASE_URL=http://localhost:8080 node scripts/verify-hreflang.mjs
- *   BASE_URL=https://radio.indi-art-culture.com node scripts/verify-hreflang.mjs
+ *   BASE_URL=https://www.radio.indi-art-culture.com node scripts/verify-hreflang.mjs
  */
 import { chromium } from "playwright";
 

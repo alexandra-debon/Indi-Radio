@@ -16,10 +16,10 @@ export const Route = createFileRoute("/chart")({
       { property: "og:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
       { name: "twitter:title", content: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/chart" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/chart" },
       { property: "og:type", content: "website" },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/chart" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/chart" }],
   }),
   component: ChartPage,
 });

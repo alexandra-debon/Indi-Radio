@@ -44,8 +44,8 @@ export const template = {
     recipientPseudo: "toi",
     actorPseudo: "jeanne_artiste",
     contextLabel: "une publication du mur",
-    url: "https://radio.indi-art-culture.com/",
-    prefsUrl: "https://radio.indi-art-culture.com/notifications",
+    url: "https://www.radio.indi-art-culture.com/",
+    prefsUrl: "https://www.radio.indi-art-culture.com/notifications",
   },
 } satisfies TemplateEntry;
 

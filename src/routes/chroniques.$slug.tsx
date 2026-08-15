@@ -16,7 +16,7 @@ import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useLang } from "@/lib/i18n";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogChroniques}`;
 
 export const Route = createFileRoute("/chroniques/$slug")({

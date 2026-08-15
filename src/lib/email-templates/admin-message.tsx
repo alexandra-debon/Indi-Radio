@@ -32,7 +32,7 @@ export const template = {
   previewData: {
     actorPseudo: "jeanne",
     preview: "Bonjour, j'aurais une question…",
-    url: "https://radio.indi-art-culture.com/admin/messages",
+    url: "https://www.radio.indi-art-culture.com/admin/messages",
   },
 } satisfies TemplateEntry;
 

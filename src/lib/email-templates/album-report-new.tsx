@@ -57,8 +57,8 @@ export const template = {
     ownerPseudo: "jeanne_artiste",
     reporterPseudo: "auditeur42",
     reason: "Contenu inapproprié dans la photo 3.",
-    albumUrl: "https://radio.indi-art-culture.com/u/jeanne_artiste/albums/abc",
-    adminUrl: "https://radio.indi-art-culture.com/admin",
+    albumUrl: "https://www.radio.indi-art-culture.com/u/jeanne_artiste/albums/abc",
+    adminUrl: "https://www.radio.indi-art-culture.com/admin",
   },
 } satisfies TemplateEntry;
 

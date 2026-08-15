@@ -14,7 +14,7 @@ import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { trackEvent } from "@/lib/plausible";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogEmissions}`;
 
 export const Route = createFileRoute("/emissions/$showId")({

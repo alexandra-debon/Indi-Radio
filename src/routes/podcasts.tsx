@@ -13,8 +13,8 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 
-const OG_PODCASTS = `https://radio.indi-art-culture.com${ogPodcasts}`;
-const SITE = "https://radio.indi-art-culture.com";
+const OG_PODCASTS = `https://www.radio.indi-art-culture.com${ogPodcasts}`;
+const SITE = "https://www.radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/podcasts")({
   head: async ({ match }) => ({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/podcasts")({
       { name: "keywords", content: "radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
       { property: "og:title", content: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
       { property: "og:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/podcasts" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/podcasts" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_PODCASTS },
       { property: "og:image:width", content: "1200" },
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/podcasts")({
       { name: "twitter:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "twitter:image", content: OG_PODCASTS },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/podcasts" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/podcasts" }],
     scripts: [
       breadcrumbLd([
         HOME_CRUMB,

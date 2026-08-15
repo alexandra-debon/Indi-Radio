@@ -10,7 +10,7 @@ import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogPodcasts}`;
 
 export const Route = createFileRoute("/episodes/$episodeId")({
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/episodes/$episodeId")({
                   },
                 }
               : {}),
-            publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+            publisher: { "@id": "https://www.radio.indi-art-culture.com/#org" },
           }),
         },
         breadcrumbLd([
