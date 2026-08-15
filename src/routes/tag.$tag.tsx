@@ -64,10 +64,10 @@ export const Route = createFileRoute("/tag/$tag")({
         { name: "twitter:description", content: `Publications taggées #${t}.` },
         { name: "twitter:card", content: "summary_large_image" },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: `https://radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
+        { property: "og:url", content: `https://www.radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
       ],
       links: [
-        { rel: "canonical", href: `https://radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
+        { rel: "canonical", href: `https://www.radio.indi-art-culture.com/tag/${encodeURIComponent(t)}` },
       ],
     };
   },

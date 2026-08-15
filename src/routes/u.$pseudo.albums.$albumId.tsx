@@ -15,10 +15,10 @@ export const Route = createFileRoute("/u/$pseudo/albums/$albumId")({
       { name: "twitter:title", content: `Album de @${params.pseudo}` },
       { name: "twitter:description", content: `Galerie photo sur InDi RaDio.` },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
+      { property: "og:url", content: `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
     ],
     links: [
-      { rel: "canonical", href: `https://radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
+      { rel: "canonical", href: `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}/albums/${params.albumId}` },
     ],
   }),
   component: AlbumGallery,

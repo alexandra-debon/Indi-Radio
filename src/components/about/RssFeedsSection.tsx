@@ -85,7 +85,7 @@ export function RssFeedsSection() {
                 className="text-xs text-muted-foreground"
               />
               <code className="break-all text-[11px] text-muted-foreground/80">
-                https://radio.indi-art-culture.com{f.href}
+                https://www.radio.indi-art-culture.com{f.href}
               </code>
             </li>
           ))}

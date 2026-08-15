@@ -60,7 +60,7 @@ export const fetchLinkPreview = createServerFn({ method: "GET" })
       const res = await fetch(rawUrl, {
         signal: controller.signal,
         headers: {
-          "User-Agent": "IndiRadioBot/1.0 (+https://radio.indi-art-culture.com)",
+          "User-Agent": "IndiRadioBot/1.0 (+https://www.radio.indi-art-culture.com)",
           Accept: "text/html,application/xhtml+xml",
         },
         redirect: "follow",

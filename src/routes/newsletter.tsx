@@ -29,10 +29,10 @@ export const Route = createFileRoute("/newsletter")({
       { property: "og:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
       { name: "twitter:title", content: "Newsletter — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Inscris-toi à la newsletter InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et reste connecté à la scène indé." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/newsletter" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/newsletter" },
       { property: "og:type", content: "website" },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/newsletter" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/newsletter" }],
   }),
   component: NewsletterPage,
 });

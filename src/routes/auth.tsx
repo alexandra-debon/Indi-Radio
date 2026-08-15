@@ -13,7 +13,7 @@ export const Route = createFileRoute("/auth")({
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://radio.indi-art-culture.com/auth" },
+      { rel: "canonical", href: "https://www.radio.indi-art-culture.com/auth" },
     ],
   }),
   component: AuthRedirect,

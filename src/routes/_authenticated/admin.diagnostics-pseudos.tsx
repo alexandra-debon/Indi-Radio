@@ -34,7 +34,7 @@ type AliasCheck = {
 };
 
 const ORIGIN =
-  typeof window !== "undefined" ? window.location.origin : "https://radio.indi-art-culture.com";
+  typeof window !== "undefined" ? window.location.origin : "https://www.radio.indi-art-culture.com";
 
 async function checkProfile(pseudo: string): Promise<ProfileCheck> {
   try {

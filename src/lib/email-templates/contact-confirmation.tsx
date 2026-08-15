@@ -35,7 +35,7 @@ const Email = ({ name, subject, message }: Props) => (
         </Section>
         <Text style={p}>
           En attendant, retrouvez-nous en direct sur{" "}
-          <a href="https://radio.indi-art-culture.com" style={link}>
+          <a href="https://www.radio.indi-art-culture.com" style={link}>
             radio.indi-art-culture.com
           </a>
           .

@@ -48,13 +48,13 @@ export const Route = createFileRoute("/coups-de-coeur")({
       { name: "twitter:description", content: "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte sur la radio 24/7 de la musique indépendante InDi RaDio." },
       {
         property: "og:url",
-        content: "https://radio.indi-art-culture.com/coups-de-coeur",
+        content: "https://www.radio.indi-art-culture.com/coups-de-coeur",
       },
     ]),
     links: [
       {
         rel: "canonical",
-        href: "https://radio.indi-art-culture.com/coups-de-coeur",
+        href: "https://www.radio.indi-art-culture.com/coups-de-coeur",
       },
     ],
     scripts: [
@@ -66,11 +66,11 @@ export const Route = createFileRoute("/coups-de-coeur")({
           name: "Coups de Cœur InDi RaDiO",
           description:
             "Nos coups de cœur InDi RaDiO : artistes indépendants découverts, albums marquants et histoires de découverte.",
-          url: "https://radio.indi-art-culture.com/coups-de-coeur",
+          url: "https://www.radio.indi-art-culture.com/coups-de-coeur",
           inLanguage: "fr-FR",
           isAccessibleForFree: true,
           about: { "@type": "Thing", name: "Musique indépendante" },
-          publisher: { "@id": "https://radio.indi-art-culture.com/#org" },
+          publisher: { "@id": "https://www.radio.indi-art-culture.com/#org" },
         }),
       },
     ],

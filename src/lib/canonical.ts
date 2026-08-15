@@ -11,7 +11,7 @@
  *  - les paramètres de tracking (utm_*, fbclid, gclid, ref…) sont ignorés
  */
 
-export const SITE_ORIGIN = "https://radio.indi-art-culture.com";
+export const SITE_ORIGIN = "https://www.radio.indi-art-culture.com";
 
 /** Chemin normalisé : sans query, sans hash, sans slash final. */
 export function canonicalPath(input: string): string {

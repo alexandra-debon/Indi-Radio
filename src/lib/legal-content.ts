@@ -7,7 +7,7 @@ export type LegalSection = { title: string; html: string };
 export type LegalPage = { heading: string; intro: LegalSection; sections: LegalSection[] };
 
 const MAIL = '<a class="font-semibold underline" href="mailto:radio@indi-art-culture.com">radio@indi-art-culture.com</a>';
-const SITE = '<a class="font-semibold underline" href="https://radio.indi-art-culture.com" target="_blank" rel="noopener noreferrer">https://radio.indi-art-culture.com</a>';
+const SITE = '<a class="font-semibold underline" href="https://www.radio.indi-art-culture.com" target="_blank" rel="noopener noreferrer">https://www.radio.indi-art-culture.com</a>';
 const PARENT = "InDi ArT CulTuRe";
 
 export const PRIVACY: Record<"fr" | "en", LegalPage> = {

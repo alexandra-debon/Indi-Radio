@@ -14,7 +14,7 @@
  *
  * We therefore emit a tiny shell `index.html` whose only job is to bootstrap
  * the native shell — the actual UI is loaded from `server.url`
- * (https://radio.indi-art-culture.com) configured in `capacitor.config.ts`.
+ * (https://www.radio.indi-art-culture.com) configured in `capacitor.config.ts`.
  * If the device is offline at cold-start, this shell also shows a minimal
  * branded fallback instead of a blank white screen.
  */
@@ -26,7 +26,7 @@ if (!existsSync(outDir)) {
   mkdirSync(outDir, { recursive: true });
 }
 
-const LIVE_URL = "https://radio.indi-art-culture.com/";
+const LIVE_URL = "https://www.radio.indi-art-culture.com/";
 
 const html = `<!doctype html>
 <html lang="fr">

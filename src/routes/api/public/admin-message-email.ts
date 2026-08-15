@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const SITE = "https://radio.indi-art-culture.com";
+const SITE = "https://www.radio.indi-art-culture.com";
 
 export const Route = createFileRoute("/api/public/admin-message-email")({
   server: {

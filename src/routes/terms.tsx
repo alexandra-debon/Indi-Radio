@@ -19,12 +19,12 @@ export const Route = createFileRoute("/terms")({
         content:
           "Conditions générales d'utilisation d'InDi RaDio, la radio 24/7 de la musique indépendante et le réseau social musique : compte, contenus, modération et tolérance zéro."
       },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/terms" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/terms" },
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Conditions d'utilisation — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Conditions générales d'utilisation d'InDi RaDio, la radio 24/7 de la musique indépendante et le réseau social musique : compte, contenus, modération et tolérance zéro." },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/terms" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/terms" }],
   }),
   component: TermsPage,
 });

@@ -19,10 +19,10 @@ export const Route = createFileRoute("/dedicaces")({
       { property: "og:description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub." },
       { name: "twitter:title", content: "Dédicaces — Radio 24/7 de la musique indépendante InDi RaDio" },
       { name: "twitter:description", content: "Envoie ta dédicace à l'antenne d'InDi RaDio, la radio 24/7 de la musique indépendante, sans pub." },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/dedicaces" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/dedicaces" },
       { property: "og:type", content: "website" },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/dedicaces" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/dedicaces" }],
   }),
   component: DedicacesPage,
 });

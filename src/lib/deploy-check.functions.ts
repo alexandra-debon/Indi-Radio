@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const TIMEOUT_MS = 15_000;
 
 type Check = {

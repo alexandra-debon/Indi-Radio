@@ -5,7 +5,7 @@ import { IndiLinksBar } from "@/components/about/IndiLinksBar";
 import ogContact from "@/assets/og-contact.jpg";
 import { useT } from "@/lib/i18n";
 
-const BASE_URL = "https://radio.indi-art-culture.com";
+const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_CONTACT = `${BASE_URL}${ogContact}`;
 
 export const Route = createFileRoute("/contact")({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/contact")({
         content:
           "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire."
       },
-      { property: "og:url", content: "https://radio.indi-art-culture.com/contact" },
+      { property: "og:url", content: "https://www.radio.indi-art-culture.com/contact" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_CONTACT },
       { property: "og:image:width", content: "1200" },
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:description", content: "Contacte l'équipe InDi RaDio, la radio 24/7 de la musique indépendante, sans pub, et InDi ArT CulTuRe. Email, téléphone et formulaire." },
       { name: "twitter:image", content: OG_CONTACT },
     ]),
-    links: [{ rel: "canonical", href: "https://radio.indi-art-culture.com/contact" }],
+    links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/contact" }],
   }),
   component: ContactPage,
 });

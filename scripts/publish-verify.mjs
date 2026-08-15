@@ -10,7 +10,7 @@
 import { spawn } from "node:child_process";
 
 const waitSec = Number(process.argv[2] ?? process.env.PUBLISH_WAIT_SEC ?? 90);
-const base = process.env.CHECK_BASE_URL ?? "https://radio.indi-art-culture.com";
+const base = process.env.CHECK_BASE_URL ?? "https://www.radio.indi-art-culture.com";
 
 console.log(`[publish:verify] waiting ${waitSec}s for deploy to propagate on ${base}…`);
 await new Promise((r) => setTimeout(r, waitSec * 1000));

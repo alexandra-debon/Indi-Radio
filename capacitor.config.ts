@@ -24,7 +24,7 @@ const config: CapacitorConfig = {
   // qui exige un `index.html` dans `webDir`.
   webDir: "dist/client",
   server: {
-    url: "https://radio.indi-art-culture.com",
+    url: "https://www.radio.indi-art-culture.com",
     cleartext: false,
     androidScheme: "https",
     iosScheme: "https",

@@ -5,7 +5,7 @@
  * Usage:
  *   node scripts/post-publish-check.mjs [baseUrl]
  *
- * Defaults to https://radio.indi-art-culture.com.
+ * Defaults to https://www.radio.indi-art-culture.com.
  * Checks:
  *   - HTTP 200 on key endpoints
  *   - SSR rendered HTML contains expected markers (title, root markup)
@@ -14,7 +14,7 @@
  * Exits with code 1 if any check fails — safe to plug into CI after publish.
  */
 
-const DEFAULT_BASE = "https://radio.indi-art-culture.com";
+const DEFAULT_BASE = "https://www.radio.indi-art-culture.com";
 const base = (process.argv[2] || process.env.CHECK_BASE_URL || DEFAULT_BASE).replace(/\/+$/, "");
 
 const TIMEOUT_MS = 15_000;
