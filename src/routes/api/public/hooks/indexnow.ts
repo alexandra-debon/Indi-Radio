@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 // Canonical public host used across the app (see robots.txt / sitemaps).
-const CANONICAL_HOST = "radio.indi-art-culture.com";
+const CANONICAL_HOST = "www.radio.indi-art-culture.com";
 const CANONICAL_ORIGIN = `https://${CANONICAL_HOST}`;
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 
