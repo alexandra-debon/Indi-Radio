@@ -9,8 +9,8 @@ import { useLang } from "@/lib/i18n";
  * des pages détail et les aperçus de partage. Quand la langue vient du
  * stockage local ou du profil (donc sans `hl` dans l'URL), on l'écrit dans
  * l'URL pour que tout lien interne cliqué la transporte jusqu'à la page
- * détail (le middleware `retainSearchParams(["hl"])` de la racine s'occupe
- * ensuite de la conserver à chaque navigation).
+ * détail, et à le retirer dès que l'interface repasse en français.
+
  */
 export function LangUrlSync() {
   const { lang } = useLang();
