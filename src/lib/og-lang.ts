@@ -9,14 +9,31 @@ export function hlFromSearch(search: unknown): OgLang {
   return hl === "en" ? "en" : "fr";
 }
 
-/** Ajoute ?hl=en à une URL partagée quand l'interface est en anglais. */
+const TRACKING_PARAMS = /^(utm_|fbclid$|gclid$|mc_cid$|mc_eid$|ref$)/i;
+
+/**
+ * Aligne une URL partagée sur la langue réellement active.
+ * - retire tout `hl=` déjà présent (sinon un ancien `hl=en` reste collé et
+ *   tous les partages suivants pointent vers la version anglaise)
+ * - ajoute `hl=en` uniquement en anglais ; en français l'URL reste nue
+ * - nettoie les paramètres de tracking parasites
+ */
 export function withHl(url: string, lang: OgLang): string {
-  if (lang !== "en") return url;
-  if (/[?&]hl=/.test(url)) return url;
-  const [base, hash = ""] = url.split("#");
-  const sep = base.includes("?") ? "&" : "?";
-  return `${base}${sep}hl=en${hash ? `#${hash}` : ""}`;
+  try {
+    const base =
+      typeof window !== "undefined" ? window.location.origin : "https://www.radio.indi-art-culture.com";
+    const u = new URL(url, base);
+    u.searchParams.delete("hl");
+    for (const key of [...u.searchParams.keys()]) {
+      if (TRACKING_PARAMS.test(key)) u.searchParams.delete(key);
+    }
+    if (lang === "en") u.searchParams.set("hl", "en");
+    return u.toString();
+  } catch {
+    return url;
+  }
 }
+
 
 /** og:site_name + locale active et alternative. */
 export function ogLocaleTags(lang: OgLang = "fr"): MetaTag[] {
