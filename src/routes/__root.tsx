@@ -166,14 +166,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  // La langue est portée par l'URL (?hl=en). On la valide au niveau racine et
-  // on la conserve à chaque navigation interne pour que le lien cliqué en
-  // anglais reste en anglais jusqu'à la page détail (SSR + head() inclus).
+  // La langue est portée par l'URL (?hl=en). On la valide au niveau racine ;
+  // sa propagation d'une page à l'autre est assurée par <LangUrlSync/>, qui
+  // écrit hl=en en anglais et le retire en français. (Pas de rétention
+  // automatique : elle empêchait la suppression du paramètre au retour en FR.)
   validateSearch: (search: Record<string, unknown>): { hl?: "en" | "fr" } => {
     const hl = search["hl"];
     return hl === "en" || hl === "fr" ? { hl: hl as "en" | "fr" } : {};
   },
-  search: { middlewares: [retainSearchParams(["hl"])] },
+
   beforeLoad: ({ location }) => {
     const target = resolveLegacyRedirect(location.pathname);
     if (target && target !== location.pathname) {
