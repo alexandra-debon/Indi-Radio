@@ -31,7 +31,7 @@ import { LangUrlSync } from "@/components/i18n/LangUrlSync";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
-import { redirect, retainSearchParams } from "@tanstack/react-router";
+import { redirect } from "@tanstack/react-router";
 import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
 function NotFoundComponent() {
