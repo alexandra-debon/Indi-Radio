@@ -61,7 +61,7 @@ export async function localizedStaticMeta(
   }
   description = clampDescription(description);
 
-  const out = meta.map((m) => {
+  const out: MetaEntry[] = meta.map((m): MetaEntry => {
     if (typeof m["title"] === "string") return { title };
     if (m["name"] === "description") return { ...m, content: description };
     if (m["property"] === "og:title" || m["name"] === "twitter:title")
