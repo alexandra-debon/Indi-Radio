@@ -111,7 +111,7 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
         ...contentMeta(0.7, normalizeDate(r.updated_at)),
       });
     }
-    // News posts (Indi Rézo)
+    // Articles du Blog InDi ArT CulTuRe
     const { data: news } = await sb
       .from("news_posts")
       .select("id, updated_at")

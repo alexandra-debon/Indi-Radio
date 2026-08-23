@@ -38,7 +38,7 @@ type Target = { path: string; label: string; group: string };
 const PAGE_LABELS: Record<string, string> = {
   "/": "Accueil / En direct",
   "/about": "À propos",
-  "/actus": "Actus · Indi Rézo",
+  "/actus": "Blog InDi ArT CulTuRe",
   "/podcasts": "Podcasts",
   "/emissions": "Émissions",
   "/chroniques": "Chroniques",

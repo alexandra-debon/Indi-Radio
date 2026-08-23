@@ -92,7 +92,7 @@ function NotFoundComponent() {
           aria-label="Liens utiles"
           className="mt-8 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3"
         >
-          <Link to="/actus" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Indi Rézo</Link>
+          <Link to="/actus" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Blog InDi ArT CulTuRe</Link>
           <Link to="/podcasts" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Podcasts</Link>
           <Link to="/emissions" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Émissions</Link>
           <Link to="/chroniques" className="rounded-md border border-input px-3 py-2 hover:bg-accent">Chroniques</Link>

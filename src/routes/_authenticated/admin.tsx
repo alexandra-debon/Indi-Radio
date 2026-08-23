@@ -103,7 +103,7 @@ function AdminPage() {
   const sections = [
     { key: "users" as const, label: "Profils & rôles", icon: Users, desc: "Promouvoir, certifier, chercher" },
     { key: "requests" as const, label: "Dédicaces", icon: Send, desc: "Modérer les demandes auditeurs" },
-    { key: "news" as const, label: "Publier une actu", icon: Newspaper, desc: "Poster sur Indi Rézo" },
+    { key: "news" as const, label: "Publier une actu", icon: Newspaper, desc: "Poster sur le Blog InDi ArT CulTuRe" },
     { key: "podcasts" as const, label: "Podcasts", icon: Headphones, desc: "Podcasts & épisodes" },
     { key: "shows" as const, label: "Émissions", icon: Mic2, desc: "Émissions, chroniques, animateurs" },
     { key: "chroniques" as const, label: "Chroniques albums", icon: Disc3, desc: "Chroniques d'albums indés" },
@@ -1429,7 +1429,7 @@ function NewsPublisher() {
       <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
       <Input placeholder="Image URL (optionnel)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
       <RichTextArea rows={4} placeholder="Contenu…" value={content} onChange={setContent} />
-      <Button onClick={() => create.mutate()} disabled={!title || !content}>Publier sur Indi Rézo</Button>
+      <Button onClick={() => create.mutate()} disabled={!title || !content}>Publier sur le Blog</Button>
     </div>
   );
 }

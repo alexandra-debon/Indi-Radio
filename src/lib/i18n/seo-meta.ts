@@ -32,8 +32,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     },
   },
   "/actus": {
-    fr: { title: "Actus · Indi Rézo — Radio 24/7 de la musique indépendante InDi RaDio", description: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
-    en: { title: "News · Indi Rézo — 24/7 Independent Music Radio InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network on 24/7 independent music radio." },
+    fr: { title: "Blog InDi ArT CulTuRe — Radio 24/7 de la musique indépendante InDi RaDio", description: "Toute l'actu de la scène indépendante et du réseau social musique InDi ArT CulTuRe sur la radio 24/7 de la musique indépendante." },
+    en: { title: "Blog InDi ArT CulTuRe — 24/7 Independent Music Radio InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network on 24/7 independent music radio." },
   },
   "/podcasts": {
     fr: { title: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
@@ -120,8 +120,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
  */
 export const PREFIX_SEO: Array<{ prefix: string; bundle: SeoBundle }> = [
   { prefix: "/actus/", bundle: {
-    fr: { title: "Actualité — InDi RaDio", description: "Article d'actualité indépendant publié sur InDi RaDio." },
-    en: { title: "News article — InDi RaDio", description: "Independent news article published on InDi RaDio." },
+    fr: { title: "Article — Blog InDi ArT CulTuRe", description: "Article indépendant publié sur le Blog InDi ArT CulTuRe d'InDi RaDio." },
+    en: { title: "Article — Blog InDi ArT CulTuRe", description: "Independent article published on the InDi ArT CulTuRe Blog by InDi RaDio." },
   } },
   { prefix: "/emissions/", bundle: {
     fr: { title: "Émission — InDi RaDio", description: "Découvre cette émission d'InDi RaDio et ses épisodes." },

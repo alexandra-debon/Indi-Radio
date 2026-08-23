@@ -830,6 +830,8 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          embed_height: number | null
+          embed_url: string | null
           id: string
           image_captions: string[]
           image_url: string | null
@@ -842,6 +844,8 @@ export type Database = {
           author_id: string
           content: string
           created_at?: string
+          embed_height?: number | null
+          embed_url?: string | null
           id?: string
           image_captions?: string[]
           image_url?: string | null
@@ -854,6 +858,8 @@ export type Database = {
           author_id?: string
           content?: string
           created_at?: string
+          embed_height?: number | null
+          embed_url?: string | null
           id?: string
           image_captions?: string[]
           image_url?: string | null
