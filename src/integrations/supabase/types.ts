@@ -193,6 +193,45 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_author_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          status?: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_authors: {
         Row: {
           created_at: string
@@ -773,7 +812,11 @@ export type Database = {
           id: string
           image_captions: string[]
           image_urls: string[]
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_note: string | null
           news_post_id: string
+          status: string
         }
         Insert: {
           author_id: string
@@ -782,7 +825,11 @@ export type Database = {
           id?: string
           image_captions?: string[]
           image_urls?: string[]
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_note?: string | null
           news_post_id: string
+          status?: string
         }
         Update: {
           author_id?: string
@@ -791,7 +838,11 @@ export type Database = {
           id?: string
           image_captions?: string[]
           image_urls?: string[]
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_note?: string | null
           news_post_id?: string
+          status?: string
         }
         Relationships: [
           {
@@ -846,6 +897,62 @@ export type Database = {
           },
         ]
       }
+      news_post_revisions: {
+        Row: {
+          content: string
+          created_at: string
+          edited_by: string | null
+          embed_height: number | null
+          embed_url: string | null
+          id: string
+          image_captions: string[]
+          image_url: string | null
+          image_urls: string[]
+          news_post_id: string
+          scheduled_at: string | null
+          social_links: Json
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          edited_by?: string | null
+          embed_height?: number | null
+          embed_url?: string | null
+          id?: string
+          image_captions?: string[]
+          image_url?: string | null
+          image_urls?: string[]
+          news_post_id: string
+          scheduled_at?: string | null
+          social_links?: Json
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          edited_by?: string | null
+          embed_height?: number | null
+          embed_url?: string | null
+          id?: string
+          image_captions?: string[]
+          image_url?: string | null
+          image_urls?: string[]
+          news_post_id?: string
+          scheduled_at?: string | null
+          social_links?: Json
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_post_revisions_news_post_id_fkey"
+            columns: ["news_post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_posts: {
         Row: {
           author_id: string
@@ -857,6 +964,7 @@ export type Database = {
           image_captions: string[]
           image_url: string | null
           image_urls: string[]
+          scheduled_at: string | null
           social_links: Json
           title: string
           updated_at: string
@@ -871,6 +979,7 @@ export type Database = {
           image_captions?: string[]
           image_url?: string | null
           image_urls?: string[]
+          scheduled_at?: string | null
           social_links?: Json
           title: string
           updated_at?: string
@@ -885,6 +994,7 @@ export type Database = {
           image_captions?: string[]
           image_url?: string | null
           image_urls?: string[]
+          scheduled_at?: string | null
           social_links?: Json
           title?: string
           updated_at?: string
