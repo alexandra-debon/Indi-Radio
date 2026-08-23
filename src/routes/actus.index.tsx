@@ -20,6 +20,8 @@ import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { ResponsiveEmbedPreview } from "@/components/media/ResponsiveEmbedPreview";
 import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
 import { NewsBulkImportExport } from "@/components/admin/NewsBulkImportExport";
+import { BlogAuthorsManager } from "@/components/admin/BlogAuthorsManager";
+import { useCanPublishNews } from "@/hooks/use-blog-authors";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
@@ -98,7 +100,7 @@ interface NewsPost {
 }
 
 function ActusPage() {
-  const { session, profile, isAdmin, isAnimateur, openAuth } = useAuth();
+  const { session, profile, isAdmin, openAuth } = useAuth();
   const t = useT();
   const qc = useQueryClient();
   useHashHighlight();
@@ -121,7 +123,7 @@ function ActusPage() {
     },
   });
 
-  const canPublish = isAdmin || isAnimateur;
+  const { canPublish } = useCanPublishNews();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -171,6 +173,8 @@ function ActusPage() {
     <div className="space-y-4">
       <h1 className="section-title">{t("page.actus.title")}</h1>
       <p className="text-sm text-muted-foreground">{t("page.actus.subtitle")}</p>
+
+      <BlogAuthorsManager />
 
       {canPublish && (
         <div className="card-brut p-3 border-2 border-primary ring-1 ring-primary/30">
