@@ -573,10 +573,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
               <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
             </div>
-            <NewsRevisionsPanel
-              postId={post.id}
-              onRestored={() => { setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); }}
-            />
+            <NewsRevisionsPanel post={{ id: post.id, title: post.title, content: post.content }} />
           </div>
         ) : (
           <>
