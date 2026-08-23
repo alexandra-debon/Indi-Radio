@@ -17,6 +17,7 @@ import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { EmbedFrame } from "@/components/media/EmbedFrame";
+import { ResponsiveEmbedPreview } from "@/components/media/ResponsiveEmbedPreview";
 import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
 import { NewsBulkImportExport } from "@/components/admin/NewsBulkImportExport";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
@@ -248,8 +249,8 @@ function ActusPage() {
           )}
           {embedPreview.embed && (
             <div className="mt-1.5">
-              <div className="mb-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu de l'intégration</div>
-              <EmbedFrame url={embedPreview.embed.url} height={embedPreview.embed.height} title="Aperçu du contenu intégré" />
+              <div className="mb-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu de l'intégration — mobile & desktop</div>
+              <ResponsiveEmbedPreview url={embedPreview.embed.url} height={embedPreview.embed.height} />
             </div>
           )}
           <div className="mt-2">
@@ -493,7 +494,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <p className="text-[11px] font-semibold text-destructive">{editEmbedParsed.error}</p>
             )}
             {editEmbedParsed.embed && (
-              <EmbedFrame url={editEmbedParsed.embed.url} height={editEmbedParsed.embed.height} title="Aperçu du contenu intégré" />
+              <ResponsiveEmbedPreview url={editEmbedParsed.embed.url} height={editEmbedParsed.embed.height} />
             )}
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">

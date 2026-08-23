@@ -13,7 +13,7 @@ import {
   type ExportablePost,
 } from "@/lib/news-bulk";
 import { sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
-import { EmbedFrame } from "@/components/media/EmbedFrame";
+import { ResponsiveEmbedPreview } from "@/components/media/ResponsiveEmbedPreview";
 
 /**
  * Import / export en lot des articles du blog. N'interfère pas avec le
@@ -157,7 +157,7 @@ export function NewsBulkImportExport({
                     <p className="line-clamp-3 whitespace-pre-wrap text-[11px] text-muted-foreground">{a.content}</p>
                   )}
                   {a.embed_url && (
-                    <EmbedFrame url={a.embed_url} height={a.embed_height} title={`Aperçu — ${a.title}`} />
+                    <ResponsiveEmbedPreview url={a.embed_url} height={a.embed_height} title={`Aperçu — ${a.title}`} />
                   )}
                   {Object.keys(a.social_links).length > 0 && (
                     <p className="text-[10px] text-muted-foreground">
