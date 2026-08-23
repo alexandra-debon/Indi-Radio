@@ -257,7 +257,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@id": "https://www.radio.indi-art-culture.com/#org",
               name: "InDi ArT CulTuRe",
               url: "https://www.radio.indi-art-culture.com/",
-              logo: "https://www.radio.indi-art-culture.com/icons/apple-touch-icon.png",
+              logo: `https://www.radio.indi-art-culture.com/icons/icon-512.png?v=${OG_ASSET_VERSION}`,
+              image: ogImageForLang("fr"),
               sameAs: [],
             },
             {
