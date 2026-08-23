@@ -273,9 +273,34 @@ function ActusPage() {
               <MultiImageUploader values={images} onChange={setImages} folder="news" />
             </div>
           </div>
+          <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1.5">
+            <label className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-primary">
+              <CalendarClock className="size-3.5" />
+              Programmer la publication (optionnel)
+              <input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                className="rounded border border-border bg-background px-1.5 py-1 text-[11px] font-normal text-foreground"
+              />
+              {scheduledAt && (
+                <button
+                  type="button"
+                  onClick={() => setScheduledAt("")}
+                  className="text-[10px] font-semibold text-muted-foreground underline"
+                >
+                  effacer
+                </button>
+              )}
+            </label>
+            <p className="mt-0.5 text-[10px] italic text-muted-foreground">
+              Sans date, l'article paraît tout de suite. Avec une date, il reste visible de toi seul
+              jusqu'à l'heure prévue.
+            </p>
+          </div>
           <div className="mt-2 flex justify-end">
             <Button size="sm" onClick={() => create.mutate()} disabled={!title || (!content && !embedPreview.embed) || create.isPending}>
-              Publier
+              {scheduledAt ? "Programmer" : "Publier"}
             </Button>
           </div>
         </div>
