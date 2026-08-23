@@ -555,10 +555,28 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <ResponsiveEmbedPreview url={editEmbedParsed.embed.url} height={editEmbedParsed.embed.height} />
             )}
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
+            <label className="flex flex-wrap items-center gap-2 rounded border border-primary/60 bg-primary/5 px-2 py-1.5 text-[11px] font-bold text-primary">
+              <CalendarClock className="size-3.5" /> Publication programmée
+              <input
+                type="datetime-local"
+                value={editSchedule}
+                onChange={(e) => setEditSchedule(e.target.value)}
+                className="rounded border border-border bg-background px-1.5 py-1 text-[11px] font-normal text-foreground"
+              />
+              {editSchedule && (
+                <button type="button" onClick={() => setEditSchedule("")} className="text-[10px] font-semibold text-muted-foreground underline">
+                  publier maintenant
+                </button>
+              )}
+            </label>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
               <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
             </div>
+            <NewsRevisionsPanel
+              postId={post.id}
+              onRestored={() => { setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); }}
+            />
           </div>
         ) : (
           <>
