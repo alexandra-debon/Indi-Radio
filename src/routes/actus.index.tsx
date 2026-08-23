@@ -265,12 +265,17 @@ function ActusPage() {
             </div>
           </div>
           <div className="mt-2 flex justify-end">
-            <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>
+            <Button size="sm" onClick={() => create.mutate()} disabled={!title || (!content && !embedPreview.embed) || create.isPending}>
               Publier
             </Button>
           </div>
         </div>
       )}
+
+      {canPublish && session && (
+        <NewsBulkImportExport authorId={session.user.id} posts={posts} />
+      )}
+
 
       <h2 className="section-title text-base">{t("page.actus.feed")}</h2>
       <ul className="space-y-3">
