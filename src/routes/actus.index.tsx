@@ -672,8 +672,28 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                         </Link>
                       )}
                     </div>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                      {c.status === "hidden" && (
+                        <span className="rounded bg-destructive px-1 py-0.5 text-[9px] font-bold uppercase text-destructive-foreground">
+                          Masqué
+                        </span>
+                      )}
                       {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
+                      {canModerate && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            moderateComment.mutate({
+                              id: c.id,
+                              status: c.status === "hidden" ? "approved" : "hidden",
+                            })
+                          }
+                          title={c.status === "hidden" ? "Réafficher ce commentaire" : "Masquer ce commentaire"}
+                          className="rounded border border-border p-0.5 text-muted-foreground transition hover:text-foreground"
+                        >
+                          {c.status === "hidden" ? <Eye className="size-3" /> : <EyeOff className="size-3" />}
+                        </button>
+                      )}
                     </span>
                   </div>
                   {isEditingC ? (
