@@ -237,6 +237,12 @@ function LangPanel({
       />
       <Field label="og:url / canonical" value={href} mono />
       <Field label="og:locale" value={lang === "fr" ? "fr_FR" : "en_US"} mono />
+      <SeoShareRow
+        path={path}
+        lang={lang}
+        title={entry.title}
+        description={entry.description}
+      />
     </div>
   );
 }
