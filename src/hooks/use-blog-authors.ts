@@ -17,10 +17,21 @@ export function useBlogAuthors() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blog_authors")
-        .select("user_id,created_at, profile:profiles!blog_authors_user_id_fkey(id,pseudo,role)")
+        .select("user_id,created_at")
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as unknown as BlogAuthorRow[];
+      const rows = data ?? [];
+      if (rows.length === 0) return [];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id,pseudo,role")
+        .in("id", rows.map((r) => r.user_id));
+      const byId = new Map((profiles ?? []).map((p) => [p.id, p]));
+      return rows.map((r) => ({
+        user_id: r.user_id,
+        created_at: r.created_at,
+        profile: (byId.get(r.user_id) as BlogAuthorRow["profile"]) ?? null,
+      }));
     },
   });
 }
