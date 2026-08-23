@@ -655,7 +655,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                 <div
                   key={c.id}
                   id={`comment-${c.id}`}
-                  className="scroll-mt-24 rounded-md bg-muted/40 p-2 transition"
+                  className={`scroll-mt-24 rounded-md bg-muted/40 p-2 transition ${c.status === "hidden" ? "opacity-60 ring-1 ring-destructive" : ""}`}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-1.5">
