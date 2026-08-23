@@ -131,6 +131,7 @@ function ActusPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
   const [embedCode, setEmbedCode] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
   const embedPreview = (() => {
     try {
       return { embed: parseEmbedCode(embedCode), error: null as string | null };
@@ -159,12 +160,13 @@ function ActusPage() {
         social_links: sanitizeLinks(socialLinks),
         embed_url: embed?.url ?? null,
         embed_height: embed?.height ?? null,
+        scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Publié !");
-      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({}); setEmbedCode("");
+      toast.success(scheduledAt ? "Article programmé !" : "Publié !");
+      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({}); setEmbedCode(""); setScheduledAt("");
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
