@@ -2,6 +2,17 @@ import { STATIC_SEO } from "@/lib/i18n/seo-meta";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { hlFromSearch, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
+import {
+  isDefaultOgImage,
+  ogImageAlt,
+  ogImageForLang,
+  OG_ASSET_VERSION,
+} from "@/lib/og-image";
+
+/** Horodatage stable dérivé de la version des visuels de partage. */
+const OG_UPDATED_TIME = new Date(
+  `${OG_ASSET_VERSION.slice(0, 4)}-${OG_ASSET_VERSION.slice(4, 6)}-${OG_ASSET_VERSION.slice(6, 8)}T00:00:00Z`,
+).toISOString();
 
 type MetaEntry = Record<string, string | undefined>;
 
