@@ -152,6 +152,66 @@ export function BlogAuthorsManager() {
             )}
           </div>
 
+          <div className="space-y-1.5 rounded-md border-2 border-primary/40 p-2">
+            <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <Mail className="h-3.5 w-3.5" /> Inviter un auteur par email
+            </p>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+              <Input
+                type="email"
+                inputMode="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="adresse@email.com"
+                className="text-xs"
+              />
+              <Button
+                size="sm"
+                className="shrink-0"
+                disabled={!/^\S+@\S+\.\S+$/.test(inviteEmail.trim()) || invite.isPending}
+                onClick={() => invite.mutate(inviteEmail.trim())}
+              >
+                <Send className="h-3.5 w-3.5" /> Inviter
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              L'invité·e reçoit un lien : l'accès n'est accordé qu'après son acceptation, connecté·e
+              avec cette même adresse.
+            </p>
+            {invites.length > 0 && (
+              <ul className="divide-y divide-border rounded-md border border-border">
+                {invites.map((i) => (
+                  <li key={i.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2">
+                    <span className="min-w-0 truncate text-[11px]">
+                      <span className="font-semibold">{i.email}</span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        ·{" "}
+                        {i.status === "pending"
+                          ? "en attente"
+                          : i.status === "accepted"
+                            ? "acceptée"
+                            : "révoquée"}
+                      </span>
+                    </span>
+                    {i.status === "pending" && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="shrink-0"
+                        onClick={() => revokeInvite.mutate(i.id)}
+                        disabled={revokeInvite.isPending}
+                      >
+                        <Ban className="h-3.5 w-3.5" /> Révoquer
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+
           {authors.length === 0 ? (
             <p className="text-[11px] text-muted-foreground">Aucun auteur ajouté — seul l'admin publie.</p>
           ) : (
