@@ -45,7 +45,7 @@ import { useTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 // context for internal maillage while users get an accessible tooltip.
 const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
   { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
-  { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Actus de la Radio musique indépendante & du Réseau social musique" },
+  { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Blog InDi ArT CulTuRe — Radio musique indépendante & Réseau social musique" },
   { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
   { to: "/podcasts", key: "nav.podcasts", icon: Headphones, seo: "Podcasts Radio musique indépendante sans pub" },
   { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },

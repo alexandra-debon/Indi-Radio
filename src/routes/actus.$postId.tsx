@@ -33,12 +33,12 @@ export const Route = createFileRoute("/actus/$postId")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Actu introuvable — Indi Rézo" },
+          { title: "Article introuvable — Blog InDi ArT CulTuRe" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const baseTitle = `${loaderData.title} · Actu — Indi Rézo, InDi RaDio`;
+    const baseTitle = `${loaderData.title} · Blog InDi ArT CulTuRe — InDi RaDio`;
     const baseDesc = clampDescription(
       stripMediaUrls(loaderData.content ?? "") ||
         `${loaderData.title} — actualité de la scène indépendante sur InDi RaDio, la radio 24/7 de la musique indépendante.`,
@@ -81,7 +81,7 @@ export const Route = createFileRoute("/actus/$postId")({
             datePublished: loaderData.created_at,
             dateModified: (loaderData as { updated_at?: string }).updated_at ?? loaderData.created_at,
             inLanguage: "fr-FR",
-            articleSection: "Indi Rézo",
+            articleSection: "Blog InDi ArT CulTuRe",
             author: {
               "@type": "Person",
               name: loaderData.author?.pseudo ?? "La rédaction",
@@ -101,7 +101,7 @@ export const Route = createFileRoute("/actus/$postId")({
         },
         breadcrumbLd([
           HOME_CRUMB,
-          { name: "Indi Rézo", url: `${SITE_ORIGIN}/actus` },
+          { name: "Blog InDi ArT CulTuRe", url: `${SITE_ORIGIN}/actus` },
           { name: loaderData.title, url },
         ]),
       ],
@@ -110,7 +110,7 @@ export const Route = createFileRoute("/actus/$postId")({
   notFoundComponent: () => (
     <div className="card-brut p-6 text-center">
       <p className="text-sm text-muted-foreground">Cette actu n'existe pas ou a été supprimée.</p>
-      <Link to="/actus" className="mt-3 inline-block text-sm text-primary underline">Retour à Indi Rézo</Link>
+      <Link to="/actus" className="mt-3 inline-block text-sm text-primary underline">Retour au Blog InDi ArT CulTuRe</Link>
     </div>
   ),
   errorComponent: () => (
@@ -128,7 +128,7 @@ function NewsDetailPage() {
   return (
     <div className="space-y-4">
       <Link to="/actus" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-3.5" /> Indi Rézo
+        <ArrowLeft className="size-3.5" /> Blog InDi ArT CulTuRe
       </Link>
       <article className="card-brut overflow-hidden">
         {post.image_url && <img src={post.image_url} alt="" className="h-56 w-full object-cover" />}
@@ -166,7 +166,7 @@ function NewsDetailPage() {
           <div className="pt-2">
             <ShareButton
               variant="chip"
-              target={{ url, title: `${post.title} — Indi Rézo`, text: body.slice(0, 200) || post.title }}
+              target={{ url, title: `${post.title} — Blog InDi ArT CulTuRe`, text: body.slice(0, 200) || post.title }}
             />
           </div>
         </div>
