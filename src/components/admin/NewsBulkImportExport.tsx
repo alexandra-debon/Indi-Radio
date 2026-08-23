@@ -24,7 +24,7 @@ export function NewsBulkImportExport({
   posts,
 }: {
   authorId: string;
-  posts: ExportablePost[];
+  posts: readonly ExportablePost[];
 }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -49,7 +49,7 @@ export function NewsBulkImportExport({
         content: a.content,
         image_url: null,
         image_urls: [] as string[],
-        social_links: sanitizeLinks(a.social_links as SocialLinks),
+        social_links: sanitizeLinks(a.social_links as unknown as SocialLinks),
         embed_url: a.embed_url,
         embed_height: a.embed_height,
       }));
@@ -66,7 +66,7 @@ export function NewsBulkImportExport({
   });
 
   const doExport = () => {
-    const json = serializeBulkArticles(posts);
+    const json = serializeBulkArticles([...posts]);
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

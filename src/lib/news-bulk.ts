@@ -36,10 +36,8 @@ const LINK_KEYS = [
   "bandcamp",
   "soundcloud",
   "tiktok",
-  "linkedin",
-  "substack",
   "deezer",
-  "applemusic",
+  "apple_music",
 ];
 
 function normalizeLinks(input: unknown): Record<string, string> {
@@ -58,7 +56,7 @@ function normalizeLinks(input: unknown): Record<string, string> {
 
 function guessLinkKey(url: string): string {
   const u = url.toLowerCase();
-  const found = LINK_KEYS.find((k) => u.includes(k === "applemusic" ? "music.apple" : k));
+  const found = LINK_KEYS.find((k) => u.includes(k === "apple_music" ? "music.apple" : k.replace("_", ".")));
   return found ?? "website";
 }
 
@@ -158,7 +156,7 @@ export interface ExportablePost {
   content: string;
   embed_url?: string | null;
   embed_height?: number | null;
-  social_links?: Record<string, string> | null;
+  social_links?: Record<string, unknown> | null;
   created_at?: string;
 }
 
@@ -170,7 +168,7 @@ export function serializeBulkArticles(posts: ExportablePost[]): string {
       content: p.content,
       embed: p.embed_url ?? "",
       embed_height: p.embed_height ?? null,
-      links: p.social_links ?? {},
+      links: (p.social_links ?? {}) as Record<string, unknown>,
       created_at: p.created_at ?? null,
     })),
     null,
