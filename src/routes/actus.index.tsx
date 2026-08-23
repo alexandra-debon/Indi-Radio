@@ -96,6 +96,7 @@ interface NewsPost {
   social_links: SocialLinks | null;
   embed_url: string | null;
   embed_height: number | null;
+  scheduled_at: string | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
 }
 
