@@ -18,6 +18,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
+import { NewsBulkImportExport } from "@/components/admin/NewsBulkImportExport";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
@@ -265,12 +266,17 @@ function ActusPage() {
             </div>
           </div>
           <div className="mt-2 flex justify-end">
-            <Button size="sm" onClick={() => create.mutate()} disabled={!title || !content || create.isPending}>
+            <Button size="sm" onClick={() => create.mutate()} disabled={!title || (!content && !embedPreview.embed) || create.isPending}>
               Publier
             </Button>
           </div>
         </div>
       )}
+
+      {canPublish && session && (
+        <NewsBulkImportExport authorId={session.user.id} posts={posts} />
+      )}
+
 
       <h2 className="section-title text-base">{t("page.actus.feed")}</h2>
       <ul className="space-y-3">

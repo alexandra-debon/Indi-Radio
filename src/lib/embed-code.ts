@@ -111,11 +111,23 @@ export function parseEmbedCode(raw: string): ParsedEmbed | null {
   }
   url.protocol = "https:";
 
+  // Sanitization stricte : pas d'identifiants dans l'URL, pas de port exotique.
+  if (url.username || url.password) {
+    throw new Error("Les adresses contenant des identifiants ne sont pas acceptées.");
+  }
+  url.username = "";
+  url.password = "";
+  if (url.port && url.port !== "443") {
+    throw new Error("Les adresses avec un port personnalisé ne sont pas acceptées.");
+  }
+  url.hash = "";
+
   if (!hostAllowed(url.hostname)) {
     throw new Error(
       `Plateforme non autorisée (${url.hostname}). Plateformes acceptées : ${EMBED_PLATFORMS_LABEL}.`,
     );
   }
+
 
   if (height !== null) height = Math.min(Math.max(height, 200), 2000);
 
@@ -129,4 +141,32 @@ export function safeParseEmbedCode(raw: string): ParsedEmbed | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Attribut `allow` minimal, calculé par plateforme.
+ * Aucune permission sensible (caméra, micro, géolocalisation, paiement,
+ * USB, capteurs) n'est jamais accordée à un contenu tiers.
+ */
+export function embedAllowAttr(rawUrl: string): string {
+  let host = "";
+  try {
+    host = new URL(rawUrl).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return "fullscreen";
+  }
+  const base = ["fullscreen"];
+  const media = ["autoplay", "encrypted-media", "picture-in-picture", "clipboard-write"];
+  const mediaHosts = [
+    "youtube.com", "youtube-nocookie.com", "youtu.be",
+    "vimeo.com", "player.vimeo.com",
+    "open.spotify.com", "podcasters.spotify.com",
+    "soundcloud.com", "w.soundcloud.com",
+    "bandcamp.com", "deezer.com", "widget.deezer.com",
+    "music.apple.com", "embed.music.apple.com",
+    "dailymotion.com", "geo.dailymotion.com",
+    "mixcloud.com", "player.twitch.tv", "loom.com",
+  ];
+  const isMedia = mediaHosts.some((h) => host === h || host.endsWith(`.${h}`));
+  return (isMedia ? [...base, ...media] : base).join("; ");
 }
