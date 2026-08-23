@@ -16,6 +16,8 @@ import { toast } from "@/lib/toast";
 import { useHashHighlight, parseHashTargets } from "@/lib/notif-navigate";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { EmbedFrame } from "@/components/media/EmbedFrame";
+import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { ShareButton } from "@/components/share/ShareButton";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
@@ -88,6 +90,8 @@ interface NewsPost {
   image_captions: string[] | null;
   created_at: string;
   social_links: SocialLinks | null;
+  embed_url: string | null;
+  embed_height: number | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
 }
 
@@ -108,7 +112,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,social_links, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,social_links,embed_url,embed_height, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -121,6 +125,14 @@ function ActusPage() {
   const [images, setImages] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
+  const [embedCode, setEmbedCode] = useState("");
+  const embedPreview = (() => {
+    try {
+      return { embed: parseEmbedCode(embedCode), error: null as string | null };
+    } catch (e) {
+      return { embed: null, error: (e as Error).message };
+    }
+  })();
 
   const create = useMutation({
     mutationFn: async () => {
@@ -129,6 +141,7 @@ function ActusPage() {
       if (trimmedVideo && !isValidVideoUrl(trimmedVideo)) {
         throw new Error("Lien vidéo invalide (YouTube ou Vimeo attendu)");
       }
+      const embed = parseEmbedCode(embedCode);
       const finalContent = trimmedVideo
         ? (content.trim() ? `${content.trim()}\n${trimmedVideo}` : trimmedVideo)
         : content;
@@ -139,12 +152,14 @@ function ActusPage() {
         image_url: images[0] ?? null,
         image_urls: images,
         social_links: sanitizeLinks(socialLinks),
+        embed_url: embed?.url ?? null,
+        embed_height: embed?.height ?? null,
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Publié !");
-      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({});
+      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({}); setEmbedCode("");
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -215,6 +230,27 @@ function ActusPage() {
             placeholder={t("wall.videoUrlPlaceholder")}
             className="mt-1.5 h-8 text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70 placeholder:font-normal"
           />
+          <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1">
+            <p className="text-[11px] italic leading-tight text-primary">
+              Code d'intégration (optionnel) — colle un &lt;iframe&gt; ou une adresse d'intégration&nbsp;: {EMBED_PLATFORMS_LABEL}.
+            </p>
+          </div>
+          <Textarea
+            value={embedCode}
+            onChange={(e) => setEmbedCode(e.target.value)}
+            rows={2}
+            placeholder={'<iframe src="https://gamma.app/embed/..." …></iframe>'}
+            className="mt-1.5 resize-y text-xs bg-transparent border-border/50 placeholder:italic placeholder:text-muted-foreground/70"
+          />
+          {embedCode.trim() && embedPreview.error && (
+            <p className="mt-1 text-[11px] font-semibold text-destructive">{embedPreview.error}</p>
+          )}
+          {embedPreview.embed && (
+            <div className="mt-1.5">
+              <div className="mb-1 text-[9px] font-bold uppercase text-muted-foreground">Aperçu de l'intégration</div>
+              <EmbedFrame url={embedPreview.embed.url} height={embedPreview.embed.height} title="Aperçu du contenu intégré" />
+            </div>
+          )}
           <div className="mt-2">
             <SocialLinksEditor value={socialLinks} onChange={setSocialLinks} />
           </div>
@@ -272,6 +308,14 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   const [editing, setEditing] = useState(false);
   const initialImages = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
   const [editForm, setEditForm] = useState({ title: post.title, content: post.content, images: initialImages, social_links: (post.social_links ?? {}) as SocialLinks });
+  const [editEmbed, setEditEmbed] = useState(post.embed_url ?? "");
+  const editEmbedParsed = (() => {
+    try {
+      return { embed: parseEmbedCode(editEmbed), error: null as string | null };
+    } catch (e) {
+      return { embed: null, error: (e as Error).message };
+    }
+  })();
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState("");
   const [commentImages, setCommentImages] = useState<string[]>([]);
@@ -359,6 +403,8 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         image_url: editForm.images[0] ?? null,
         image_urls: editForm.images,
         social_links: sanitizeLinks(editForm.social_links),
+        embed_url: parseEmbedCode(editEmbed)?.url ?? null,
+        embed_height: parseEmbedCode(editEmbed)?.height ?? null,
       } as any).eq("id", post.id);
       if (error) throw error;
     },
@@ -430,6 +476,19 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
             <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} placeholder="Titre" />
             <MultiImageUploader values={editForm.images} onChange={(v) => setEditForm({ ...editForm, images: v })} folder="news" />
             <Textarea rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} placeholder="Contenu" />
+            <Textarea
+              rows={2}
+              value={editEmbed}
+              onChange={(e) => setEditEmbed(e.target.value)}
+              placeholder="Code d'intégration (iframe ou adresse) — laisser vide pour retirer"
+              className="text-xs"
+            />
+            {editEmbed.trim() && editEmbedParsed.error && (
+              <p className="text-[11px] font-semibold text-destructive">{editEmbedParsed.error}</p>
+            )}
+            {editEmbedParsed.embed && (
+              <EmbedFrame url={editEmbedParsed.embed.url} height={editEmbedParsed.embed.height} title="Aperçu du contenu intégré" />
+            )}
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
@@ -449,6 +508,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               </p>
             )}
             <UrlEmbeds text={post.content} />
+            {post.embed_url && (
+              <EmbedFrame url={post.embed_url} height={post.embed_height} title={post.title} className="mt-2" />
+            )}
             <SocialLinksBar links={post.social_links} className="pt-1" />
             {post.author?.pseudo && (
               <div className="mt-1 flex justify-end">

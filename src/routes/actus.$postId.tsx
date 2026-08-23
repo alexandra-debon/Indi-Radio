@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/actus/$postId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("news_posts")
-      .select("id,title,content,image_url,created_at,updated_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified)")
+      .select("id,title,content,image_url,embed_url,embed_height,created_at,updated_at, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified)")
       .eq("id", params.postId)
       .maybeSingle();
     if (error || !data) throw notFound();
@@ -148,6 +149,9 @@ function NewsDetailPage() {
             </p>
           )}
           <UrlEmbeds text={post.content ?? ""} />
+          {post.embed_url && (
+            <EmbedFrame url={post.embed_url} height={post.embed_height} title={post.title} className="mt-3" />
+          )}
           {post.author?.pseudo && (
             <div className="flex justify-end">
               <Link
