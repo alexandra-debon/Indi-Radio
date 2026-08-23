@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ShieldAlert, ExternalLink } from "lucide-react";
+import { SeoShareRow } from "@/components/admin/SeoShareRow";
 
 const SITE = "https://www.radio.indi-art-culture.com";
 
