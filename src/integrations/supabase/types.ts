@@ -193,6 +193,27 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_authors: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       broadcast_partners: {
         Row: {
           alt_text: string | null
@@ -1777,6 +1798,7 @@ export type Database = {
       }
       award_presence_point: { Args: never; Returns: boolean }
       calculate_level: { Args: { pts: number }; Returns: number }
+      can_publish_news: { Args: { _user_id: string }; Returns: boolean }
       gallery_owner_public: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
