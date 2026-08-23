@@ -348,6 +348,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   const initialImages = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
   const [editForm, setEditForm] = useState({ title: post.title, content: post.content, images: initialImages, social_links: (post.social_links ?? {}) as SocialLinks });
   const [editEmbed, setEditEmbed] = useState(post.embed_url ?? "");
+  const toLocalInput = (iso: string | null) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const [editSchedule, setEditSchedule] = useState(toLocalInput(post.scheduled_at));
   const editEmbedParsed = (() => {
     try {
       return { embed: parseEmbedCode(editEmbed), error: null as string | null };
@@ -362,6 +369,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   const isOwner = sessionUserId === post.author_id;
   const canEditPost = isOwner;
   const canDeletePost = isOwner || isAdmin;
+  const { canPublish } = useCanPublishNews();
+  const canModerate = isAdmin || canPublish;
+  const isScheduled = !!post.scheduled_at && new Date(post.scheduled_at).getTime() > Date.now();
 
   const { data: likeInfo } = useQuery({
     queryKey: ["news-likes", post.id, sessionUserId ?? "anon"],
