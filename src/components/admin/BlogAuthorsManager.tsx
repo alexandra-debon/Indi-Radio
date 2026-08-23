@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trash2, UserPlus, ShieldCheck } from "lucide-react";
+import { Trash2, UserPlus, ShieldCheck, Mail, Send, Ban } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBlogAuthors } from "@/hooks/use-blog-authors";
+import { createBlogInvite } from "@/lib/blog-invites.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -18,6 +20,47 @@ export function BlogAuthorsManager() {
   const { data: authors = [] } = useBlogAuthors();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const sendInvite = useServerFn(createBlogInvite);
+
+  const { data: invites = [] } = useQuery({
+    queryKey: ["blog-invites"],
+    enabled: isAdmin && open,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_author_invites")
+        .select("id,email,status,expires_at,accepted_at,created_at")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const invite = useMutation({
+    mutationFn: async (email: string) => sendInvite({ data: { email } }),
+    onSuccess: (res) => {
+      toast.success(res.sent ? "Invitation envoyée par email" : "Invitation créée (email non délivré — copie le lien)");
+      setInviteEmail("");
+      qc.invalidateQueries({ queryKey: ["blog-invites"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const revokeInvite = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("blog_author_invites")
+        .update({ status: "revoked" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Invitation révoquée");
+      qc.invalidateQueries({ queryKey: ["blog-invites"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const { data: results = [] } = useQuery({
     queryKey: ["blog-authors-search", search],
@@ -108,6 +151,66 @@ export function BlogAuthorsManager() {
               </ul>
             )}
           </div>
+
+          <div className="space-y-1.5 rounded-md border-2 border-primary/40 p-2">
+            <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <Mail className="h-3.5 w-3.5" /> Inviter un auteur par email
+            </p>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+              <Input
+                type="email"
+                inputMode="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="adresse@email.com"
+                className="text-xs"
+              />
+              <Button
+                size="sm"
+                className="shrink-0"
+                disabled={!/^\S+@\S+\.\S+$/.test(inviteEmail.trim()) || invite.isPending}
+                onClick={() => invite.mutate(inviteEmail.trim())}
+              >
+                <Send className="h-3.5 w-3.5" /> Inviter
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              L'invité·e reçoit un lien : l'accès n'est accordé qu'après son acceptation, connecté·e
+              avec cette même adresse.
+            </p>
+            {invites.length > 0 && (
+              <ul className="divide-y divide-border rounded-md border border-border">
+                {invites.map((i) => (
+                  <li key={i.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2">
+                    <span className="min-w-0 truncate text-[11px]">
+                      <span className="font-semibold">{i.email}</span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        ·{" "}
+                        {i.status === "pending"
+                          ? "en attente"
+                          : i.status === "accepted"
+                            ? "acceptée"
+                            : "révoquée"}
+                      </span>
+                    </span>
+                    {i.status === "pending" && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="shrink-0"
+                        onClick={() => revokeInvite.mutate(i.id)}
+                        disabled={revokeInvite.isPending}
+                      >
+                        <Ban className="h-3.5 w-3.5" /> Révoquer
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
 
           {authors.length === 0 ? (
             <p className="text-[11px] text-muted-foreground">Aucun auteur ajouté — seul l'admin publie.</p>

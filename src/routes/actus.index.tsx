@@ -7,7 +7,7 @@ import { UserBadge } from "@/components/UserBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Newspaper, ArrowUpRight } from "lucide-react";
+import { Heart, MessageCircle, Newspaper, ArrowUpRight, CalendarClock, EyeOff, Eye } from "lucide-react";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
@@ -20,6 +20,7 @@ import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { ResponsiveEmbedPreview } from "@/components/media/ResponsiveEmbedPreview";
 import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
 import { NewsBulkImportExport } from "@/components/admin/NewsBulkImportExport";
+import { NewsRevisionsPanel } from "@/components/admin/NewsRevisionsPanel";
 import { BlogAuthorsManager } from "@/components/admin/BlogAuthorsManager";
 import { useCanPublishNews } from "@/hooks/use-blog-authors";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
@@ -96,6 +97,7 @@ interface NewsPost {
   social_links: SocialLinks | null;
   embed_url: string | null;
   embed_height: number | null;
+  scheduled_at: string | null;
   author: { id: string; pseudo: string; role: "admin" | "artiste" | "animateur" | "auditeur"; is_certified: boolean; is_team_indi: boolean; badges: string[]; level: number } | null;
 }
 
@@ -116,7 +118,7 @@ function ActusPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_posts")
-        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,social_links,embed_url,embed_height, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id,author_id,title,content,image_url,image_urls,image_captions,created_at,scheduled_at,social_links,embed_url,embed_height, author:profiles!news_posts_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NewsPost[];
@@ -130,6 +132,7 @@ function ActusPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
   const [embedCode, setEmbedCode] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
   const embedPreview = (() => {
     try {
       return { embed: parseEmbedCode(embedCode), error: null as string | null };
@@ -158,12 +161,13 @@ function ActusPage() {
         social_links: sanitizeLinks(socialLinks),
         embed_url: embed?.url ?? null,
         embed_height: embed?.height ?? null,
+        scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Publié !");
-      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({}); setEmbedCode("");
+      toast.success(scheduledAt ? "Article programmé !" : "Publié !");
+      setTitle(""); setContent(""); setImages([]); setVideoUrl(""); setSocialLinks({}); setEmbedCode(""); setScheduledAt("");
       qc.invalidateQueries({ queryKey: ["news-posts"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -270,9 +274,34 @@ function ActusPage() {
               <MultiImageUploader values={images} onChange={setImages} folder="news" />
             </div>
           </div>
+          <div className="mt-2 rounded border border-primary/60 bg-primary/5 px-2 py-1.5">
+            <label className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-primary">
+              <CalendarClock className="size-3.5" />
+              Programmer la publication (optionnel)
+              <input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                className="rounded border border-border bg-background px-1.5 py-1 text-[11px] font-normal text-foreground"
+              />
+              {scheduledAt && (
+                <button
+                  type="button"
+                  onClick={() => setScheduledAt("")}
+                  className="text-[10px] font-semibold text-muted-foreground underline"
+                >
+                  effacer
+                </button>
+              )}
+            </label>
+            <p className="mt-0.5 text-[10px] italic text-muted-foreground">
+              Sans date, l'article paraît tout de suite. Avec une date, il reste visible de toi seul
+              jusqu'à l'heure prévue.
+            </p>
+          </div>
           <div className="mt-2 flex justify-end">
             <Button size="sm" onClick={() => create.mutate()} disabled={!title || (!content && !embedPreview.embed) || create.isPending}>
-              Publier
+              {scheduledAt ? "Programmer" : "Publier"}
             </Button>
           </div>
         </div>
@@ -320,6 +349,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   const initialImages = (post.image_urls && post.image_urls.length > 0) ? post.image_urls : (post.image_url ? [post.image_url] : []);
   const [editForm, setEditForm] = useState({ title: post.title, content: post.content, images: initialImages, social_links: (post.social_links ?? {}) as SocialLinks });
   const [editEmbed, setEditEmbed] = useState(post.embed_url ?? "");
+  const toLocalInput = (iso: string | null) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const [editSchedule, setEditSchedule] = useState(toLocalInput(post.scheduled_at));
   const editEmbedParsed = (() => {
     try {
       return { embed: parseEmbedCode(editEmbed), error: null as string | null };
@@ -334,6 +370,9 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
   const isOwner = sessionUserId === post.author_id;
   const canEditPost = isOwner;
   const canDeletePost = isOwner || isAdmin;
+  const { canPublish } = useCanPublishNews();
+  const canModerate = isAdmin || canPublish;
+  const isScheduled = !!post.scheduled_at && new Date(post.scheduled_at).getTime() > Date.now();
 
   const { data: likeInfo } = useQuery({
     queryKey: ["news-likes", post.id, sessionUserId ?? "anon"],
@@ -354,7 +393,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, author_id, content, created_at, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id, author_id, content, created_at, status, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
@@ -416,10 +455,20 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         social_links: sanitizeLinks(editForm.social_links),
         embed_url: parseEmbedCode(editEmbed)?.url ?? null,
         embed_height: parseEmbedCode(editEmbed)?.height ?? null,
+        scheduled_at: editSchedule ? new Date(editSchedule).toISOString() : null,
       } as any).eq("id", post.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
+    onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); qc.invalidateQueries({ queryKey: ["news-revisions", post.id] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const moderateComment = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "approved" | "hidden" }) => {
+      const { error } = await supabase.from("news_comments").update({ status } as any).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -478,7 +527,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
-          <span className="text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            {isScheduled && (
+              <span className="flex items-center gap-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-foreground">
+                <CalendarClock className="size-3" />
+                {new Date(post.scheduled_at!).toLocaleString()}
+              </span>
+            )}
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
           </span>
         </div>
@@ -501,10 +556,25 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
               <ResponsiveEmbedPreview url={editEmbedParsed.embed.url} height={editEmbedParsed.embed.height} />
             )}
             <SocialLinksEditor value={editForm.social_links} onChange={(v) => setEditForm({ ...editForm, social_links: v })} />
+            <label className="flex flex-wrap items-center gap-2 rounded border border-primary/60 bg-primary/5 px-2 py-1.5 text-[11px] font-bold text-primary">
+              <CalendarClock className="size-3.5" /> Publication programmée
+              <input
+                type="datetime-local"
+                value={editSchedule}
+                onChange={(e) => setEditSchedule(e.target.value)}
+                className="rounded border border-border bg-background px-1.5 py-1 text-[11px] font-normal text-foreground"
+              />
+              {editSchedule && (
+                <button type="button" onClick={() => setEditSchedule("")} className="text-[10px] font-semibold text-muted-foreground underline">
+                  publier maintenant
+                </button>
+              )}
+            </label>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="size-3.5" /> Annuler</Button>
               <Button size="sm" onClick={() => updatePost.mutate()} disabled={!editForm.title || !editForm.content || updatePost.isPending}><Check className="size-3.5" /> Enregistrer</Button>
             </div>
+            <NewsRevisionsPanel post={{ id: post.id, title: post.title, content: post.content }} />
           </div>
         ) : (
           <>
@@ -585,7 +655,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                 <div
                   key={c.id}
                   id={`comment-${c.id}`}
-                  className="scroll-mt-24 rounded-md bg-muted/40 p-2 transition"
+                  className={`scroll-mt-24 rounded-md bg-muted/40 p-2 transition ${c.status === "hidden" ? "opacity-60 ring-1 ring-destructive" : ""}`}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-1.5">
@@ -602,8 +672,28 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
                         </Link>
                       )}
                     </div>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                      {c.status === "hidden" && (
+                        <span className="rounded bg-destructive px-1 py-0.5 text-[9px] font-bold uppercase text-destructive-foreground">
+                          Masqué
+                        </span>
+                      )}
                       {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
+                      {canModerate && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            moderateComment.mutate({
+                              id: c.id,
+                              status: c.status === "hidden" ? "approved" : "hidden",
+                            })
+                          }
+                          title={c.status === "hidden" ? "Réafficher ce commentaire" : "Masquer ce commentaire"}
+                          className="rounded border border-border p-0.5 text-muted-foreground transition hover:text-foreground"
+                        >
+                          {c.status === "hidden" ? <Eye className="size-3" /> : <EyeOff className="size-3" />}
+                        </button>
+                      )}
                     </span>
                   </div>
                   {isEditingC ? (
