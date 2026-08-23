@@ -130,3 +130,31 @@ export function safeParseEmbedCode(raw: string): ParsedEmbed | null {
     return null;
   }
 }
+
+/**
+ * Attribut `allow` minimal, calculé par plateforme.
+ * Aucune permission sensible (caméra, micro, géolocalisation, paiement,
+ * USB, capteurs) n'est jamais accordée à un contenu tiers.
+ */
+export function embedAllowAttr(rawUrl: string): string {
+  let host = "";
+  try {
+    host = new URL(rawUrl).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return "fullscreen";
+  }
+  const base = ["fullscreen"];
+  const media = ["autoplay", "encrypted-media", "picture-in-picture", "clipboard-write"];
+  const mediaHosts = [
+    "youtube.com", "youtube-nocookie.com", "youtu.be",
+    "vimeo.com", "player.vimeo.com",
+    "open.spotify.com", "podcasters.spotify.com",
+    "soundcloud.com", "w.soundcloud.com",
+    "bandcamp.com", "deezer.com", "widget.deezer.com",
+    "music.apple.com", "embed.music.apple.com",
+    "dailymotion.com", "geo.dailymotion.com",
+    "mixcloud.com", "player.twitch.tv", "loom.com",
+  ];
+  const isMedia = mediaHosts.some((h) => host === h || host.endsWith(`.${h}`));
+  return (isMedia ? [...base, ...media] : base).join("; ");
+}
