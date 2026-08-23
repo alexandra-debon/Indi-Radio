@@ -526,7 +526,13 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <UserBadge profile={post.author} className="text-xs" />
-          <span className="text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            {isScheduled && (
+              <span className="flex items-center gap-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-foreground">
+                <CalendarClock className="size-3" />
+                {new Date(post.scheduled_at!).toLocaleString()}
+              </span>
+            )}
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
           </span>
         </div>
