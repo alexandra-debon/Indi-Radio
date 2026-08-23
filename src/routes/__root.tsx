@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import { OG_ASSET_VERSION, ogImageForLang } from "@/lib/og-image";
 import { appleTouchStartupImages } from "@/lib/apple-touch-startup-images";
 import { reportLovableError } from "../lib/lovable-error-reporting";
