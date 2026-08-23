@@ -454,10 +454,20 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
         social_links: sanitizeLinks(editForm.social_links),
         embed_url: parseEmbedCode(editEmbed)?.url ?? null,
         embed_height: parseEmbedCode(editEmbed)?.height ?? null,
+        scheduled_at: editSchedule ? new Date(editSchedule).toISOString() : null,
       } as any).eq("id", post.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); },
+    onSuccess: () => { toast.success("Actu modifiée"); setEditing(false); qc.invalidateQueries({ queryKey: ["news-posts"] }); qc.invalidateQueries({ queryKey: ["news-revisions", post.id] }); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const moderateComment = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "approved" | "hidden" }) => {
+      const { error } = await supabase.from("news_comments").update({ status } as any).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["news-comments", post.id] }); },
     onError: (e) => toast.error((e as Error).message),
   });
 
