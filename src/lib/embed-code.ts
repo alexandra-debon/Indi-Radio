@@ -111,11 +111,23 @@ export function parseEmbedCode(raw: string): ParsedEmbed | null {
   }
   url.protocol = "https:";
 
+  // Sanitization stricte : pas d'identifiants dans l'URL, pas de port exotique.
+  if (url.username || url.password) {
+    throw new Error("Les adresses contenant des identifiants ne sont pas acceptées.");
+  }
+  url.username = "";
+  url.password = "";
+  if (url.port && url.port !== "443") {
+    throw new Error("Les adresses avec un port personnalisé ne sont pas acceptées.");
+  }
+  url.hash = "";
+
   if (!hostAllowed(url.hostname)) {
     throw new Error(
       `Plateforme non autorisée (${url.hostname}). Plateformes acceptées : ${EMBED_PLATFORMS_LABEL}.`,
     );
   }
+
 
   if (height !== null) height = Math.min(Math.max(height, 200), 2000);
 
