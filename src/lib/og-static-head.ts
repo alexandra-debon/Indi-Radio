@@ -59,6 +59,17 @@ export async function localizedStaticMeta(
       return { ...m, content: description };
     if (m["property"] === "og:url" && m["content"])
       return { ...m, content: withHl(m["content"] as string, lang) };
+    // Image de partage : toujours celle de la langue active, avec version
+    // (cache-busting Facebook/LinkedIn). On ne touche pas aux visuels
+    // spécifiques d'un article.
+    if (
+      (m["property"] === "og:image" ||
+        m["property"] === "og:image:url" ||
+        m["property"] === "og:image:secure_url" ||
+        m["name"] === "twitter:image") &&
+      isDefaultOgImage(m["content"])
+    )
+      return { ...m, content: ogImageForLang(lang) };
     return m;
   });
 
@@ -69,5 +80,24 @@ export async function localizedStaticMeta(
     property: "og:locale:alternate",
     content: lang === "en" ? "fr_FR" : "en_US",
   });
+
+  // Pages sans visuel déclaré : on ajoute l'image de partage localisée.
+  if (!out.some((m) => m["property"] === "og:image")) {
+    const img = ogImageForLang(lang);
+    out.push(
+      { property: "og:image", content: img },
+      { property: "og:image:secure_url", content: img },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: ogImageAlt(lang) },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: img },
+    );
+  }
+
+  // Signal explicite de fraîcheur pour les scrapers sociaux.
+  out.push({ property: "og:updated_time", content: OG_UPDATED_TIME });
   return out;
 }
+
