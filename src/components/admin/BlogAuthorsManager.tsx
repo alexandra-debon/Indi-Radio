@@ -20,6 +20,47 @@ export function BlogAuthorsManager() {
   const { data: authors = [] } = useBlogAuthors();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const sendInvite = useServerFn(createBlogInvite);
+
+  const { data: invites = [] } = useQuery({
+    queryKey: ["blog-invites"],
+    enabled: isAdmin && open,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_author_invites")
+        .select("id,email,status,expires_at,accepted_at,created_at")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const invite = useMutation({
+    mutationFn: async (email: string) => sendInvite({ data: { email } }),
+    onSuccess: (res) => {
+      toast.success(res.sent ? "Invitation envoyée par email" : "Invitation créée (email non délivré — copie le lien)");
+      setInviteEmail("");
+      qc.invalidateQueries({ queryKey: ["blog-invites"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const revokeInvite = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("blog_author_invites")
+        .update({ status: "revoked" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Invitation révoquée");
+      qc.invalidateQueries({ queryKey: ["blog-invites"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const { data: results = [] } = useQuery({
     queryKey: ["blog-authors-search", search],
