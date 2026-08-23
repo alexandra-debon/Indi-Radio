@@ -22,13 +22,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
-import ogHome from "@/assets/og-home.jpg";
+import { ogImageForLang } from "@/lib/og-image";
 
 
 import { useLang, useT } from "@/lib/i18n";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
-const OG_HOME = `${BASE_URL}${ogHome}`;
+const OG_HOME = ogImageForLang("fr");
 
 export const Route = createFileRoute("/")({
   head: async ({ match }) => ({

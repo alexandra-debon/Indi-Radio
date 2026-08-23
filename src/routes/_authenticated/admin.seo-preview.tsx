@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ShieldAlert, ExternalLink } from "lucide-react";
+import { SeoShareRow } from "@/components/admin/SeoShareRow";
 
 const SITE = "https://www.radio.indi-art-culture.com";
 
@@ -237,6 +238,12 @@ function LangPanel({
       />
       <Field label="og:url / canonical" value={href} mono />
       <Field label="og:locale" value={lang === "fr" ? "fr_FR" : "en_US"} mono />
+      <SeoShareRow
+        path={path}
+        lang={lang}
+        title={entry.title}
+        description={entry.description}
+      />
     </div>
   );
 }
