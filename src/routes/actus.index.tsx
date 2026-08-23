@@ -20,6 +20,7 @@ import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { ResponsiveEmbedPreview } from "@/components/media/ResponsiveEmbedPreview";
 import { parseEmbedCode, EMBED_PLATFORMS_LABEL } from "@/lib/embed-code";
 import { NewsBulkImportExport } from "@/components/admin/NewsBulkImportExport";
+import { NewsRevisionsPanel } from "@/components/admin/NewsRevisionsPanel";
 import { BlogAuthorsManager } from "@/components/admin/BlogAuthorsManager";
 import { useCanPublishNews } from "@/hooks/use-blog-authors";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
