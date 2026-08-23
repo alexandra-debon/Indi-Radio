@@ -392,7 +392,7 @@ function NewsCard({ post, onSignIn, sessionUserId, autoOpenComments = false }: {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_comments")
-        .select("id, author_id, content, created_at, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
+        .select("id, author_id, content, created_at, status, image_urls, image_captions, author:profiles!news_comments_author_id_fkey(id,pseudo,role,is_certified,is_team_indi,badges,level)")
         .eq("news_post_id", post.id)
         .order("created_at", { ascending: true });
       return data ?? [];
