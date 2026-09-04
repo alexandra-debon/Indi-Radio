@@ -103,7 +103,7 @@ export function MiniPlayer() {
           to="/radio-mode"
           aria-label={t("radio.mode")}
           title={t("radio.modeHint")}
-          className="hidden shrink-0 items-center gap-1.5 rounded-full border-2 border-primary px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground xs:inline-flex sm:inline-flex"
+          className="hidden shrink-0 items-center gap-1.5 rounded-full border-2 border-primary px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground sm:inline-flex"
         >
           <Maximize2 className="size-3.5" aria-hidden />
           {t("radio.mode")}
