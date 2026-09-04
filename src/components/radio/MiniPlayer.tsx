@@ -1,5 +1,6 @@
-import { Play, Pause, Radio } from "lucide-react";
+import { Play, Pause, Radio, Maximize2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Link } from "@tanstack/react-router";
 import { useRadio } from "./RadioPlayerProvider";
 import { LikeButton } from "./LikeButton";
 import { LiveIndicator } from "./LiveIndicator";
@@ -98,8 +99,26 @@ export function MiniPlayer() {
             </>
           )}
         </div>
+        <Link
+          to="/radio-mode"
+          aria-label={t("radio.mode")}
+          title={t("radio.modeHint")}
+          className="hidden shrink-0 items-center gap-1.5 rounded-full border-2 border-primary px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground sm:inline-flex"
+        >
+          <Maximize2 className="size-3.5" aria-hidden />
+          {t("radio.mode")}
+        </Link>
+        <Link
+          to="/radio-mode"
+          aria-label={t("radio.mode")}
+          title={t("radio.modeHint")}
+          className="grid size-9 shrink-0 place-items-center rounded-full border-2 border-primary text-primary transition active:scale-95 sm:hidden"
+        >
+          <Maximize2 className="size-4" aria-hidden />
+        </Link>
         <AdminChatTrigger />
       </div>
+
     </div>
   );
 }

@@ -1,4 +1,10 @@
-# Radio Mode — écran verrouillé esthétique
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+# Je voudrais que les pochettes apparaissent sur les trois derniers titres également et un bouton volume et muteRadio Mode — écran verrouillé esthétique
 
 Oui, c'est tout à fait possible. Un mode plein écran, très sombre, centré sur la musique.
 

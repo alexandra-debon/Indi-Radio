@@ -27,6 +27,7 @@ import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
 import { Route as RssChroniquesDotxmlRouteImport } from './routes/rss-chroniques[.]xml'
 import { Route as RssActusDotxmlRouteImport } from './routes/rss-actus[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RadioModeRouteImport } from './routes/radio-mode'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as PodcastDotxmlRouteImport } from './routes/podcast[.]xml'
@@ -177,6 +178,11 @@ const RssActusDotxmlRoute = RssActusDotxmlRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RadioModeRoute = RadioModeRouteImport.update({
+  id: '/radio-mode',
+  path: '/radio-mode',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -518,6 +524,7 @@ export interface FileRoutesByFullPath {
   '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
+  '/radio-mode': typeof RadioModeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
@@ -598,6 +605,7 @@ export interface FileRoutesByTo {
   '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
+  '/radio-mode': typeof RadioModeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
@@ -680,6 +688,7 @@ export interface FileRoutesById {
   '/podcast.xml': typeof PodcastDotxmlRoute
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
+  '/radio-mode': typeof RadioModeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rss-actus.xml': typeof RssActusDotxmlRoute
   '/rss-chroniques.xml': typeof RssChroniquesDotxmlRoute
@@ -762,6 +771,7 @@ export interface FileRouteTypes {
     | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
+    | '/radio-mode'
     | '/reset-password'
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
+    | '/radio-mode'
     | '/reset-password'
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
@@ -923,6 +934,7 @@ export interface FileRouteTypes {
     | '/podcast.xml'
     | '/podcasts'
     | '/privacy'
+    | '/radio-mode'
     | '/reset-password'
     | '/rss-actus.xml'
     | '/rss-chroniques.xml'
@@ -1005,6 +1017,7 @@ export interface RootRouteChildren {
   PodcastDotxmlRoute: typeof PodcastDotxmlRoute
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
+  RadioModeRoute: typeof RadioModeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RssActusDotxmlRoute: typeof RssActusDotxmlRoute
   RssChroniquesDotxmlRoute: typeof RssChroniquesDotxmlRoute
@@ -1185,6 +1198,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/radio-mode': {
+      id: '/radio-mode'
+      path: '/radio-mode'
+      fullPath: '/radio-mode'
+      preLoaderRoute: typeof RadioModeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -1675,6 +1695,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastDotxmlRoute: PodcastDotxmlRoute,
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
+  RadioModeRoute: RadioModeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RssActusDotxmlRoute: RssActusDotxmlRoute,
   RssChroniquesDotxmlRoute: RssChroniquesDotxmlRoute,

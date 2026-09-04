@@ -121,6 +121,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     }
   };
 
+  // Radio Mode : écran verrouillé plein écran, sans chrome applicatif.
+  if (pathname === "/radio-mode") {
+    return <>{children}</>;
+  }
+
   return (
     <TooltipProvider delayDuration={200}>
     <div className="flex min-h-screen flex-col">
