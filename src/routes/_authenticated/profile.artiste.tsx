@@ -333,6 +333,25 @@ function ArtistSpacePage() {
           <SocialLinksEditor value={links} onChange={setLinks} />
         </div>
 
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5"><Eye className="size-4" /> Sections visibles sur ma page publique</Label>
+          {([
+            ["Dates de concert", showEvents, setShowEvents] as const,
+            ["Boutique", showShop, setShowShop] as const,
+            ["Publications", showPosts, setShowPosts] as const,
+          ]).map(([label, val, set]) => (
+            <label key={label} className="flex items-center justify-between gap-3 border-2 border-border p-2 text-sm font-semibold">
+              <span className="flex items-center gap-1.5">
+                {val ? <Eye className="size-4" /> : <EyeOff className="size-4 text-muted-foreground" />} {label}
+              </span>
+              <Switch checked={val} onCheckedChange={set} aria-label={`Afficher la section ${label}`} />
+            </label>
+          ))}
+          <p className="text-[11px] text-muted-foreground">
+            Une section masquée disparaît entièrement de ta page publique.
+          </p>
+        </div>
+
         <Button type="submit" disabled={saving}>
           {saving ? <Loader2 className="size-4 animate-spin" /> : null}
           {saving ? "Enregistrement…" : "Enregistrer ma page"}
