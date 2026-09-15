@@ -44,6 +44,7 @@ import { useTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 // `seo` renders as the anchor `title` attribute: crawlers use it as anchor
 // context for internal maillage while users get an accessible tooltip.
 const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
+  { to: "/profile/edit", key: "profile.mySpace", icon: UserCog, seo: "Ma page perso — Espace membre InDi RaDio" },
   { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
   { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Blog InDi ArT CulTuRe — Radio musique indépendante & Réseau social musique" },
   { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
