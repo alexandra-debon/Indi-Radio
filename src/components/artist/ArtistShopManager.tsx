@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { toast } from "@/lib/toast";
-import { ShoppingBag, Loader2, Trash2, Plus } from "lucide-react";
+import { ShoppingBag, Loader2, Trash2, Plus, Pencil, X } from "lucide-react";
 import { SHOP_FORMATS, useArtistShopItems, type ShopItem } from "@/components/artist/ArtistShop";
 
 export function ArtistShopManager({ artistId }: { artistId: string }) {
@@ -20,6 +20,22 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
   const [image, setImage] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setTitle(""); setImage(""); setSummary(""); setUrl(""); setFormat("Vinyle");
+  };
+
+  const startEdit = (it: ShopItem) => {
+    setEditingId(it.id);
+    setTitle(it.title);
+    setFormat(it.format);
+    setImage(it.image_url ?? "");
+    setSummary(it.summary ?? "");
+    setUrl(it.external_url ?? "");
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["artist-shop"] });
 
@@ -27,19 +43,27 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
     mutationFn: async () => {
       if (!title.trim()) throw new Error("Titre obligatoire");
       if (url.trim() && !/^https?:\/\/.+\..+/.test(url.trim())) throw new Error("Lien d'achat invalide");
-      const { error } = await supabase.from("artist_shop_items").insert({
-        artist_id: artistId,
+      const payload = {
         title: title.trim(),
         format,
         image_url: image || null,
         summary: summary.trim() || null,
         external_url: url.trim() || null,
-      } as any);
+      };
+      if (editingId) {
+        const { error } = await supabase.from("artist_shop_items").update(payload as any).eq("id", editingId);
+        if (error) throw error;
+        return "update" as const;
+      }
+      const { error } = await supabase
+        .from("artist_shop_items")
+        .insert({ artist_id: artistId, ...payload } as any);
       if (error) throw error;
+      return "insert" as const;
     },
-    onSuccess: () => {
-      setTitle(""); setImage(""); setSummary(""); setUrl(""); setFormat("Vinyle");
-      toast.success("Objet ajouté à ta boutique");
+    onSuccess: (mode) => {
+      resetForm();
+      toast.success(mode === "update" ? "Objet mis à jour" : "Objet ajouté à ta boutique");
       invalidate();
     },
     onError: (e) => toast.error((e as Error).message),
@@ -110,9 +134,17 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         </p>
       </div>
 
-      <Button type="button" onClick={() => add.mutate()} disabled={add.isPending}>
-        {add.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} Ajouter à la boutique
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" onClick={() => add.mutate()} disabled={add.isPending}>
+          {add.isPending ? <Loader2 className="size-4 animate-spin" /> : editingId ? <Pencil className="size-4" /> : <Plus className="size-4" />}
+          {editingId ? "Enregistrer les modifications" : "Ajouter à la boutique"}
+        </Button>
+        {editingId && (
+          <Button type="button" variant="ghost" onClick={resetForm}>
+            <X className="size-4" /> Annuler
+          </Button>
+        )}
+      </div>
 
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">Aucun objet pour l'instant.</p>
@@ -142,6 +174,9 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
                 />
                 Visible
               </label>
+              <Button type="button" variant="ghost" size="sm" onClick={() => startEdit(it)} aria-label="Modifier cet objet">
+                <Pencil className="size-4" />
+              </Button>
               <Button
                 type="button"
                 variant="ghost"
