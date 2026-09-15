@@ -114,6 +114,7 @@ export function SocialWall() {
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
+  const [visibility, setVisibility] = useState<PostVisibility>("feed");
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
 
