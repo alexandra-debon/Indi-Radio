@@ -169,7 +169,7 @@ function ArtistSpacePage() {
         image_url: postImages[0] ?? null,
         image_urls: postImages,
         image_captions: new Array(postImages.length).fill(""),
-        visibility: postFeed ? "feed" : "profile_only",
+        visibility: postVisibility,
       } as any);
       if (error) throw error;
     },
