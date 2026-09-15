@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { Feather, Check, Loader2 } from "lucide-react";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { Link } from "@tanstack/react-router";
 import {
   Dialog,
@@ -61,7 +62,7 @@ export function MagazineVillageShare({
           title: entry.title,
           excerpt: body.slice(0, 200) || label(kind),
           content: body || label(kind),
-          cover_url: entry.cover_url,
+          cover_url: entry.cover_url || flipHtml5ThumbnailUrl(entry.magazine_url),
           magazine_url: entry.magazine_url,
           source_kind: kind,
           category: "art",
