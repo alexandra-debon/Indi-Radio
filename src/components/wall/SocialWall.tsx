@@ -326,6 +326,7 @@ export function SocialWall() {
       setSocialDraft({});
       setImageDraft("");
       setImagesDraft([]);
+      setVisibility("feed");
       setComposerOpen(false);
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
