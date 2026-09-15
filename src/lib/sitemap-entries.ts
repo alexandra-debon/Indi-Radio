@@ -19,6 +19,7 @@ export const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/playlists", changefreq: "weekly", priority: "0.6" },
   { path: "/artistes", changefreq: "weekly", priority: "0.7" },
   { path: "/clips", changefreq: "weekly", priority: "0.6" },
+  { path: "/redak-village", changefreq: "daily", priority: "0.8" },
   { path: "/top", changefreq: "daily", priority: "0.6" },
   { path: "/top-users", changefreq: "daily", priority: "0.5" },
   { path: "/dedicaces", changefreq: "weekly", priority: "0.5" },
@@ -170,6 +171,20 @@ export async function loadAllEntries(): Promise<SitemapEntry[]> {
       entries.push({
         path: `/clips/${r.id}`,
         ...contentMeta(0.55, normalizeDate(r.created_at)),
+      });
+    }
+    // Articles RéDaK'Village (communauté)
+    const { data: village } = await sb
+      .from("village_articles")
+      .select("slug, updated_at")
+      .eq("published", true)
+      .order("updated_at", { ascending: false })
+      .limit(2000);
+    for (const r of village ?? []) {
+      if (!r.slug) continue;
+      entries.push({
+        path: `/redak-village/${r.slug}`,
+        ...contentMeta(0.65, normalizeDate(r.updated_at)),
       });
     }
     // Social wall posts (publications)

@@ -44,6 +44,7 @@ import { Route as ArtistesRouteImport } from './routes/artistes'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.index'
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
@@ -51,6 +52,7 @@ import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
 import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
+import { Route as RedakVillageSlugRouteImport } from './routes/redak-village.$slug'
 import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
@@ -268,6 +270,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RedakVillageIndexRoute = RedakVillageIndexRouteImport.update({
+  id: '/redak-village/',
+  path: '/redak-village/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
   id: '/playlists/',
   path: '/playlists/',
@@ -301,6 +308,11 @@ const ActusIndexRoute = ActusIndexRouteImport.update({
 const TagTagRoute = TagTagRouteImport.update({
   id: '/tag/$tag',
   path: '/tag/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedakVillageSlugRoute = RedakVillageSlugRouteImport.update({
+  id: '/redak-village/$slug',
+  path: '/redak-village/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
@@ -584,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -591,6 +604,7 @@ export interface FileRoutesByFullPath {
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
+  '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -669,6 +683,7 @@ export interface FileRoutesByTo {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus': typeof ActusIndexRoute
   '/chroniques': typeof ChroniquesIndexRoute
@@ -676,6 +691,7 @@ export interface FileRoutesByTo {
   '/emissions': typeof EmissionsIndexRoute
   '/magazines': typeof MagazinesIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
+  '/redak-village': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -756,6 +772,7 @@ export interface FileRoutesById {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -763,6 +780,7 @@ export interface FileRoutesById {
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
+  '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -843,6 +861,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -850,6 +869,7 @@ export interface FileRouteTypes {
     | '/emissions/'
     | '/magazines/'
     | '/playlists/'
+    | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/boutique'
@@ -928,6 +948,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus'
     | '/chroniques'
@@ -935,6 +956,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/magazines'
     | '/playlists'
+    | '/redak-village'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/boutique'
@@ -1014,6 +1036,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -1021,6 +1044,7 @@ export interface FileRouteTypes {
     | '/emissions/'
     | '/magazines/'
     | '/playlists/'
+    | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/boutique'
@@ -1097,6 +1121,7 @@ export interface RootRouteChildren {
   MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
   PlaylistsSlugRoute: typeof PlaylistsSlugRoute
+  RedakVillageSlugRoute: typeof RedakVillageSlugRoute
   TagTagRoute: typeof TagTagRoute
   ActusIndexRoute: typeof ActusIndexRoute
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
@@ -1104,6 +1129,7 @@ export interface RootRouteChildren {
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
+  RedakVillageIndexRoute: typeof RedakVillageIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
@@ -1370,6 +1396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/redak-village/': {
+      id: '/redak-village/'
+      path: '/redak-village'
+      fullPath: '/redak-village/'
+      preLoaderRoute: typeof RedakVillageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/playlists/': {
       id: '/playlists/'
       path: '/playlists'
@@ -1417,6 +1450,13 @@ declare module '@tanstack/react-router' {
       path: '/tag/$tag'
       fullPath: '/tag/$tag'
       preLoaderRoute: typeof TagTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redak-village/$slug': {
+      id: '/redak-village/$slug'
+      path: '/redak-village/$slug'
+      fullPath: '/redak-village/$slug'
+      preLoaderRoute: typeof RedakVillageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playlists/$slug': {
@@ -1812,6 +1852,7 @@ const rootRouteChildren: RootRouteChildren = {
   MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
   PlaylistsSlugRoute: PlaylistsSlugRoute,
+  RedakVillageSlugRoute: RedakVillageSlugRoute,
   TagTagRoute: TagTagRoute,
   ActusIndexRoute: ActusIndexRoute,
   ChroniquesIndexRoute: ChroniquesIndexRoute,
@@ -1819,6 +1860,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmissionsIndexRoute: EmissionsIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
+  RedakVillageIndexRoute: RedakVillageIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,

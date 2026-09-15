@@ -6,10 +6,12 @@ import { WallExpandHandle } from "@/components/wall/WallExpandHandle";
 import { useT, useLang } from "@/lib/i18n";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
+import type { Locale } from "date-fns";
+import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { Heart, MessageCircle, Pin, PenSquare } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Newspaper } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -122,7 +124,6 @@ export function WallCompact({
         </div>
       </div>
 
-
       <div className="space-y-2">
         {posts.length === 0 && (
           <button
@@ -163,7 +164,11 @@ export function WallCompact({
                   )}
                   {p.author && <UserBadge profile={p.author} compact />}
                   <span className="text-muted-foreground">
-                    · {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
+                    ·{" "}
+                    {formatDistanceToNow(new Date(p.created_at), {
+                      addSuffix: true,
+                      locale: dateLocale,
+                    })}
                   </span>
                 </div>
                 {p.title && (
@@ -175,7 +180,12 @@ export function WallCompact({
                 )}
                 {bodyText && (
                   <div className="line-clamp-2 text-xs text-muted-foreground">
-                    <TranslatedText entityType="post" entityKey={p.id} field="content" text={bodyText}>
+                    <TranslatedText
+                      entityType="post"
+                      entityKey={p.id}
+                      field="content"
+                      text={bodyText}
+                    >
                       {(tt) => <>{renderRich(tt)}</>}
                     </TranslatedText>
                   </div>
@@ -194,6 +204,8 @@ export function WallCompact({
         })}
       </div>
 
+      <FeedTeasers />
+
       <button
         type="button"
         onClick={onExpand}
@@ -201,8 +213,178 @@ export function WallCompact({
       >
         {t("wall.seeAll")}
       </button>
-
     </section>
+  );
+}
+type TeaserKind = "village" | "news" | "clip" | "review";
 
+interface Teaser {
+  kind: TeaserKind;
+  id: string;
+  title: string;
+  excerpt: string;
+  cover: string | null;
+  date: string;
+}
+
+const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
+  village: { fr: "RéDaK'Village", en: "RéDaK'Village" },
+  news: { fr: "Blog InDi ArT CulTuRe", en: "InDi ArT CulTuRe Blog" },
+  clip: { fr: "Clip Addict", en: "Clip Addict" },
+  review: { fr: "Chronique", en: "Album review" },
+};
+
+/**
+ * Cartes teaser des contenus éditoriaux et communautaires publiés
+ * récemment : elles renvoient vers la page complète, jamais vers le mur.
+ */
+function FeedTeasers() {
+  const { lang } = useLang();
+  const dateLocale = lang === "en" ? enUS : fr;
+  const key = lang === "en" ? "en" : "fr";
+
+  const { data: items = [] } = useQuery<Teaser[]>({
+    queryKey: ["wall-compact-teasers"],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const [village, news, clips, reviews] = await Promise.all([
+        supabase
+          .from("village_articles")
+          .select("slug, title, excerpt, content, cover_url, created_at")
+          .eq("published", true)
+          .eq("visibility", "feed")
+          .order("created_at", { ascending: false })
+          .limit(3),
+        supabase
+          .from("news_posts")
+          .select("id, title, content, image_url, created_at")
+          .order("created_at", { ascending: false })
+          .limit(2),
+        supabase
+          .from("clip_entries")
+          .select("id, title, body, created_at")
+          .order("created_at", { ascending: false })
+          .limit(2),
+        supabase
+          .from("album_reviews")
+          .select("slug, title, artist, excerpt, cover_url, created_at")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .limit(2),
+      ]);
+      const out: Teaser[] = [];
+      for (const r of village.data ?? []) {
+        out.push({
+          kind: "village",
+          id: r.slug,
+          title: r.title,
+          excerpt: (r.excerpt || r.content || "").slice(0, 180),
+          cover: r.cover_url,
+          date: r.created_at,
+        });
+      }
+      for (const r of news.data ?? []) {
+        out.push({
+          kind: "news",
+          id: r.id,
+          title: r.title,
+          excerpt: stripMediaUrls(r.content || "").slice(0, 180),
+          cover: r.image_url,
+          date: r.created_at,
+        });
+      }
+      for (const r of clips.data ?? []) {
+        out.push({
+          kind: "clip",
+          id: r.id,
+          title: r.title,
+          excerpt: stripMediaUrls(r.body || "").slice(0, 180),
+          cover: null,
+          date: r.created_at,
+        });
+      }
+      for (const r of reviews.data ?? []) {
+        out.push({
+          kind: "review",
+          id: r.slug,
+          title: `${r.artist} — ${r.title}`,
+          excerpt: (r.excerpt || "").slice(0, 180),
+          cover: r.cover_url,
+          date: r.created_at,
+        });
+      }
+      return out.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+    },
+  });
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {items.map((it) => (
+        <TeaserCard
+          key={`${it.kind}-${it.id}`}
+          item={it}
+          label={TEASER_LABEL[it.kind][key]}
+          locale={dateLocale}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TeaserCard({ item, label, locale }: { item: Teaser; label: string; locale: Locale }) {
+  const inner = (
+    <>
+      {item.cover && (
+        <img
+          src={item.cover}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="size-16 shrink-0 rounded object-cover"
+        />
+      )}
+      <div className="min-w-0 flex-1 space-y-1">
+        <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+          <span className="inline-flex items-center gap-1 border-2 border-black bg-primary px-1.5 py-0.5 font-black uppercase tracking-widest text-black">
+            <Newspaper className="size-3" /> {label}
+          </span>
+          <span className="text-muted-foreground">
+            · {formatDistanceToNow(new Date(item.date), { addSuffix: true, locale })}
+          </span>
+        </div>
+        <div className="line-clamp-2 text-sm font-bold">{item.title}</div>
+        {item.excerpt && (
+          <div className="line-clamp-2 text-xs text-muted-foreground">{item.excerpt}</div>
+        )}
+      </div>
+    </>
+  );
+  const cls =
+    "card-brut flex w-full items-start gap-3 p-3 text-left transition hover:-translate-y-0.5 hover:bg-primary/5";
+
+  if (item.kind === "village")
+    return (
+      <Link to="/redak-village/$slug" params={{ slug: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  if (item.kind === "news")
+    return (
+      <Link to="/actus/$postId" params={{ postId: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  if (item.kind === "clip")
+    return (
+      <Link to="/clips/$clipId" params={{ clipId: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  return (
+    <Link to="/chroniques/$slug" params={{ slug: item.id }} className={cls}>
+      {inner}
+    </Link>
   );
 }
