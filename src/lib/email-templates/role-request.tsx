@@ -38,13 +38,14 @@ export const RoleRequestEmail = ({
           {stageName ? ` (${stageName})` : ''} demande le statut{' '}
           <strong>{roleRequested}</strong> sur InDi RaDio.
         </Text>
-        {note && (
+        {note && note.trim() ? (
           <>
             <Hr style={hr} />
-            <Text style={text}>{note}</Text>
+            <Text style={label}>Message du candidat :</Text>
+            <Text style={quote}>{note}</Text>
             <Hr style={hr} />
           </>
-        )}
+        ) : null}
         <Button style={button} href={reviewUrl}>
           Examiner la candidature
         </Button>
