@@ -392,7 +392,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/candidatures"
-                search={{}}
+                search={(prev) => prev}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === "/admin/candidatures" ? "page" : undefined}
                 className={cn(
