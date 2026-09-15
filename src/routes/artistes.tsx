@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, Search, MessageCircle } from "lucide-react";
+import { BadgeCheck, Search, MessageCircle, ShoppingBag } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
@@ -58,6 +58,17 @@ function ArtistesPage() {
   const t = useT();
   const [q, setQ] = useState("");
   const { data = [], isLoading } = useQuery({ queryKey: ["artistes-gallery"], queryFn: fetchArtists });
+  const { data: shopIds } = useQuery<Set<string>>({
+    queryKey: ["artistes-gallery-shops"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("artist_shop_items")
+        .select("artist_id")
+        .eq("is_visible", true);
+      if (error) throw error;
+      return new Set((data ?? []).map((r: { artist_id: string }) => r.artist_id));
+    },
+  });
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -114,6 +125,15 @@ function ArtistesPage() {
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-base font-black">{name}</span>
                       <BadgeCheck className="size-4 shrink-0 text-primary" aria-label={t("gallery.certified")} />
+                      {shopIds?.has(a.id) && (
+                        <span
+                          title="Boutique disponible"
+                          aria-label="Boutique disponible"
+                          className="inline-flex shrink-0 items-center gap-1 border-2 border-border bg-primary px-1 py-0.5 text-[9px] font-black uppercase tracking-widest text-foreground"
+                        >
+                          <ShoppingBag className="size-3" />
+                        </span>
+                      )}
                     </div>
                     <div className="text-[11px] uppercase tracking-wide text-muted-foreground">@{a.pseudo}</div>
                     {a.gallery_summary && (

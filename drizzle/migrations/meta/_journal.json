@@ -36,6 +36,13 @@
       "when": 1789496016757,
       "tag": "0004_post_visibility_followers_only",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789497030292,
+      "tag": "0005_artist_shop_items",
+      "breakpoints": true
     }
   ]
 }

@@ -12,6 +12,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { FollowButton, ArtistEvents, ArtistPosts } from "@/components/artist/ArtistPageSections";
+import { ArtistShop } from "@/components/artist/ArtistShop";
 
 export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
@@ -135,6 +136,9 @@ type Profile = {
   accent_color: string | null;
   stage_name: string | null;
   gallery_summary: string | null;
+  show_events_section: boolean | null;
+  show_shop_section: boolean | null;
+  show_posts_section: boolean | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
@@ -185,7 +189,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary, show_events_section, show_shop_section, show_posts_section")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -385,8 +389,9 @@ function UserProfilePage() {
         </div>
       )}
 
-      {isArtistPage && <ArtistEvents artistId={profile.id} accent={accent} />}
-      <ArtistPosts artistId={profile.id} accent={accent} />
+      {isArtistPage && profile.show_events_section !== false && <ArtistEvents artistId={profile.id} accent={accent} />}
+      {profile.show_shop_section !== false && <ArtistShop artistId={profile.id} accent={accent} />}
+      {profile.show_posts_section !== false && <ArtistPosts artistId={profile.id} accent={accent} />}
 
       <div className="grid grid-cols-3 gap-2">
         <StatCard icon={FileText} label={t("upub.stats.posts")} value={stats.posts} />

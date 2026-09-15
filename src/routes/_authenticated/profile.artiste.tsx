@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { Switch } from "@/components/ui/switch";
+import { ArtistShopManager } from "@/components/artist/ArtistShopManager";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/components/social/VisibilityPicker";
@@ -54,12 +56,18 @@ function ArtistSpacePage() {
   const [summary, setSummary] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
   const [saving, setSaving] = useState(false);
+  const [showEvents, setShowEvents] = useState(true);
+  const [showShop, setShowShop] = useState(true);
+  const [showPosts, setShowPosts] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
     setBanner((profile as any).banner_url ?? "");
     setAccent((profile as any).accent_color ?? "");
     setSummary((profile as any).gallery_summary ?? "");
+    setShowEvents((profile as any).show_events_section ?? true);
+    setShowShop((profile as any).show_shop_section ?? true);
+    setShowPosts((profile as any).show_posts_section ?? true);
     const sl = (profile as any).social_links;
     setLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
   }, [profile]);
@@ -226,6 +234,9 @@ function ArtistSpacePage() {
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
           social_links: sanitizeLinks(links),
+          show_events_section: showEvents,
+          show_shop_section: showShop,
+          show_posts_section: showPosts,
         } as any)
         .eq("id", uid);
       if (error) throw error;
@@ -322,6 +333,25 @@ function ArtistSpacePage() {
           <SocialLinksEditor value={links} onChange={setLinks} />
         </div>
 
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5"><Eye className="size-4" /> Sections visibles sur ma page publique</Label>
+          {([
+            ["Dates de concert", showEvents, setShowEvents] as const,
+            ["Boutique", showShop, setShowShop] as const,
+            ["Publications", showPosts, setShowPosts] as const,
+          ]).map(([label, val, set]) => (
+            <label key={label} className="flex items-center justify-between gap-3 border-2 border-border p-2 text-sm font-semibold">
+              <span className="flex items-center gap-1.5">
+                {val ? <Eye className="size-4" /> : <EyeOff className="size-4 text-muted-foreground" />} {label}
+              </span>
+              <Switch checked={val} onCheckedChange={set} aria-label={`Afficher la section ${label}`} />
+            </label>
+          ))}
+          <p className="text-[11px] text-muted-foreground">
+            Une section masquée disparaît entièrement de ta page publique.
+          </p>
+        </div>
+
         <Button type="submit" disabled={saving}>
           {saving ? <Loader2 className="size-4 animate-spin" /> : null}
           {saving ? "Enregistrement…" : "Enregistrer ma page"}
@@ -366,6 +396,9 @@ function ArtistSpacePage() {
           </ul>
         )}
       </section>
+
+      {/* Boutique */}
+      <ArtistShopManager artistId={session.user.id} />
 
       {/* Blog artiste */}
       <section className="card-brut space-y-3 p-4">

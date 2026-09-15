@@ -231,6 +231,59 @@ export type Database = {
           },
         ]
       }
+      artist_shop_items: {
+        Row: {
+          artist_id: string
+          created_at: string
+          external_url: string | null
+          format: string
+          id: string
+          image_url: string | null
+          is_visible: boolean
+          position: number
+          summary: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          external_url?: string | null
+          format?: string
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          position?: number
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          external_url?: string | null
+          format?: string
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          position?: number
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_shop_items_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artwork_lookups: {
         Row: {
           artist: string
@@ -1602,6 +1655,9 @@ export type Database = {
           role_request_status: string | null
           role_request_submitted_at: string | null
           role_requested: Database["public"]["Enums"]["app_role"] | null
+          show_events_section: boolean
+          show_posts_section: boolean
+          show_shop_section: boolean
           social_links: Json
           stage_name: string | null
           updated_at: string
@@ -1633,6 +1689,9 @@ export type Database = {
           role_request_status?: string | null
           role_request_submitted_at?: string | null
           role_requested?: Database["public"]["Enums"]["app_role"] | null
+          show_events_section?: boolean
+          show_posts_section?: boolean
+          show_shop_section?: boolean
           social_links?: Json
           stage_name?: string | null
           updated_at?: string
@@ -1664,6 +1723,9 @@ export type Database = {
           role_request_status?: string | null
           role_request_submitted_at?: string | null
           role_requested?: Database["public"]["Enums"]["app_role"] | null
+          show_events_section?: boolean
+          show_posts_section?: boolean
+          show_shop_section?: boolean
           social_links?: Json
           stage_name?: string | null
           updated_at?: string
