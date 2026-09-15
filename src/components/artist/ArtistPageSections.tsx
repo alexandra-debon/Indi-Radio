@@ -248,6 +248,9 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
     },
   });
 
+  const postIds = posts.map((p) => p.id);
+  const { likes, comments } = usePostInteractions(postIds);
+
   return (
     <div className="card-brut p-4" style={accent ? { borderColor: accent } : undefined}>
       <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
@@ -296,6 +299,13 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
                     ))}
                   </div>
                 )}
+                <PostInteractions
+                  postId={p.id}
+                  likes={likes}
+                  comments={comments}
+                  shareTitle={p.title ?? "Publication sur Indi Radio"}
+                  shareText={stripMediaUrls(p.content)}
+                />
               </li>
             );
           })}
