@@ -55,6 +55,10 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     fr: { title: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub." },
     en: { title: "Clip Addict — 24/7 Independent Music Radio InDi RaDio", description: "The video playlist of independent music clips curated by InDi RaDio on 24/7 independent music radio ad-free." },
   },
+  "/redak-village": {
+    fr: { title: "RéDaK'Village — Les articles de la communauté InDi RaDio", description: "RéDaK'Village : l'espace d'écriture de la communauté InDi RaDio. Articles sur la musique indé et la culture indé signés par les auditeurs, artistes et médias." },
+    en: { title: "RéDaK'Village — Articles by the InDi RaDio community", description: "RéDaK'Village: the writing space of the InDi RaDio community. Articles about indie music and indie culture written by listeners, artists and media." },
+  },
   "/chart": {
     fr: { title: "Top 25 des titres — Radio 24/7 de la musique indépendante InDi RaDio", description: "Le classement des 25 titres les plus aimés par la communauté de la radio 24/7 de la musique indépendante InDi RaDio." },
     en: { title: "Top 25 Tracks — 24/7 Independent Music Radio InDi RaDio", description: "The chart of the 25 most-loved tracks by the 24/7 independent music radio community InDi RaDio." },

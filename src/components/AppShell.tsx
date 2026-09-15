@@ -53,6 +53,7 @@ const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
   { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
   { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
   { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
+  { to: "/redak-village", key: "nav.village", icon: Feather, seo: "RéDaK'Village — Les articles de la communauté InDi RaDio" },
   { to: "/artistes", key: "nav.gallery", icon: Mic, seo: "Galerie Artistes certifiés — Radio musique indé" },
   { to: "/playlists", key: "nav.playlists", icon: ListMusic, seo: "Playlists InDi RaDio — Spotify & Apple Music, musique indépendante" },
   { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
