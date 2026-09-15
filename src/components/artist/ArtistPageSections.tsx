@@ -11,6 +11,8 @@ import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock } from "lucide-react";
 import { PostInteractions, usePostInteractions } from "@/components/wall/PostInteractions";
+import { CategoryBadge, CategoryFilter, type PostCategory } from "@/components/social/PostCategory";
+import { useState } from "react";
 
 type ArtistEvent = {
   id: string;
@@ -28,6 +30,7 @@ type ArtistPost = {
   image_url: string | null;
   image_urls: string[] | null;
   visibility: string;
+  category: string | null;
 };
 
 const TXT = {
@@ -234,12 +237,14 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
     },
   });
 
+  const [category, setCategory] = useState<PostCategory | null>(null);
+
   const { data: posts = [] } = useQuery<ArtistPost[]>({
     queryKey: ["artist-posts-public", artistId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, title, content, created_at, image_url, image_urls, visibility")
+        .select("id, title, content, created_at, image_url, image_urls, visibility, category")
         .eq("author_id", artistId)
         .order("created_at", { ascending: false })
         .limit(20);
@@ -248,7 +253,8 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
     },
   });
 
-  const postIds = posts.map((p) => p.id);
+  const shown = category ? posts.filter((p) => p.category === category) : posts;
+  const postIds = shown.map((p) => p.id);
   const { likes, comments } = usePostInteractions(postIds);
 
   return (
@@ -261,11 +267,16 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
           <Lock className="size-3.5 shrink-0" /> {txt.lockedHint}
         </p>
       )}
-      {posts.length === 0 ? (
+      {posts.length > 0 && (
+        <div className="mb-3">
+          <CategoryFilter value={category} onChange={setCategory} accent={accent} />
+        </div>
+      )}
+      {shown.length === 0 ? (
         <p className="text-sm text-muted-foreground">{txt.postsEmpty}</p>
       ) : (
         <ul className="space-y-3">
-          {posts.map((p) => {
+          {shown.map((p) => {
             const images = (p.image_urls && p.image_urls.length > 0 ? p.image_urls : p.image_url ? [p.image_url] : []).slice(0, 3);
             const text = stripMediaUrls(p.content);
             return (
@@ -274,11 +285,14 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
                   <Link to="/p/$postId" params={{ postId: p.id }} className="text-sm font-black hover:underline">
                     {p.title || new Date(p.created_at).toLocaleDateString()}
                   </Link>
-                  {(p.visibility === "profile_only" || p.visibility === "followers_only") && (
-                    <span className="shrink-0 border border-border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
-                      {p.visibility === "followers_only" ? txt.followersOnly : txt.onlyHere}
-                    </span>
-                  )}
+                  <div className="flex shrink-0 items-center gap-1">
+                    <CategoryBadge category={p.category} accent={accent} />
+                    {(p.visibility === "profile_only" || p.visibility === "followers_only") && (
+                      <span className="shrink-0 border border-border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                        {p.visibility === "followers_only" ? txt.followersOnly : txt.onlyHere}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 {text && (
                   <TranslatedText

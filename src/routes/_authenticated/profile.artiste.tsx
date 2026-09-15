@@ -13,6 +13,7 @@ import { ArtistShopManager } from "@/components/artist/ArtistShopManager";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/components/social/VisibilityPicker";
+import { CategoryPicker, type PostCategory } from "@/components/social/PostCategory";
 import { isValidVideoUrl } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff } from "lucide-react";
@@ -162,6 +163,7 @@ function ArtistSpacePage() {
   const [postVideo, setPostVideo] = useState("");
   const [postImages, setPostImages] = useState<string[]>([]);
   const [postVisibility, setPostVisibility] = useState<PostVisibility>("feed");
+  const [postCategory, setPostCategory] = useState<PostCategory | null>(null);
 
   const publish = useMutation({
     mutationFn: async () => {
@@ -179,11 +181,12 @@ function ArtistSpacePage() {
         image_urls: postImages,
         image_captions: new Array(postImages.length).fill(""),
         visibility: postVisibility,
+        category: postCategory,
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
-      setPostTitle(""); setPostBody(""); setPostVideo(""); setPostImages([]);
+      setPostTitle(""); setPostBody(""); setPostVideo(""); setPostImages([]); setPostCategory(null);
       toast.success("Publication en ligne");
       qc.invalidateQueries({ queryKey: ["artist-own-posts"] });
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
@@ -410,6 +413,7 @@ function ArtistSpacePage() {
         <Input placeholder="Lien vidéo / audio (YouTube, Vimeo, SoundCloud)" value={postVideo} onChange={(e) => setPostVideo(e.target.value)} inputMode="url" />
         <MultiImageUploader values={postImages} onChange={setPostImages} folder={`artist/${session.user.id}`} />
         <VisibilityPicker value={postVisibility} onChange={setPostVisibility} name="new-post-visibility" />
+        <CategoryPicker value={postCategory} onChange={setPostCategory} name="new-post-category" />
         <Button type="button" onClick={() => publish.mutate()} disabled={publish.isPending}>
           {publish.isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} Publier
         </Button>

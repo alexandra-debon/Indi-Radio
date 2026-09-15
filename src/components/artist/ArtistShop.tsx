@@ -8,7 +8,7 @@ import { SmartImg } from "@/components/media/SmartImg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
-import { ShoppingBag, ExternalLink, Sparkles, Tag } from "lucide-react";
+import { ShoppingBag, ExternalLink, Sparkles, Tag, Filter } from "lucide-react";
 
 export type ShopItem = {
   id: string;
@@ -32,6 +32,9 @@ const TXT = {
     tags: "Tags éditoriaux (admin)",
     save: "Enregistrer les tags",
     tagsHint: "Séparés par des virgules",
+    filterLabel: "Format",
+    allFormats: "Tout",
+    noneForFormat: "Aucun objet dans ce format.",
   },
   en: {
     shop: "Shop",
@@ -41,6 +44,9 @@ const TXT = {
     tags: "Editorial tags (admin)",
     save: "Save tags",
     tagsHint: "Comma separated",
+    filterLabel: "Format",
+    allFormats: "All",
+    noneForFormat: "No item in this format.",
   },
 } as const;
 
@@ -160,11 +166,14 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
   const txt = useShopTxt();
   const { isAdmin } = useAuth();
   const { data: items = [] } = useArtistShopItems(artistId);
+  const [format, setFormat] = useState<string | null>(null);
 
   const featured = items.filter((i) => (i.tags ?? []).length > 0);
+  const availableFormats = SHOP_FORMATS.filter((f) => items.some((i) => i.format === f));
+  const visible = format ? items.filter((i) => i.format === format) : items;
 
   return (
-    <div className="card-brut p-4" style={accent ? { borderColor: accent } : undefined}>
+    <div id="boutique" className="card-brut scroll-mt-24 p-4" style={accent ? { borderColor: accent } : undefined}>
       <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
         <ShoppingBag className="size-4" style={accent ? { color: accent } : undefined} /> {txt.shop}
       </h2>
@@ -186,11 +195,52 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
               </div>
             </div>
           )}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((i) => (
-              <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} />
-            ))}
-          </div>
+          {availableFormats.length > 1 && (
+            <div className="mb-3 flex flex-wrap items-center gap-1.5" role="group" aria-label={txt.filterLabel}>
+              <span className="mr-1 flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <Filter className="size-3" /> {txt.filterLabel}
+              </span>
+              <button
+                type="button"
+                onClick={() => setFormat(null)}
+                aria-pressed={format === null}
+                className={
+                  "rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                  (format === null ? "bg-primary text-black shadow-[2px_2px_0_0_#000]" : "bg-background hover:bg-muted")
+                }
+                style={format === null && accent ? { backgroundColor: accent, color: "#000" } : undefined}
+              >
+                {txt.allFormats}
+              </button>
+              {availableFormats.map((f) => {
+                const active = format === f;
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFormat(active ? null : f)}
+                    aria-pressed={active}
+                    className={
+                      "rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                      (active ? "bg-primary text-black shadow-[2px_2px_0_0_#000]" : "bg-background hover:bg-muted")
+                    }
+                    style={active && accent ? { backgroundColor: accent, color: "#000" } : undefined}
+                  >
+                    {f}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {visible.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{txt.noneForFormat}</p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {visible.map((i) => (
+                <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} />
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>
