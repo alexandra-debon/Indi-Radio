@@ -61,6 +61,7 @@ export function MagazineEntryEditor({
     onSuccess: () => {
       toast.success(initial?.id ? "Article modifié" : "Article publié");
       qc.invalidateQueries({ queryKey: ["magazine-entries"] });
+      qc.invalidateQueries({ queryKey: ["wall-compact-teasers"] });
       onDone();
     },
     onError: (e) => toast.error((e as Error).message),

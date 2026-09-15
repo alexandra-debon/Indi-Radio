@@ -10,8 +10,9 @@ import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { Heart, MessageCircle, Pin, PenSquare, Newspaper } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -226,7 +227,7 @@ function clipThumb(url: string | null): string | null {
   return null;
 }
 
-type TeaserKind = "village" | "news" | "clip" | "review";
+type TeaserKind = "village" | "news" | "clip" | "review" | "magazine";
 
 interface Teaser {
   kind: TeaserKind;
@@ -242,6 +243,7 @@ const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
   news: { fr: "Blog InDi ArT CulTuRe", en: "InDi ArT CulTuRe Blog" },
   clip: { fr: "Clip Addict", en: "Clip Addict" },
   review: { fr: "Chronique", en: "Album review" },
+  magazine: { fr: "Magazine interactif", en: "Interactive magazine" },
 };
 
 /**
@@ -257,7 +259,7 @@ function FeedTeasers() {
     queryKey: ["wall-compact-teasers"],
     staleTime: 60_000,
     queryFn: async () => {
-      const [village, news, clips, reviews] = await Promise.all([
+      const [village, news, clips, reviews, magazines] = await Promise.all([
         supabase
           .from("village_articles")
           .select("slug, title, excerpt, content, cover_url, created_at")
@@ -281,8 +283,23 @@ function FeedTeasers() {
           .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
+        supabase
+          .from("magazine_entries")
+          .select("id, title, body, cover_url, magazine_url, created_at")
+          .order("created_at", { ascending: false })
+          .limit(2),
       ]);
       const out: Teaser[] = [];
+      for (const r of magazines.data ?? []) {
+        out.push({
+          kind: "magazine",
+          id: r.id,
+          title: r.title,
+          excerpt: stripMediaUrls(r.body || "").slice(0, 180),
+          cover: r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
+          date: r.created_at,
+        });
+      }
       for (const r of village.data ?? []) {
         out.push({
           kind: "village",
@@ -358,7 +375,7 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
           <span className="inline-flex items-center gap-1 border-2 border-black bg-primary px-1.5 py-0.5 font-black uppercase tracking-widest text-black">
-            <Newspaper className="size-3" /> {label}
+            {item.kind === "magazine" ? <BookOpen className="size-3" /> : <Newspaper className="size-3" />} {label}
           </span>
           <span className="text-muted-foreground">
             · {formatDistanceToNow(new Date(item.date), { addSuffix: true, locale })}
@@ -389,6 +406,12 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
   if (item.kind === "clip")
     return (
       <Link to="/clips/$clipId" params={{ clipId: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  if (item.kind === "magazine")
+    return (
+      <Link to="/magazines/$magazineId" params={{ magazineId: item.id }} className={cls}>
         {inner}
       </Link>
     );
