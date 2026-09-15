@@ -88,28 +88,40 @@ function WelcomePage() {
       return;
     }
     window.localStorage.removeItem(PENDING_ROLE_KEY);
+    armStatusTour();
     qc.invalidateQueries({ queryKey: ["profile"] });
     toast.success("Profil enregistré, bienvenue sur InDi RaDio !");
     navigate({ to: "/" });
   }
 
   async function sendApplication() {
-    if (note.trim().length < 30) {
-      toast.error("Présente-toi en quelques lignes (30 caractères minimum).");
+    const isMedia = choice === "media";
+    if (stageName.trim().length < 2) {
+      toast.error(isMedia ? "Indique le nom de ton média." : "Indique ton nom d'artiste.");
+      return;
+    }
+    const clean = sanitizeLinks(links) as SocialLinks;
+    const hasSocial = Object.entries(clean).some(
+      ([k, v]) => !k.startsWith("__") && typeof v === "string" && v.trim().length > 0,
+    );
+    if (isMedia && !hasSocial && !website.trim()) {
+      toast.error("Renseigne au moins un lien professionnel ou ton site web.");
       return;
     }
     setSaving(true);
     try {
       await submit({
         data: {
-          role: choice === "media" ? "media" : "artiste",
+          role: isMedia ? "media" : "artiste",
           stageName: stageName.trim(),
           punchline: punchline.trim(),
           note: note.trim(),
-          socialLinks: sanitizeLinks(links) as Record<string, unknown>,
+          website: website.trim(),
+          socialLinks: clean as Record<string, unknown>,
         },
       });
       window.localStorage.removeItem(PENDING_ROLE_KEY);
+      armStatusTour();
       qc.invalidateQueries({ queryKey: ["profile"] });
       setDone(true);
     } catch (err) {
