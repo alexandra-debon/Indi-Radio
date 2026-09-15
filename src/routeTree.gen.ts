@@ -82,6 +82,7 @@ import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
+import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
@@ -474,6 +475,12 @@ const AuthenticatedAdminCandidaturesRoute =
     path: '/candidatures',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBoutiqueRoute =
+  AuthenticatedAdminBoutiqueRouteImport.update({
+    id: '/boutique',
+    path: '/boutique',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -586,6 +593,7 @@ export interface FileRoutesByFullPath {
   '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -670,6 +678,7 @@ export interface FileRoutesByTo {
   '/playlists': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -756,6 +765,7 @@ export interface FileRoutesById {
   '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
@@ -926,6 +937,7 @@ export interface FileRouteTypes {
     | '/playlists'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
@@ -1011,6 +1023,7 @@ export interface FileRouteTypes {
     | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
@@ -1623,6 +1636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCandidaturesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/boutique': {
+      id: '/_authenticated/admin/boutique'
+      path: '/boutique'
+      fullPath: '/admin/boutique'
+      preLoaderRoute: typeof AuthenticatedAdminBoutiqueRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -1697,6 +1717,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -1704,6 +1725,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBoutiqueRoute: AuthenticatedAdminBoutiqueRoute,
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
