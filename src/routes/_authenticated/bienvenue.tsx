@@ -17,6 +17,7 @@ import {
   sanitizeLinks,
   type SocialLinks,
 } from "@/components/social/SocialLinksBar";
+import { armStatusTour } from "@/components/onboarding/StatusTour";
 
 type RoleChoice = "auditeur" | "artiste" | "media";
 
