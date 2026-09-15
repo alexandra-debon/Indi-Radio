@@ -2044,6 +2044,54 @@ export type Database = {
         }
         Relationships: []
       }
+      village_articles: {
+        Row: {
+          author_id: string
+          category: string | null
+          content: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published: boolean
+          slug: string
+          title: string
+          updated_at: string
+          video_url: string | null
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          category?: string | null
+          content: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          category?: string | null
+          content?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          visibility?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       chart_all_time: {
