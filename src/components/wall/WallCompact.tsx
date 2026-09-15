@@ -383,12 +383,15 @@ function FeedTeasers() {
 }
 
 function TeaserCard({ item, label, locale }: { item: Teaser; label: string; locale: Locale }) {
+  const { lang } = useLang();
+  const coverAlt =
+    lang === "en" ? `${label} thumbnail — ${item.title}` : `Vignette ${label} — ${item.title}`;
   const inner = (
     <>
       {item.cover && (
         <img
           src={item.cover}
-          alt=""
+          alt={coverAlt}
           loading="lazy"
           decoding="async"
           className="size-16 shrink-0 rounded object-cover"
@@ -396,16 +399,38 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
       )}
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
-          <span className="inline-flex items-center gap-1 border-2 border-black bg-primary px-1.5 py-0.5 font-black uppercase tracking-widest text-black">
-            {item.kind === "magazine" ? <BookOpen className="size-3" /> : <Newspaper className="size-3" />} {label}
+          <span
+            className="inline-flex items-center gap-1 border-2 border-black bg-primary px-1.5 py-0.5 font-black uppercase tracking-widest text-black"
+            aria-label={label}
+          >
+            {item.kind === "magazine" ? (
+              <BookOpen className="size-3" aria-hidden="true" />
+            ) : (
+              <Newspaper className="size-3" aria-hidden="true" />
+            )}{" "}
+            {label}
           </span>
           <span className="text-muted-foreground">
             · {formatDistanceToNow(new Date(item.date), { addSuffix: true, locale })}
           </span>
         </div>
-        <div className="line-clamp-2 text-sm font-bold">{item.title}</div>
+        <div className="line-clamp-2 text-sm font-bold">
+          <TranslatedText
+            entityType={`teaser-${item.kind}`}
+            entityKey={item.id}
+            field="title"
+            text={item.title}
+          />
+        </div>
         {item.excerpt && (
-          <div className="line-clamp-2 text-xs text-muted-foreground">{item.excerpt}</div>
+          <div className="line-clamp-2 text-xs text-muted-foreground">
+            <TranslatedText
+              entityType={`teaser-${item.kind}`}
+              entityKey={item.id}
+              field="excerpt"
+              text={item.excerpt}
+            />
+          </div>
         )}
       </div>
     </>
