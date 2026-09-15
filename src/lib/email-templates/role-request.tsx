@@ -63,6 +63,16 @@ const h1 = { fontSize: '22px', fontWeight: 'bold', color: '#111111' }
 const text = { fontSize: '15px', lineHeight: '24px', color: '#222222' }
 const muted = { fontSize: '12px', lineHeight: '20px', color: '#666666' }
 const hr = { borderColor: '#eeeeee', margin: '16px 0' }
+const label = { fontSize: '13px', fontWeight: 'bold', color: '#444444', margin: '0 0 4px' }
+const quote = {
+  fontSize: '15px',
+  lineHeight: '24px',
+  color: '#222222',
+  whiteSpace: 'pre-wrap' as const,
+  borderLeft: '3px solid #facc15',
+  paddingLeft: '12px',
+  margin: '0',
+}
 const button = {
   backgroundColor: '#facc15',
   color: '#000000',
