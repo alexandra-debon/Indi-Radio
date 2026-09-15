@@ -183,6 +183,21 @@ function ArtistSpacePage() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  // Suppression : même permission que sur le mur (RLS « auteur ou admin »).
+  const deletePost = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("posts").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Publication supprimée");
+      qc.invalidateQueries({ queryKey: ["artist-own-posts"] });
+      qc.invalidateQueries({ queryKey: ["wall-posts"] });
+      qc.invalidateQueries({ queryKey: ["artist-posts-public"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   const setVisibility = useMutation({
     mutationFn: async ({ id, visibility }: { id: string; visibility: string }) => {
       const { error } = await supabase.from("posts").update({ visibility } as any).eq("id", id);
