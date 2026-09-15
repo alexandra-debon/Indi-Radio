@@ -211,6 +211,24 @@ export function ArtistEvents({ artistId, accent }: { artistId: string; accent?: 
 
 export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: string | null }) {
   const txt = useTxt();
+  const { session } = useAuth();
+  const uid = session?.user.id ?? null;
+  const isSelf = uid === artistId;
+
+  const { data: following = false } = useQuery<boolean>({
+    queryKey: ["artist-following", artistId, uid],
+    enabled: !!uid,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("artist_follows")
+        .select("id")
+        .eq("artist_id", artistId)
+        .eq("follower_id", uid!)
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
   const { data: posts = [] } = useQuery<ArtistPost[]>({
     queryKey: ["artist-posts-public", artistId],
     queryFn: async () => {
