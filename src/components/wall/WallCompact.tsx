@@ -10,10 +10,11 @@ import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
-import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { flipHtml5ThumbnailUrl, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface CompactPost {
@@ -236,6 +237,8 @@ interface Teaser {
   excerpt: string;
   cover: string | null;
   date: string;
+  /** URL FlipHTML5 pour les teasers magazine (ouverture directe du flipbook). */
+  url?: string | null;
 }
 
 const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
@@ -299,6 +302,7 @@ function FeedTeasers() {
           excerpt: stripMediaUrls(r.body || "").slice(0, 180),
           cover: r.og_image_url || r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
           date: r.created_at,
+          url: r.magazine_url,
         });
       }
       for (const r of village.data ?? []) {
