@@ -135,6 +135,9 @@ type Profile = {
   accent_color: string | null;
   stage_name: string | null;
   gallery_summary: string | null;
+  show_events_section: boolean | null;
+  show_shop_section: boolean | null;
+  show_posts_section: boolean | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
