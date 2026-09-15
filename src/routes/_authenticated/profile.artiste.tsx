@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/components/social/VisibilityPicker";
 import { isValidVideoUrl } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff } from "lucide-react";
