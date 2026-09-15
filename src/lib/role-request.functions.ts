@@ -74,10 +74,16 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
       const { data: admins } = await supabaseAdmin.from("profiles").select("id").eq("role", "admin");
+      const extraRecipient = "community-app@indi-art-culture.com";
+      const adminEmails: string[] = [];
       for (const a of admins ?? []) {
         const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(a.id);
         const email = userRes?.user?.email;
-        if (!email) continue;
+        if (email) adminEmails.push(email);
+      }
+      // Destinataire supplémentaire systématique (pas de déduplication nécessaire).
+      adminEmails.push(extraRecipient);
+      for (const email of adminEmails) {
         await sendTemplateEmail("role-request", email, {
           templateData: {
             pseudo: profile?.pseudo ?? "Un membre",
@@ -86,7 +92,7 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
             note: data.note || "",
             reviewUrl: `${SITE_ORIGIN}/admin/candidatures`,
           },
-          idempotencyKey: `role-request-${context.userId}-${a.id}-${Date.now()}`,
+          idempotencyKey: `role-request-${context.userId}-${email}-${Date.now()}`,
         });
       }
     } catch {
