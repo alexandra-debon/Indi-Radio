@@ -38,4 +38,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'mention-notification': mentionNotificationTemplate,
   'admin-message': adminMessageTemplate,
   'blog-author-invite': blogAuthorInviteTemplate,
+  'role-request': roleRequestTemplate,
 }
