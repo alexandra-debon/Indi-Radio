@@ -287,6 +287,27 @@ export function AuthDialog() {
           <TabsContent value="signup">
             <form className="space-y-3" onSubmit={handleSignUp}>
               <div>
+                <Label>Je m'inscris en tant que</Label>
+                <div className="mt-1 grid gap-2">
+                  {ROLE_OPTIONS.map((o) => (
+                    <button
+                      key={o.key}
+                      type="button"
+                      onClick={() => setSignUpRole(o.key)}
+                      aria-pressed={signUpRole === o.key}
+                      className={`rounded-lg border p-2.5 text-left transition ${
+                        signUpRole === o.key
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="text-sm font-semibold">{o.label}</div>
+                      <div className="text-xs text-muted-foreground">{o.hint}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <Label htmlFor="su-pseudo">Pseudo</Label>
                 <Input id="su-pseudo" required minLength={2} value={signUpPseudo} onChange={(e) => setSignUpPseudo(e.target.value)} />
               </div>
