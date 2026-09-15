@@ -31,7 +31,7 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => submitSchema.parse(raw))
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {
+    const patch: any = {
       role_requested: data.role,
       role_request_status: "pending",
       role_request_note: data.note,
@@ -94,7 +94,7 @@ export const reviewRoleRequest = createServerFn({ method: "POST" })
     if (candidate.role_request_status !== "pending") throw new Error("Candidature déjà traitée.");
 
     const now = new Date().toISOString();
-    const patch: Record<string, unknown> =
+    const patch: any =
       data.decision === "approved"
         ? {
             role: candidate.role_requested ?? "artiste",
