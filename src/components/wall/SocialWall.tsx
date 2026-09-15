@@ -521,6 +521,11 @@ export function SocialWall() {
             </div>
           </div>
         )}
+        {session && (
+          <div className="mt-2">
+            <VisibilityPicker value={visibility} onChange={setVisibility} name="wall-post-visibility" />
+          </div>
+        )}
         <div className="mt-3 flex justify-end gap-2">
           <Button size="sm" variant="ghost" onClick={() => setComposerOpen(false)}>
             {t("wall.cancel")}
