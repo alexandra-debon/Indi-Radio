@@ -2054,8 +2054,10 @@ export type Database = {
           excerpt: string | null
           free_tag: string | null
           id: string
+          magazine_url: string | null
           published: boolean
           slug: string
+          source_kind: string | null
           title: string
           updated_at: string
           video_url: string | null
@@ -2070,8 +2072,10 @@ export type Database = {
           excerpt?: string | null
           free_tag?: string | null
           id?: string
+          magazine_url?: string | null
           published?: boolean
           slug: string
+          source_kind?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
@@ -2086,8 +2090,10 @@ export type Database = {
           excerpt?: string | null
           free_tag?: string | null
           id?: string
+          magazine_url?: string | null
           published?: boolean
           slug?: string
+          source_kind?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null

@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { MagazineEntryEditor, type MagazineEntryDraft } from "@/components/magazines/MagazineEntryEditor";
+import { MagazineVillageShare } from "@/components/magazines/MagazineVillageShare";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { useT, useLang } from "@/lib/i18n";
@@ -167,7 +168,8 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
       <FlipbookViewer url={entry.magazine_url} title={entry.title} coverUrl={entry.cover_url} />
 
       {isAdmin && (
-        <div className="flex justify-end gap-1 pt-1">
+        <div className="flex flex-wrap items-center justify-end gap-1 pt-1">
+          <MagazineVillageShare entry={entry} />
           <button
             onClick={() => setEditing(true)}
             className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
