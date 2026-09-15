@@ -9,7 +9,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
-import { CalendarDays, Ticket, Heart, HeartOff, Newspaper } from "lucide-react";
+import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock } from "lucide-react";
 
 type ArtistEvent = {
   id: string;
@@ -42,6 +42,8 @@ const TXT = {
     posts: "Publications",
     postsEmpty: "Aucune publication pour le moment.",
     onlyHere: "Exclusivité de cette page",
+    followersOnly: "Réservé aux abonnés",
+    lockedHint: "Abonne-toi pour voir les publications réservées aux abonnés.",
   },
   en: {
     follow: "Follow",
@@ -55,6 +57,8 @@ const TXT = {
     posts: "Posts",
     postsEmpty: "No post yet.",
     onlyHere: "Exclusive to this page",
+    followersOnly: "Followers only",
+    lockedHint: "Follow to see followers-only posts.",
   },
 } as const;
 
@@ -211,6 +215,24 @@ export function ArtistEvents({ artistId, accent }: { artistId: string; accent?: 
 
 export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: string | null }) {
   const txt = useTxt();
+  const { session } = useAuth();
+  const uid = session?.user.id ?? null;
+  const isSelf = uid === artistId;
+
+  const { data: following = false } = useQuery<boolean>({
+    queryKey: ["artist-following", artistId, uid],
+    enabled: !!uid,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("artist_follows")
+        .select("id")
+        .eq("artist_id", artistId)
+        .eq("follower_id", uid!)
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
   const { data: posts = [] } = useQuery<ArtistPost[]>({
     queryKey: ["artist-posts-public", artistId],
     queryFn: async () => {
@@ -230,6 +252,11 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
       <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
         <Newspaper className="size-4" style={accent ? { color: accent } : undefined} /> {txt.posts}
       </h2>
+      {!isSelf && !following && (
+        <p className="mb-2 flex items-center gap-1.5 border-2 border-dashed border-border p-2 text-[11px] text-muted-foreground">
+          <Lock className="size-3.5 shrink-0" /> {txt.lockedHint}
+        </p>
+      )}
       {posts.length === 0 ? (
         <p className="text-sm text-muted-foreground">{txt.postsEmpty}</p>
       ) : (
@@ -243,9 +270,9 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
                   <Link to="/p/$postId" params={{ postId: p.id }} className="text-sm font-black hover:underline">
                     {p.title || new Date(p.created_at).toLocaleDateString()}
                   </Link>
-                  {p.visibility === "profile_only" && (
+                  {(p.visibility === "profile_only" || p.visibility === "followers_only") && (
                     <span className="shrink-0 border border-border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
-                      {txt.onlyHere}
+                      {p.visibility === "followers_only" ? txt.followersOnly : txt.onlyHere}
                     </span>
                   )}
                 </div>

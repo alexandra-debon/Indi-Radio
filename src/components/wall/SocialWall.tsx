@@ -20,6 +20,7 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { VisibilityPicker, type PostVisibility } from "@/components/social/VisibilityPicker";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
@@ -114,6 +115,7 @@ export function SocialWall() {
   const [pinDialogFor, setPinDialogFor] = useState<string | null>(null);
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
+  const [visibility, setVisibility] = useState<PostVisibility>("feed");
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
 
@@ -313,6 +315,7 @@ export function SocialWall() {
         image_urls: canUploadImages ? imagesDraft : [],
         title: title.trim() || null,
         image_captions: canUploadImages ? new Array(imagesDraft.length).fill("") : [],
+        visibility,
       } as any);
       if (error) throw error;
     },
@@ -323,6 +326,7 @@ export function SocialWall() {
       setSocialDraft({});
       setImageDraft("");
       setImagesDraft([]);
+      setVisibility("feed");
       setComposerOpen(false);
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
@@ -519,6 +523,11 @@ export function SocialWall() {
             <div className="mt-1.5">
               <MultiImageUploader values={imagesDraft} onChange={setImagesDraft} folder="wall" />
             </div>
+          </div>
+        )}
+        {session && (
+          <div className="mt-2">
+            <VisibilityPicker value={visibility} onChange={setVisibility} name="wall-post-visibility" />
           </div>
         )}
         <div className="mt-3 flex justify-end gap-2">

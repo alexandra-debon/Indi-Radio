@@ -347,7 +347,7 @@ function UserProfilePage() {
         )}
 
         <LevelBar points={profile.points} level={profile.level} />
-        {isArtistPage && <FollowButton artistId={profile.id} accent={accent} />}
+        <FollowButton artistId={profile.id} accent={accent} />
         {profile.role === "artiste" && profile.is_certified && (
           <a
             href={`/?mention=${encodeURIComponent(profile.pseudo)}`}
@@ -385,12 +385,8 @@ function UserProfilePage() {
         </div>
       )}
 
-      {isArtistPage && (
-        <>
-          <ArtistEvents artistId={profile.id} accent={accent} />
-          <ArtistPosts artistId={profile.id} accent={accent} />
-        </>
-      )}
+      {isArtistPage && <ArtistEvents artistId={profile.id} accent={accent} />}
+      <ArtistPosts artistId={profile.id} accent={accent} />
 
       <div className="grid grid-cols-3 gap-2">
         <StatCard icon={FileText} label={t("upub.stats.posts")} value={stats.posts} />
