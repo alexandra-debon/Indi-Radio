@@ -26,6 +26,7 @@ import { template as albumReportResolvedTemplate } from './album-report-resolved
 import { template as mentionNotificationTemplate } from './mention-notification'
 import { template as adminMessageTemplate } from './admin-message'
 import { template as blogAuthorInviteTemplate } from './blog-author-invite'
+import { template as roleRequestTemplate } from './role-request'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'user-ban': userBanTemplate,
