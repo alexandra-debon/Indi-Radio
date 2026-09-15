@@ -13,6 +13,7 @@ import {
   type VillageCategory,
 } from "@/components/village/VillageCategory";
 import { MagazineSourceBadge } from "@/components/village/MagazineSource";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { SmartImg } from "@/components/media/SmartImg";
 import { localizedStaticMeta } from "@/lib/og-static-head";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
@@ -152,7 +153,7 @@ function VillagePage() {
                 params={{ slug: a.slug }}
                 className="card-brut block h-full overflow-hidden transition hover:-translate-y-0.5"
               >
-                {a.cover_url && (
+                {a.cover_url ? (
                   <SmartImg
                     src={a.cover_url}
                     width={640}
@@ -161,7 +162,14 @@ function VillagePage() {
                     alt=""
                     className="h-40 w-full object-cover"
                   />
-                )}
+                ) : a.magazine_url && flipHtml5ThumbnailUrl(a.magazine_url) ? (
+                  <img
+                    src={flipHtml5ThumbnailUrl(a.magazine_url) as string}
+                    alt=""
+                    loading="lazy"
+                    className="h-40 w-full bg-black object-contain"
+                  />
+                ) : null}
                 <div className="space-y-1.5 p-3">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <MagazineSourceBadge kind={a.source_kind} />
