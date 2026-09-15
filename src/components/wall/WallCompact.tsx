@@ -10,10 +10,11 @@ import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
-import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { flipHtml5ThumbnailUrl, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface CompactPost {
@@ -236,6 +237,8 @@ interface Teaser {
   excerpt: string;
   cover: string | null;
   date: string;
+  /** URL FlipHTML5 pour les teasers magazine (ouverture directe du flipbook). */
+  url?: string | null;
 }
 
 const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
@@ -299,6 +302,7 @@ function FeedTeasers() {
           excerpt: stripMediaUrls(r.body || "").slice(0, 180),
           cover: r.og_image_url || r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
           date: r.created_at,
+          url: r.magazine_url,
         });
       }
       for (const r of village.data ?? []) {
@@ -341,7 +345,14 @@ function FeedTeasers() {
           date: r.created_at,
         });
       }
-      return out.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+      const sorted = out.sort((a, b) => b.date.localeCompare(a.date));
+      const top = sorted.slice(0, 6);
+      // Garantit la présence du teaser magazine le plus récent.
+      if (!top.some((t) => t.kind === "magazine")) {
+        const mag = sorted.find((t) => t.kind === "magazine");
+        if (mag) top[top.length - 1] = mag;
+      }
+      return top;
     },
   });
 
@@ -410,15 +421,68 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
         {inner}
       </Link>
     );
-  if (item.kind === "magazine")
+  if (item.kind === "magazine") return <MagazineTeaserCard item={item} inner={inner} cls={cls} />;
+  return (
+    <Link to="/chroniques/$slug" params={{ slug: item.id }} className={cls}>
+      {inner}
+    </Link>
+  );
+}
+
+/**
+ * Teaser magazine : ouvre directement le flipbook FlipHTML5 en plein écran
+ * (audio/vidéo autorisés), avec un lien discret vers la page complète.
+ */
+function MagazineTeaserCard({
+  item,
+  inner,
+  cls,
+}: {
+  item: Teaser;
+  inner: React.ReactNode;
+  cls: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const { lang } = useLang();
+  if (!item.url) {
     return (
       <Link to="/magazines/$magazineId" params={{ magazineId: item.id }} className={cls}>
         {inner}
       </Link>
     );
+  }
+  const embedUrl = normalizeFlipHtml5Url(item.url);
   return (
-    <Link to="/chroniques/$slug" params={{ slug: item.id }} className={cls}>
-      {inner}
-    </Link>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={item.title}
+        className={cls}
+      >
+        {inner}
+      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-hidden border-0 bg-black p-0 sm:left-1/2 sm:top-1/2 sm:h-[92vh] sm:w-[96vw] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg [&>button]:right-3 [&>button]:top-3 [&>button]:z-20 [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:p-2 [&>button]:text-white [&>button]:opacity-100">
+          <DialogTitle className="sr-only">{item.title}</DialogTitle>
+          <iframe
+            src={embedUrl}
+            title={item.title}
+            allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-write"
+            allowFullScreen
+            className="h-full w-full border-0"
+          />
+          <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2">
+            <Link
+              to="/magazines/$magazineId"
+              params={{ magazineId: item.id }}
+              className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur hover:bg-white/25"
+            >
+              {lang === "en" ? "View full page" : "Voir la page complète"}
+            </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
