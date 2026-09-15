@@ -8,6 +8,13 @@
       "when": 1788482169178,
       "tag": "0000_fix_news_comments_anon_select_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789492131589,
+      "tag": "0001_add_media_role_enum_value",
+      "breakpoints": true
     }
   ]
 }

@@ -1949,7 +1949,7 @@ export type Database = {
       unaccent_fallback: { Args: { _t: string }; Returns: string }
     }
     Enums: {
-      app_role: "auditeur" | "artiste" | "animateur" | "admin"
+      app_role: "auditeur" | "artiste" | "animateur" | "admin" | "media"
       clip_section: "clips_actu" | "playlists_clips"
     }
     CompositeTypes: {
@@ -2078,7 +2078,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["auditeur", "artiste", "animateur", "admin"],
+      app_role: ["auditeur", "artiste", "animateur", "admin", "media"],
       clip_section: ["clips_actu", "playlists_clips"],
     },
   },
