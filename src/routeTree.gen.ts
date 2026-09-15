@@ -83,6 +83,7 @@ import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_authenticated/admin.redak-village'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminMagazinesRouteImport } from './routes/_authenticated/admin.magazines'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
@@ -482,6 +483,12 @@ const AuthenticatedAdminMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMagazinesRoute =
+  AuthenticatedAdminMagazinesRouteImport.update({
+    id: '/magazines',
+    path: '/magazines',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDiagnosticsPseudosRoute =
   AuthenticatedAdminDiagnosticsPseudosRouteImport.update({
     id: '/diagnostics-pseudos',
@@ -617,6 +624,7 @@ export interface FileRoutesByFullPath {
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
+  '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -705,6 +713,7 @@ export interface FileRoutesByTo {
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
+  '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -795,6 +804,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
+  '/_authenticated/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -885,6 +895,7 @@ export interface FileRouteTypes {
     | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
+    | '/admin/magazines'
     | '/admin/messages'
     | '/admin/redak-village'
     | '/admin/seo-preview'
@@ -973,6 +984,7 @@ export interface FileRouteTypes {
     | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
+    | '/admin/magazines'
     | '/admin/messages'
     | '/admin/redak-village'
     | '/admin/seo-preview'
@@ -1062,6 +1074,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
     | '/_authenticated/admin/diagnostics-pseudos'
+    | '/_authenticated/admin/magazines'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/redak-village'
     | '/_authenticated/admin/seo-preview'
@@ -1682,6 +1695,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/magazines': {
+      id: '/_authenticated/admin/magazines'
+      path: '/magazines'
+      fullPath: '/admin/magazines'
+      preLoaderRoute: typeof AuthenticatedAdminMagazinesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/diagnostics-pseudos': {
       id: '/_authenticated/admin/diagnostics-pseudos'
       path: '/diagnostics-pseudos'
@@ -1780,6 +1800,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
+  AuthenticatedAdminMagazinesRoute: typeof AuthenticatedAdminMagazinesRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminRedakVillageRoute: typeof AuthenticatedAdminRedakVillageRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
@@ -1790,6 +1811,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
+  AuthenticatedAdminMagazinesRoute: AuthenticatedAdminMagazinesRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminRedakVillageRoute: AuthenticatedAdminRedakVillageRoute,
   AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
