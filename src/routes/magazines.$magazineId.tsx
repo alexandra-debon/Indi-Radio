@@ -21,7 +21,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("magazine_entries")
-      .select("id,title,body,magazine_url,cover_url,created_at")
+      .select("id,title,body,magazine_url,cover_url,og_image_url,created_at")
       .eq("id", params.magazineId)
       .maybeSingle();
     if (error || !data) throw notFound();
