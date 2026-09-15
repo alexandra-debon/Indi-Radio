@@ -24,7 +24,11 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
 
   const resetForm = () => {
     setEditingId(null);
-    setTitle(""); setImage(""); setSummary(""); setUrl(""); setFormat("Vinyle");
+    setTitle("");
+    setImage("");
+    setSummary("");
+    setUrl("");
+    setFormat("Vinyle");
   };
 
   const startEdit = (it: ShopItem) => {
@@ -42,7 +46,8 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
   const add = useMutation({
     mutationFn: async () => {
       if (!title.trim()) throw new Error("Titre obligatoire");
-      if (url.trim() && !/^https?:\/\/.+\..+/.test(url.trim())) throw new Error("Lien d'achat invalide");
+      if (url.trim() && !/^https?:\/\/.+\..+/.test(url.trim()))
+        throw new Error("Lien d'achat invalide");
       const payload = {
         title: title.trim(),
         format,
@@ -51,7 +56,10 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         external_url: url.trim() || null,
       };
       if (editingId) {
-        const { error } = await supabase.from("artist_shop_items").update(payload as any).eq("id", editingId);
+        const { error } = await supabase
+          .from("artist_shop_items")
+          .update(payload as any)
+          .eq("id", editingId);
         if (error) throw error;
         return "update" as const;
       }
@@ -71,7 +79,10 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
 
   const toggleVisible = useMutation({
     mutationFn: async ({ id, is_visible }: { id: string; is_visible: boolean }) => {
-      const { error } = await supabase.from("artist_shop_items").update({ is_visible } as any).eq("id", id);
+      const { error } = await supabase
+        .from("artist_shop_items")
+        .update({ is_visible } as any)
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: invalidate,
@@ -99,7 +110,12 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="shop-title">Titre *</Label>
-          <Input id="shop-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nom de l'objet" />
+          <Input
+            id="shop-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Nom de l'objet"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="shop-format">Format</Label>
@@ -110,7 +126,9 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
             className="w-full border-2 border-border bg-background px-2 py-2 text-sm font-semibold"
           >
             {SHOP_FORMATS.map((f) => (
-              <option key={f} value={f}>{f}</option>
+              <option key={f} value={f}>
+                {f}
+              </option>
             ))}
           </select>
         </div>
@@ -118,25 +136,52 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
 
       <div className="space-y-1.5">
         <Label>Photo (carrée)</Label>
-        <ImageUploader value={image} onChange={setImage} folder={`shop/${artistId}`} label="Photo de l'objet" usage="cover" defaultRatio="1:1" />
+        <ImageUploader
+          value={image}
+          onChange={setImage}
+          folder={`shop/${artistId}`}
+          label="Photo de l'objet"
+          usage="cover"
+          defaultRatio="1:1"
+        />
       </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="shop-summary">Présentation (optionnel)</Label>
-        <Textarea id="shop-summary" rows={3} maxLength={600} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Quelques mots sur cet objet…" />
+        <Textarea
+          id="shop-summary"
+          rows={3}
+          maxLength={600}
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+          placeholder="Quelques mots sur cet objet…"
+        />
       </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="shop-url">Lien d'achat</Label>
-        <Input id="shop-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" inputMode="url" />
+        <Input
+          id="shop-url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://…"
+          inputMode="url"
+        />
         <p className="text-[11px] text-muted-foreground">
-          Le lien n'est jamais affiché tel quel : les visiteurs voient uniquement un bouton « Acheter ».
+          Le lien n'est jamais affiché tel quel : les visiteurs voient uniquement un bouton «
+          Acheter ».
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <Button type="button" onClick={() => add.mutate()} disabled={add.isPending}>
-          {add.isPending ? <Loader2 className="size-4 animate-spin" /> : editingId ? <Pencil className="size-4" /> : <Plus className="size-4" />}
+          {add.isPending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : editingId ? (
+            <Pencil className="size-4" />
+          ) : (
+            <Plus className="size-4" />
+          )}
           {editingId ? "Enregistrer les modifications" : "Ajouter à la boutique"}
         </Button>
         {editingId && (
@@ -151,9 +196,16 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
       ) : (
         <ul className="space-y-2 pt-2">
           {items.map((it: ShopItem) => (
-            <li key={it.id} className="flex flex-wrap items-center gap-2 border-2 border-border p-2 text-sm">
+            <li
+              key={it.id}
+              className="flex flex-wrap items-center gap-2 border-2 border-border p-2 text-sm"
+            >
               {it.image_url ? (
-                <img src={it.image_url} alt="" className="size-12 shrink-0 border-2 border-border object-cover" />
+                <img
+                  src={it.image_url}
+                  alt=""
+                  className="size-12 shrink-0 border-2 border-border object-cover"
+                />
               ) : (
                 <div className="grid size-12 shrink-0 place-items-center border-2 border-border bg-muted">
                   <ShoppingBag className="size-4 text-muted-foreground" />
@@ -174,7 +226,13 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
                 />
                 Visible
               </label>
-              <Button type="button" variant="ghost" size="sm" onClick={() => startEdit(it)} aria-label="Modifier cet objet">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => startEdit(it)}
+                aria-label="Modifier cet objet"
+              >
                 <Pencil className="size-4" />
               </Button>
               <Button
@@ -193,7 +251,8 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         </ul>
       )}
       <p className="text-[11px] text-muted-foreground">
-        Les tags éditoriaux (« Choix de la rédaction », « Découverte InDi »…) sont attribués par l'équipe InDi.
+        Les tags éditoriaux (« Choix de la rédaction », « Découverte InDi »…) sont attribués par
+        l'équipe InDi.
       </p>
     </section>
   );

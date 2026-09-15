@@ -12,7 +12,10 @@ import { localizedStaticMeta } from "@/lib/og-static-head";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogImageForLang } from "@/lib/og-image";
 import { useVillageTxt, VILLAGE_NAME } from "@/components/village/village-i18n";
-import { VillageArticleEditor, type VillageArticle } from "@/components/village/VillageArticleEditor";
+import {
+  VillageArticleEditor,
+  type VillageArticle,
+} from "@/components/village/VillageArticleEditor";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_VILLAGE = ogImageForLang("fr");

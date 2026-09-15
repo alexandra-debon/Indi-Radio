@@ -18,10 +18,7 @@ import { localizedOgText } from "@/lib/og-lang-head";
 import { ogImageForLang } from "@/lib/og-image";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import {
-  ContentLikeButton,
-  ContentCommentsSection,
-} from "@/components/content/ContentReactions";
+import { ContentLikeButton, ContentCommentsSection } from "@/components/content/ContentReactions";
 import { useVillageTxt, VILLAGE_NAME } from "@/components/village/village-i18n";
 import {
   VillageArticleEditor,
@@ -236,7 +233,12 @@ function VillageArticlePage() {
             />
             {canEdit && (
               <>
-                <Button size="sm" variant="ghost" onClick={() => setEditing(true)} className="gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setEditing(true)}
+                  className="gap-1"
+                >
                   <Pencil className="size-3.5" /> {txt.edit}
                 </Button>
                 <Button
