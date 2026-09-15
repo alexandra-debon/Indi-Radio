@@ -12,6 +12,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { FollowButton, ArtistEvents, ArtistPosts } from "@/components/artist/ArtistPageSections";
+import { ArtistShop } from "@/components/artist/ArtistShop";
 
 export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
