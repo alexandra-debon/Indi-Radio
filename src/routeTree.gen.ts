@@ -44,6 +44,7 @@ import { Route as ArtistesRouteImport } from './routes/artistes'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.index'
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
@@ -266,6 +267,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedakVillageIndexRoute = RedakVillageIndexRouteImport.update({
+  id: '/redak-village/',
+  path: '/redak-village/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
@@ -591,6 +597,7 @@ export interface FileRoutesByFullPath {
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
+  '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByTo {
   '/emissions': typeof EmissionsIndexRoute
   '/magazines': typeof MagazinesIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
+  '/redak-village': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -763,6 +771,7 @@ export interface FileRoutesById {
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
+  '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
@@ -850,6 +859,7 @@ export interface FileRouteTypes {
     | '/emissions/'
     | '/magazines/'
     | '/playlists/'
+    | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/boutique'
@@ -935,6 +945,7 @@ export interface FileRouteTypes {
     | '/emissions'
     | '/magazines'
     | '/playlists'
+    | '/redak-village'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/boutique'
@@ -1021,6 +1032,7 @@ export interface FileRouteTypes {
     | '/emissions/'
     | '/magazines/'
     | '/playlists/'
+    | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/boutique'
@@ -1104,6 +1116,7 @@ export interface RootRouteChildren {
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
+  RedakVillageIndexRoute: typeof RedakVillageIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAdminMessageEmailRoute: typeof ApiPublicAdminMessageEmailRoute
@@ -1368,6 +1381,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redak-village/': {
+      id: '/redak-village/'
+      path: '/redak-village'
+      fullPath: '/redak-village/'
+      preLoaderRoute: typeof RedakVillageIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playlists/': {
@@ -1819,6 +1839,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmissionsIndexRoute: EmissionsIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
+  RedakVillageIndexRoute: RedakVillageIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAdminMessageEmailRoute: ApiPublicAdminMessageEmailRoute,
