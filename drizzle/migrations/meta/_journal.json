@@ -92,6 +92,13 @@
       "when": 1789503743404,
       "tag": "0012_magazine_entries_published",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1789504388818,
+      "tag": "0013_village_articles_author_profile_fk",
+      "breakpoints": true
     }
   ]
 }
