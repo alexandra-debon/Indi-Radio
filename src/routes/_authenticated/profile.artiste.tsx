@@ -152,7 +152,7 @@ function ArtistSpacePage() {
   const [postBody, setPostBody] = useState("");
   const [postVideo, setPostVideo] = useState("");
   const [postImages, setPostImages] = useState<string[]>([]);
-  const [postFeed, setPostFeed] = useState(true);
+  const [postVisibility, setPostVisibility] = useState<PostVisibility>("feed");
 
   const publish = useMutation({
     mutationFn: async () => {
