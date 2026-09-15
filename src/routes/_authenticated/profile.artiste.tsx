@@ -56,12 +56,18 @@ function ArtistSpacePage() {
   const [summary, setSummary] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
   const [saving, setSaving] = useState(false);
+  const [showEvents, setShowEvents] = useState(true);
+  const [showShop, setShowShop] = useState(true);
+  const [showPosts, setShowPosts] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
     setBanner((profile as any).banner_url ?? "");
     setAccent((profile as any).accent_color ?? "");
     setSummary((profile as any).gallery_summary ?? "");
+    setShowEvents((profile as any).show_events_section ?? true);
+    setShowShop((profile as any).show_shop_section ?? true);
+    setShowPosts((profile as any).show_posts_section ?? true);
     const sl = (profile as any).social_links;
     setLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
   }, [profile]);
