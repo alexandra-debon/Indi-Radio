@@ -12,6 +12,7 @@ import {
   FreeTagBadge,
   type VillageCategory,
 } from "@/components/village/VillageCategory";
+import { MagazineSourceBadge } from "@/components/village/MagazineSource";
 import { SmartImg } from "@/components/media/SmartImg";
 import { localizedStaticMeta } from "@/lib/og-static-head";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
