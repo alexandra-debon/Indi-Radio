@@ -10,6 +10,7 @@ import { stripMediaUrls } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock } from "lucide-react";
+import { PostInteractions, usePostInteractions } from "@/components/wall/PostInteractions";
 
 type ArtistEvent = {
   id: string;

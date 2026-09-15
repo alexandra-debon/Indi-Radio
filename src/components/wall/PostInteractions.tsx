@@ -96,7 +96,6 @@ export function PostInteractions({
   const postLikes = likes.filter((l) => l.post_id === postId);
   const liked = !!uid && postLikes.some((l) => l.user_id === uid);
   const postComments = comments.filter((c) => c.post_id === postId);
-  const idsKey = [...new Set([...likes.map((l) => l.post_id), ...comments.map((c) => c.post_id), postId])].sort().join(",");
 
   const toggleLike = useMutation({
     mutationFn: async () => {
