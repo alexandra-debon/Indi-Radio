@@ -449,6 +449,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/redak-village"
+                search={{}}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === "/admin/redak-village" ? "page" : undefined}
                 className={cn(
