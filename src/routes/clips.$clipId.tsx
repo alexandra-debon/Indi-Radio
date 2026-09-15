@@ -7,7 +7,7 @@ import { parseMediaUrl } from "@/lib/media-embed";
 import { ArrowLeft } from "lucide-react";
 import ogClips from "@/assets/og-clips.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
-import { ogCommonTags, ogImageTags, ogVideoTags } from "@/lib/og-tags";
+import { ogImageTags, ogVideoTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
