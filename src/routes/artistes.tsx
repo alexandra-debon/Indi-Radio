@@ -125,6 +125,15 @@ function ArtistesPage() {
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-base font-black">{name}</span>
                       <BadgeCheck className="size-4 shrink-0 text-primary" aria-label={t("gallery.certified")} />
+                      {shopIds?.has(a.id) && (
+                        <span
+                          title="Boutique disponible"
+                          aria-label="Boutique disponible"
+                          className="inline-flex shrink-0 items-center gap-1 border-2 border-border bg-primary px-1 py-0.5 text-[9px] font-black uppercase tracking-widest text-foreground"
+                        >
+                          <ShoppingBag className="size-3" />
+                        </span>
+                      )}
                     </div>
                     <div className="text-[11px] uppercase tracking-wide text-muted-foreground">@{a.pseudo}</div>
                     {a.gallery_summary && (
