@@ -12,6 +12,7 @@ import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { MagazineVillageShare } from "@/components/magazines/MagazineVillageShare";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -140,6 +141,9 @@ function MagazineDetailPage() {
               text: entry.body?.slice(0, 200) || entry.title,
             }}
           />
+        </div>
+        <div className="flex justify-end">
+          <MagazineVillageShare entry={entry} />
         </div>
         {entry.body && (
           <TranslatedText
