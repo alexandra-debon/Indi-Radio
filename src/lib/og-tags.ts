@@ -43,8 +43,12 @@ export function ogImageTags(
     { property: "og:image", content: src },
     { property: "og:image:url", content: src },
     { property: "og:image:type", content: type },
-    { property: "og:image:width", content: String(width) },
-    { property: "og:image:height", content: String(height) },
+    ...(opts.declareSize === false
+      ? []
+      : [
+          { property: "og:image:width", content: String(width) },
+          { property: "og:image:height", content: String(height) },
+        ]),
     { name: "twitter:image", content: src },
   ];
   if (src.startsWith("https://")) {
