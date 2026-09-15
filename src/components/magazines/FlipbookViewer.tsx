@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Maximize2, ExternalLink, BookOpen, Volume2, Film } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { normalizeFlipHtml5Url, flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
-import { useLang } from "@/hooks/use-lang";
+import { useLang } from "@/lib/i18n";
 
 const TXT = {
   fr: {
