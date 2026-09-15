@@ -347,7 +347,7 @@ function UserProfilePage() {
         )}
 
         <LevelBar points={profile.points} level={profile.level} />
-        {isArtistPage && <FollowButton artistId={profile.id} accent={accent} />}
+        <FollowButton artistId={profile.id} accent={accent} />
         {profile.role === "artiste" && profile.is_certified && (
           <a
             href={`/?mention=${encodeURIComponent(profile.pseudo)}`}
