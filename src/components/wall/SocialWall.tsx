@@ -315,6 +315,7 @@ export function SocialWall() {
         image_urls: canUploadImages ? imagesDraft : [],
         title: title.trim() || null,
         image_captions: canUploadImages ? new Array(imagesDraft.length).fill("") : [],
+        visibility,
       } as any);
       if (error) throw error;
     },
