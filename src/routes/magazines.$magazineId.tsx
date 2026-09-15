@@ -6,7 +6,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import ogHome from "@/assets/og-home.jpg";
-import { flipHtml5ThumbnailUrl, magazineShareImage } from "@/lib/fliphtml5";
+import { magazineShareImage } from "@/lib/fliphtml5";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
