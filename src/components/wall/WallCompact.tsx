@@ -10,6 +10,7 @@ import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper } from "lucide-react";
 import { useEffect } from "react";
@@ -226,7 +227,7 @@ function clipThumb(url: string | null): string | null {
   return null;
 }
 
-type TeaserKind = "village" | "news" | "clip" | "review";
+type TeaserKind = "village" | "news" | "clip" | "review" | "magazine";
 
 interface Teaser {
   kind: TeaserKind;
@@ -242,6 +243,7 @@ const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
   news: { fr: "Blog InDi ArT CulTuRe", en: "InDi ArT CulTuRe Blog" },
   clip: { fr: "Clip Addict", en: "Clip Addict" },
   review: { fr: "Chronique", en: "Album review" },
+  magazine: { fr: "Magazine interactif", en: "Interactive magazine" },
 };
 
 /**
