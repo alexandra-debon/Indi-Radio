@@ -414,12 +414,7 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
         {inner}
       </Link>
     );
-  if (item.kind === "magazine")
-    return (
-      <Link to="/magazines/$magazineId" params={{ magazineId: item.id }} className={cls}>
-        {inner}
-      </Link>
-    );
+  if (item.kind === "magazine") return <MagazineTeaserCard item={item} inner={inner} cls={cls} />;
   return (
     <Link to="/chroniques/$slug" params={{ slug: item.id }} className={cls}>
       {inner}
