@@ -58,15 +58,21 @@ function ArtistesPage() {
   const t = useT();
   const [q, setQ] = useState("");
   const { data = [], isLoading } = useQuery({ queryKey: ["artistes-gallery"], queryFn: fetchArtists });
-  const { data: shopIds } = useQuery<Set<string>>({
+  const { data: shopByArtist } = useQuery<Map<string, string[]>>({
     queryKey: ["artistes-gallery-shops"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("artist_shop_items")
-        .select("artist_id")
+        .select("artist_id, title")
         .eq("is_visible", true);
       if (error) throw error;
-      return new Set((data ?? []).map((r: { artist_id: string }) => r.artist_id));
+      const map = new Map<string, string[]>();
+      for (const r of (data ?? []) as unknown as { artist_id: string; title: string }[]) {
+        const titles = map.get(r.artist_id);
+        if (titles) titles.push(r.title);
+        else map.set(r.artist_id, [r.title]);
+      }
+      return map;
     },
   });
 
@@ -76,9 +82,10 @@ function ArtistesPage() {
     return data.filter(
       (a) =>
         (a.stage_name ?? "").toLowerCase().includes(needle) ||
-        a.pseudo.toLowerCase().includes(needle),
+        a.pseudo.toLowerCase().includes(needle) ||
+        (shopByArtist?.get(a.id) ?? []).some((title) => title.toLowerCase().includes(needle)),
     );
-  }, [data, q]);
+  }, [data, q, shopByArtist]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4">
@@ -125,7 +132,7 @@ function ArtistesPage() {
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-base font-black">{name}</span>
                       <BadgeCheck className="size-4 shrink-0 text-primary" aria-label={t("gallery.certified")} />
-                      {shopIds?.has(a.id) && (
+                      {shopByArtist?.has(a.id) && (
                         <span
                           title="Boutique disponible"
                           aria-label="Boutique disponible"
