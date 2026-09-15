@@ -6,7 +6,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import ogHome from "@/assets/og-home.jpg";
-import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { flipHtml5ThumbnailUrl, magazineShareImage } from "@/lib/fliphtml5";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
@@ -63,8 +63,12 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
         ...ogLocaleTags(lang),
-        ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
-        { name: "twitter:card", content: "summary_large_image" },
+        ...ogImageTags(image, {
+          baseUrl: BASE_URL,
+          alt: loaderData.title,
+          declareSize: landscape,
+        }),
+        { name: "twitter:card", content: landscape ? "summary_large_image" : "summary" },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
