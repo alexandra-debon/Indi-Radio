@@ -50,6 +50,7 @@ interface MagazineRow {
   body: string | null;
   magazine_url: string;
   cover_url: string | null;
+  og_image_url: string | null;
   author_id: string | null;
   pinned_at: string | null;
   created_at: string;
