@@ -389,6 +389,21 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <MessageCircle className="size-4" /> Messages auditeurs
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/admin/candidatures"
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/candidatures" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/candidatures"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <Shield className="size-4" /> Candidatures
+              </Link>
+            )}
             {session && !isAdmin && (
               <button
                 onClick={() => { setOpen(false); openAdminChat(); }}
