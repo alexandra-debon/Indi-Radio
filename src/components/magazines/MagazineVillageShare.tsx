@@ -67,7 +67,7 @@ export function MagazineVillageShare({
           category: "art",
           visibility: "feed",
           published: true,
-        })
+        } as never)
         .select("slug")
         .single();
       if (error) throw error;
