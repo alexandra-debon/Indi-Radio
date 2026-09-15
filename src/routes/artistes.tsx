@@ -58,6 +58,17 @@ function ArtistesPage() {
   const t = useT();
   const [q, setQ] = useState("");
   const { data = [], isLoading } = useQuery({ queryKey: ["artistes-gallery"], queryFn: fetchArtists });
+  const { data: shopIds } = useQuery<Set<string>>({
+    queryKey: ["artistes-gallery-shops"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("artist_shop_items")
+        .select("artist_id")
+        .eq("is_visible", true);
+      if (error) throw error;
+      return new Set((data ?? []).map((r: { artist_id: string }) => r.artist_id));
+    },
+  });
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
