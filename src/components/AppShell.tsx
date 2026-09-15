@@ -462,6 +462,22 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Feather className="size-4" /> {t("nav.villageAdmin")}
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/admin/magazines"
+                search={{ tab: "users" }}
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/magazines" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/magazines"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <BookOpen className="size-4" /> {t("nav.magazinesAdmin")}
+              </Link>
+            )}
             {session && !isAdmin && (
               <button
                 onClick={() => { setOpen(false); openAdminChat(); }}

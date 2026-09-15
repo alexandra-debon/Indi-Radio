@@ -85,6 +85,13 @@
       "when": 1789503108443,
       "tag": "0011_village_articles_magazine_source",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1789503743404,
+      "tag": "0012_magazine_entries_published",
+      "breakpoints": true
     }
   ]
 }
