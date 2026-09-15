@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/components/mentions/MentionTextarea";
 import { toast } from "@/lib/toast";
 import { trackEvent } from "@/lib/plausible";
-import { Heart, MessageCircle, Trash2, ArrowUpRight } from "lucide-react";
+import { Heart, MessageCircle, Trash2, ArrowUpRight, Pencil } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
@@ -92,6 +92,8 @@ export function PostInteractions({
   const [draft, setDraft] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [video, setVideo] = useState("");
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
 
   const postLikes = likes.filter((l) => l.post_id === postId);
   const liked = !!uid && postLikes.some((l) => l.user_id === uid);
@@ -141,6 +143,20 @@ export function PostInteractions({
       qc.invalidateQueries({ queryKey: ["post-comments"] });
       qc.invalidateQueries({ queryKey: ["wall-comments"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const editComment = useMutation({
+    mutationFn: async ({ id, content }: { id: string; content: string }) => {
+      const { error } = await supabase.from("post_comments").update({ content: content.trim() } as any).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setEditId(null);
+      setEditText("");
+      qc.invalidateQueries({ queryKey: ["post-comments"] });
+      qc.invalidateQueries({ queryKey: ["wall-comments"] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -203,7 +219,29 @@ export function PostInteractions({
                     {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: dateLocale })}
                   </span>
                 </div>
-                {stripMediaUrls(c.content) && (
+                {editId === c.id ? (
+                  <div className="space-y-1">
+                    <MentionTextarea
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      rows={2}
+                      className="text-xs"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        disabled={!editText.trim() || editComment.isPending}
+                        onClick={() => editComment.mutate({ id: c.id, content: editText })}
+                      >
+                        {t("comment.save")}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setEditId(null)}>
+                        {t("comment.cancel")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+                {editId !== c.id && stripMediaUrls(c.content) && (
                   <p className="whitespace-pre-wrap text-xs">
                     <TranslatedText entityType="post_comment" entityKey={c.id} field="content" text={stripMediaUrls(c.content)}>
                       {(tr) => <>{renderRich(tr)}</>}
@@ -225,6 +263,16 @@ export function PostInteractions({
                     <CommentLikeButton commentId={c.id} kind="post" />
                     {session && session.user.id !== c.author_id && <ReportButton commentType="post_comment" commentId={c.id} />}
                   </div>
+                  <div className="flex items-center gap-1">
+                  {uid === c.author_id && editId !== c.id && (
+                    <button
+                      onClick={() => { setEditId(c.id); setEditText(c.content); }}
+                      className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-primary"
+                      aria-label={t("comment.edit")}
+                    >
+                      <Pencil className="size-3" />
+                    </button>
+                  )}
                   {canDel && (
                     <button
                       onClick={() => { if (confirm("Supprimer cette réponse ?")) deleteComment.mutate(c.id); }}
@@ -234,6 +282,7 @@ export function PostInteractions({
                       <Trash2 className="size-3" />
                     </button>
                   )}
+                  </div>
                 </div>
               </div>
             );
