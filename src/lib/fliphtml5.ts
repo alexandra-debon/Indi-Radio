@@ -50,3 +50,25 @@ export function flipHtml5ThumbnailUrl(url: string): string | null {
     return null;
   }
 }
+/**
+ * Vignette de partage d'un article interactif (magazine).
+ *
+ * Priorité :
+ *  1. `og_image_url` — vignette dédiée 1200x630 téléversée par l'équipe,
+ *     seule option vraiment « propre » pour Facebook / X.
+ *  2. `cover_url` — couverture personnalisée (souvent paysage).
+ *  3. La couverture FlipHTML5 (`files/shot.jpg`), en portrait : on ne
+ *     déclare alors pas de dimensions 1200x630 et on bascule la carte
+ *     Twitter en `summary` pour éviter un recadrage cassé.
+ *  4. Le visuel de repli du site.
+ */
+export function magazineShareImage(
+  entry: { og_image_url?: string | null; cover_url?: string | null; magazine_url?: string | null },
+  fallback: string,
+): { image: string; landscape: boolean } {
+  if (entry.og_image_url) return { image: entry.og_image_url, landscape: true };
+  if (entry.cover_url) return { image: entry.cover_url, landscape: true };
+  const shot = entry.magazine_url ? flipHtml5ThumbnailUrl(entry.magazine_url) : null;
+  if (shot) return { image: shot, landscape: false };
+  return { image: fallback, landscape: true };
+}

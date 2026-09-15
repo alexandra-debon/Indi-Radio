@@ -874,6 +874,7 @@ export type Database = {
           created_at: string
           id: string
           magazine_url: string
+          og_image_url: string | null
           pinned_at: string | null
           published: boolean
           title: string
@@ -886,6 +887,7 @@ export type Database = {
           created_at?: string
           id?: string
           magazine_url: string
+          og_image_url?: string | null
           pinned_at?: string | null
           published?: boolean
           title: string
@@ -898,6 +900,7 @@ export type Database = {
           created_at?: string
           id?: string
           magazine_url?: string
+          og_image_url?: string | null
           pinned_at?: string | null
           published?: boolean
           title?: string

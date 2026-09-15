@@ -285,7 +285,7 @@ function FeedTeasers() {
           .limit(2),
         supabase
           .from("magazine_entries")
-          .select("id, title, body, cover_url, magazine_url, created_at")
+          .select("id, title, body, cover_url, og_image_url, magazine_url, created_at")
           .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
@@ -297,7 +297,7 @@ function FeedTeasers() {
           id: r.id,
           title: r.title,
           excerpt: stripMediaUrls(r.body || "").slice(0, 180),
-          cover: r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
+          cover: r.og_image_url || r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
           date: r.created_at,
         });
       }

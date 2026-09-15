@@ -6,7 +6,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import ogHome from "@/assets/og-home.jpg";
-import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { magazineShareImage } from "@/lib/fliphtml5";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("magazine_entries")
-      .select("id,title,body,magazine_url,cover_url,created_at")
+      .select("id,title,body,magazine_url,cover_url,og_image_url,created_at")
       .eq("id", params.magazineId)
       .maybeSingle();
     if (error || !data) throw notFound();
@@ -51,12 +51,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
     });
     const title = localized.title;
     const desc = clampDescription(localized.description);
-    // Priorité : miniature FlipHTML5 (dérivée automatiquement du lien),
-    // puis couverture personnalisée si renseignée, sinon fallback Indi Radio.
-    const image =
-      flipHtml5ThumbnailUrl(loaderData.magazine_url) ||
-      loaderData.cover_url ||
-      OG_FALLBACK;
+    const { image, landscape } = magazineShareImage(loaderData, OG_FALLBACK);
     return {
       meta: [
         { title },
@@ -68,8 +63,12 @@ export const Route = createFileRoute("/magazines/$magazineId")({
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
         ...ogLocaleTags(lang),
-        ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
-        { name: "twitter:card", content: "summary_large_image" },
+        ...ogImageTags(image, {
+          baseUrl: BASE_URL,
+          alt: loaderData.title,
+          declareSize: landscape,
+        }),
+        { name: "twitter:card", content: landscape ? "summary_large_image" : "summary" },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [

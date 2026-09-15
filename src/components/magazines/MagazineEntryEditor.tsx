@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isValidFlipHtml5Url, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
 import { X, Check } from "lucide-react";
+import { ImageUploader } from "@/components/media/ImageUploader";
 
 export interface MagazineEntryDraft {
   id?: string;
@@ -15,6 +16,7 @@ export interface MagazineEntryDraft {
   body: string | null;
   magazine_url: string;
   cover_url: string | null;
+  og_image_url?: string | null;
 }
 
 export function MagazineEntryEditor({
@@ -30,6 +32,7 @@ export function MagazineEntryEditor({
   const [body, setBody] = useState(initial?.body ?? "");
   const [magazineUrl, setMagazineUrl] = useState(initial?.magazine_url ?? "");
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
+  const [ogImage, setOgImage] = useState(initial?.og_image_url ?? "");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -47,6 +50,7 @@ export function MagazineEntryEditor({
         body: body.trim() || null,
         magazine_url: normalizeFlipHtml5Url(trimmedUrl),
         cover_url: coverUrl.trim() || null,
+        og_image_url: ogImage.trim() || null,
         author_id: session.user.id,
       };
 
@@ -94,6 +98,23 @@ export function MagazineEntryEditor({
         value={coverUrl}
         onChange={(e) => setCoverUrl(e.target.value)}
       />
+
+      <div className="space-y-1">
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          Vignette de partage (Facebook / X) — paysage 1200×630
+        </div>
+        <ImageUploader
+          value={ogImage}
+          onChange={setOgImage}
+          folder="magazines"
+          usage="cover"
+          defaultRatio="16:9"
+          label="Vignette de partage (optionnel)"
+        />
+        <p className="text-[11px] text-muted-foreground">
+          Sans vignette, l&apos;aperçu reprend la couverture du magazine (format portrait, souvent recadré par les réseaux).
+        </p>
+      </div>
 
       <div className="flex justify-end gap-2">
         <Button size="sm" variant="ghost" onClick={onDone}>

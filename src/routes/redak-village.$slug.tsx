@@ -13,7 +13,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
-import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
+import { flipHtml5ThumbnailUrl, magazineShareImage } from "@/lib/fliphtml5";
 import { renderRich } from "@/lib/rich-text";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogImageTags } from "@/lib/og-tags";
@@ -69,10 +69,9 @@ export const Route = createFileRoute("/redak-village/$slug")({
     const desc = clampDescription(localized.description);
     // Pour un article magazine, la couverture FlipHTML5 fait une bien
     // meilleure vignette de partage que l'image de repli du site.
-    const image =
-      loaderData.cover_url ||
-      (loaderData.magazine_url ? flipHtml5ThumbnailUrl(loaderData.magazine_url) : null) ||
-      OG_FALLBACK;
+    const share = magazineShareImage(loaderData, OG_FALLBACK);
+    const image = share.image;
+    const landscape = share.landscape;
     return {
       meta: [
         { title },
@@ -84,8 +83,12 @@ export const Route = createFileRoute("/redak-village/$slug")({
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
         ...ogLocaleTags(lang),
-        ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
-        { name: "twitter:card", content: "summary_large_image" },
+        ...ogImageTags(image, {
+          baseUrl: BASE_URL,
+          alt: loaderData.title,
+          declareSize: landscape,
+        }),
+        { name: "twitter:card", content: landscape ? "summary_large_image" : "summary" },
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [

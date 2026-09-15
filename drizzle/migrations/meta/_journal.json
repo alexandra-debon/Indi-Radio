@@ -99,6 +99,13 @@
       "when": 1789504388818,
       "tag": "0013_village_articles_author_profile_fk",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1789504556834,
+      "tag": "0014_magazine_entries_og_image",
+      "breakpoints": true
     }
   ]
 }
