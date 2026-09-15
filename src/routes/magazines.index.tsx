@@ -127,6 +127,7 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
     onSuccess: () => {
       toast.success("Article supprimé");
       qc.invalidateQueries({ queryKey: ["magazine-entries"] });
+      qc.invalidateQueries({ queryKey: ["wall-compact-teasers"] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
