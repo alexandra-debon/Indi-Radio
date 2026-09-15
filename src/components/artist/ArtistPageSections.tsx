@@ -252,6 +252,11 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
       <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
         <Newspaper className="size-4" style={accent ? { color: accent } : undefined} /> {txt.posts}
       </h2>
+      {!isSelf && !following && (
+        <p className="mb-2 flex items-center gap-1.5 border-2 border-dashed border-border p-2 text-[11px] text-muted-foreground">
+          <Lock className="size-3.5 shrink-0" /> {txt.lockedHint}
+        </p>
+      )}
       {posts.length === 0 ? (
         <p className="text-sm text-muted-foreground">{txt.postsEmpty}</p>
       ) : (
