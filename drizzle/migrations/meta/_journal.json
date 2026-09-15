@@ -50,6 +50,13 @@
       "when": 1789498535743,
       "tag": "0006_posts_category",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789499480607,
+      "tag": "0007_grant_profile_new_columns",
+      "breakpoints": true
     }
   ]
 }

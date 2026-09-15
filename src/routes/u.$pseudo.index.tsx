@@ -14,6 +14,122 @@ import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { FollowButton, ArtistEvents, ArtistPosts } from "@/components/artist/ArtistPageSections";
 import { ArtistShop } from "@/components/artist/ArtistShop";
 
+type SectionKey = "events" | "shop" | "posts";
+
+/**
+ * Sur mobile, les trois grandes sections (dates, boutique, publications) sont
+ * regroupées dans des onglets pour éviter un défilement interminable.
+ * À partir de `md`, elles restent empilées comme avant.
+ */
+function ArtistSections({
+  artistId,
+  accent,
+  showEvents,
+  showShop,
+  showPosts,
+}: {
+  artistId: string;
+  accent?: string | null;
+  showEvents: boolean;
+  showShop: boolean;
+  showPosts: boolean;
+}) {
+  const { lang } = useLang();
+  const hash = useRouterState({ select: (s) => s.location.hash });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const sections: { key: SectionKey; id: string; label: string; node: React.ReactNode }[] = [];
+  if (showEvents) {
+    sections.push({
+      key: "events",
+      id: "dates",
+      label: lang === "en" ? "Shows" : "Dates",
+      node: <ArtistEvents artistId={artistId} accent={accent} />,
+    });
+  }
+  if (showShop) {
+    sections.push({
+      key: "shop",
+      id: "boutique",
+      label: lang === "en" ? "Shop" : "Boutique",
+      node: <ArtistShop artistId={artistId} accent={accent} />,
+    });
+  }
+  if (showPosts) {
+    sections.push({
+      key: "posts",
+      id: "publications",
+      label: lang === "en" ? "Posts" : "Publications",
+      node: <ArtistPosts artistId={artistId} accent={accent} />,
+    });
+  }
+
+  const firstKey = sections[0]?.key ?? "posts";
+  const [tab, setTab] = useState<SectionKey>(firstKey);
+
+  useEffect(() => {
+    const h = (hash || "").replace(/^#/, "");
+    if (h === "boutique") setTab("shop");
+    else if (h === "dates") setTab("events");
+    else if (h === "publications") setTab("posts");
+  }, [hash]);
+
+  if (sections.length === 0) return null;
+
+  const active = sections.find((s) => s.key === tab) ?? sections[0];
+
+  if (!isMobile) {
+    return (
+      <>
+        {sections.map((s) => (
+          <div key={s.key} id={s.id} className="scroll-mt-24">
+            {s.node}
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div
+        className="sticky top-14 z-20 -mx-4 grid gap-1 border-y-2 border-border bg-background px-4 py-2"
+        style={{ gridTemplateColumns: `repeat(${sections.length}, minmax(0, 1fr))` }}
+      >
+        {sections.map((s) => {
+          const isActive = s.key === active.key;
+          return (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => setTab(s.key)}
+              aria-current={isActive ? "true" : undefined}
+              className={`truncate border-2 border-border px-2 py-2 text-[11px] font-black uppercase tracking-widest transition ${
+                isActive ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"
+              }`}
+              style={isActive && accent ? { backgroundColor: accent, borderColor: accent } : undefined}
+            >
+              {s.label}
+            </button>
+          );
+        })}
+      </div>
+      <div id={active.id} className="scroll-mt-24">
+        {active.node}
+      </div>
+    </div>
+  );
+}
+
+
 export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
@@ -320,23 +436,23 @@ function UserProfilePage() {
           <img
             src={profile.banner_url}
             alt={`Bannière de @${profile.pseudo}`}
-            className="aspect-[16/9] w-full object-cover sm:aspect-[1920/480]"
+            className="aspect-[2/1] w-full object-cover sm:aspect-[1920/480]"
           />
         </div>
       )}
 
       <div className="card-brut p-4 space-y-4" style={accent ? { borderColor: accent } : undefined}>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="" className="size-20 rounded-full object-cover border-2 border-border" />
+            <img src={profile.avatar_url} alt="" className="size-14 shrink-0 rounded-full object-cover border-2 border-border sm:size-20" />
           ) : (
-            <div className="grid size-20 place-items-center rounded-full bg-muted text-lg font-black uppercase">
+            <div className="grid size-14 shrink-0 place-items-center rounded-full bg-muted text-lg font-black uppercase sm:size-20">
               {profile.pseudo.slice(0, 2)}
             </div>
           )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h1 className="truncate text-2xl font-black" style={accent ? { color: accent } : undefined}>
+              <h1 className="truncate text-xl font-black sm:text-2xl" style={accent ? { color: accent } : undefined}>
                 {isArtistPage && profile.stage_name ? profile.stage_name : `@${profile.pseudo}`}
               </h1>
               {profile.is_certified && <BadgeCheck className="size-5 text-primary" aria-label={t("upub.certified")} />}
@@ -350,8 +466,8 @@ function UserProfilePage() {
               <span>· {t("upub.memberSince")} {joined}</span>
             </div>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="text-3xl font-black tabular-nums text-primary">{profile.points}</span>
+          <div className="flex shrink-0 flex-col items-end">
+            <span className="text-2xl font-black tabular-nums text-primary sm:text-3xl">{profile.points}</span>
             <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("upub.points")}</span>
           </div>
         </div>
@@ -407,9 +523,14 @@ function UserProfilePage() {
         </div>
       )}
 
-      {isArtistPage && profile.show_events_section !== false && <ArtistEvents artistId={profile.id} accent={accent} />}
-      {profile.show_shop_section !== false && <ArtistShop artistId={profile.id} accent={accent} />}
-      {profile.show_posts_section !== false && <ArtistPosts artistId={profile.id} accent={accent} />}
+      <ArtistSections
+        artistId={profile.id}
+        accent={accent}
+        showEvents={isArtistPage && profile.show_events_section !== false}
+        showShop={profile.show_shop_section !== false}
+        showPosts={profile.show_posts_section !== false}
+      />
+
 
       <div className="grid grid-cols-3 gap-2">
         <StatCard icon={FileText} label={t("upub.stats.posts")} value={stats.posts} />
