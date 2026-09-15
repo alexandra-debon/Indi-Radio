@@ -150,7 +150,11 @@ export function WallCompact({
               {cover && (
                 <img
                   src={cover}
-                  alt=""
+                  alt={
+                    lang === "en"
+                      ? `Post illustration${p.title ? ` — ${p.title}` : ""}`
+                      : `Illustration de la publication${p.title ? ` — ${p.title}` : ""}`
+                  }
                   loading="lazy"
                   decoding="async"
                   className="size-16 shrink-0 rounded object-cover"
