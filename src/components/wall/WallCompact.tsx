@@ -194,6 +194,9 @@ export function WallCompact({
         })}
       </div>
 
+      <FeedTeasers />
+
+
       <button
         type="button"
         onClick={onExpand}
