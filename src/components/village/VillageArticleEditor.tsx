@@ -35,6 +35,8 @@ export interface VillageArticle {
   video_url: string | null;
   category: string | null;
   free_tag: string | null;
+  magazine_url?: string | null;
+  source_kind?: string | null;
   visibility: string;
   created_at: string;
   updated_at: string;

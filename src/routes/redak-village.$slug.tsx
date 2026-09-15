@@ -8,9 +8,11 @@ import { toast } from "@/lib/toast";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import { VillageCategoryBadge, FreeTagBadge } from "@/components/village/VillageCategory";
+import { MagazineSourceBadge } from "@/components/village/MagazineSource";
 import { ShareButton } from "@/components/share/ShareButton";
 import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
 import { renderRich } from "@/lib/rich-text";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogImageTags } from "@/lib/og-tags";
@@ -34,7 +36,7 @@ export const Route = createFileRoute("/redak-village/$slug")({
     const { data, error } = await supabase
       .from("village_articles")
       .select(
-        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
+        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, magazine_url, source_kind, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -188,6 +190,7 @@ function VillageArticlePage() {
         )}
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-center gap-2">
+            <MagazineSourceBadge kind={article.source_kind} />
             <VillageCategoryBadge category={article.category} />
             <FreeTagBadge tag={article.free_tag} />
             {article.author && <UserBadge profile={article.author} className="text-xs" />}
@@ -221,6 +224,13 @@ function VillageArticlePage() {
             </TranslatedText>
           </div>
           {article.video_url && <UrlEmbeds text={article.video_url} />}
+          {article.magazine_url && (
+            <FlipbookViewer
+              url={article.magazine_url}
+              title={article.title}
+              coverUrl={article.cover_url}
+            />
+          )}
 
           <div className="flex flex-wrap items-center gap-2 pt-2">
             <ContentLikeButton contentType="village_article" contentId={article.id} />
