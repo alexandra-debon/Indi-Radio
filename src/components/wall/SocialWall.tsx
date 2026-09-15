@@ -20,6 +20,7 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
+import { VisibilityPicker, type PostVisibility } from "@/components/social/VisibilityPicker";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { ReportImageButton } from "@/components/moderation/ReportImageButton";
