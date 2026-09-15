@@ -9,7 +9,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
-import { CalendarDays, Ticket, Heart, HeartOff, Newspaper } from "lucide-react";
+import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock } from "lucide-react";
 
 type ArtistEvent = {
   id: string;
