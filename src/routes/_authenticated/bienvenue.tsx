@@ -50,6 +50,7 @@ function WelcomePage() {
   const [punchline, setPunchline] = useState("");
   const [bio, setBio] = useState("");
   const [note, setNote] = useState("");
+  const [website, setWebsite] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
