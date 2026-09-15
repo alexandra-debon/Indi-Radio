@@ -234,6 +234,9 @@ function ArtistSpacePage() {
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
           social_links: sanitizeLinks(links),
+          show_events_section: showEvents,
+          show_shop_section: showShop,
+          show_posts_section: showPosts,
         } as any)
         .eq("id", uid);
       if (error) throw error;
