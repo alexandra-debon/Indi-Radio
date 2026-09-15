@@ -314,6 +314,7 @@ function RootComponent() {
           <SeoLocalizer />
           <LangUrlSync />
           <OnboardingTour />
+          <StatusTour />
           <CookieConsent />
           <PlausibleRouteTracker />
         </RadioPlayerProvider>
