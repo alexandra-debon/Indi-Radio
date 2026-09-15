@@ -82,9 +82,10 @@ function ArtistesPage() {
     return data.filter(
       (a) =>
         (a.stage_name ?? "").toLowerCase().includes(needle) ||
-        a.pseudo.toLowerCase().includes(needle),
+        a.pseudo.toLowerCase().includes(needle) ||
+        (shopByArtist?.get(a.id) ?? []).some((title) => title.toLowerCase().includes(needle)),
     );
-  }, [data, q]);
+  }, [data, q, shopByArtist]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4">
@@ -131,7 +132,7 @@ function ArtistesPage() {
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-base font-black">{name}</span>
                       <BadgeCheck className="size-4 shrink-0 text-primary" aria-label={t("gallery.certified")} />
-                      {shopIds?.has(a.id) && (
+                      {shopByArtist?.has(a.id) && (
                         <span
                           title="Boutique disponible"
                           aria-label="Boutique disponible"
