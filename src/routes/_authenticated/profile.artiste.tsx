@@ -397,6 +397,9 @@ function ArtistSpacePage() {
         )}
       </section>
 
+      {/* Boutique */}
+      <ArtistShopManager artistId={session.user.id} />
+
       {/* Blog artiste */}
       <section className="card-brut space-y-3 p-4">
         <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide">
