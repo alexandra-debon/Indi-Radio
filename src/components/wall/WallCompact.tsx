@@ -421,3 +421,61 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
     </Link>
   );
 }
+
+/**
+ * Teaser magazine : ouvre directement le flipbook FlipHTML5 en plein écran
+ * (audio/vidéo autorisés), avec un lien discret vers la page complète.
+ */
+function MagazineTeaserCard({
+  item,
+  inner,
+  cls,
+}: {
+  item: Teaser;
+  inner: React.ReactNode;
+  cls: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const { lang } = useLang();
+  if (!item.url) {
+    return (
+      <Link to="/magazines/$magazineId" params={{ magazineId: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  }
+  const embedUrl = normalizeFlipHtml5Url(item.url);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={item.title}
+        className={cls}
+      >
+        {inner}
+      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-hidden border-0 bg-black p-0 sm:left-1/2 sm:top-1/2 sm:h-[92vh] sm:w-[96vw] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg [&>button]:right-3 [&>button]:top-3 [&>button]:z-20 [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:p-2 [&>button]:text-white [&>button]:opacity-100">
+          <DialogTitle className="sr-only">{item.title}</DialogTitle>
+          <iframe
+            src={embedUrl}
+            title={item.title}
+            allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-write"
+            allowFullScreen
+            className="h-full w-full border-0"
+          />
+          <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2">
+            <Link
+              to="/magazines/$magazineId"
+              params={{ magazineId: item.id }}
+              className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur hover:bg-white/25"
+            >
+              {lang === "en" ? "View full page" : "Voir la page complète"}
+            </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
