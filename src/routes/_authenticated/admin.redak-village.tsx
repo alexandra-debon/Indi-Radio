@@ -47,7 +47,7 @@ function AdminVillagePage() {
       const { data, error } = await supabase
         .from("village_articles")
         .select(
-          "id, title, slug, excerpt, cover_url, category, free_tag, visibility, published, created_at, author:profiles!village_articles_author_id_fkey(id, pseudo, stage_name)",
+          "id, title, slug, excerpt, cover_url, category, free_tag, visibility, published, created_at, author:profiles!village_articles_author_id_profiles_fkey(id, pseudo, stage_name)",
         )
         .order("created_at", { ascending: false })
         .limit(200);

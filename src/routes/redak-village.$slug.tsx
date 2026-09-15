@@ -37,7 +37,7 @@ export const Route = createFileRoute("/redak-village/$slug")({
     const { data, error } = await supabase
       .from("village_articles")
       .select(
-        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, magazine_url, source_kind, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
+        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, magazine_url, source_kind, visibility, created_at, updated_at, author:profiles!village_articles_author_id_profiles_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
       )
       .eq("slug", params.slug)
       .maybeSingle();
