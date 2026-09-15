@@ -197,11 +197,17 @@ export function WallCompact({
                   </div>
                 )}
                 <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                  <span className="inline-flex items-center gap-1">
-                    <Heart className="size-3" /> {c.likes}
+                  <span
+                    className="inline-flex items-center gap-1"
+                    aria-label={`${c.likes} ${lang === "en" ? "likes" : "j'aime"}`}
+                  >
+                    <Heart className="size-3" aria-hidden="true" /> {c.likes}
                   </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MessageCircle className="size-3" /> {c.comments}
+                  <span
+                    className="inline-flex items-center gap-1"
+                    aria-label={`${c.comments} ${lang === "en" ? "comments" : "commentaires"}`}
+                  >
+                    <MessageCircle className="size-3" aria-hidden="true" /> {c.comments}
                   </span>
                 </div>
               </div>
