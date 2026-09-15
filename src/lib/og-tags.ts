@@ -18,7 +18,18 @@ export function absoluteImage(image: string, baseUrl: string): string {
 
 export function ogImageTags(
   image: string,
-  opts: { baseUrl: string; width?: number; height?: number; alt?: string } = { baseUrl: "" },
+  opts: {
+    baseUrl: string;
+    width?: number;
+    height?: number;
+    alt?: string;
+    /**
+     * Quand l'image n'est pas au format paysage 1200x630 (couverture de
+     * magazine en portrait, par ex.), déclarer de fausses dimensions fait
+     * recadrer ou refuser l'aperçu. Passer `false` pour les omettre.
+     */
+    declareSize?: boolean;
+  } = { baseUrl: "" },
 ): MetaTag[] {
   const src = absoluteImage(image, opts.baseUrl);
   const width = opts.width ?? 1200;
