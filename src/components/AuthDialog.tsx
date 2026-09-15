@@ -89,6 +89,7 @@ export function AuthDialog() {
       toast.error(error.message);
     } else {
       toast.success("Bienvenue !");
+      if (goToOnboarding()) return;
       closeAuth();
     }
   }
@@ -100,23 +101,32 @@ export function AuthDialog() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: signUpEmail,
       password: signUpPassword,
       options: {
-        emailRedirectTo: `${getBrowserOrigin()}/`,
-        data: { pseudo: signUpPseudo.trim() },
+        emailRedirectTo: `${getBrowserOrigin()}/bienvenue?role=${signUpRole}`,
+        data: { pseudo: signUpPseudo.trim(), requested_role: signUpRole },
       },
     });
     setLoading(false);
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success(
-        "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter.",
-        { duration: 8000 }
-      );
+      return;
     }
+    window.localStorage.setItem(PENDING_ROLE_KEY, signUpRole);
+    if (data.session) {
+      toast.success("Compte créé !");
+      if (goToOnboarding()) return;
+      closeAuth();
+      return;
+    }
+    toast.success(
+      signUpRole === "auditeur"
+        ? "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter."
+        : "Compte créé ! Confirme ton adresse par email : tu pourras ensuite envoyer ta candidature.",
+      { duration: 8000 }
+    );
   }
 
   async function handleForgot(e: React.FormEvent) {
