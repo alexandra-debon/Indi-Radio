@@ -51,12 +51,7 @@ export const Route = createFileRoute("/magazines/$magazineId")({
     });
     const title = localized.title;
     const desc = clampDescription(localized.description);
-    // Priorité : miniature FlipHTML5 (dérivée automatiquement du lien),
-    // puis couverture personnalisée si renseignée, sinon fallback Indi Radio.
-    const image =
-      flipHtml5ThumbnailUrl(loaderData.magazine_url) ||
-      loaderData.cover_url ||
-      OG_FALLBACK;
+    const { image, landscape } = magazineShareImage(loaderData, OG_FALLBACK);
     return {
       meta: [
         { title },
