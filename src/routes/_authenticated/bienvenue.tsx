@@ -182,8 +182,26 @@ function WelcomePage() {
       <div className="mt-6 space-y-4 rounded-xl border border-border bg-card p-5">
         {choice !== "auditeur" && (
           <div>
-            <Label htmlFor="stage">{choice === "media" ? "Nom du média" : "Nom de scène"}</Label>
-            <Input id="stage" value={stageName} onChange={(e) => setStageName(e.target.value)} maxLength={80} />
+            <Label htmlFor="stage">
+              {choice === "media" ? "Nom du média" : "Nom d'artiste"}{" "}
+              <span className="text-primary">*</span>
+            </Label>
+            <Input
+              id="stage"
+              required
+              value={stageName}
+              onChange={(e) => setStageName(e.target.value)}
+              maxLength={80}
+              placeholder={choice === "media" ? "Ex : Indie Mag" : "Ex : The Indie Tapes"}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {choice === "media"
+                ? "Nom professionnel de ton média : il sert au repérage et à la validation rapide par l'équipe."
+                : "Le nom sous lequel ta musique est publiée : il sert au repérage et à la validation rapide par l'équipe."}{" "}
+              À ne pas confondre avec ton <strong>pseudo</strong> (le nom d'utilisateur affiché sur
+              le site), qui reste différent et pourra être choisi ou modifié plus tard depuis ton
+              profil.
+            </p>
           </div>
         )}
         <div>
