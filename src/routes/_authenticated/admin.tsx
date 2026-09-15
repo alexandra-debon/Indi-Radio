@@ -1058,7 +1058,9 @@ function UserAdmin() {
             <DialogTitle>Certifier un artiste</DialogTitle>
             <DialogDescription>
               Renseigne le nom d'artiste ou de groupe et un visuel pour la Galerie Artistes.
-              Ces informations apparaîtront publiquement.
+              Ces informations apparaîtront publiquement. Ce sont les valeurs de départ :
+              une fois certifié, l'artiste gère lui-même sa bannière, sa couleur, son résumé,
+              ses réseaux et ses dates depuis son espace « Ma page artiste ».
             </DialogDescription>
           </DialogHeader>
           {certifyTarget && (

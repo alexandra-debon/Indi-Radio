@@ -76,6 +76,7 @@ import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/pub
 import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
+import { Route as AuthenticatedProfileArtisteRouteImport } from './routes/_authenticated/profile.artiste'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
@@ -437,6 +438,12 @@ const AuthenticatedProfileBadgesRoute =
     path: '/profile/badges',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfileArtisteRoute =
+  AuthenticatedProfileArtisteRouteImport.update({
+    id: '/profile/artiste',
+    path: '/profile/artiste',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileAlbumsRoute =
   AuthenticatedProfileAlbumsRouteImport.update({
     id: '/profile/albums',
@@ -584,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
+  '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
@@ -667,6 +675,7 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
+  '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
@@ -752,6 +761,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
+  '/_authenticated/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/_authenticated/profile/likes': typeof AuthenticatedProfileLikesRoute
@@ -837,6 +847,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
+    | '/profile/artiste'
     | '/profile/badges'
     | '/profile/edit'
     | '/profile/likes'
@@ -920,6 +931,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/seo-preview'
     | '/profile/albums'
+    | '/profile/artiste'
     | '/profile/badges'
     | '/profile/edit'
     | '/profile/likes'
@@ -1004,6 +1016,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/seo-preview'
     | '/_authenticated/profile/albums'
+    | '/_authenticated/profile/artiste'
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
     | '/_authenticated/profile/likes'
@@ -1568,6 +1581,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileBadgesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile/artiste': {
+      id: '/_authenticated/profile/artiste'
+      path: '/profile/artiste'
+      fullPath: '/profile/artiste'
+      preLoaderRoute: typeof AuthenticatedProfileArtisteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/albums': {
       id: '/_authenticated/profile/albums'
       path: '/profile/albums'
@@ -1700,6 +1720,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileAlbumsRoute: typeof AuthenticatedProfileAlbumsRoute
+  AuthenticatedProfileArtisteRoute: typeof AuthenticatedProfileArtisteRoute
   AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
   AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
   AuthenticatedProfileLikesRoute: typeof AuthenticatedProfileLikesRoute
@@ -1712,6 +1733,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileAlbumsRoute: AuthenticatedProfileAlbumsRoute,
+  AuthenticatedProfileArtisteRoute: AuthenticatedProfileArtisteRoute,
   AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
   AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
   AuthenticatedProfileLikesRoute: AuthenticatedProfileLikesRoute,

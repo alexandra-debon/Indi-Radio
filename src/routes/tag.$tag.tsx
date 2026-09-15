@@ -84,6 +84,7 @@ function TagPage() {
       const { data, error } = await supabase
         .from("posts")
         .select("id, author_id, content, title, created_at, image_url, image_urls, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .eq("visibility", "feed")
         .or(`content.ilike.${needle},title.ilike.${needle}`)
         .order("created_at", { ascending: false })
         .limit(100);

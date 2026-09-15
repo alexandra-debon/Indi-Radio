@@ -54,6 +54,7 @@ export function WallCompact({
         .select(
           "id, author_id, title, content, created_at, pinned_at, pin_label, image_urls, image_url, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
         )
+        .eq("visibility", "feed")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(3);

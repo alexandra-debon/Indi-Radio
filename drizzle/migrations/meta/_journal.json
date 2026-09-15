@@ -22,6 +22,13 @@
       "when": 1789492217045,
       "tag": "0002_role_requests_and_punchline",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789495372813,
+      "tag": "0003_artist_pages_events_follows",
+      "breakpoints": true
     }
   ]
 }

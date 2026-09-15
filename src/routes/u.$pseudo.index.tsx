@@ -11,12 +11,13 @@ import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLink
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
+import { FollowButton, ArtistEvents, ArtistPosts } from "@/components/artist/ArtistPageSections";
 
 export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -73,9 +74,10 @@ export const Route = createFileRoute("/u/$pseudo/")({
       // canonical URL and not to index this alias.
       meta.push({ name: "robots", content: "noindex, follow" });
     }
-    if (loaderData?.avatar_url) {
-      meta.push({ property: "og:image", content: loaderData.avatar_url });
-      meta.push({ name: "twitter:image", content: loaderData.avatar_url });
+    const ogImage = (loaderData as any)?.banner_url || loaderData?.avatar_url;
+    if (ogImage) {
+      meta.push({ property: "og:image", content: ogImage });
+      meta.push({ name: "twitter:image", content: ogImage });
     }
     return {
       meta,
@@ -129,6 +131,10 @@ type Profile = {
   bio: string | null;
   website: string | null;
   social_links: SocialLinks | null;
+  banner_url: string | null;
+  accent_color: string | null;
+  stage_name: string | null;
+  gallery_summary: string | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
@@ -179,7 +185,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -280,11 +286,24 @@ function UserProfilePage() {
   const { profile, stats } = data;
   const joined = new Date(profile.created_at).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { year: "numeric", month: "long" });
 
+  const isArtistPage = profile.role === "artiste" || profile.role === "media";
+  const accent = isArtistPage && profile.accent_color ? profile.accent_color : null;
+
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-4">
       <Link to="/top-users" className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground">{t("upub.backTop")}</Link>
 
-      <div className="card-brut p-4 space-y-4">
+      {isArtistPage && profile.banner_url && (
+        <div className="overflow-hidden border-2 border-border" style={accent ? { borderColor: accent } : undefined}>
+          <img
+            src={profile.banner_url}
+            alt={`Bannière de @${profile.pseudo}`}
+            className="aspect-[16/9] w-full object-cover sm:aspect-[1920/480]"
+          />
+        </div>
+      )}
+
+      <div className="card-brut p-4 space-y-4" style={accent ? { borderColor: accent } : undefined}>
         <div className="flex items-center gap-4">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="size-20 rounded-full object-cover border-2 border-border" />
@@ -295,9 +314,14 @@ function UserProfilePage() {
           )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h1 className="truncate text-2xl font-black">@{profile.pseudo}</h1>
+              <h1 className="truncate text-2xl font-black" style={accent ? { color: accent } : undefined}>
+                {isArtistPage && profile.stage_name ? profile.stage_name : `@${profile.pseudo}`}
+              </h1>
               {profile.is_certified && <BadgeCheck className="size-5 text-primary" aria-label={t("upub.certified")} />}
             </div>
+            {isArtistPage && profile.stage_name && (
+              <div className="truncate text-xs text-muted-foreground">@{profile.pseudo}</div>
+            )}
             <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
               <span>{profile.role}</span>
               {profile.is_team_indi && <span className="border border-border bg-primary px-1.5 py-0.5 text-foreground">{t("upub.teamIndi")}</span>}
@@ -310,7 +334,20 @@ function UserProfilePage() {
           </div>
         </div>
 
+        {isArtistPage && profile.gallery_summary && (
+          <TranslatedText
+            as="p"
+            className="whitespace-pre-wrap text-sm"
+            entityType="profile"
+            entityKey={profile.id}
+            field="gallery_summary"
+            text={profile.gallery_summary}
+            manual={false}
+          />
+        )}
+
         <LevelBar points={profile.points} level={profile.level} />
+        {isArtistPage && <FollowButton artistId={profile.id} accent={accent} />}
         {profile.role === "artiste" && profile.is_certified && (
           <a
             href={`/?mention=${encodeURIComponent(profile.pseudo)}`}
@@ -346,6 +383,13 @@ function UserProfilePage() {
           )}
           {profile.social_links && <SocialLinksBar links={profile.social_links} />}
         </div>
+      )}
+
+      {isArtistPage && (
+        <>
+          <ArtistEvents artistId={profile.id} accent={accent} />
+          <ArtistPosts artistId={profile.id} accent={accent} />
+        </>
       )}
 
       <div className="grid grid-cols-3 gap-2">

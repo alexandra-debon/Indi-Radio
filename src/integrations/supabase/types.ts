@@ -157,6 +157,80 @@ export type Database = {
         }
         Relationships: []
       }
+      artist_events: {
+        Row: {
+          artist_id: string
+          created_at: string
+          event_date: string
+          id: string
+          ticket_url: string | null
+          title: string
+          venue: string | null
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          event_date: string
+          id?: string
+          ticket_url?: string | null
+          title: string
+          venue?: string | null
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          ticket_url?: string | null
+          title?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_events_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artist_follows: {
+        Row: {
+          artist_id: string
+          created_at: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          follower_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_follows_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artist_follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artwork_lookups: {
         Row: {
           artist: string
@@ -1430,6 +1504,7 @@ export type Database = {
           social_links: Json
           title: string | null
           updated_at: string
+          visibility: string
         }
         Insert: {
           album_id?: string | null
@@ -1446,6 +1521,7 @@ export type Database = {
           social_links?: Json
           title?: string | null
           updated_at?: string
+          visibility?: string
         }
         Update: {
           album_id?: string | null
@@ -1462,6 +1538,7 @@ export type Database = {
           social_links?: Json
           title?: string | null
           updated_at?: string
+          visibility?: string
         }
         Relationships: [
           {
@@ -1500,8 +1577,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accent_color: string | null
           avatar_url: string | null
           badges: string[]
+          banner_url: string | null
           bio: string | null
           created_at: string
           gallery_cover_url: string | null
@@ -1529,8 +1608,10 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          accent_color?: string | null
           avatar_url?: string | null
           badges?: string[]
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           gallery_cover_url?: string | null
@@ -1558,8 +1639,10 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          accent_color?: string | null
           avatar_url?: string | null
           badges?: string[]
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           gallery_cover_url?: string | null
