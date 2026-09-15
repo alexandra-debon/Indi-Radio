@@ -286,6 +286,7 @@ function FeedTeasers() {
         supabase
           .from("magazine_entries")
           .select("id, title, body, cover_url, magazine_url, created_at")
+          .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
       ]);
