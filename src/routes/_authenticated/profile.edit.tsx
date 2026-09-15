@@ -303,6 +303,21 @@ function EditProfilePage() {
           </div>
         )}
 
+        {(profile.role === "artiste" || (profile as any).role === "media") && (
+          <div className="space-y-1.5 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
+            <div className="text-sm font-black uppercase tracking-wide">Ma page artiste</div>
+            <p className="text-[11px] text-muted-foreground">
+              Bannière, couleur d'accent, résumé, dates de concert et publications : tout se gère depuis ton espace dédié.
+            </p>
+            <Link
+              to="/profile/artiste"
+              className="inline-flex items-center gap-1.5 border-2 border-border bg-primary px-3 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground"
+            >
+              Ouvrir mon espace artiste
+            </Link>
+          </div>
+        )}
+
         <div className="flex gap-2">
           <Button type="submit" disabled={saving || uploading} className="flex-1">
             {saving ? <Loader2 className="size-4 animate-spin" /> : null}
