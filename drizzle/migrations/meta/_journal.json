@@ -64,6 +64,13 @@
       "when": 1789501653277,
       "tag": "0008_create_village_articles",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789502251449,
+      "tag": "0009_village_categories_and_free_tag",
+      "breakpoints": true
     }
   ]
 }

@@ -6,7 +6,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { PenSquare, Feather } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
-import { CategoryBadge } from "@/components/social/PostCategory";
+import {
+  VillageCategoryBadge,
+  VillageCategoryFilter,
+  FreeTagBadge,
+  type VillageCategory,
+} from "@/components/village/VillageCategory";
 import { SmartImg } from "@/components/media/SmartImg";
 import { localizedStaticMeta } from "@/lib/og-static-head";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
@@ -52,6 +57,8 @@ function VillagePage() {
   const txt = useVillageTxt();
   const { session, requireAuth } = useAuth();
   const [writing, setWriting] = useState(false);
+  const [category, setCategory] = useState<VillageCategory | null>(null);
+  const [tag, setTag] = useState<string | null>(null);
 
   const { data: articles = [] } = useQuery<VillageArticle[]>({
     queryKey: ["village-articles"],
@@ -59,7 +66,7 @@ function VillagePage() {
       const { data, error } = await supabase
         .from("village_articles")
         .select(
-          "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
+          "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
         )
         .eq("published", true)
         .order("created_at", { ascending: false })
@@ -68,6 +75,14 @@ function VillagePage() {
       return (data ?? []) as unknown as VillageArticle[];
     },
   });
+
+  const freeTags = Array.from(
+    new Set(articles.map((a) => a.free_tag?.trim()).filter((v): v is string => !!v)),
+  ).slice(0, 12);
+
+  const visible = articles.filter(
+    (a) => (!category || a.category === category) && (!tag || a.free_tag?.trim() === tag),
+  );
 
   return (
     <div className="space-y-4">
@@ -92,11 +107,42 @@ function VillagePage() {
         <VillageArticleEditor onDone={() => setWriting(false)} onCancel={() => setWriting(false)} />
       )}
 
-      {articles.length === 0 ? (
+      {articles.length > 0 && (
+        <div className="space-y-2">
+          <VillageCategoryFilter
+            value={category}
+            onChange={setCategory}
+            available={Array.from(new Set(articles.map((a) => a.category).filter(Boolean) as string[]))}
+          />
+          {freeTags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                {txt.filterTags}
+              </span>
+              {freeTags.map((ft) => (
+                <button
+                  key={ft}
+                  type="button"
+                  onClick={() => setTag(tag === ft ? null : ft)}
+                  aria-pressed={tag === ft}
+                  className={
+                    "rounded-full border-2 border-primary px-2 py-0.5 text-[10px] font-black uppercase tracking-widest transition " +
+                    (tag === ft ? "bg-primary text-black" : "bg-primary/10 text-primary hover:bg-primary/20")
+                  }
+                >
+                  {ft}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {visible.length === 0 ? (
         <p className="card-brut p-6 text-center text-sm text-muted-foreground">{txt.empty}</p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">
-          {articles.map((a) => (
+          {visible.map((a) => (
             <li key={a.id}>
               <Link
                 to="/redak-village/$slug"
@@ -115,7 +161,8 @@ function VillagePage() {
                 )}
                 <div className="space-y-1.5 p-3">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <CategoryBadge category={a.category} />
+                    <VillageCategoryBadge category={a.category} />
+                    <FreeTagBadge tag={a.free_tag} />
                     {a.author && <UserBadge profile={a.author} compact />}
                   </div>
                   <h2 className="text-base font-bold leading-tight">{a.title}</h2>

@@ -2052,6 +2052,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           excerpt: string | null
+          free_tag: string | null
           id: string
           published: boolean
           slug: string
@@ -2067,6 +2068,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
+          free_tag?: string | null
           id?: string
           published?: boolean
           slug: string
@@ -2082,6 +2084,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
+          free_tag?: string | null
           id?: string
           published?: boolean
           slug?: string
