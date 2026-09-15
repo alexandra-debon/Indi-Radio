@@ -33,6 +33,18 @@ export function AuthDialog() {
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPseudo, setSignUpPseudo] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpRole, setSignUpRole] = useState<RoleChoice>("auditeur");
+
+  // Après une connexion réussie, si un rôle a été choisi à l'inscription,
+  // on emmène la personne vers l'étape de finalisation du profil.
+  function goToOnboarding() {
+    const pending =
+      typeof window === "undefined" ? null : window.localStorage.getItem(PENDING_ROLE_KEY);
+    if (!pending) return false;
+    closeAuth();
+    window.location.assign(`/bienvenue?role=${encodeURIComponent(pending)}`);
+    return true;
+  }
 
   async function handleResend() {
     if (!signInEmail) {
