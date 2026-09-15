@@ -61,6 +61,7 @@ import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
+import { Route as AuthenticatedBienvenueRouteImport } from './routes/_authenticated/bienvenue'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -79,6 +80,7 @@ import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
+import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
@@ -350,6 +352,11 @@ const AuthenticatedNotifTestRoute = AuthenticatedNotifTestRouteImport.update({
   path: '/notif-test',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBienvenueRoute = AuthenticatedBienvenueRouteImport.update({
+  id: '/bienvenue',
+  path: '/bienvenue',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -454,6 +461,12 @@ const AuthenticatedAdminDiagnosticsPseudosRoute =
     path: '/diagnostics-pseudos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCandidaturesRoute =
+  AuthenticatedAdminCandidaturesRouteImport.update({
+    id: '/candidatures',
+    path: '/candidatures',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -546,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/bienvenue': typeof AuthenticatedBienvenueRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -565,6 +579,7 @@ export interface FileRoutesByFullPath {
   '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -627,6 +642,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/bienvenue': typeof AuthenticatedBienvenueRoute
   '/notif-test': typeof AuthenticatedNotifTestRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -646,6 +662,7 @@ export interface FileRoutesByTo {
   '/playlists': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -710,6 +727,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/bienvenue': typeof AuthenticatedBienvenueRoute
   '/_authenticated/notif-test': typeof AuthenticatedNotifTestRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/actus/$postId': typeof ActusPostIdRoute
@@ -729,6 +747,7 @@ export interface FileRoutesById {
   '/playlists/': typeof PlaylistsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
@@ -793,6 +812,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/bienvenue'
     | '/notif-test'
     | '/notifications'
     | '/actus/$postId'
@@ -812,6 +832,7 @@ export interface FileRouteTypes {
     | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
@@ -874,6 +895,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/bienvenue'
     | '/notif-test'
     | '/notifications'
     | '/actus/$postId'
@@ -893,6 +915,7 @@ export interface FileRouteTypes {
     | '/playlists'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
     | '/admin/seo-preview'
@@ -956,6 +979,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
+    | '/_authenticated/bienvenue'
     | '/_authenticated/notif-test'
     | '/_authenticated/notifications'
     | '/actus/$postId'
@@ -975,6 +999,7 @@ export interface FileRouteTypes {
     | '/playlists/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/candidatures'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/seo-preview'
@@ -1438,6 +1463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotifTestRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bienvenue': {
+      id: '/_authenticated/bienvenue'
+      path: '/bienvenue'
+      fullPath: '/bienvenue'
+      preLoaderRoute: typeof AuthenticatedBienvenueRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -1564,6 +1596,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/candidatures': {
+      id: '/_authenticated/admin/candidatures'
+      path: '/candidatures'
+      fullPath: '/admin/candidatures'
+      preLoaderRoute: typeof AuthenticatedAdminCandidaturesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -1638,12 +1677,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
@@ -1655,6 +1696,7 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBienvenueRoute: typeof AuthenticatedBienvenueRoute
   AuthenticatedNotifTestRoute: typeof AuthenticatedNotifTestRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileAlbumsRoute: typeof AuthenticatedProfileAlbumsRoute
@@ -1666,6 +1708,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBienvenueRoute: AuthenticatedBienvenueRoute,
   AuthenticatedNotifTestRoute: AuthenticatedNotifTestRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileAlbumsRoute: AuthenticatedProfileAlbumsRoute,

@@ -1,10 +1,10 @@
-import { Crown, Mic, Palette, CheckCircle2, Radio } from "lucide-react";
+import { Crown, Mic, Palette, CheckCircle2, Radio, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 
 export interface BadgeProfile {
   pseudo: string;
-  role: "admin" | "artiste" | "animateur" | "auditeur";
+  role: "admin" | "artiste" | "animateur" | "auditeur" | "media";
   is_certified: boolean;
   is_team_indi?: boolean | null;
   badges?: string[] | null;
@@ -47,6 +47,11 @@ export function UserBadge({ profile, className, compact }: { profile: BadgeProfi
       {profile.role === "artiste" && (
         <span className="inline-flex items-center gap-1 rounded-sm border border-primary px-1.5 py-0.5 text-[10px] uppercase text-primary">
           <Palette className="size-3" /> {t("badge.artiste")}
+        </span>
+      )}
+      {profile.role === "media" && (
+        <span className="inline-flex items-center gap-1 rounded-sm border border-primary px-1.5 py-0.5 text-[10px] uppercase text-primary">
+          <Newspaper className="size-3" /> {t("badge.media")}
         </span>
       )}
       {profile.role === "auditeur" && profile.level && profile.level > 0 && (

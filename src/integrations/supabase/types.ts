@@ -1514,9 +1514,15 @@ export type Database = {
           level: number
           points: number
           pseudo: string
+          punchline: string | null
           quarantine_reason: string | null
           quarantined_at: string | null
           role: Database["public"]["Enums"]["app_role"]
+          role_request_note: string | null
+          role_request_reviewed_at: string | null
+          role_request_status: string | null
+          role_request_submitted_at: string | null
+          role_requested: Database["public"]["Enums"]["app_role"] | null
           social_links: Json
           stage_name: string | null
           updated_at: string
@@ -1537,9 +1543,15 @@ export type Database = {
           level?: number
           points?: number
           pseudo: string
+          punchline?: string | null
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          role_request_note?: string | null
+          role_request_reviewed_at?: string | null
+          role_request_status?: string | null
+          role_request_submitted_at?: string | null
+          role_requested?: Database["public"]["Enums"]["app_role"] | null
           social_links?: Json
           stage_name?: string | null
           updated_at?: string
@@ -1560,9 +1572,15 @@ export type Database = {
           level?: number
           points?: number
           pseudo?: string
+          punchline?: string | null
           quarantine_reason?: string | null
           quarantined_at?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          role_request_note?: string | null
+          role_request_reviewed_at?: string | null
+          role_request_status?: string | null
+          role_request_submitted_at?: string | null
+          role_requested?: Database["public"]["Enums"]["app_role"] | null
           social_links?: Json
           stage_name?: string | null
           updated_at?: string
@@ -1949,7 +1967,7 @@ export type Database = {
       unaccent_fallback: { Args: { _t: string }; Returns: string }
     }
     Enums: {
-      app_role: "auditeur" | "artiste" | "animateur" | "admin"
+      app_role: "auditeur" | "artiste" | "animateur" | "admin" | "media"
       clip_section: "clips_actu" | "playlists_clips"
     }
     CompositeTypes: {
@@ -2078,7 +2096,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["auditeur", "artiste", "animateur", "admin"],
+      app_role: ["auditeur", "artiste", "animateur", "admin", "media"],
       clip_section: ["clips_actu", "playlists_clips"],
     },
   },

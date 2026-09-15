@@ -9,6 +9,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
 
+type RoleChoice = "auditeur" | "artiste" | "media";
+
+const PENDING_ROLE_KEY = "indi.pendingRole";
+
+const ROLE_OPTIONS: { key: RoleChoice; label: string; hint: string }[] = [
+  { key: "auditeur", label: "Auditeur-Lecteur", hint: "Écouter, réagir, commenter" },
+  { key: "artiste", label: "Artiste", hint: "Diffuser ma musique (validation par l'équipe)" },
+  { key: "media", label: "Média", hint: "Presse, blog, radio (validation par l'équipe)" },
+];
+
 function getBrowserOrigin() {
   return typeof window === "undefined" ? "https://www.radio.indi-art-culture.com" : window.location.origin;
 }
@@ -33,6 +43,18 @@ export function AuthDialog() {
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPseudo, setSignUpPseudo] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpRole, setSignUpRole] = useState<RoleChoice>("auditeur");
+
+  // Après une connexion réussie, si un rôle a été choisi à l'inscription,
+  // on emmène la personne vers l'étape de finalisation du profil.
+  function goToOnboarding() {
+    const pending =
+      typeof window === "undefined" ? null : window.localStorage.getItem(PENDING_ROLE_KEY);
+    if (!pending) return false;
+    closeAuth();
+    window.location.assign(`/bienvenue?role=${encodeURIComponent(pending)}`);
+    return true;
+  }
 
   async function handleResend() {
     if (!signInEmail) {
@@ -67,6 +89,7 @@ export function AuthDialog() {
       toast.error(error.message);
     } else {
       toast.success("Bienvenue !");
+      if (goToOnboarding()) return;
       closeAuth();
     }
   }
@@ -78,23 +101,32 @@ export function AuthDialog() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: signUpEmail,
       password: signUpPassword,
       options: {
-        emailRedirectTo: `${getBrowserOrigin()}/`,
-        data: { pseudo: signUpPseudo.trim() },
+        emailRedirectTo: `${getBrowserOrigin()}/bienvenue?role=${signUpRole}`,
+        data: { pseudo: signUpPseudo.trim(), requested_role: signUpRole },
       },
     });
     setLoading(false);
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success(
-        "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter.",
-        { duration: 8000 }
-      );
+      return;
     }
+    window.localStorage.setItem(PENDING_ROLE_KEY, signUpRole);
+    if (data.session) {
+      toast.success("Compte créé !");
+      if (goToOnboarding()) return;
+      closeAuth();
+      return;
+    }
+    toast.success(
+      signUpRole === "auditeur"
+        ? "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter."
+        : "Compte créé ! Confirme ton adresse par email : tu pourras ensuite envoyer ta candidature.",
+      { duration: 8000 }
+    );
   }
 
   async function handleForgot(e: React.FormEvent) {
@@ -254,6 +286,27 @@ export function AuthDialog() {
           </TabsContent>
           <TabsContent value="signup">
             <form className="space-y-3" onSubmit={handleSignUp}>
+              <div>
+                <Label>Je m'inscris en tant que</Label>
+                <div className="mt-1 grid gap-2">
+                  {ROLE_OPTIONS.map((o) => (
+                    <button
+                      key={o.key}
+                      type="button"
+                      onClick={() => setSignUpRole(o.key)}
+                      aria-pressed={signUpRole === o.key}
+                      className={`rounded-lg border p-2.5 text-left transition ${
+                        signUpRole === o.key
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="text-sm font-semibold">{o.label}</div>
+                      <div className="text-xs text-muted-foreground">{o.hint}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div>
                 <Label htmlFor="su-pseudo">Pseudo</Label>
                 <Input id="su-pseudo" required minLength={2} value={signUpPseudo} onChange={(e) => setSignUpPseudo(e.target.value)} />
