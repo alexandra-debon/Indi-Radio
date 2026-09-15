@@ -757,6 +757,8 @@ export const dict = {
     "badge.admin": "Admin",
     "badge.anim": "Host",
     "badge.artiste": "Artist",
+    "badge.media": "Media",
+    "role.media": "Media",
     "badge.levelShort": "Lvl.",
     "page.chart.empty": "No tracks charted yet.",
     "page.magazines.subtitle": "Flip through our interactive articles and explore our world.",
