@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Heart, Star, Trash2, Flag } from "lucide-react";
+import { Heart, Star, Trash2, Flag, Pencil } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -83,6 +83,8 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [replyImages, setReplyImages] = useState<string[]>([]);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
   const key = ["content-comments", contentType, contentId];
 
   useEffect(() => {
@@ -139,6 +141,22 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const edit = useMutation({
+    mutationFn: async ({ id, body }: { id: string; body: string }) => {
+      const { error } = await supabase
+        .from("content_comments")
+        .update({ body: body.trim() } as any)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setEditId(null);
+      setEditText("");
+      qc.invalidateQueries({ queryKey: key });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("content_comments").delete().eq("id", id);
@@ -156,11 +174,23 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
         <span className="font-semibold">{c.pseudo}</span>
         <span className="text-muted-foreground">{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
       </div>
+      {editId === c.id ? (
+        <div className="mt-1 space-y-1">
+          <Textarea rows={3} value={editText} onChange={(e) => setEditText(e.target.value)} className="text-xs" />
+          <div className="flex gap-2">
+            <Button size="sm" disabled={!editText.trim() || edit.isPending} onClick={() => edit.mutate({ id: c.id, body: editText })}>
+              {t("comment.save")}
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditId(null)}>{t("comment.cancel")}</Button>
+          </div>
+        </div>
+      ) : (
       <p className="mt-1 whitespace-pre-wrap text-foreground/90">
         <TranslatedText entityType="content_comment" entityKey={c.id} field="body" text={c.body}>
           {(txt) => <>{renderRich(txt)}</>}
         </TranslatedText>
       </p>
+      )}
       {Array.isArray((c as any).image_urls) && (c as any).image_urls.length > 0 && (
         <div className={cn("mt-1 grid gap-1", (c as any).image_urls.length === 1 ? "grid-cols-1" : (c as any).image_urls.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
           {(c as any).image_urls.map((u: string, i: number) => (
@@ -177,6 +207,14 @@ export function ContentCommentsSection({ contentType, contentId }: Props) {
             className="text-[10px] text-muted-foreground hover:text-primary"
           >
             {t("comment.reply")}
+          </button>
+        )}
+        {session?.user.id === c.author_id && (
+          <button
+            onClick={() => { setEditId(c.id); setEditText(c.body); }}
+            className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary"
+          >
+            <Pencil className="size-3" /> {t("comment.edit")}
           </button>
         )}
         {session?.user.id === c.author_id && (
