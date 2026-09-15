@@ -83,7 +83,7 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
             pseudo: profile?.pseudo ?? "Un membre",
             roleRequested: data.role === "media" ? "Média" : "Artiste",
             stageName: profile?.stage_name ?? "",
-            note: data.note,
+            note: data.note || "",
             reviewUrl: `${SITE_ORIGIN}/admin/candidatures`,
           },
           idempotencyKey: `role-request-${context.userId}-${a.id}-${Date.now()}`,
