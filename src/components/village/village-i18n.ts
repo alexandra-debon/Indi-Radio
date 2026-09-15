@@ -42,6 +42,11 @@ const FR = {
   freeTag: "Votre tag libre (optionnel)",
   freeTagHint: "Un mot ou une courte expression, ex. street art, festival…",
   filterTags: "Tags des rédacteurs",
+  subscribe: "S'abonner",
+  unsubscribe: "Abonné",
+  subscribed: "Abonné : vous serez notifié des nouveaux articles.",
+  unsubscribed: "Désabonné de RéDaK'Village.",
+  subError: "Action impossible pour le moment.",
 };
 
 const EN: typeof FR = {
@@ -81,6 +86,11 @@ const EN: typeof FR = {
   freeTag: "Your own tag (optional)",
   freeTagHint: "One word or short phrase, e.g. street art, festival…",
   filterTags: "Writers' tags",
+  subscribe: "Subscribe",
+  unsubscribe: "Subscribed",
+  subscribed: "Subscribed: you'll be notified of new articles.",
+  unsubscribed: "Unsubscribed from RéDaK'Village.",
+  subError: "Action failed, please retry.",
 };
 
 export function useVillageTxt() {

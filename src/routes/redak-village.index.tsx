@@ -21,6 +21,7 @@ import {
   VillageArticleEditor,
   type VillageArticle,
 } from "@/components/village/VillageArticleEditor";
+import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_VILLAGE = ogImageForLang("fr");
@@ -92,7 +93,8 @@ function VillagePage() {
         </h1>
         <p className="text-sm font-semibold">{txt.intro}</p>
         <p className="text-xs text-muted-foreground">{txt.subtitle}</p>
-        <div className="pt-1">
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <VillageSubscribeButton />
           <Button
             type="button"
             onClick={() => requireAuth(() => setWriting((w) => !w))}
