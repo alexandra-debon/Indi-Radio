@@ -345,7 +345,14 @@ function FeedTeasers() {
           date: r.created_at,
         });
       }
-      return out.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+      const sorted = out.sort((a, b) => b.date.localeCompare(a.date));
+      const top = sorted.slice(0, 6);
+      // Garantit la présence du teaser magazine le plus récent.
+      if (!top.some((t) => t.kind === "magazine")) {
+        const mag = sorted.find((t) => t.kind === "magazine");
+        if (mag) top[top.length - 1] = mag;
+      }
+      return top;
     },
   });
 
