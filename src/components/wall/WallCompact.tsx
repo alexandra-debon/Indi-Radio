@@ -259,7 +259,7 @@ function FeedTeasers() {
     queryKey: ["wall-compact-teasers"],
     staleTime: 60_000,
     queryFn: async () => {
-      const [village, news, clips, reviews] = await Promise.all([
+      const [village, news, clips, reviews, magazines] = await Promise.all([
         supabase
           .from("village_articles")
           .select("slug, title, excerpt, content, cover_url, created_at")
@@ -283,8 +283,23 @@ function FeedTeasers() {
           .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
+        supabase
+          .from("magazine_entries")
+          .select("id, title, body, cover_url, magazine_url, created_at")
+          .order("created_at", { ascending: false })
+          .limit(2),
       ]);
       const out: Teaser[] = [];
+      for (const r of magazines.data ?? []) {
+        out.push({
+          kind: "magazine",
+          id: r.id,
+          title: r.title,
+          excerpt: stripMediaUrls(r.body || "").slice(0, 180),
+          cover: r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
+          date: r.created_at,
+        });
+      }
       for (const r of village.data ?? []) {
         out.push({
           kind: "village",
