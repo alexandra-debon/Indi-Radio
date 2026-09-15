@@ -9,6 +9,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
 
+type RoleChoice = "auditeur" | "artiste" | "media";
+
+const PENDING_ROLE_KEY = "indi.pendingRole";
+
+const ROLE_OPTIONS: { key: RoleChoice; label: string; hint: string }[] = [
+  { key: "auditeur", label: "Auditeur-Lecteur", hint: "Écouter, réagir, commenter" },
+  { key: "artiste", label: "Artiste", hint: "Diffuser ma musique (validation par l'équipe)" },
+  { key: "media", label: "Média", hint: "Presse, blog, radio (validation par l'équipe)" },
+];
+
 function getBrowserOrigin() {
   return typeof window === "undefined" ? "https://www.radio.indi-art-culture.com" : window.location.origin;
 }
