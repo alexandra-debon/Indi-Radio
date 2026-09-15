@@ -15,6 +15,13 @@
       "when": 1789492131589,
       "tag": "0001_add_media_role_enum_value",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789492217045,
+      "tag": "0002_role_requests_and_punchline",
+      "breakpoints": true
     }
   ]
 }
