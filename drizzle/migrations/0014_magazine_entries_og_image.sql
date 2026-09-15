@@ -1,0 +1,1 @@
+ALTER TABLE public.magazine_entries ADD COLUMN IF NOT EXISTS og_image_url text;
