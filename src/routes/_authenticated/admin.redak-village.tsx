@@ -142,7 +142,8 @@ function AdminVillagePage() {
                 {a.cover_url && (
                   <SmartImg
                     src={a.cover_url}
-                    alt=""
+                    width={56}
+                    height={56}
                     className="size-14 shrink-0 rounded-md object-cover"
                   />
                 )}

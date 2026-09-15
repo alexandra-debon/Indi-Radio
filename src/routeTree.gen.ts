@@ -81,6 +81,7 @@ import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authen
 import { Route as AuthenticatedProfileArtisteRouteImport } from './routes/_authenticated/profile.artiste'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
+import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_authenticated/admin.redak-village'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
@@ -469,6 +470,12 @@ const AuthenticatedAdminSeoPreviewRoute =
     path: '/seo-preview',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminRedakVillageRoute =
+  AuthenticatedAdminRedakVillageRouteImport.update({
+    id: '/redak-village',
+    path: '/redak-village',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminMessagesRoute =
   AuthenticatedAdminMessagesRouteImport.update({
     id: '/messages',
@@ -611,6 +618,7 @@ export interface FileRoutesByFullPath {
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
@@ -698,6 +706,7 @@ export interface FileRoutesByTo {
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
@@ -787,6 +796,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/_authenticated/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/artiste': typeof AuthenticatedProfileArtisteRoute
@@ -876,6 +886,7 @@ export interface FileRouteTypes {
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
+    | '/admin/redak-village'
     | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/artiste'
@@ -963,6 +974,7 @@ export interface FileRouteTypes {
     | '/admin/candidatures'
     | '/admin/diagnostics-pseudos'
     | '/admin/messages'
+    | '/admin/redak-village'
     | '/admin/seo-preview'
     | '/profile/albums'
     | '/profile/artiste'
@@ -1051,6 +1063,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/candidatures'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/messages'
+    | '/_authenticated/admin/redak-village'
     | '/_authenticated/admin/seo-preview'
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/artiste'
@@ -1655,6 +1668,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSeoPreviewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/redak-village': {
+      id: '/_authenticated/admin/redak-village'
+      path: '/redak-village'
+      fullPath: '/admin/redak-village'
+      preLoaderRoute: typeof AuthenticatedAdminRedakVillageRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/messages': {
       id: '/_authenticated/admin/messages'
       path: '/messages'
@@ -1761,6 +1781,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
+  AuthenticatedAdminRedakVillageRoute: typeof AuthenticatedAdminRedakVillageRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
 }
 
@@ -1770,6 +1791,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
+  AuthenticatedAdminRedakVillageRoute: AuthenticatedAdminRedakVillageRoute,
   AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
 }
 
