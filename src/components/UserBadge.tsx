@@ -4,7 +4,7 @@ import { useT } from "@/lib/i18n";
 
 export interface BadgeProfile {
   pseudo: string;
-  role: "admin" | "artiste" | "animateur" | "auditeur";
+  role: "admin" | "artiste" | "animateur" | "auditeur" | "media";
   is_certified: boolean;
   is_team_indi?: boolean | null;
   badges?: string[] | null;
