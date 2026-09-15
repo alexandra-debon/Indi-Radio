@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/media/ImageUploader";
-import { CategoryPicker, type PostCategory } from "@/components/social/PostCategory";
+import {
+  VillageCategoryPicker,
+  type VillageCategory,
+} from "@/components/village/VillageCategory";
 import { toast } from "@/lib/toast";
 import { isValidVideoUrl } from "@/lib/media-embed";
 import { Loader2, PenSquare, ShieldAlert } from "lucide-react";
@@ -31,6 +34,7 @@ export interface VillageArticle {
   cover_url: string | null;
   video_url: string | null;
   category: string | null;
+  free_tag: string | null;
   visibility: string;
   created_at: string;
   updated_at: string;
@@ -64,9 +68,10 @@ export function VillageArticleEditor({
   const [content, setContent] = useState(article?.content ?? "");
   const [cover, setCover] = useState(article?.cover_url ?? "");
   const [video, setVideo] = useState(article?.video_url ?? "");
-  const [category, setCategory] = useState<PostCategory | null>(
-    (article?.category as PostCategory | null) ?? null,
+  const [category, setCategory] = useState<VillageCategory | null>(
+    (article?.category as VillageCategory | null) ?? null,
   );
+  const [freeTag, setFreeTag] = useState(article?.free_tag ?? "");
   const [onFeed, setOnFeed] = useState((article?.visibility ?? "feed") === "feed");
   const [warnOpen, setWarnOpen] = useState(false);
   const [ack, setAck] = useState(false);
@@ -85,6 +90,7 @@ export function VillageArticleEditor({
         cover_url: cover || null,
         video_url: v || null,
         category,
+        free_tag: freeTag.trim().slice(0, 40) || null,
         visibility: onFeed ? "feed" : "village_only",
       };
       if (article) {
@@ -183,7 +189,18 @@ export function VillageArticleEditor({
         />
       </div>
 
-      <CategoryPicker value={category} onChange={setCategory} name="village-category" />
+      <VillageCategoryPicker value={category} onChange={setCategory} />
+
+      <div className="space-y-1.5">
+        <Label htmlFor="village-tag">{txt.freeTag}</Label>
+        <Input
+          id="village-tag"
+          value={freeTag}
+          maxLength={40}
+          onChange={(e) => setFreeTag(e.target.value)}
+          placeholder={txt.freeTagHint}
+        />
+      </div>
 
       <fieldset className="space-y-1 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
         <legend className="px-1 text-[11px] font-black uppercase tracking-widest">

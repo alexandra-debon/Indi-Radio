@@ -39,6 +39,9 @@ const FR = {
   contentRequired: "Le texte de l'article est obligatoire",
   signIn: "Connectez-vous pour écrire un article.",
   articles: "article(s)",
+  freeTag: "Votre tag libre (optionnel)",
+  freeTagHint: "Un mot ou une courte expression, ex. street art, festival…",
+  filterTags: "Tags des rédacteurs",
 };
 
 const EN: typeof FR = {
@@ -75,6 +78,9 @@ const EN: typeof FR = {
   contentRequired: "The article text is required",
   signIn: "Sign in to write an article.",
   articles: "article(s)",
+  freeTag: "Your own tag (optional)",
+  freeTagHint: "One word or short phrase, e.g. street art, festival…",
+  filterTags: "Writers' tags",
 };
 
 export function useVillageTxt() {

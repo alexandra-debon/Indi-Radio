@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
-import { CategoryBadge } from "@/components/social/PostCategory";
+import { VillageCategoryBadge, FreeTagBadge } from "@/components/village/VillageCategory";
 import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { renderRich } from "@/lib/rich-text";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/redak-village/$slug")({
     const { data, error } = await supabase
       .from("village_articles")
       .select(
-        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
+        "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, visibility, created_at, updated_at, author:profiles!village_articles_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -188,7 +188,8 @@ function VillageArticlePage() {
         )}
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <CategoryBadge category={article.category} />
+            <VillageCategoryBadge category={article.category} />
+            <FreeTagBadge tag={article.free_tag} />
             {article.author && <UserBadge profile={article.author} className="text-xs" />}
           </div>
           <h1 className="text-2xl font-bold">
