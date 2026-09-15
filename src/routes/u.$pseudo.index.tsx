@@ -188,7 +188,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary, show_events_section, show_shop_section, show_posts_section")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
