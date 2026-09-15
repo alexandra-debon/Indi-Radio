@@ -119,12 +119,13 @@ function MagazineDetailPage() {
       <Link to="/magazines" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-3.5" /> Magazine Indi Art Culture
       </Link>
-      <article className="card-brut space-y-3 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <h1 className="flex items-start gap-2 text-2xl font-bold">
+      <article className="card-brut space-y-3 p-3 sm:p-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+          <h1 className="flex min-w-0 items-start gap-2 text-xl font-bold leading-tight sm:text-2xl">
             <BookOpen className="mt-1 size-5 shrink-0 text-primary" />
             <TranslatedText
               as="span"
+              className="break-words"
               entityType="magazine_entry"
               entityKey={entry.id}
               field="title"
@@ -143,7 +144,7 @@ function MagazineDetailPage() {
         {entry.body && (
           <TranslatedText
             as="p"
-            className="whitespace-pre-wrap text-sm"
+            className="break-words [overflow-wrap:anywhere] whitespace-pre-wrap text-sm"
             entityType="magazine_entry"
             entityKey={entry.id}
             field="body"
