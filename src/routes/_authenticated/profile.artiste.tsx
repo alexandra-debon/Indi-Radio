@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/media/ImageUploader";
+import { Switch } from "@/components/ui/switch";
+import { ArtistShopManager } from "@/components/artist/ArtistShopManager";
 import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/components/social/VisibilityPicker";
