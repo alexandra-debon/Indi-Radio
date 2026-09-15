@@ -66,7 +66,12 @@ export const Route = createFileRoute("/redak-village/$slug")({
     });
     const title = localized.title;
     const desc = clampDescription(localized.description);
-    const image = loaderData.cover_url || OG_FALLBACK;
+    // Pour un article magazine, la couverture FlipHTML5 fait une bien
+    // meilleure vignette de partage que l'image de repli du site.
+    const image =
+      loaderData.cover_url ||
+      (loaderData.magazine_url ? flipHtml5ThumbnailUrl(loaderData.magazine_url) : null) ||
+      OG_FALLBACK;
     return {
       meta: [
         { title },
