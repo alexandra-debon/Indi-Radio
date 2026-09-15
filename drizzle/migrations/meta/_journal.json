@@ -78,6 +78,13 @@
       "when": 1789502374396,
       "tag": "0010_village_subscriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789503108443,
+      "tag": "0011_village_articles_magazine_source",
+      "breakpoints": true
     }
   ]
 }
