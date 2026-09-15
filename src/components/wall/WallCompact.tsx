@@ -12,7 +12,7 @@ import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
 import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { Heart, MessageCircle, Pin, PenSquare, Newspaper } from "lucide-react";
+import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen } from "lucide-react";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -375,7 +375,7 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
           <span className="inline-flex items-center gap-1 border-2 border-black bg-primary px-1.5 py-0.5 font-black uppercase tracking-widest text-black">
-            <Newspaper className="size-3" /> {label}
+            {item.kind === "magazine" ? <BookOpen className="size-3" /> : <Newspaper className="size-3" />} {label}
           </span>
           <span className="text-muted-foreground">
             · {formatDistanceToNow(new Date(item.date), { addSuffix: true, locale })}
