@@ -261,9 +261,9 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
                   <Link to="/p/$postId" params={{ postId: p.id }} className="text-sm font-black hover:underline">
                     {p.title || new Date(p.created_at).toLocaleDateString()}
                   </Link>
-                  {p.visibility === "profile_only" && (
+                  {(p.visibility === "profile_only" || p.visibility === "followers_only") && (
                     <span className="shrink-0 border border-border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground">
-                      {txt.onlyHere}
+                      {p.visibility === "followers_only" ? txt.followersOnly : txt.onlyHere}
                     </span>
                   )}
                 </div>
