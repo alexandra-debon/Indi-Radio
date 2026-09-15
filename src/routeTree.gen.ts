@@ -52,6 +52,7 @@ import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
 import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
+import { Route as RedakVillageSlugRouteImport } from './routes/redak-village.$slug'
 import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
@@ -307,6 +308,11 @@ const ActusIndexRoute = ActusIndexRouteImport.update({
 const TagTagRoute = TagTagRouteImport.update({
   id: '/tag/$tag',
   path: '/tag/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedakVillageSlugRoute = RedakVillageSlugRouteImport.update({
+  id: '/redak-village/$slug',
+  path: '/redak-village/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
@@ -590,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByTo {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus': typeof ActusIndexRoute
   '/chroniques': typeof ChroniquesIndexRoute
@@ -764,6 +772,7 @@ export interface FileRoutesById {
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
+  '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
@@ -852,6 +861,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -938,6 +948,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus'
     | '/chroniques'
@@ -1025,6 +1036,7 @@ export interface FileRouteTypes {
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/playlists/$slug'
+    | '/redak-village/$slug'
     | '/tag/$tag'
     | '/actus/'
     | '/chroniques/'
@@ -1109,6 +1121,7 @@ export interface RootRouteChildren {
   MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
   PlaylistsSlugRoute: typeof PlaylistsSlugRoute
+  RedakVillageSlugRoute: typeof RedakVillageSlugRoute
   TagTagRoute: typeof TagTagRoute
   ActusIndexRoute: typeof ActusIndexRoute
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
@@ -1437,6 +1450,13 @@ declare module '@tanstack/react-router' {
       path: '/tag/$tag'
       fullPath: '/tag/$tag'
       preLoaderRoute: typeof TagTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redak-village/$slug': {
+      id: '/redak-village/$slug'
+      path: '/redak-village/$slug'
+      fullPath: '/redak-village/$slug'
+      preLoaderRoute: typeof RedakVillageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playlists/$slug': {
@@ -1832,6 +1852,7 @@ const rootRouteChildren: RootRouteChildren = {
   MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
   PlaylistsSlugRoute: PlaylistsSlugRoute,
+  RedakVillageSlugRoute: RedakVillageSlugRoute,
   TagTagRoute: TagTagRoute,
   ActusIndexRoute: ActusIndexRoute,
   ChroniquesIndexRoute: ChroniquesIndexRoute,
