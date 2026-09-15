@@ -9,6 +9,7 @@ import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import { VillageCategoryBadge, FreeTagBadge } from "@/components/village/VillageCategory";
 import { ShareButton } from "@/components/share/ShareButton";
+import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { renderRich } from "@/lib/rich-text";
 import { clampDescription } from "@/lib/i18n/seo-meta";
@@ -224,6 +225,7 @@ function VillageArticlePage() {
 
           <div className="flex flex-wrap items-center gap-2 pt-2">
             <ContentLikeButton contentType="village_article" contentId={article.id} />
+            <VillageSubscribeButton />
             <ShareButton
               variant="chip"
               target={{
