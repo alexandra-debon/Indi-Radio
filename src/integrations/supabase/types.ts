@@ -1545,6 +1545,7 @@ export type Database = {
         Row: {
           album_id: string | null
           author_id: string
+          category: string | null
           content: string
           created_at: string
           id: string
@@ -1562,6 +1563,7 @@ export type Database = {
         Insert: {
           album_id?: string | null
           author_id: string
+          category?: string | null
           content: string
           created_at?: string
           id?: string
@@ -1579,6 +1581,7 @@ export type Database = {
         Update: {
           album_id?: string | null
           author_id?: string
+          category?: string | null
           content?: string
           created_at?: string
           id?: string

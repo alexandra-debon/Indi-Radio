@@ -43,6 +43,13 @@
       "when": 1789497030292,
       "tag": "0005_artist_shop_items",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789498535743,
+      "tag": "0006_posts_category",
+      "breakpoints": true
     }
   ]
 }

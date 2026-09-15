@@ -41,6 +41,12 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import {
+  CategoryBadge,
+  CategoryFilter,
+  CategoryPicker,
+  type PostCategory,
+} from "@/components/social/PostCategory";
 
 interface PostRow {
   id: string;
@@ -55,6 +61,7 @@ interface PostRow {
   title: string | null;
   image_captions: string[] | null;
   album_id: string | null;
+  category: string | null;
   album: { id: string; title: string; cover_url: string | null } | null;
   author: {
     id: string;
@@ -116,6 +123,8 @@ export function SocialWall() {
   const [pinLabelDraft, setPinLabelDraft] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
   const [visibility, setVisibility] = useState<PostVisibility>("feed");
+  const [category, setCategory] = useState<PostCategory | null>(null);
+  const [activeCategory, setActiveCategory] = useState<PostCategory | null>(null);
   const hash = useRouterState({ select: (s) => s.location.hash });
   const listRef = useRef<HTMLUListElement | null>(null);
 
@@ -145,15 +154,16 @@ export function SocialWall() {
   }, [hash]);
 
   const { data: posts = [] } = useQuery<PostRow[]>({
-    queryKey: ["wall-posts", activeTag],
+    queryKey: ["wall-posts", activeTag, activeCategory],
     queryFn: async () => {
       let req = supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, category, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .eq("visibility", "feed")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(50);
+      if (activeCategory) req = req.eq("category", activeCategory);
       if (activeTag) {
         const needle = `%#${activeTag}%`;
         req = req.or(`content.ilike.${needle},title.ilike.${needle}`);
@@ -316,6 +326,7 @@ export function SocialWall() {
         title: title.trim() || null,
         image_captions: canUploadImages ? new Array(imagesDraft.length).fill("") : [],
         visibility,
+        category,
       } as any);
       if (error) throw error;
     },
@@ -327,6 +338,7 @@ export function SocialWall() {
       setImageDraft("");
       setImagesDraft([]);
       setVisibility("feed");
+      setCategory(null);
       setComposerOpen(false);
       toast.success("Ton message est en ligne — +2 pts");
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
@@ -526,8 +538,9 @@ export function SocialWall() {
           </div>
         )}
         {session && (
-          <div className="mt-2">
+          <div className="mt-2 space-y-2">
             <VisibilityPicker value={visibility} onChange={setVisibility} name="wall-post-visibility" />
+            <CategoryPicker value={category} onChange={setCategory} name="wall-post-category" />
           </div>
         )}
         <div className="mt-3 flex justify-end gap-2">
@@ -556,6 +569,9 @@ export function SocialWall() {
       >
         <Plus className="size-6" strokeWidth={3} />
       </button>
+
+      <CategoryFilter value={activeCategory} onChange={setActiveCategory} />
+
 
       {(popularTags.length > 0 || activeTag) && (
         <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background/40 p-2">
@@ -694,6 +710,11 @@ export function SocialWall() {
                       </h3>
                     ) : null;
                   })()}
+                  {p.category && (
+                    <div className="mt-1">
+                      <CategoryBadge category={p.category} />
+                    </div>
+                  )}
                   {stripMediaUrls(p.content) && (
                     <p className="whitespace-pre-wrap text-sm">
                       <TranslatedText entityType="post" entityKey={p.id} field="content" text={stripMediaUrls(p.content)}>

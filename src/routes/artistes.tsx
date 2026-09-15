@@ -115,34 +115,51 @@ function ArtistesPage() {
             const name = a.stage_name || a.pseudo;
             return (
               <li key={a.id} className="card-brut flex flex-col gap-3 p-3">
-                <Link to="/u/$pseudo" params={{ pseudo: a.pseudo }} className="flex items-start gap-3">
-                  {cover ? (
-                    <img
-                      src={cover}
-                      alt={`Visuel de ${name}`}
-                      loading="lazy"
-                      className="size-20 shrink-0 rounded-md border-2 border-primary object-cover shadow-[2px_2px_0_0_hsl(var(--border))]"
-                    />
-                  ) : (
-                    <div className="grid size-20 shrink-0 place-items-center rounded-md border-2 border-border bg-muted text-sm font-black uppercase text-muted-foreground">
-                      {name.slice(0, 2)}
-                    </div>
-                  )}
+                <div className="flex items-start gap-3">
+                  <Link to="/u/$pseudo" params={{ pseudo: a.pseudo }} className="shrink-0">
+                    {cover ? (
+                      <img
+                        src={cover}
+                        alt={`Visuel de ${name}`}
+                        loading="lazy"
+                        className="size-20 shrink-0 rounded-md border-2 border-primary object-cover shadow-[2px_2px_0_0_hsl(var(--border))]"
+                      />
+                    ) : (
+                      <div className="grid size-20 shrink-0 place-items-center rounded-md border-2 border-border bg-muted text-sm font-black uppercase text-muted-foreground">
+                        {name.slice(0, 2)}
+                      </div>
+                    )}
+                  </Link>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="truncate text-base font-black">{name}</span>
+                      <Link
+                        to="/u/$pseudo"
+                        params={{ pseudo: a.pseudo }}
+                        className="truncate text-base font-black hover:underline"
+                      >
+                        {name}
+                      </Link>
                       <BadgeCheck className="size-4 shrink-0 text-primary" aria-label={t("gallery.certified")} />
                       {shopByArtist?.has(a.id) && (
-                        <span
-                          title="Boutique disponible"
-                          aria-label="Boutique disponible"
-                          className="inline-flex shrink-0 items-center gap-1 border-2 border-border bg-primary px-1 py-0.5 text-[9px] font-black uppercase tracking-widest text-foreground"
+                        <Link
+                          to="/u/$pseudo"
+                          params={{ pseudo: a.pseudo }}
+                          hash="boutique"
+                          title="Voir la boutique"
+                          aria-label={`Voir la boutique de ${name}`}
+                          className="inline-flex shrink-0 items-center gap-1 border-2 border-border bg-primary px-1 py-0.5 text-[9px] font-black uppercase tracking-widest text-foreground transition hover:-translate-y-0.5"
                         >
                           <ShoppingBag className="size-3" />
-                        </span>
+                        </Link>
                       )}
                     </div>
-                    <div className="text-[11px] uppercase tracking-wide text-muted-foreground">@{a.pseudo}</div>
+                    <Link
+                      to="/u/$pseudo"
+                      params={{ pseudo: a.pseudo }}
+                      className="block text-[11px] uppercase tracking-wide text-muted-foreground hover:underline"
+                    >
+                      @{a.pseudo}
+                    </Link>
                     {a.gallery_summary && (
                       <TranslatedText
                         as="p"
@@ -154,7 +171,7 @@ function ArtistesPage() {
                       />
                     )}
                   </div>
-                </Link>
+                </div>
                 {a.social_links && Object.keys(a.social_links).some((k) => k !== "__order" && k !== "__labels") && (
                   <div className="border-t border-dashed border-border/60 pt-2">
                     <SocialLinksBar links={a.social_links} />

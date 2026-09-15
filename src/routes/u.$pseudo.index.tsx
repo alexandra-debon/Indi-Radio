@@ -1,6 +1,6 @@
-import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -283,6 +283,24 @@ function UserProfilePage() {
   });
   const [openKey, setOpenKey] = useState<string | null>(null);
   const selected = achievements.find((a) => a.key === openKey) ?? null;
+
+  // Ancre `#boutique` : le contenu est chargé de façon asynchrone, on scrolle
+  // une fois la section réellement présente dans le DOM.
+  const hash = useRouterState({ select: (s) => s.location.hash });
+  useEffect(() => {
+    if (!hash) return;
+    let tries = 0;
+    const tick = () => {
+      const el = document.getElementById(hash.replace(/^#/, ""));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (tries++ < 20) setTimeout(tick, 100);
+    };
+    tick();
+  }, [hash, data?.profile.id]);
+
 
   if (isLoading) return <div className="p-4 text-sm text-muted-foreground">{t("upub.loading")}</div>;
   if (error || !data) return <div className="p-4">{t("upub.notFound")} <Link to="/top-users" className="underline">{t("upub.back")}</Link></div>;
