@@ -360,46 +360,44 @@ function ArtistSpacePage() {
         <Textarea rows={4} placeholder="Ton actualité, ton nouveau morceau…" value={postBody} onChange={(e) => setPostBody(e.target.value)} />
         <Input placeholder="Lien vidéo / audio (YouTube, Vimeo, SoundCloud)" value={postVideo} onChange={(e) => setPostVideo(e.target.value)} inputMode="url" />
         <MultiImageUploader values={postImages} onChange={setPostImages} folder={`artist/${session.user.id}`} />
-        <fieldset className="space-y-2 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
-          <legend className="px-1 text-[11px] font-black uppercase tracking-widest">Diffusion</legend>
-          <label className="flex items-start gap-2 text-sm">
-            <input type="radio" name="visibility" checked={postFeed} onChange={() => setPostFeed(true)} className="mt-1 size-4 accent-primary" />
-            <span>
-              <span className="font-semibold">Publier aussi sur le feed général</span>
-              <span className="block text-[11px] text-muted-foreground">Visible sur le mur InDi ReZo et sur ma page.</span>
-            </span>
-          </label>
-          <label className="flex items-start gap-2 text-sm">
-            <input type="radio" name="visibility" checked={!postFeed} onChange={() => setPostFeed(false)} className="mt-1 size-4 accent-primary" />
-            <span>
-              <span className="font-semibold">Garder seulement sur ma page</span>
-              <span className="block text-[11px] text-muted-foreground">Visible uniquement sur ma page publique. Mes abonnés sont prévenus dans tous les cas.</span>
-            </span>
-          </label>
-        </fieldset>
+        <VisibilityPicker value={postVisibility} onChange={setPostVisibility} name="new-post-visibility" />
         <Button type="button" onClick={() => publish.mutate()} disabled={publish.isPending}>
           {publish.isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} Publier
         </Button>
+        <p className="text-[11px] text-muted-foreground">
+          Mes abonnés sont prévenus à chaque publication, quel que soit le mode de diffusion choisi.
+        </p>
 
         {ownPosts.length > 0 && (
           <ul className="space-y-2 pt-2">
             {ownPosts.map((p) => (
-              <li key={p.id} className="flex items-center gap-2 border-2 border-border p-2 text-sm">
+              <li key={p.id} className="flex flex-wrap items-center gap-2 border-2 border-border p-2 text-sm">
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-bold">{p.title || p.content.slice(0, 60) || "Publication"}</div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(p.created_at).toLocaleDateString("fr-FR")} ·{" "}
-                    {p.visibility === "feed" ? "Feed général + ma page" : "Ma page uniquement"}
+                    {new Date(p.created_at).toLocaleDateString("fr-FR")} · {visibilityLabel(p.visibility)}
                   </div>
                 </div>
+                <select
+                  aria-label="Diffusion de la publication"
+                  value={p.visibility}
+                  onChange={(e) => setVisibility.mutate({ id: p.id, visibility: e.target.value })}
+                  className="border-2 border-border bg-background px-2 py-1 text-xs font-semibold"
+                >
+                  <option value="feed">Feed général + ma page</option>
+                  <option value="profile_only">Ma page uniquement</option>
+                  <option value="followers_only">Réservé à mes abonnés</option>
+                </select>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  onClick={() => setVisibility.mutate({ id: p.id, visibility: p.visibility === "feed" ? "profile_only" : "feed" })}
+                  className="text-destructive"
+                  onClick={() => {
+                    if (window.confirm("Supprimer définitivement cette publication ?")) deletePost.mutate(p.id);
+                  }}
                 >
-                  {p.visibility === "feed" ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                  {p.visibility === "feed" ? "Retirer du feed" : "Mettre sur le feed"}
+                  <Trash2 className="size-4" />
                 </Button>
               </li>
             ))}
