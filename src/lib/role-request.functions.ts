@@ -53,11 +53,12 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
     const patch: any = {
       role_requested: data.role,
       role_request_status: "pending",
-      role_request_note: data.note,
+      role_request_note: data.note || null,
       role_request_submitted_at: new Date().toISOString(),
+      stage_name: data.stageName,
     };
-    if (data.stageName) patch.stage_name = data.stageName;
     if (data.punchline) patch.punchline = data.punchline;
+    if (data.website) patch.website = data.website;
     if (data.socialLinks) patch.social_links = data.socialLinks;
 
     const { data: profile, error } = await context.supabase
