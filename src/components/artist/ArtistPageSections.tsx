@@ -42,6 +42,8 @@ const TXT = {
     posts: "Publications",
     postsEmpty: "Aucune publication pour le moment.",
     onlyHere: "Exclusivité de cette page",
+    followersOnly: "Réservé aux abonnés",
+    lockedHint: "Abonne-toi pour voir les publications réservées aux abonnés.",
   },
   en: {
     follow: "Follow",
@@ -55,6 +57,8 @@ const TXT = {
     posts: "Posts",
     postsEmpty: "No post yet.",
     onlyHere: "Exclusive to this page",
+    followersOnly: "Followers only",
+    lockedHint: "Follow to see followers-only posts.",
   },
 } as const;
 
