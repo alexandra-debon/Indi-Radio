@@ -234,20 +234,49 @@ function WelcomePage() {
         ) : (
           <>
             <div>
-              <Label htmlFor="note">Ta présentation / ton pitch</Label>
+              <Label htmlFor="note">
+                {choice === "media"
+                  ? "Message de présentation (facultatif)"
+                  : "Message pour la rédaction et l'équipe InDi Art Culture (facultatif)"}
+              </Label>
               <Textarea
                 id="note"
                 rows={6}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 maxLength={2000}
-                placeholder="Parle-nous de ton projet, de ton actualité, de ce que tu aimerais partager sur InDi RaDio…"
+                placeholder={
+                  choice === "media"
+                    ? "Présente ton média, ta ligne éditoriale, ton audience… si tu le souhaites."
+                    : "Un mot sur ton projet, ton actualité, ce que tu aimerais partager sur InDi RaDio… si tu le souhaites."
+                }
               />
-              <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 — 30 caractères minimum.</p>
+              <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 — facultatif.</p>
             </div>
             <div>
-              <Label>Liens réseaux sociaux</Label>
+              <Label htmlFor="website">
+                Site web {choice === "media" && <span className="text-primary">*</span>}
+              </Label>
+              <Input
+                id="website"
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                maxLength={300}
+                placeholder="https://…"
+              />
+            </div>
+            <div>
+              <Label>
+                Liens professionnels / réseaux sociaux{" "}
+                {choice === "media" && <span className="text-primary">*</span>}
+              </Label>
               <SocialLinksEditor value={links} onChange={setLinks} />
+              {choice === "media" && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Au moins un lien professionnel ou un site web est requis.
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               <Button onClick={sendApplication} disabled={saving}>
