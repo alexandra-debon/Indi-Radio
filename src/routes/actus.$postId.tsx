@@ -5,7 +5,7 @@ import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { EmbedFrame } from "@/components/media/EmbedFrame";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { clampDescription } from "@/lib/i18n/seo-meta";
-import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";

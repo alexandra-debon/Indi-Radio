@@ -13,7 +13,7 @@ import { VillageSubscribeButton } from "@/components/village/VillageSubscribeBut
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { renderRich } from "@/lib/rich-text";
 import { clampDescription } from "@/lib/i18n/seo-meta";
-import { ogImageTags, ogCommonTags } from "@/lib/og-tags";
+import { ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { ogImageForLang } from "@/lib/og-image";
@@ -75,7 +75,6 @@ export const Route = createFileRoute("/redak-village/$slug")({
         { name: "twitter:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "article" },
-        ...ogCommonTags(lang === "en" ? "en_US" : "fr_FR"),
         ...ogLocaleTags(lang),
         ...ogImageTags(image, { baseUrl: BASE_URL, alt: loaderData.title }),
         { name: "twitter:card", content: "summary_large_image" },

@@ -10,7 +10,7 @@ import { ContentLikeButton, ContentCommentsSection, ContentRatingSection } from 
 import ogChroniques from "@/assets/og-chroniques.jpg";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { clampDescription } from "@/lib/i18n/seo-meta";
-import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
+import { ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { TranslatedText } from "@/components/i18n/TranslatedText";

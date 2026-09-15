@@ -9,7 +9,7 @@ import { enUS, fr } from "date-fns/locale";
 import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
-import { stripMediaUrls } from "@/lib/media-embed";
+import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper } from "lucide-react";
 import { useEffect } from "react";
@@ -216,6 +216,16 @@ export function WallCompact({
     </section>
   );
 }
+/** Vignette YouTube d'un clip, pour que la carte teaser ait une image. */
+function clipThumb(url: string | null): string | null {
+  if (!url) return null;
+  const m = parseMediaUrl(url);
+  if (m && m.kind === "youtube" && m.type === "video") {
+    return `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg`;
+  }
+  return null;
+}
+
 type TeaserKind = "village" | "news" | "clip" | "review";
 
 interface Teaser {
@@ -262,7 +272,7 @@ function FeedTeasers() {
           .limit(2),
         supabase
           .from("clip_entries")
-          .select("id, title, body, created_at")
+          .select("id, title, body, video_url, video_urls, created_at")
           .order("created_at", { ascending: false })
           .limit(2),
         supabase
@@ -299,7 +309,7 @@ function FeedTeasers() {
           id: r.id,
           title: r.title,
           excerpt: stripMediaUrls(r.body || "").slice(0, 180),
-          cover: null,
+          cover: clipThumb(r.video_url ?? r.video_urls?.[0] ?? null),
           date: r.created_at,
         });
       }
