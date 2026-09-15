@@ -67,6 +67,7 @@ function WelcomePage() {
     setPunchline((p) => p || (profile as any).punchline || "");
     setBio((b) => b || profile.bio || "");
     setStageName((s) => s || profile.stage_name || "");
+    setWebsite((w) => w || profile.website || "");
     setLinks((l) =>
       Object.keys(l).length ? l : ((profile.social_links as SocialLinks) ?? {}),
     );
