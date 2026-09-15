@@ -4,13 +4,32 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const SITE_ORIGIN = "https://www.radio.indi-art-culture.com";
 
-const submitSchema = z.object({
-  role: z.enum(["artiste", "media"]),
-  stageName: z.string().trim().max(80).optional().or(z.literal("")),
-  punchline: z.string().trim().max(160).optional().or(z.literal("")),
-  note: z.string().trim().min(30, "Présente-toi en quelques lignes (30 caractères minimum).").max(2000),
-  socialLinks: z.record(z.string(), z.any()).optional(),
-});
+const submitSchema = z
+  .object({
+    role: z.enum(["artiste", "media"]),
+    stageName: z
+      .string()
+      .trim()
+      .min(2, "Indique ton nom d'artiste ou le nom de ton média.")
+      .max(80),
+    punchline: z.string().trim().max(160).optional().or(z.literal("")),
+    note: z.string().trim().max(2000).optional().or(z.literal("")),
+    website: z.string().trim().max(300).optional().or(z.literal("")),
+    socialLinks: z.record(z.string(), z.any()).optional(),
+  })
+  .superRefine((v, ctx) => {
+    if (v.role !== "media") return;
+    const hasSocial = Object.entries(v.socialLinks ?? {}).some(
+      ([k, val]) => !k.startsWith("__") && typeof val === "string" && val.trim().length > 0,
+    );
+    if (!hasSocial && !v.website) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["website"],
+        message: "Renseigne au moins un lien professionnel ou un site web.",
+      });
+    }
+  });
 
 const reviewSchema = z.object({
   userId: z.string().uuid(),
@@ -34,11 +53,12 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
     const patch: any = {
       role_requested: data.role,
       role_request_status: "pending",
-      role_request_note: data.note,
+      role_request_note: data.note || null,
       role_request_submitted_at: new Date().toISOString(),
+      stage_name: data.stageName,
     };
-    if (data.stageName) patch.stage_name = data.stageName;
     if (data.punchline) patch.punchline = data.punchline;
+    if (data.website) patch.website = data.website;
     if (data.socialLinks) patch.social_links = data.socialLinks;
 
     const { data: profile, error } = await context.supabase
@@ -63,7 +83,7 @@ export const submitRoleRequest = createServerFn({ method: "POST" })
             pseudo: profile?.pseudo ?? "Un membre",
             roleRequested: data.role === "media" ? "Média" : "Artiste",
             stageName: profile?.stage_name ?? "",
-            note: data.note,
+            note: data.note || "",
             reviewUrl: `${SITE_ORIGIN}/admin/candidatures`,
           },
           idempotencyKey: `role-request-${context.userId}-${a.id}-${Date.now()}`,

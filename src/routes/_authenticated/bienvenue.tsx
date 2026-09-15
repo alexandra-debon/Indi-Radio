@@ -17,6 +17,7 @@ import {
   sanitizeLinks,
   type SocialLinks,
 } from "@/components/social/SocialLinksBar";
+import { armStatusTour } from "@/components/onboarding/StatusTour";
 
 type RoleChoice = "auditeur" | "artiste" | "media";
 
@@ -50,6 +51,7 @@ function WelcomePage() {
   const [punchline, setPunchline] = useState("");
   const [bio, setBio] = useState("");
   const [note, setNote] = useState("");
+  const [website, setWebsite] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -66,6 +68,7 @@ function WelcomePage() {
     setPunchline((p) => p || (profile as any).punchline || "");
     setBio((b) => b || profile.bio || "");
     setStageName((s) => s || profile.stage_name || "");
+    setWebsite((w) => w || profile.website || "");
     setLinks((l) =>
       Object.keys(l).length ? l : ((profile.social_links as SocialLinks) ?? {}),
     );
@@ -86,28 +89,40 @@ function WelcomePage() {
       return;
     }
     window.localStorage.removeItem(PENDING_ROLE_KEY);
+    armStatusTour();
     qc.invalidateQueries({ queryKey: ["profile"] });
     toast.success("Profil enregistré, bienvenue sur InDi RaDio !");
     navigate({ to: "/" });
   }
 
   async function sendApplication() {
-    if (note.trim().length < 30) {
-      toast.error("Présente-toi en quelques lignes (30 caractères minimum).");
+    const isMedia = choice === "media";
+    if (stageName.trim().length < 2) {
+      toast.error(isMedia ? "Indique le nom de ton média." : "Indique ton nom d'artiste.");
+      return;
+    }
+    const clean = sanitizeLinks(links) as SocialLinks;
+    const hasSocial = Object.entries(clean).some(
+      ([k, v]) => !k.startsWith("__") && typeof v === "string" && v.trim().length > 0,
+    );
+    if (isMedia && !hasSocial && !website.trim()) {
+      toast.error("Renseigne au moins un lien professionnel ou ton site web.");
       return;
     }
     setSaving(true);
     try {
       await submit({
         data: {
-          role: choice === "media" ? "media" : "artiste",
+          role: isMedia ? "media" : "artiste",
           stageName: stageName.trim(),
           punchline: punchline.trim(),
           note: note.trim(),
-          socialLinks: sanitizeLinks(links) as Record<string, unknown>,
+          website: website.trim(),
+          socialLinks: clean as Record<string, unknown>,
         },
       });
       window.localStorage.removeItem(PENDING_ROLE_KEY);
+      armStatusTour();
       qc.invalidateQueries({ queryKey: ["profile"] });
       setDone(true);
     } catch (err) {
@@ -167,8 +182,26 @@ function WelcomePage() {
       <div className="mt-6 space-y-4 rounded-xl border border-border bg-card p-5">
         {choice !== "auditeur" && (
           <div>
-            <Label htmlFor="stage">{choice === "media" ? "Nom du média" : "Nom de scène"}</Label>
-            <Input id="stage" value={stageName} onChange={(e) => setStageName(e.target.value)} maxLength={80} />
+            <Label htmlFor="stage">
+              {choice === "media" ? "Nom du média" : "Nom d'artiste"}{" "}
+              <span className="text-primary">*</span>
+            </Label>
+            <Input
+              id="stage"
+              required
+              value={stageName}
+              onChange={(e) => setStageName(e.target.value)}
+              maxLength={80}
+              placeholder={choice === "media" ? "Ex : Indie Mag" : "Ex : The Indie Tapes"}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {choice === "media"
+                ? "Nom professionnel de ton média : il sert au repérage et à la validation rapide par l'équipe."
+                : "Le nom sous lequel ta musique est publiée : il sert au repérage et à la validation rapide par l'équipe."}{" "}
+              À ne pas confondre avec ton <strong>pseudo</strong> (le nom d'utilisateur affiché sur
+              le site), qui reste différent et pourra être choisi ou modifié plus tard depuis ton
+              profil.
+            </p>
           </div>
         )}
         <div>
@@ -201,20 +234,49 @@ function WelcomePage() {
         ) : (
           <>
             <div>
-              <Label htmlFor="note">Ta présentation / ton pitch</Label>
+              <Label htmlFor="note">
+                {choice === "media"
+                  ? "Message de présentation (facultatif)"
+                  : "Message pour la rédaction et l'équipe InDi Art Culture (facultatif)"}
+              </Label>
               <Textarea
                 id="note"
                 rows={6}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 maxLength={2000}
-                placeholder="Parle-nous de ton projet, de ton actualité, de ce que tu aimerais partager sur InDi RaDio…"
+                placeholder={
+                  choice === "media"
+                    ? "Présente ton média, ta ligne éditoriale, ton audience… si tu le souhaites."
+                    : "Un mot sur ton projet, ton actualité, ce que tu aimerais partager sur InDi RaDio… si tu le souhaites."
+                }
               />
-              <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 — 30 caractères minimum.</p>
+              <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 — facultatif.</p>
             </div>
             <div>
-              <Label>Liens réseaux sociaux</Label>
+              <Label htmlFor="website">
+                Site web {choice === "media" && <span className="text-primary">*</span>}
+              </Label>
+              <Input
+                id="website"
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                maxLength={300}
+                placeholder="https://…"
+              />
+            </div>
+            <div>
+              <Label>
+                Liens professionnels / réseaux sociaux{" "}
+                {choice === "media" && <span className="text-primary">*</span>}
+              </Label>
               <SocialLinksEditor value={links} onChange={setLinks} />
+              {choice === "media" && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Au moins un lien professionnel ou un site web est requis.
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               <Button onClick={sendApplication} disabled={saving}>
