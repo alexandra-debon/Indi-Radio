@@ -112,7 +112,7 @@ function ArtistSections({
               type="button"
               onClick={() => setTab(s.key)}
               aria-current={isActive ? "true" : undefined}
-              className={`truncate border-2 border-border px-2 py-2 text-[11px] font-black uppercase tracking-widest transition ${
+              className={`truncate border-2 border-border px-1 py-2 text-[10px] font-black uppercase tracking-wide transition ${
                 isActive ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"
               }`}
               style={isActive && accent ? { backgroundColor: accent, borderColor: accent } : undefined}
