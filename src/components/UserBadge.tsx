@@ -1,4 +1,4 @@
-import { Crown, Mic, Palette, CheckCircle2, Radio } from "lucide-react";
+import { Crown, Mic, Palette, CheckCircle2, Radio, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 
