@@ -29,6 +29,7 @@ import { LanguageProvider } from "@/lib/i18n";
 import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { LangUrlSync } from "@/components/i18n/LangUrlSync";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { StatusTour } from "@/components/onboarding/StatusTour";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
 import { redirect } from "@tanstack/react-router";
