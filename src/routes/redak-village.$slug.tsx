@@ -13,6 +13,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
+import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
 import { renderRich } from "@/lib/rich-text";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogImageTags } from "@/lib/og-tags";
@@ -66,7 +67,12 @@ export const Route = createFileRoute("/redak-village/$slug")({
     });
     const title = localized.title;
     const desc = clampDescription(localized.description);
-    const image = loaderData.cover_url || OG_FALLBACK;
+    // Pour un article magazine, la couverture FlipHTML5 fait une bien
+    // meilleure vignette de partage que l'image de repli du site.
+    const image =
+      loaderData.cover_url ||
+      (loaderData.magazine_url ? flipHtml5ThumbnailUrl(loaderData.magazine_url) : null) ||
+      OG_FALLBACK;
     return {
       meta: [
         { title },
@@ -185,17 +191,21 @@ function VillageArticlePage() {
       </Link>
 
       <article className="card-brut overflow-hidden">
-        {article.cover_url && (
-          <img src={article.cover_url} alt="" className="h-56 w-full object-cover" />
+        {article.cover_url && !article.magazine_url && (
+          <img
+            src={article.cover_url}
+            alt=""
+            className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
+          />
         )}
-        <div className="space-y-3 p-4">
+        <div className="space-y-3 p-3 sm:p-4">
           <div className="flex flex-wrap items-center gap-2">
             <MagazineSourceBadge kind={article.source_kind} />
             <VillageCategoryBadge category={article.category} />
             <FreeTagBadge tag={article.free_tag} />
             {article.author && <UserBadge profile={article.author} className="text-xs" />}
           </div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="break-words text-xl font-bold leading-tight sm:text-2xl">
             <TranslatedText
               entityType="village_article"
               entityKey={article.id}
@@ -203,8 +213,15 @@ function VillageArticlePage() {
               text={article.title}
             />
           </h1>
+          {article.magazine_url && (
+            <FlipbookViewer
+              url={article.magazine_url}
+              title={article.title}
+              coverUrl={article.cover_url}
+            />
+          )}
           {article.excerpt && (
-            <p className="text-sm font-semibold text-muted-foreground">
+            <p className="break-words text-sm font-semibold text-muted-foreground">
               <TranslatedText
                 entityType="village_article"
                 entityKey={article.id}
@@ -213,7 +230,7 @@ function VillageArticlePage() {
               />
             </p>
           )}
-          <div className="whitespace-pre-wrap text-sm">
+          <div className="break-words [overflow-wrap:anywhere] whitespace-pre-wrap text-sm [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-md [&_iframe]:aspect-video [&_iframe]:h-auto [&_iframe]:w-full">
             <TranslatedText
               entityType="village_article"
               entityKey={article.id}
@@ -224,13 +241,6 @@ function VillageArticlePage() {
             </TranslatedText>
           </div>
           {article.video_url && <UrlEmbeds text={article.video_url} />}
-          {article.magazine_url && (
-            <FlipbookViewer
-              url={article.magazine_url}
-              title={article.title}
-              coverUrl={article.cover_url}
-            />
-          )}
 
           <div className="flex flex-wrap items-center gap-2 pt-2">
             <ContentLikeButton contentType="village_article" contentId={article.id} />
