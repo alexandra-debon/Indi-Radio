@@ -139,6 +139,7 @@ function MagazineCard({ entry }: { entry: MagazineRow }) {
       body: entry.body,
       magazine_url: entry.magazine_url,
       cover_url: entry.cover_url,
+      og_image_url: entry.og_image_url,
     };
     return <MagazineEntryEditor initial={draft} onDone={() => setEditing(false)} />;
   }
