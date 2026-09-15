@@ -385,12 +385,8 @@ function UserProfilePage() {
         </div>
       )}
 
-      {isArtistPage && (
-        <>
-          <ArtistEvents artistId={profile.id} accent={accent} />
-          <ArtistPosts artistId={profile.id} accent={accent} />
-        </>
-      )}
+      {isArtistPage && <ArtistEvents artistId={profile.id} accent={accent} />}
+      <ArtistPosts artistId={profile.id} accent={accent} />
 
       <div className="grid grid-cols-3 gap-2">
         <StatCard icon={FileText} label={t("upub.stats.posts")} value={stats.posts} />
