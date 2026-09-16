@@ -668,13 +668,23 @@ export function SocialWall() {
                   {(isAdmin || isOwner) && (
                     <MultiImageUploader values={editImages} onChange={setEditImages} folder="wall" />
                   )}
+                  {(isAdmin || isOwner) && (
+                    <ImageUploader
+                      value={editOgImage}
+                      onChange={setEditOgImage}
+                      folder="wall"
+                      usage="cover"
+                      defaultRatio="16:9"
+                      label={t("wall.ogImage")}
+                    />
+                  )}
                   <div className="flex justify-end gap-2">
                     <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
                       <X className="size-3.5" /> Annuler
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: (isAdmin || isOwner) ? (editImages[0] || null) : undefined, image_urls: (isAdmin || isOwner) ? editImages : undefined })}
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: (isAdmin || isOwner) ? (editImages[0] || null) : undefined, image_urls: (isAdmin || isOwner) ? editImages : undefined, og_image_url: (isAdmin || isOwner) ? (editOgImage.trim() || null) : undefined })}
                       disabled={!editContent.trim() || updatePost.isPending}
                     >
                       <Check className="size-3.5" /> Enregistrer
