@@ -190,7 +190,7 @@ export function WallCompact({
                 {p.title && (
                   <div className="line-clamp-1 text-sm font-bold">
                     <TranslatedText entityType="post" entityKey={p.id} field="title" text={p.title}>
-                      {(tt) => <>{renderRich(tt)}</>}
+                      {(tt) => <>{renderRich(tt, { plain: true })}</>}
                     </TranslatedText>
                   </div>
                 )}
@@ -202,7 +202,7 @@ export function WallCompact({
                       field="content"
                       text={bodyText}
                     >
-                      {(tt) => <>{renderRich(tt)}</>}
+                      {(tt) => <>{renderRich(tt, { plain: true })}</>}
                     </TranslatedText>
                   </div>
                 )}
