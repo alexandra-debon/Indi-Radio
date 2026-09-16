@@ -2064,6 +2064,7 @@ export type Database = {
           published: boolean
           slug: string
           source_kind: string | null
+          source_post_id: string | null
           title: string
           updated_at: string
           video_url: string | null
@@ -2082,6 +2083,7 @@ export type Database = {
           published?: boolean
           slug: string
           source_kind?: string | null
+          source_post_id?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
@@ -2100,6 +2102,7 @@ export type Database = {
           published?: boolean
           slug?: string
           source_kind?: string | null
+          source_post_id?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null
