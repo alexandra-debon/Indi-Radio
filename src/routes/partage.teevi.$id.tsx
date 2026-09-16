@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ExplicitVideoEmbed } from "@/components/media/UrlEmbeds";
+import { teeviShareImage } from "@/lib/teevi-share-image";
 import { parseMediaUrl } from "@/lib/media-embed";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogImageTags, ogVideoTags } from "@/lib/og-tags";
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/partage/teevi/$id")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("teevi_videos")
-      .select("id, title, video_url, summary, tags")
+      .select("id, title, video_url, summary, tags, og_image_url")
       .eq("id", params.id)
       .eq("published", true)
       .maybeSingle();
@@ -59,7 +60,8 @@ export const Route = createFileRoute("/partage/teevi/$id")({
     const desc = clampDescription(
       s.d || (loaderData.summary || "").replace(/\s+/g, " ").slice(0, 300) || loaderData.title,
     );
-    const image = s.img || OG_FALLBACK;
+    const image =
+      s.img || teeviShareImage(loaderData, lang === "en" ? "en" : "fr").image || OG_FALLBACK;
     const media = parseMediaUrl(loaderData.video_url);
     const embed =
       media && media.kind === "vimeo" ? `https://player.vimeo.com/video/${media.id}` : null;

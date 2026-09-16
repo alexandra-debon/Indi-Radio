@@ -6,7 +6,8 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { ExplicitVideoEmbed } from "@/components/media/UrlEmbeds";
 import { parseMediaUrl } from "@/lib/media-embed";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
-import { ogVideoTags } from "@/lib/og-tags";
+import { ogImageTags, ogVideoTags } from "@/lib/og-tags";
+import { teeviShareImage } from "@/lib/teevi-share-image";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { TeeviLikeButton, TeeviComments } from "@/components/teevi/TeeviReactions";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/indi-teevi/$videoId")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("teevi_videos")
-      .select("id, title, video_url, summary, tags, published, created_at")
+      .select("id, title, video_url, summary, tags, published, og_image_url, created_at")
       .eq("id", params.videoId)
       .maybeSingle();
     if (error || !data) throw notFound();
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/indi-teevi/$videoId")({
         { property: "og:type", content: embed ? "video.other" : "article" },
         ...ogLocaleTags(lang),
         ...(embed ? ogVideoTags(embed) : []),
+        ...ogImageTags(teeviShareImage(loaderData, lang === "en" ? "en" : "fr").image),
         { name: "twitter:card", content: "summary_large_image" },
         ...(loaderData.published ? [] : [{ name: "robots", content: "noindex" }]),
       ],
