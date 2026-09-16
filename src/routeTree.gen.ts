@@ -48,6 +48,7 @@ import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.in
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
 import { Route as PartageIndexRouteImport } from './routes/partage.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
+import { Route as IndiTeeviIndexRouteImport } from './routes/indi-teevi.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
@@ -58,6 +59,7 @@ import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
 import { Route as PartageSlugRouteImport } from './routes/partage.$slug'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
+import { Route as IndiTeeviVideoIdRouteImport } from './routes/indi-teevi.$videoId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
 import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
@@ -301,6 +303,11 @@ const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
   path: '/magazines/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndiTeeviIndexRoute = IndiTeeviIndexRouteImport.update({
+  id: '/indi-teevi/',
+  path: '/indi-teevi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
   id: '/emissions/',
   path: '/emissions/',
@@ -349,6 +356,11 @@ const PPostIdRoute = PPostIdRouteImport.update({
 const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
   id: '/magazines/$magazineId',
   path: '/magazines/$magazineId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndiTeeviVideoIdRoute = IndiTeeviVideoIdRouteImport.update({
+  id: '/indi-teevi/$videoId',
+  path: '/indi-teevi/$videoId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
@@ -664,6 +676,7 @@ export interface FileRoutesByFullPath {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/partage/$slug': typeof PartageSlugRoute
@@ -674,6 +687,7 @@ export interface FileRoutesByFullPath {
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
+  '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
@@ -762,6 +776,7 @@ export interface FileRoutesByTo {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/partage/$slug': typeof PartageSlugRoute
@@ -772,6 +787,7 @@ export interface FileRoutesByTo {
   '/chroniques': typeof ChroniquesIndexRoute
   '/clips': typeof ClipsIndexRoute
   '/emissions': typeof EmissionsIndexRoute
+  '/indi-teevi': typeof IndiTeeviIndexRoute
   '/magazines': typeof MagazinesIndexRoute
   '/partage': typeof PartageIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
@@ -862,6 +878,7 @@ export interface FileRoutesById {
   '/clips/$clipId': typeof ClipsClipIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
   '/partage/$slug': typeof PartageSlugRoute
@@ -872,6 +889,7 @@ export interface FileRoutesById {
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
+  '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
   '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
@@ -962,6 +980,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/indi-teevi/$videoId'
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/partage/$slug'
@@ -972,6 +991,7 @@ export interface FileRouteTypes {
     | '/chroniques/'
     | '/clips/'
     | '/emissions/'
+    | '/indi-teevi/'
     | '/magazines/'
     | '/partage/'
     | '/playlists/'
@@ -1060,6 +1080,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/indi-teevi/$videoId'
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/partage/$slug'
@@ -1070,6 +1091,7 @@ export interface FileRouteTypes {
     | '/chroniques'
     | '/clips'
     | '/emissions'
+    | '/indi-teevi'
     | '/magazines'
     | '/partage'
     | '/playlists'
@@ -1159,6 +1181,7 @@ export interface FileRouteTypes {
     | '/clips/$clipId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
+    | '/indi-teevi/$videoId'
     | '/magazines/$magazineId'
     | '/p/$postId'
     | '/partage/$slug'
@@ -1169,6 +1192,7 @@ export interface FileRouteTypes {
     | '/chroniques/'
     | '/clips/'
     | '/emissions/'
+    | '/indi-teevi/'
     | '/magazines/'
     | '/partage/'
     | '/playlists/'
@@ -1255,6 +1279,7 @@ export interface RootRouteChildren {
   ClipsClipIdRoute: typeof ClipsClipIdRoute
   EmissionsShowIdRoute: typeof EmissionsShowIdRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
+  IndiTeeviVideoIdRoute: typeof IndiTeeviVideoIdRoute
   MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
   PartageSlugRoute: typeof PartageSlugRoute
@@ -1265,6 +1290,7 @@ export interface RootRouteChildren {
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
   ClipsIndexRoute: typeof ClipsIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
+  IndiTeeviIndexRoute: typeof IndiTeeviIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
   PartageIndexRoute: typeof PartageIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
@@ -1567,6 +1593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MagazinesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/indi-teevi/': {
+      id: '/indi-teevi/'
+      path: '/indi-teevi'
+      fullPath: '/indi-teevi/'
+      preLoaderRoute: typeof IndiTeeviIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/emissions/': {
       id: '/emissions/'
       path: '/emissions'
@@ -1635,6 +1668,13 @@ declare module '@tanstack/react-router' {
       path: '/magazines/$magazineId'
       fullPath: '/magazines/$magazineId'
       preLoaderRoute: typeof MagazinesMagazineIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/indi-teevi/$videoId': {
+      id: '/indi-teevi/$videoId'
+      path: '/indi-teevi/$videoId'
+      fullPath: '/indi-teevi/$videoId'
+      preLoaderRoute: typeof IndiTeeviVideoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/episodes/$episodeId': {
@@ -2079,6 +2119,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsClipIdRoute: ClipsClipIdRoute,
   EmissionsShowIdRoute: EmissionsShowIdRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
+  IndiTeeviVideoIdRoute: IndiTeeviVideoIdRoute,
   MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
   PartageSlugRoute: PartageSlugRoute,
@@ -2089,6 +2130,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChroniquesIndexRoute: ChroniquesIndexRoute,
   ClipsIndexRoute: ClipsIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
+  IndiTeeviIndexRoute: IndiTeeviIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
   PartageIndexRoute: PartageIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
