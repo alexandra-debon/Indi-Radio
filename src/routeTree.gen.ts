@@ -46,6 +46,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.index'
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
+import { Route as PartageIndexRouteImport } from './routes/partage.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
@@ -54,6 +55,7 @@ import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as RedakVillageSlugRouteImport } from './routes/redak-village.$slug'
 import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
+import { Route as PartageSlugRouteImport } from './routes/partage.$slug'
 import { Route as PPostIdRouteImport } from './routes/p.$postId'
 import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
@@ -282,6 +284,11 @@ const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
   path: '/playlists/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartageIndexRoute = PartageIndexRouteImport.update({
+  id: '/partage/',
+  path: '/partage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
   id: '/magazines/',
   path: '/magazines/',
@@ -320,6 +327,11 @@ const RedakVillageSlugRoute = RedakVillageSlugRouteImport.update({
 const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
   id: '/playlists/$slug',
   path: '/playlists/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageSlugRoute = PartageSlugRouteImport.update({
+  id: '/partage/$slug',
+  path: '/partage/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPostIdRoute = PPostIdRouteImport.update({
@@ -609,6 +621,7 @@ export interface FileRoutesByFullPath {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/partage/$slug': typeof PartageSlugRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
   '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -617,6 +630,7 @@ export interface FileRoutesByFullPath {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -698,6 +712,7 @@ export interface FileRoutesByTo {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/partage/$slug': typeof PartageSlugRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
   '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -706,6 +721,7 @@ export interface FileRoutesByTo {
   '/clips': typeof ClipsIndexRoute
   '/emissions': typeof EmissionsIndexRoute
   '/magazines': typeof MagazinesIndexRoute
+  '/partage': typeof PartageIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
   '/redak-village': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -789,6 +805,7 @@ export interface FileRoutesById {
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/magazines/$magazineId': typeof MagazinesMagazineIdRoute
   '/p/$postId': typeof PPostIdRoute
+  '/partage/$slug': typeof PartageSlugRoute
   '/playlists/$slug': typeof PlaylistsSlugRoute
   '/redak-village/$slug': typeof RedakVillageSlugRoute
   '/tag/$tag': typeof TagTagRoute
@@ -797,6 +814,7 @@ export interface FileRoutesById {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -880,6 +898,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/partage/$slug'
     | '/playlists/$slug'
     | '/redak-village/$slug'
     | '/tag/$tag'
@@ -888,6 +907,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/partage/'
     | '/playlists/'
     | '/redak-village/'
     | '/.lovable/oauth/consent'
@@ -969,6 +989,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/partage/$slug'
     | '/playlists/$slug'
     | '/redak-village/$slug'
     | '/tag/$tag'
@@ -977,6 +998,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/emissions'
     | '/magazines'
+    | '/partage'
     | '/playlists'
     | '/redak-village'
     | '/.lovable/oauth/consent'
@@ -1059,6 +1081,7 @@ export interface FileRouteTypes {
     | '/episodes/$episodeId'
     | '/magazines/$magazineId'
     | '/p/$postId'
+    | '/partage/$slug'
     | '/playlists/$slug'
     | '/redak-village/$slug'
     | '/tag/$tag'
@@ -1067,6 +1090,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/partage/'
     | '/playlists/'
     | '/redak-village/'
     | '/.lovable/oauth/consent'
@@ -1146,6 +1170,7 @@ export interface RootRouteChildren {
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   MagazinesMagazineIdRoute: typeof MagazinesMagazineIdRoute
   PPostIdRoute: typeof PPostIdRoute
+  PartageSlugRoute: typeof PartageSlugRoute
   PlaylistsSlugRoute: typeof PlaylistsSlugRoute
   RedakVillageSlugRoute: typeof RedakVillageSlugRoute
   TagTagRoute: typeof TagTagRoute
@@ -1154,6 +1179,7 @@ export interface RootRouteChildren {
   ClipsIndexRoute: typeof ClipsIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
+  PartageIndexRoute: typeof PartageIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
   RedakVillageIndexRoute: typeof RedakVillageIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -1436,6 +1462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaylistsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partage/': {
+      id: '/partage/'
+      path: '/partage'
+      fullPath: '/partage/'
+      preLoaderRoute: typeof PartageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/magazines/': {
       id: '/magazines/'
       path: '/magazines'
@@ -1490,6 +1523,13 @@ declare module '@tanstack/react-router' {
       path: '/playlists/$slug'
       fullPath: '/playlists/$slug'
       preLoaderRoute: typeof PlaylistsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partage/$slug': {
+      id: '/partage/$slug'
+      path: '/partage/$slug'
+      fullPath: '/partage/$slug'
+      preLoaderRoute: typeof PartageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$postId': {
@@ -1895,6 +1935,7 @@ const rootRouteChildren: RootRouteChildren = {
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   MagazinesMagazineIdRoute: MagazinesMagazineIdRoute,
   PPostIdRoute: PPostIdRoute,
+  PartageSlugRoute: PartageSlugRoute,
   PlaylistsSlugRoute: PlaylistsSlugRoute,
   RedakVillageSlugRoute: RedakVillageSlugRoute,
   TagTagRoute: TagTagRoute,
@@ -1903,6 +1944,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsIndexRoute: ClipsIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
+  PartageIndexRoute: PartageIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
   RedakVillageIndexRoute: RedakVillageIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
