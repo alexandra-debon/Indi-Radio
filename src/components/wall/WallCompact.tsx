@@ -165,9 +165,19 @@ export function WallCompact({
                   {p.pinned_at && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-1.5 py-0.5 font-bold uppercase text-primary">
                       <Pin className="size-3" />
-                      {p.pin_label || t("wall.pinned")}
+                      {p.pin_label ? (
+                        <TranslatedText
+                          entityType="post"
+                          entityKey={p.id}
+                          field="pin_label"
+                          text={p.pin_label}
+                        />
+                      ) : (
+                        t("wall.pinned")
+                      )}
                     </span>
                   )}
+
                   {p.author && <UserBadge profile={p.author} compact />}
                   <span className="text-muted-foreground">
                     ·{" "}

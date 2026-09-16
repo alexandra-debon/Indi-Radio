@@ -390,59 +390,56 @@ function NewsletterBanner() {
  * auditeurs.
  */
 export function SeoInternalLinks() {
+  const { lang } = useLang();
+  const en = lang === "en";
+  const links: { to: string; label: string; title: string }[] = en
+    ? [
+        { to: "/", label: "Live indie music radio", title: "Live indie music radio — ad-free radio" },
+        { to: "/podcasts", label: "Independent music radio — Podcasts", title: "Independent music radio podcasts" },
+        { to: "/emissions", label: "Ad-free radio — Show replays", title: "Ad-free radio shows" },
+        { to: "/chroniques", label: "Indie music album reviews", title: "Indie music radio album reviews" },
+        { to: "/actus", label: "Music social network — News", title: "News from the InDi music social network" },
+        { to: "/top-users", label: "Music social network — Top members", title: "Top members of the music social network" },
+        { to: "/coups-de-coeur", label: "Independent music favourites", title: "Independent music radio favourites" },
+        { to: "/soumission-artistes", label: "Artist submissions — Free radio", title: "Artist submissions — free independent music radio" },
+      ]
+    : [
+        { to: "/", label: "Radio musique indé en direct", title: "Radio musique indé en direct — Radio sans pub" },
+        { to: "/podcasts", label: "Radio musique indépendante — Podcasts", title: "Podcasts Radio musique indépendante" },
+        { to: "/emissions", label: "Radio sans pub — Émissions replay", title: "Émissions Radio sans pub" },
+        { to: "/chroniques", label: "Chroniques Radio musique indé", title: "Chroniques Radio musique indé" },
+        { to: "/actus", label: "Réseau social musique — Actus", title: "Actus du Réseau social musique InDi" },
+        { to: "/top-users", label: "Réseau social musique — Top membres", title: "Top membres du Réseau social musique" },
+        { to: "/coups-de-coeur", label: "Coups de cœur Radio musique indépendante", title: "Coups de cœur Radio musique indépendante" },
+        { to: "/soumission-artistes", label: "Soumission artistes — Radio gratuite", title: "Soumission artistes — Radio gratuite musique indépendante" },
+      ];
   return (
     <nav
-      aria-label="Liens Radio musique indé & Réseau social musique"
+      aria-label={
+        en ? "Indie music radio & music social network links" : "Liens Radio musique indé & Réseau social musique"
+      }
       className="card-brut mt-4 space-y-2 p-4 text-sm"
     >
       <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-        Explorer InDi RaDio
+        {en ? "Explore InDi RaDio" : "Explorer InDi RaDio"}
       </h2>
       <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-muted-foreground">
-        <li>
-          <Link to="/" title="Radio musique indé en direct — Radio sans pub" className="underline-offset-2 hover:text-primary hover:underline">
-            Radio musique indé en direct
-          </Link>
-        </li>
-        <li>
-          <Link to="/podcasts" title="Podcasts Radio musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
-            Radio musique indépendante — Podcasts
-          </Link>
-        </li>
-        <li>
-          <Link to="/emissions" title="Émissions Radio sans pub" className="underline-offset-2 hover:text-primary hover:underline">
-            Radio sans pub — Émissions replay
-          </Link>
-        </li>
-        <li>
-          <Link to="/chroniques" title="Chroniques Radio musique indé" className="underline-offset-2 hover:text-primary hover:underline">
-            Chroniques Radio musique indé
-          </Link>
-        </li>
-        <li>
-          <Link to="/actus" title="Actus du Réseau social musique InDi" className="underline-offset-2 hover:text-primary hover:underline">
-            Réseau social musique — Actus
-          </Link>
-        </li>
-        <li>
-          <Link to="/top-users" title="Top membres du Réseau social musique" className="underline-offset-2 hover:text-primary hover:underline">
-            Réseau social musique — Top membres
-          </Link>
-        </li>
-        <li>
-          <Link to="/coups-de-coeur" title="Coups de cœur Radio musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
-            Coups de cœur Radio musique indépendante
-          </Link>
-        </li>
-        <li>
-          <Link to="/soumission-artistes" title="Soumission artistes — Radio gratuite musique indépendante" className="underline-offset-2 hover:text-primary hover:underline">
-            Soumission artistes — Radio gratuite
-          </Link>
-        </li>
+        {links.map((l) => (
+          <li key={l.to}>
+            <Link
+              to={l.to}
+              title={l.title}
+              className="underline-offset-2 hover:text-primary hover:underline"
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
       </ul>
     </nav>
   );
 }
+
 
 function HistoryRow({
   track,
