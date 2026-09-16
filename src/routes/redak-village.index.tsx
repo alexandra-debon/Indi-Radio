@@ -19,6 +19,7 @@ import { localizedStaticMeta } from "@/lib/og-static-head";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { ogImageForLang } from "@/lib/og-image";
 import { useVillageTxt, VILLAGE_NAME } from "@/components/village/village-i18n";
+import { ChallengeBadge, useChallenges } from "@/components/village/ChallengeBits";
 import {
   VillageArticleEditor,
   type VillageArticle,
@@ -62,6 +63,8 @@ function VillagePage() {
   const [writing, setWriting] = useState(false);
   const [category, setCategory] = useState<VillageCategory | null>(null);
   const [tag, setTag] = useState<string | null>(null);
+  const [answerChallenge, setAnswerChallenge] = useState<string | null>(null);
+  const { data: challenges = [] } = useChallenges(true);
 
   const { data: articles = [] } = useQuery<VillageArticle[]>({
     queryKey: ["village-articles"],
@@ -69,7 +72,7 @@ function VillagePage() {
       const { data, error } = await supabase
         .from("village_articles")
         .select(
-          "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, magazine_url, source_kind, visibility, created_at, updated_at, author:profiles!village_articles_author_id_profiles_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
+          "id, author_id, title, slug, excerpt, content, cover_url, video_url, category, free_tag, challenge_id, magazine_url, source_kind, visibility, created_at, updated_at, author:profiles!village_articles_author_id_profiles_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)",
         )
         .eq("published", true)
         .order("created_at", { ascending: false })
@@ -107,8 +110,54 @@ function VillagePage() {
         </div>
       </header>
 
+      {challenges.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+            <Target className="size-4 text-destructive" /> {txt.challenges}
+          </h2>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {challenges.map((c) => (
+              <li key={c.id} className="card-brut space-y-1.5 p-3">
+                <h3 className="text-sm font-black">{c.title}</h3>
+                {c.description && (
+                  <p className="line-clamp-3 text-xs text-muted-foreground">{c.description}</p>
+                )}
+                {c.ends_at && (
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    {txt.challengeEnds} {new Date(c.ends_at).toLocaleDateString()}
+                  </p>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={() =>
+                    requireAuth(() => {
+                      setAnswerChallenge(c.id);
+                      setWriting(true);
+                    })
+                  }
+                >
+                  <Target className="size-3.5" /> {txt.challengeAnswerCta}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {writing && session && (
-        <VillageArticleEditor onDone={() => setWriting(false)} onCancel={() => setWriting(false)} />
+        <VillageArticleEditor
+          challengeId={answerChallenge}
+          onDone={() => {
+            setWriting(false);
+            setAnswerChallenge(null);
+          }}
+          onCancel={() => {
+            setWriting(false);
+            setAnswerChallenge(null);
+          }}
+        />
       )}
 
       {articles.length > 0 && (
@@ -175,6 +224,7 @@ function VillagePage() {
                     <MagazineSourceBadge kind={a.source_kind} />
                     <VillageCategoryBadge category={a.category} />
                     <FreeTagBadge tag={a.free_tag} />
+                    <ChallengeBadge challenge={challenges.find((c) => c.id === a.challenge_id)} />
                     {a.author && <UserBadge profile={a.author} compact />}
                   </div>
                   <h2 className="text-base font-bold leading-tight">{a.title}</h2>
