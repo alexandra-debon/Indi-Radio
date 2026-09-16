@@ -178,8 +178,8 @@ export function PostVillageShare({
                 {txt.coverLabel}
               </span>
               <ImageUploader
-                value={cover}
-                onChange={setCover}
+                value={cover ?? ""}
+                onChange={(u) => setCover(u || null)}
                 folder="village"
                 usage="cover"
                 defaultRatio="16:9"
