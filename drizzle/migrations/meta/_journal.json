@@ -113,6 +113,13 @@
       "when": 1789548150744,
       "tag": "0015_village_articles_source_post",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1789548319144,
+      "tag": "0016_posts_og_image",
+      "breakpoints": true
     }
   ]
 }

@@ -1559,6 +1559,7 @@ export type Database = {
           image_url: string | null
           image_urls: string[]
           mentions: string[] | null
+          og_image_url: string | null
           pin_label: string | null
           pinned_at: string | null
           social_links: Json
@@ -1577,6 +1578,7 @@ export type Database = {
           image_url?: string | null
           image_urls?: string[]
           mentions?: string[] | null
+          og_image_url?: string | null
           pin_label?: string | null
           pinned_at?: string | null
           social_links?: Json
@@ -1595,6 +1597,7 @@ export type Database = {
           image_url?: string | null
           image_urls?: string[]
           mentions?: string[] | null
+          og_image_url?: string | null
           pin_label?: string | null
           pinned_at?: string | null
           social_links?: Json
