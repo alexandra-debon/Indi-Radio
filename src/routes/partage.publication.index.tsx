@@ -11,6 +11,7 @@ import { Copy, Link2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/use-auth";
+import { postShareImage } from "@/lib/post-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 
@@ -88,7 +89,7 @@ function defaults(row: Row) {
   return {
     title: (row.title || text.slice(0, 80) || "InDi RaDio").trim(),
     desc: text.slice(0, 220),
-    img: row.og_image_url || row.image_url || row.image_urls?.[0] || "",
+    img: postShareImage(row).image,
   };
 }
 

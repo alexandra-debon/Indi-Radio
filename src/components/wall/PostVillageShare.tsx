@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { stripMediaUrls } from "@/lib/media-embed";
+import { postShareImage } from "@/lib/post-share-image";
 import {
   VillageCategoryPicker,
   type VillageCategory,
@@ -78,9 +79,7 @@ export function PostVillageShare({
 
   const plain = stripMediaUrls(post.content).trim();
   const [title, setTitle] = useState(post.title?.trim() || plain.slice(0, 80));
-  const [cover, setCover] = useState<string | null>(
-    post.og_image_url || post.image_url || post.image_urls?.[0] || null,
-  );
+  const [cover, setCover] = useState<string | null>(postShareImage(post).image);
   const [category, setCategory] = useState<VillageCategory | null>(
     (post.category as VillageCategory | null) ?? null,
   );

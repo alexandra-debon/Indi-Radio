@@ -12,6 +12,7 @@ import { renderRich } from "@/lib/rich-text";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
+import { postShareImage } from "@/lib/post-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
@@ -55,11 +56,8 @@ export const Route = createFileRoute("/p/$postId")({
     });
     const title = localized.title;
     const desc = localized.description;
-    const firstImage =
-      loaderData.og_image_url ||
-      (loaderData.image_urls && loaderData.image_urls.length > 0
-        ? loaderData.image_urls[0]
-        : loaderData.image_url) || OG_FALLBACK;
+    const share = postShareImage(loaderData, lang === "en" ? "en" : "fr");
+    const firstImage = share.image || OG_FALLBACK;
     return {
       meta: [
         { title },
