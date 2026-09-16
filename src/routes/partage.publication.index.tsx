@@ -34,6 +34,7 @@ const TXT = {
     open: "Ouvrir le lien",
     village: "Partager un article RéDaK'Village",
     magazine: "Partager un magazine interactif",
+    teevi: "Partager une vidéo InDi TeeVi",
   },
   en: {
     title: "Share a wall post",
@@ -53,6 +54,7 @@ const TXT = {
     open: "Open link",
     village: "Share a RéDaK'Village article",
     magazine: "Share an interactive magazine",
+    teevi: "Share an InDi TeeVi video",
   },
 } as const;
 
@@ -162,6 +164,9 @@ function PostShareComposer() {
             className="text-sm font-bold text-primary hover:underline"
           >
             {t.magazine}
+          </Link>
+          <Link to="/partage/teevi" className="text-sm font-bold text-primary hover:underline">
+            {t.teevi}
           </Link>
         </div>
       </header>
