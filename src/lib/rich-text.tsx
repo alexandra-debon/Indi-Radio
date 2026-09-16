@@ -32,8 +32,12 @@ const FORMAT_RULES: Array<{ re: RegExp; render: (inner: ReactNode, key: number) 
  * Render a plain string with clickable #hashtags, highlighted @mentions and
  * simple text formatting. Emojis pass through natively. Safe: no HTML injection.
  */
-export function renderRich(text: string | null | undefined): ReactNode {
+export function renderRich(
+  text: string | null | undefined,
+  opts?: { plain?: boolean },
+): ReactNode {
   if (!text) return null;
+  const plain = opts?.plain === true;
   // Find the earliest formatting marker and recurse around it.
   let best: { index: number; len: number; inner: string; render: (i: ReactNode, k: number) => ReactNode } | null = null;
   for (const rule of FORMAT_RULES) {
@@ -47,12 +51,13 @@ export function renderRich(text: string | null | undefined): ReactNode {
     const after = text.slice(best.index + best.len);
     return (
       <>
-        {renderRich(before)}
-        {best.render(renderRich(best.inner), 0)}
-        {renderRich(after)}
+        {renderRich(before, opts)}
+        {best.render(renderRich(best.inner, opts), 0)}
+        {renderRich(after, opts)}
       </>
     );
   }
+
   const parts = text.split(TOKEN_RE);
   return parts.map((p, i) => {
     if (!p) return null;
@@ -60,6 +65,10 @@ export function renderRich(text: string | null | undefined): ReactNode {
       const raw = p.slice(1);
       const tag = normalizeHashtag(raw);
       if (!tag) return <span key={i}>{p}</span>;
+      if (plain)
+        return (
+          <span key={i} className="font-semibold text-primary">{`#${tag}`}</span>
+        );
       return (
         <Link
           key={i}
@@ -74,8 +83,15 @@ export function renderRich(text: string | null | undefined): ReactNode {
     }
     if (p.startsWith("@") && p.length > 1) {
       const pseudo = p.slice(1);
+      if (plain)
+        return (
+          <span key={i} className="mention font-semibold text-primary">
+            {p}
+          </span>
+        );
       return (
         <span key={i} className="mention-wrap inline-flex items-baseline gap-0.5">
+
           <Link
             to="/u/$pseudo"
             params={{ pseudo }}
