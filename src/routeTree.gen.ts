@@ -89,6 +89,7 @@ import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenti
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
 import { Route as AuthenticatedProfileArtisteRouteImport } from './routes/_authenticated/profile.artiste'
 import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
+import { Route as AuthenticatedAdminTeeviRouteImport } from './routes/_authenticated/admin.teevi'
 import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
 import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_authenticated/admin.redak-village'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
@@ -522,6 +523,11 @@ const AuthenticatedProfileAlbumsRoute =
     path: '/profile/albums',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminTeeviRoute = AuthenticatedAdminTeeviRouteImport.update({
+  id: '/teevi',
+  path: '/teevi',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminSeoPreviewRoute =
   AuthenticatedAdminSeoPreviewRouteImport.update({
     id: '/seo-preview',
@@ -703,6 +709,7 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
+  '/admin/teevi': typeof AuthenticatedAdminTeeviRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -803,6 +810,7 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
+  '/admin/teevi': typeof AuthenticatedAdminTeeviRoute
   '/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -905,6 +913,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/redak-village': typeof AuthenticatedAdminRedakVillageRoute
   '/_authenticated/admin/seo-preview': typeof AuthenticatedAdminSeoPreviewRoute
+  '/_authenticated/admin/teevi': typeof AuthenticatedAdminTeeviRoute
   '/_authenticated/profile/albums': typeof AuthenticatedProfileAlbumsRoute
   '/_authenticated/profile/artiste': typeof AuthenticatedProfileArtisteRoute
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
@@ -1007,6 +1016,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/redak-village'
     | '/admin/seo-preview'
+    | '/admin/teevi'
     | '/profile/albums'
     | '/profile/artiste'
     | '/profile/badges'
@@ -1107,6 +1117,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/redak-village'
     | '/admin/seo-preview'
+    | '/admin/teevi'
     | '/profile/albums'
     | '/profile/artiste'
     | '/profile/badges'
@@ -1208,6 +1219,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/redak-village'
     | '/_authenticated/admin/seo-preview'
+    | '/_authenticated/admin/teevi'
     | '/_authenticated/profile/albums'
     | '/_authenticated/profile/artiste'
     | '/_authenticated/profile/badges'
@@ -1880,6 +1892,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/teevi': {
+      id: '/_authenticated/admin/teevi'
+      path: '/teevi'
+      fullPath: '/admin/teevi'
+      preLoaderRoute: typeof AuthenticatedAdminTeeviRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/seo-preview': {
       id: '/_authenticated/admin/seo-preview'
       path: '/seo-preview'
@@ -2026,6 +2045,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminRedakVillageRoute: typeof AuthenticatedAdminRedakVillageRoute
   AuthenticatedAdminSeoPreviewRoute: typeof AuthenticatedAdminSeoPreviewRoute
+  AuthenticatedAdminTeeviRoute: typeof AuthenticatedAdminTeeviRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -2039,6 +2059,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminRedakVillageRoute: AuthenticatedAdminRedakVillageRoute,
   AuthenticatedAdminSeoPreviewRoute: AuthenticatedAdminSeoPreviewRoute,
+  AuthenticatedAdminTeeviRoute: AuthenticatedAdminTeeviRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
