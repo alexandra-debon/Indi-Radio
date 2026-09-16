@@ -857,7 +857,7 @@ export function SocialWall() {
                       )}
                       {canEdit && (
                         <button
-                        onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); setEditImages((p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : [])); }}
+                        onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); setEditOgImage(p.og_image_url ?? ""); setEditImages((p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : [])); }}
                           className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           aria-label="Modifier"
                         >
