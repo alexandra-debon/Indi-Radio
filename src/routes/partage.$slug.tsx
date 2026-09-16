@@ -7,7 +7,7 @@ import { ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { ogImageForLang } from "@/lib/og-image";
 import { flipHtml5ThumbnailUrl } from "@/lib/fliphtml5";
-import { useVillageTxt, VILLAGE_NAME } from "@/components/village/village-i18n";
+import { VILLAGE_NAME } from "@/components/village/village-i18n";
 import { useLang } from "@/lib/i18n";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
