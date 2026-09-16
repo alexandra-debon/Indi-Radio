@@ -63,6 +63,7 @@ interface PostRow {
   image_captions: string[] | null;
   album_id: string | null;
   category: string | null;
+  og_image_url: string | null;
   album: { id: string; title: string; cover_url: string | null } | null;
   author: {
     id: string;
@@ -116,6 +117,7 @@ export function SocialWall() {
   const [editImage, setEditImage] = useState("");
   const [imagesDraft, setImagesDraft] = useState<string[]>([]);
   const [editImages, setEditImages] = useState<string[]>([]);
+  const [editOgImage, setEditOgImage] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
