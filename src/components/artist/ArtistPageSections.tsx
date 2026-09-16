@@ -246,6 +246,22 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
   });
 
   const [category, setCategory] = useState<PostCategory | null>(null);
+  const qcPosts = useQueryClient();
+
+  const removePost = useMutation({
+    mutationFn: async (postId: string) => {
+      const { error } = await supabase.from("posts").delete().eq("id", postId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success(txt.deleted);
+      qcPosts.invalidateQueries({ queryKey: ["artist-posts-public", artistId] });
+      qcPosts.invalidateQueries({ queryKey: ["wall-posts"] });
+      qcPosts.invalidateQueries({ queryKey: ["wall-compact"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
 
   const { data: posts = [] } = useQuery<ArtistPost[]>({
     queryKey: ["artist-posts-public", artistId],
