@@ -47,6 +47,18 @@ const FR = {
   subscribed: "Abonné : vous serez notifié des nouveaux articles.",
   unsubscribed: "Désabonné de RéDaK'Village.",
   subError: "Action impossible pour le moment.",
+  challenges: "Challenges éditoriaux",
+  challengePick: "Répondre à un challenge (optionnel)",
+  challengeNone: "Aucun challenge",
+  challengeAnswer: "Article en réponse à un challenge",
+  challengeAnswerCta: "Répondre à ce challenge",
+  challengeEnds: "Jusqu'au",
+  charterTitle: "Charte : article avec lien musical",
+  charterBody:
+    "Votre article contient un lien musical (Spotify, SoundCloud, YouTube, Bandcamp…). En publiant, vous confirmez que l'artiste ou la musique évoqués sont indépendants, que vous ne recevez aucune rétribution, directe ou indirecte, pour en parler, et que la modération peut retirer l'article en cas de diffusion rémunérée hors charte.",
+  charterAck: "J'ai lu et j'accepte",
+  charterDontShow: "Ne plus me montrer ce message",
+  charterConfirm: "Publier",
 };
 
 const EN: typeof FR = {
@@ -91,6 +103,18 @@ const EN: typeof FR = {
   subscribed: "Subscribed: you'll be notified of new articles.",
   unsubscribed: "Unsubscribed from RéDaK'Village.",
   subError: "Action failed, please retry.",
+  challenges: "Editorial challenges",
+  challengePick: "Answer a challenge (optional)",
+  challengeNone: "No challenge",
+  challengeAnswer: "Article answering a challenge",
+  challengeAnswerCta: "Answer this challenge",
+  challengeEnds: "Until",
+  charterTitle: "Charter: article with a music link",
+  charterBody:
+    "Your article contains a music link (Spotify, SoundCloud, YouTube, Bandcamp…). By publishing, you confirm that the artist or music mentioned are independent, that you receive no payment, direct or indirect, for covering them, and that moderation may remove the article in case of paid promotion outside the charter.",
+  charterAck: "I have read and I accept",
+  charterDontShow: "Don't show me this message again",
+  charterConfirm: "Publish",
 };
 
 export function useVillageTxt() {

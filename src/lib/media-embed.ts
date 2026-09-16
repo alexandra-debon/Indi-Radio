@@ -3,7 +3,23 @@
 export type MediaEmbed =
   | { kind: "youtube"; type: "video"; id: string; embedUrl: string; originalUrl: string }
   | { kind: "youtube"; type: "playlist"; id: string; embedUrl: string; originalUrl: string }
-  | { kind: "vimeo"; type: "video"; id: string; embedUrl: string; originalUrl: string };
+  | { kind: "vimeo"; type: "video"; id: string; embedUrl: string; originalUrl: string }
+  | {
+      kind: "spotify";
+      type: "audio";
+      id: string;
+      embedUrl: string;
+      originalUrl: string;
+      height: number;
+    }
+  | {
+      kind: "soundcloud";
+      type: "audio";
+      id: string;
+      embedUrl: string;
+      originalUrl: string;
+      height: number;
+    };
 
 // Matches most URLs including query strings; keeps trailing punctuation out.
 const URL_RE = /\bhttps?:\/\/[^\s<>"']+[^\s<>"'.,;!?)\]}]/gi;
@@ -66,7 +82,73 @@ export function parseMediaUrl(rawUrl: string): MediaEmbed | null {
     }
   }
 
+  // Spotify (titre, album, playlist, épisode, podcast)
+  if (host === "open.spotify.com" || host === "spotify.com") {
+    const m = u.pathname.match(
+      /\/(?:intl-[a-z-]+\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)/,
+    );
+    if (m) {
+      const [, type, id] = m;
+      const tall = type === "album" || type === "playlist" || type === "artist";
+      return {
+        kind: "spotify",
+        type: "audio",
+        id: `${type}:${id}`,
+        embedUrl: `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`,
+        originalUrl: rawUrl,
+        height: tall ? 352 : 152,
+      };
+    }
+  }
+
+  // SoundCloud (titres, sets, profils) — le player prend l'URL publique
+  if (host === "soundcloud.com" || host === "m.soundcloud.com" || host === "on.soundcloud.com") {
+    const path = u.pathname.replace(/\/+$/, "");
+    if (path.length > 1) {
+      const canonical = `https://soundcloud.com${path}`;
+      const isSet = path.includes("/sets/");
+      return {
+        kind: "soundcloud",
+        type: "audio",
+        id: path.slice(1),
+        embedUrl: `https://w.soundcloud.com/player/?url=${encodeURIComponent(
+          canonical,
+        )}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=false`,
+        originalUrl: rawUrl,
+        height: isSet ? 320 : 166,
+      };
+    }
+  }
+
   return null;
+}
+
+/** Vrai si le texte contient au moins un lien musical (streaming / plateforme). */
+export function hasMusicLink(text: string): boolean {
+  for (const url of extractUrls(text || "")) {
+    const m = parseMediaUrl(url);
+    if (m && (m.kind === "spotify" || m.kind === "soundcloud")) return true;
+    let host = "";
+    try {
+      host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+    } catch {
+      continue;
+    }
+    if (
+      host.endsWith("bandcamp.com") ||
+      host === "music.apple.com" ||
+      host === "deezer.com" ||
+      host === "www.deezer.com" ||
+      host === "tidal.com" ||
+      host === "music.youtube.com" ||
+      host === "open.spotify.com" ||
+      host === "soundcloud.com"
+    ) {
+      return true;
+    }
+    if (m && m.kind === "youtube") return true;
+  }
+  return false;
 }
 
 function ytVideo(id: string, list: string | null, rawUrl: string): MediaEmbed {

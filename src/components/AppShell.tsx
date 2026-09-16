@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart, Rss, ListMusic, ShoppingBag, Feather } from "lucide-react";
+import { Menu, X, Radio, Newspaper, Mic2, BarChart3, Headphones, Send, Info, Shield, User as UserIcon, UserCog, LogOut, LogIn, Disc3, Film, BookOpen, Star, Mic, Mail, FileText, Trophy, MessageCircle, Heart, Rss, ListMusic, ShoppingBag, Feather, Award, Target } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserBadge } from "@/components/UserBadge";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -476,6 +476,38 @@ export function AppShell({ children }: { children: ReactNode }) {
                 )}
               >
                 <BookOpen className="size-4" /> {t("nav.magazinesAdmin")}
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin/badges"
+                search={{ tab: "users" }}
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/badges" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/badges"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <Award className="size-4" /> {t("nav.badgesAdmin")}
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin/challenges"
+                search={{ tab: "users" }}
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/challenges" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/challenges"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <Target className="size-4" /> {t("nav.challengesAdmin")}
               </Link>
             )}
             {session && !isAdmin && (
