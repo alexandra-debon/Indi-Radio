@@ -55,11 +55,8 @@ export const Route = createFileRoute("/p/$postId")({
     });
     const title = localized.title;
     const desc = localized.description;
-    const firstImage =
-      loaderData.og_image_url ||
-      (loaderData.image_urls && loaderData.image_urls.length > 0
-        ? loaderData.image_urls[0]
-        : loaderData.image_url) || OG_FALLBACK;
+    const share = postShareImage(loaderData, lang === "en" ? "en" : "fr");
+    const firstImage = share.image || OG_FALLBACK;
     return {
       meta: [
         { title },
