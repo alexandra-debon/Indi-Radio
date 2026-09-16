@@ -12,6 +12,7 @@ import { renderRich } from "@/lib/rich-text";
 import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
+import { postShareImage } from "@/lib/post-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogHome}`;
