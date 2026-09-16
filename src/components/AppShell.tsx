@@ -481,7 +481,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/badges"
-                search={{}}
+                search={(prev) => prev}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === "/admin/badges" ? "page" : undefined}
                 className={cn(
@@ -497,7 +497,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {isAdmin && (
               <Link
                 to="/admin/challenges"
-                search={{}}
+                search={(prev) => prev}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === "/admin/challenges" ? "page" : undefined}
                 className={cn(
