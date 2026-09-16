@@ -25,7 +25,7 @@ export const Route = createFileRoute("/p/$postId")({
     const { data, error } = await supabase
       .from("posts")
       .select(
-        "id, content, image_url, image_urls, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified)"
+        "id, content, image_url, image_urls, og_image_url, created_at, author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified)"
       )
       .eq("id", params.postId)
       .maybeSingle();
@@ -56,6 +56,7 @@ export const Route = createFileRoute("/p/$postId")({
     const title = localized.title;
     const desc = localized.description;
     const firstImage =
+      loaderData.og_image_url ||
       (loaderData.image_urls && loaderData.image_urls.length > 0
         ? loaderData.image_urls[0]
         : loaderData.image_url) || OG_FALLBACK;

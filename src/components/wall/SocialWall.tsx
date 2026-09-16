@@ -63,6 +63,7 @@ interface PostRow {
   image_captions: string[] | null;
   album_id: string | null;
   category: string | null;
+  og_image_url: string | null;
   album: { id: string; title: string; cover_url: string | null } | null;
   author: {
     id: string;
@@ -116,6 +117,7 @@ export function SocialWall() {
   const [editImage, setEditImage] = useState("");
   const [imagesDraft, setImagesDraft] = useState<string[]>([]);
   const [editImages, setEditImages] = useState<string[]>([]);
+  const [editOgImage, setEditOgImage] = useState("");
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [replyImages, setReplyImages] = useState<Record<string, string[]>>({});
@@ -159,7 +161,7 @@ export function SocialWall() {
     queryFn: async () => {
       let req = supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, category, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, category, og_image_url, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .eq("visibility", "feed")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
@@ -349,12 +351,13 @@ export function SocialWall() {
   });
 
   const updatePost = useMutation({
-    mutationFn: async ({ id, content, social_links, image_url, image_urls }: { id: string; content: string; social_links?: SocialLinks; image_url?: string | null; image_urls?: string[] }) => {
+    mutationFn: async ({ id, content, social_links, image_url, image_urls, og_image_url }: { id: string; content: string; social_links?: SocialLinks; image_url?: string | null; image_urls?: string[]; og_image_url?: string | null }) => {
       const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
       const payload: any = { content, mentions };
       if (social_links !== undefined) payload.social_links = sanitizeLinks(social_links);
       if (image_url !== undefined) payload.image_url = image_url;
       if (image_urls !== undefined) payload.image_urls = image_urls;
+      if (og_image_url !== undefined) payload.og_image_url = og_image_url;
       const { error } = await supabase.from("posts").update(payload).eq("id", id);
       if (error) throw error;
     },
@@ -665,13 +668,23 @@ export function SocialWall() {
                   {(isAdmin || isOwner) && (
                     <MultiImageUploader values={editImages} onChange={setEditImages} folder="wall" />
                   )}
+                  {(isAdmin || isOwner) && (
+                    <ImageUploader
+                      value={editOgImage}
+                      onChange={setEditOgImage}
+                      folder="wall"
+                      usage="cover"
+                      defaultRatio="16:9"
+                      label={t("wall.ogImage")}
+                    />
+                  )}
                   <div className="flex justify-end gap-2">
                     <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
                       <X className="size-3.5" /> Annuler
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: (isAdmin || isOwner) ? (editImages[0] || null) : undefined, image_urls: (isAdmin || isOwner) ? editImages : undefined })}
+                      onClick={() => updatePost.mutate({ id: p.id, content: editContent.trim(), social_links: isAdmin ? editSocial : undefined, image_url: (isAdmin || isOwner) ? (editImages[0] || null) : undefined, image_urls: (isAdmin || isOwner) ? editImages : undefined, og_image_url: (isAdmin || isOwner) ? (editOgImage.trim() || null) : undefined })}
                       disabled={!editContent.trim() || updatePost.isPending}
                     >
                       <Check className="size-3.5" /> Enregistrer
@@ -844,7 +857,7 @@ export function SocialWall() {
                       )}
                       {canEdit && (
                         <button
-                        onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); setEditImages((p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : [])); }}
+                        onClick={() => { setEditingId(p.id); setEditContent(p.content); setEditSocial((p.social_links as SocialLinks | null) ?? {}); setEditImage(p.image_url ?? ""); setEditOgImage(p.og_image_url ?? ""); setEditImages((p.image_urls && p.image_urls.length > 0) ? p.image_urls : (p.image_url ? [p.image_url] : [])); }}
                           className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           aria-label="Modifier"
                         >
@@ -948,6 +961,7 @@ export function SocialWall() {
                             image_url: p.image_url ?? null,
                             image_urls: p.image_urls ?? null,
                             category: p.category ?? null,
+                            og_image_url: p.og_image_url ?? null,
                           }}
                         />
                       )}
