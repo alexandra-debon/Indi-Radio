@@ -15,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
+import { PostVillageShare } from "@/components/wall/PostVillageShare";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { Input } from "@/components/ui/input";
