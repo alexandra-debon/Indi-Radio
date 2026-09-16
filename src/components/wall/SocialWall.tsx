@@ -161,7 +161,7 @@ export function SocialWall() {
     queryFn: async () => {
       let req = supabase
         .from("posts")
-        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, category, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
+        .select("id, author_id, content, created_at, pinned_at, pin_label, social_links, image_url, image_urls, title, image_captions, album_id, category, og_image_url, album:photo_albums!posts_album_id_fkey(id, title, cover_url), author:profiles!posts_author_id_fkey(id, pseudo, role, is_certified, is_team_indi, badges, level)")
         .eq("visibility", "feed")
         .order("pinned_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
@@ -351,12 +351,13 @@ export function SocialWall() {
   });
 
   const updatePost = useMutation({
-    mutationFn: async ({ id, content, social_links, image_url, image_urls }: { id: string; content: string; social_links?: SocialLinks; image_url?: string | null; image_urls?: string[] }) => {
+    mutationFn: async ({ id, content, social_links, image_url, image_urls, og_image_url }: { id: string; content: string; social_links?: SocialLinks; image_url?: string | null; image_urls?: string[]; og_image_url?: string | null }) => {
       const mentions = Array.from(content.matchAll(MENTION_RE)).map((m) => m[1]);
       const payload: any = { content, mentions };
       if (social_links !== undefined) payload.social_links = sanitizeLinks(social_links);
       if (image_url !== undefined) payload.image_url = image_url;
       if (image_urls !== undefined) payload.image_urls = image_urls;
+      if (og_image_url !== undefined) payload.og_image_url = og_image_url;
       const { error } = await supabase.from("posts").update(payload).eq("id", id);
       if (error) throw error;
     },
