@@ -6,7 +6,7 @@ import { Disc3, Star } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/chroniques/")({
 
 function ChroniquesPage() {
   const t = useT();
+  const { lang } = useLang();
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["album-reviews"],
     queryFn: async () => {
@@ -79,8 +80,12 @@ function ChroniquesPage() {
               <ShareButton
                 target={{
                   url: `/chroniques/${r.slug}`,
-                  title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
-                  text: r.excerpt ?? `Chronique de ${r.title} par ${r.artist}`,
+                  title: `${r.title} — ${r.artist} · ${lang === "en" ? "Album review" : "Chronique"} Indi Radio`,
+                  text:
+                    r.excerpt ??
+                    (lang === "en"
+                      ? `Album review of ${r.title} by ${r.artist}`
+                      : `Chronique de ${r.title} par ${r.artist}`),
                 }}
                 className="bg-background/80 backdrop-blur"
               />
@@ -97,7 +102,11 @@ function ChroniquesPage() {
                     width={192}
                     height={192}
                     responsive={[96, 192, 288]}
-                    alt={`Pochette de ${r.title} par ${r.artist}`}
+                    alt={
+                      lang === "en"
+                        ? `Album cover of ${r.title} by ${r.artist}`
+                        : `Pochette de ${r.title} par ${r.artist}`
+                    }
                     className="size-full object-cover"
                   />
                 ) : (
@@ -107,7 +116,14 @@ function ChroniquesPage() {
                 )}
               </div>
               <div className="flex min-w-0 flex-1 flex-col">
-                <div className="truncate text-sm font-bold">{r.title}</div>
+                <TranslatedText
+                  as="div"
+                  className="truncate text-sm font-bold"
+                  entityType="album_review"
+                  entityKey={r.id}
+                  field="title"
+                  text={r.title}
+                />
                 <div className="truncate text-xs text-muted-foreground">
                   {r.artist}{r.label ? ` · ${r.label}` : ""}
                 </div>
