@@ -103,6 +103,18 @@ const EN: typeof FR = {
   subscribed: "Subscribed: you'll be notified of new articles.",
   unsubscribed: "Unsubscribed from RéDaK'Village.",
   subError: "Action failed, please retry.",
+  challenges: "Editorial challenges",
+  challengePick: "Answer a challenge (optional)",
+  challengeNone: "No challenge",
+  challengeAnswer: "Article answering a challenge",
+  challengeAnswerCta: "Answer this challenge",
+  challengeEnds: "Until",
+  charterTitle: "Charter: article with a music link",
+  charterBody:
+    "Your article contains a music link (Spotify, SoundCloud, YouTube, Bandcamp…). By publishing, you confirm that the artist or music mentioned are independent, that you receive no payment, direct or indirect, for covering them, and that moderation may remove the article in case of paid promotion outside the charter.",
+  charterAck: "I have read and I accept",
+  charterDontShow: "Don't show me this message again",
+  charterConfirm: "Publish",
 };
 
 export function useVillageTxt() {
