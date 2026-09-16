@@ -92,6 +92,7 @@ import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminMagazinesRouteImport } from './routes/_authenticated/admin.magazines'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
+import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_authenticated/admin.challenges'
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
 import { Route as AuthenticatedAdminBadgesRouteImport } from './routes/_authenticated/admin.badges'
@@ -539,6 +540,12 @@ const AuthenticatedAdminDiagnosticsPseudosRoute =
     path: '/diagnostics-pseudos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminChallengesRoute =
+  AuthenticatedAdminChallengesRouteImport.update({
+    id: '/challenges',
+    path: '/challenges',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCandidaturesRoute =
   AuthenticatedAdminCandidaturesRouteImport.update({
     id: '/candidatures',
@@ -676,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
+  '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -773,6 +781,7 @@ export interface FileRoutesByTo {
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
+  '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -872,6 +881,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
+  '/_authenticated/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
+    | '/admin/challenges'
     | '/admin/diagnostics-pseudos'
     | '/admin/magazines'
     | '/admin/messages'
@@ -1068,6 +1079,7 @@ export interface FileRouteTypes {
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
+    | '/admin/challenges'
     | '/admin/diagnostics-pseudos'
     | '/admin/magazines'
     | '/admin/messages'
@@ -1166,6 +1178,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/badges'
     | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
+    | '/_authenticated/admin/challenges'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/magazines'
     | '/_authenticated/admin/messages'
@@ -1862,6 +1875,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/challenges': {
+      id: '/_authenticated/admin/challenges'
+      path: '/challenges'
+      fullPath: '/admin/challenges'
+      preLoaderRoute: typeof AuthenticatedAdminChallengesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/candidatures': {
       id: '/_authenticated/admin/candidatures'
       path: '/candidatures'
@@ -1960,6 +1980,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBadgesRoute: typeof AuthenticatedAdminBadgesRoute
   AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
+  AuthenticatedAdminChallengesRoute: typeof AuthenticatedAdminChallengesRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMagazinesRoute: typeof AuthenticatedAdminMagazinesRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -1971,6 +1992,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBadgesRoute: AuthenticatedAdminBadgesRoute,
   AuthenticatedAdminBoutiqueRoute: AuthenticatedAdminBoutiqueRoute,
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
+  AuthenticatedAdminChallengesRoute: AuthenticatedAdminChallengesRoute,
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
   AuthenticatedAdminMagazinesRoute: AuthenticatedAdminMagazinesRoute,
