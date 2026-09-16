@@ -478,6 +478,36 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <BookOpen className="size-4" /> {t("nav.magazinesAdmin")}
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/admin/badges"
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/badges" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/badges"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <Award className="size-4" /> {t("nav.badgesAdmin")}
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin/challenges"
+                onClick={() => setOpen(false)}
+                aria-current={pathname === "/admin/challenges" ? "page" : undefined}
+                className={cn(
+                  "mt-1 flex items-center gap-3 rounded-md border-l-4 border-destructive/40 px-3 py-2.5 text-sm text-destructive transition-colors",
+                  pathname === "/admin/challenges"
+                    ? "border-destructive bg-destructive/15 font-semibold shadow-sm"
+                    : "hover:bg-destructive/10",
+                )}
+              >
+                <Target className="size-4" /> {t("nav.challengesAdmin")}
+              </Link>
+            )}
             {session && !isAdmin && (
               <button
                 onClick={() => { setOpen(false); openAdminChat(); }}
