@@ -4,7 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { PenSquare, Feather } from "lucide-react";
+import { PenSquare, Feather, Target } from "lucide-react";
 import { UserBadge } from "@/components/UserBadge";
 import {
   VillageCategoryBadge,
