@@ -46,6 +46,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.index'
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
+import { Route as PartageIndexRouteImport } from './routes/partage.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
@@ -281,6 +282,11 @@ const RedakVillageIndexRoute = RedakVillageIndexRouteImport.update({
 const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
   id: '/playlists/',
   path: '/playlists/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageIndexRoute = PartageIndexRouteImport.update({
+  id: '/partage/',
+  path: '/partage/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
@@ -624,6 +630,7 @@ export interface FileRoutesByFullPath {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -714,6 +721,7 @@ export interface FileRoutesByTo {
   '/clips': typeof ClipsIndexRoute
   '/emissions': typeof EmissionsIndexRoute
   '/magazines': typeof MagazinesIndexRoute
+  '/partage': typeof PartageIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
   '/redak-village': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -806,6 +814,7 @@ export interface FileRoutesById {
   '/clips/': typeof ClipsIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
+  '/partage/': typeof PartageIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -898,6 +907,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/partage/'
     | '/playlists/'
     | '/redak-village/'
     | '/.lovable/oauth/consent'
@@ -988,6 +998,7 @@ export interface FileRouteTypes {
     | '/clips'
     | '/emissions'
     | '/magazines'
+    | '/partage'
     | '/playlists'
     | '/redak-village'
     | '/.lovable/oauth/consent'
@@ -1079,6 +1090,7 @@ export interface FileRouteTypes {
     | '/clips/'
     | '/emissions/'
     | '/magazines/'
+    | '/partage/'
     | '/playlists/'
     | '/redak-village/'
     | '/.lovable/oauth/consent'
@@ -1167,6 +1179,7 @@ export interface RootRouteChildren {
   ClipsIndexRoute: typeof ClipsIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
+  PartageIndexRoute: typeof PartageIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
   RedakVillageIndexRoute: typeof RedakVillageIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -1447,6 +1460,13 @@ declare module '@tanstack/react-router' {
       path: '/playlists'
       fullPath: '/playlists/'
       preLoaderRoute: typeof PlaylistsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partage/': {
+      id: '/partage/'
+      path: '/partage'
+      fullPath: '/partage/'
+      preLoaderRoute: typeof PartageIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magazines/': {
@@ -1924,6 +1944,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClipsIndexRoute: ClipsIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
+  PartageIndexRoute: PartageIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
   RedakVillageIndexRoute: RedakVillageIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
