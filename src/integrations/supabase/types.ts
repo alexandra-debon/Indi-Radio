@@ -2070,6 +2070,7 @@ export type Database = {
           author_id: string | null
           created_at: string
           id: string
+          og_image_url: string | null
           published: boolean
           summary: string | null
           tags: string[]
@@ -2081,6 +2082,7 @@ export type Database = {
           author_id?: string | null
           created_at?: string
           id?: string
+          og_image_url?: string | null
           published?: boolean
           summary?: string | null
           tags?: string[]
@@ -2092,6 +2094,7 @@ export type Database = {
           author_id?: string | null
           created_at?: string
           id?: string
+          og_image_url?: string | null
           published?: boolean
           summary?: string | null
           tags?: string[]
