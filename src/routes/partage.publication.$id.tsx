@@ -59,9 +59,9 @@ export const Route = createFileRoute("/partage/publication/$id")({
     const url = withHl(`${BASE_URL}/partage/publication/${params.id}${suffix}`, lang);
     const title = s.t || loaderData.title || text.slice(0, 80) || "InDi RaDio";
     const desc = clampDescription(s.d || text.slice(0, 300) || title);
-    const own = loaderData.og_image_url || loaderData.image_url || loaderData.image_urls?.[0];
-    const image = s.img || own || OG_FALLBACK;
-    const landscape = Boolean(s.img || loaderData.og_image_url);
+    const auto = postShareImage(loaderData, lang === "en" ? "en" : "fr");
+    const image = s.img || auto.image || OG_FALLBACK;
+    const landscape = s.img ? true : auto.landscape;
     return {
       meta: [
         { title },
