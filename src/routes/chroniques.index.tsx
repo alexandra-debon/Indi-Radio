@@ -6,7 +6,7 @@ import { Disc3, Star } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ContentLikeButton } from "@/components/content/ContentReactions";
 import ogChroniques from "@/assets/og-chroniques.jpg";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/chroniques/")({
 
 function ChroniquesPage() {
   const t = useT();
+  const { lang } = useLang();
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["album-reviews"],
     queryFn: async () => {
