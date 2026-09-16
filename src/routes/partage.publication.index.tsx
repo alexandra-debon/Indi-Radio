@@ -11,6 +11,7 @@ import { Copy, Link2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/use-auth";
+import { postShareImage } from "@/lib/post-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 
