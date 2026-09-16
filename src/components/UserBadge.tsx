@@ -1,6 +1,8 @@
 import { Crown, Mic, Palette, CheckCircle2, Radio, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
+import { useBadgeDefs, BadgeChip } from "@/components/badges/badge-defs";
+import { LevelTierBadge } from "@/components/LevelTier";
 
 export interface BadgeProfile {
   pseudo: string;
@@ -13,6 +15,7 @@ export interface BadgeProfile {
 
 export function UserBadge({ profile, className, compact }: { profile: BadgeProfile | null | undefined; className?: string; compact?: boolean }) {
   const t = useT();
+  const { data: badgeDefs = [] } = useBadgeDefs();
   if (!profile) return <span className={cn("text-muted-foreground", className)}>{t("role.auditeur")}</span>;
 
   if (compact) {
@@ -55,17 +58,10 @@ export function UserBadge({ profile, className, compact }: { profile: BadgeProfi
         </span>
       )}
       {profile.role === "auditeur" && profile.level && profile.level > 0 && (
-        <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[10px] uppercase text-muted-foreground">
-          {t("badge.levelShort")} {profile.level}
-        </span>
+        <LevelTierBadge level={profile.level} />
       )}
       {profile.badges?.map((b) => (
-        <span
-          key={b}
-          className="inline-flex items-center rounded-sm border border-primary bg-primary px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-black"
-        >
-          {b}
-        </span>
+        <BadgeChip key={b} badgeKey={b} def={badgeDefs.find((d) => d.key === b)} />
       ))}
     </span>
   );
