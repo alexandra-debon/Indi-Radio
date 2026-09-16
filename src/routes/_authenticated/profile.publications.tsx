@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/profile/publications")({
 
 function MyPostsPage() {
   const { session } = useAuth();
-  const lang = useLang();
+  const { lang } = useLang();
   const fr = lang !== "en";
 
   return (

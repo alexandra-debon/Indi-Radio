@@ -45,7 +45,7 @@ const TXT = {
 
 /** Liste de gestion de TOUTES les publications d'un membre (feed, page, abonnés). */
 export function MyPostsManager({ userId, limit = 100 }: { userId: string; limit?: number }) {
-  const lang = useLang();
+  const { lang } = useLang();
   const t = TXT[lang === "en" ? "en" : "fr"];
   const qc = useQueryClient();
 
