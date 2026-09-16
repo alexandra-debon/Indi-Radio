@@ -9,18 +9,17 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { ShareButton } from "@/components/share/ShareButton";
 import { Copy, Link2 } from "lucide-react";
 import { toast } from "@/lib/toast";
+import { ogImageForLang } from "@/lib/og-image";
 import { useLang } from "@/lib/i18n";
-import { useAuth } from "@/hooks/use-auth";
-import { postShareImage } from "@/lib/post-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 
 const TXT = {
   fr: {
-    title: "Partager une publication du mur",
+    title: "Partager une vidéo InDi TeeVi",
     intro:
-      "Choisissez une de vos publications, ajustez le titre, la description et la vignette : vous obtenez un lien public prêt à envoyer, avec son aperçu réseaux.",
-    pick: "Publication",
+      "Choisissez une vidéo, ajustez le titre, la description et la vignette : vous obtenez un lien public prêt à envoyer, avec son aperçu réseaux.",
+    pick: "Vidéo",
     ptitle: "Titre affiché",
     pdesc: "Description",
     pimg: "Vignette de partage (paysage 1200×630)",
@@ -28,19 +27,17 @@ const TXT = {
     copy: "Copier le lien",
     copied: "Lien copié",
     preview: "Aperçu",
-    empty: "Aucune publication à partager pour le moment.",
-    signin: "Connectez-vous pour composer un lien vers vos publications.",
+    empty: "Aucune vidéo publiée pour le moment.",
     reset: "Valeurs d'origine",
     open: "Ouvrir le lien",
     village: "Partager un article RéDaK'Village",
     magazine: "Partager un magazine interactif",
-    teevi: "Partager une vidéo InDi TeeVi",
   },
   en: {
-    title: "Share a wall post",
+    title: "Share an InDi TeeVi video",
     intro:
-      "Pick one of your posts, adjust the title, description and thumbnail: you get a public link ready to send, with its social preview.",
-    pick: "Post",
+      "Pick a video, adjust the title, description and thumbnail: you get a public link ready to send, with its social preview.",
+    pick: "Video",
     ptitle: "Displayed title",
     pdesc: "Description",
     pimg: "Share thumbnail (landscape 1200×630)",
@@ -48,21 +45,19 @@ const TXT = {
     copy: "Copy link",
     copied: "Link copied",
     preview: "Preview",
-    empty: "No post to share yet.",
-    signin: "Sign in to compose a link to your posts.",
+    empty: "No published video yet.",
     reset: "Original values",
     open: "Open link",
     village: "Share a RéDaK'Village article",
     magazine: "Share an interactive magazine",
-    teevi: "Share an InDi TeeVi video",
   },
 } as const;
 
-const HEAD_TITLE = "Partager une publication du mur — InDi RaDio";
+const HEAD_TITLE = "Partager une vidéo InDi TeeVi — InDi RaDio";
 const HEAD_DESC =
-  "Composez un lien public vers une publication du mur InDi RaDio avec titre, description et vignette prédéfinis.";
+  "Composez un lien public vers une vidéo InDi TeeVi avec titre, description et vignette prédéfinis.";
 
-export const Route = createFileRoute("/partage/publication/")({
+export const Route = createFileRoute("/partage/teevi/")({
   head: () => ({
     meta: [
       { title: HEAD_TITLE },
@@ -74,47 +69,41 @@ export const Route = createFileRoute("/partage/publication/")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: PostShareComposer,
+  component: TeeviShareComposer,
 });
 
 type Row = {
   id: string;
-  title: string | null;
-  content: string | null;
-  image_url: string | null;
-  image_urls: string[] | null;
-  og_image_url: string | null;
+  title: string;
+  summary: string | null;
 };
 
-function defaults(row: Row) {
-  const text = (row.content || "").replace(/\s+/g, " ").trim();
+function defaults(row: Row, fallbackImg: string) {
   return {
-    title: (row.title || text.slice(0, 80) || "InDi RaDio").trim(),
-    desc: text.slice(0, 220),
-    img: postShareImage(row).image,
+    title: row.title,
+    desc: (row.summary || "").replace(/\s+/g, " ").slice(0, 220).trim(),
+    img: fallbackImg,
   };
 }
 
-function PostShareComposer() {
+function TeeviShareComposer() {
   const { lang } = useLang();
-  const { user, isAdmin } = useAuth();
   const t = TXT[lang === "en" ? "en" : "fr"];
+  const fallbackImg = ogImageForLang(lang === "en" ? "en" : "fr");
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [img, setImg] = useState("");
 
   const { data: rows = [] } = useQuery({
-    queryKey: ["share-composer-posts", user?.id, isAdmin],
-    enabled: !!user,
+    queryKey: ["share-composer-teevi"],
     queryFn: async () => {
-      let q = supabase
-        .from("posts")
-        .select("id, title, content, image_url, image_urls, og_image_url")
+      const { data, error } = await supabase
+        .from("teevi_videos")
+        .select("id, title, summary")
+        .eq("published", true)
         .order("created_at", { ascending: false })
         .limit(60);
-      if (!isAdmin) q = q.eq("author_id", user!.id);
-      const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as Row[];
     },
@@ -123,7 +112,7 @@ function PostShareComposer() {
   const current = rows.find((r) => r.id === id) ?? null;
 
   function select(row: Row) {
-    const d = defaults(row);
+    const d = defaults(row, fallbackImg);
     setId(row.id);
     setTitle(d.title);
     setDesc(d.desc);
@@ -132,14 +121,14 @@ function PostShareComposer() {
 
   const url = useMemo(() => {
     if (!current) return "";
-    const d = defaults(current);
+    const d = defaults(current, fallbackImg);
     const qs = new URLSearchParams();
     if (title && title !== d.title) qs.set("t", title.slice(0, 160));
     if (desc && desc !== d.desc) qs.set("d", desc.slice(0, 300));
     if (img && img !== d.img) qs.set("img", img);
     const q = qs.toString();
-    return `${BASE_URL}/partage/publication/${current.id}${q ? `?${q}` : ""}`;
-  }, [current, title, desc, img]);
+    return `${BASE_URL}/partage/teevi/${current.id}${q ? `?${q}` : ""}`;
+  }, [current, title, desc, img, fallbackImg]);
 
   async function copy() {
     try {
@@ -155,7 +144,7 @@ function PostShareComposer() {
       <header className="card-brut space-y-1 p-4">
         <h1 className="text-xl font-black">{t.title}</h1>
         <p className="text-sm text-muted-foreground">{t.intro}</p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-x-3">
           <Link to="/partage" className="text-sm font-bold text-primary hover:underline">
             {t.village}
           </Link>
@@ -165,17 +154,12 @@ function PostShareComposer() {
           >
             {t.magazine}
           </Link>
-          <Link to="/partage/teevi" className="text-sm font-bold text-primary hover:underline">
-            {t.teevi}
-          </Link>
         </div>
       </header>
 
       <section className="card-brut space-y-2 p-4">
         <span className="text-xs font-black uppercase tracking-wide">{t.pick}</span>
-        {!user ? (
-          <p className="text-sm text-muted-foreground">{t.signin}</p>
-        ) : rows.length === 0 ? (
+        {rows.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t.empty}</p>
         ) : (
           <div className="flex max-h-56 flex-col gap-1 overflow-y-auto">
@@ -188,7 +172,7 @@ function PostShareComposer() {
                   r.id === id ? "bg-primary text-primary-foreground" : "bg-card"
                 }`}
               >
-                {defaults(r).title}
+                {r.title}
               </button>
             ))}
           </div>
@@ -214,7 +198,7 @@ function PostShareComposer() {
             <ImageUploader
               value={img}
               onChange={(v) => setImg(v || "")}
-              folder="posts"
+              folder="teevi"
               usage="cover"
               defaultRatio="16:9"
               label={t.pimg}
@@ -234,10 +218,10 @@ function PostShareComposer() {
               </Button>
               <ShareButton
                 variant="chip"
-                target={{ url: `/partage/publication/${current.id}`, title, text: desc }}
+                target={{ url: `/partage/teevi/${current.id}`, title, text: desc }}
               />
               <Link
-                to="/partage/publication/$id"
+                to="/partage/teevi/$id"
                 params={{ id: current.id }}
                 className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline"
               >

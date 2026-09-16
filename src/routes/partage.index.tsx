@@ -31,6 +31,7 @@ const TXT = {
     empty: "Aucun article publié pour le moment.",
     reset: "Valeurs d'origine",
     open: "Ouvrir le lien",
+    teevi: "Partager une vidéo InDi TeeVi",
   },
   en: {
     title: `Share a ${VILLAGE_NAME} link`,
@@ -47,6 +48,7 @@ const TXT = {
     empty: "No published article yet.",
     reset: "Original values",
     open: "Open link",
+    teevi: "Share an InDi TeeVi video",
   },
 } as const;
 
@@ -149,6 +151,9 @@ function ShareComposer() {
       <header className="card-brut space-y-1 p-4">
         <h1 className="text-xl font-black">{t.title}</h1>
         <p className="text-sm text-muted-foreground">{t.intro}</p>
+        <Link to="/partage/teevi" className="text-sm font-bold text-primary hover:underline">
+          {t.teevi}
+        </Link>
       </header>
 
       <section className="card-brut space-y-2 p-4">
