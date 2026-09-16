@@ -6,6 +6,7 @@ import { clampDescription } from "@/lib/i18n/seo-meta";
 import { ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { ogImageForLang } from "@/lib/og-image";
+import { postShareImage } from "@/lib/post-share-image";
 import { useLang } from "@/lib/i18n";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
