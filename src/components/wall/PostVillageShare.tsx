@@ -67,6 +67,7 @@ export function PostVillageShare({
     image_url: string | null;
     image_urls: string[] | null;
     category: string | null;
+    og_image_url?: string | null;
   };
 }) {
   const { session } = useAuth();
@@ -78,7 +79,7 @@ export function PostVillageShare({
   const plain = stripMediaUrls(post.content).trim();
   const [title, setTitle] = useState(post.title?.trim() || plain.slice(0, 80));
   const [cover, setCover] = useState<string | null>(
-    post.image_url || post.image_urls?.[0] || null,
+    post.og_image_url || post.image_url || post.image_urls?.[0] || null,
   );
   const [category, setCategory] = useState<VillageCategory | null>(
     (post.category as VillageCategory | null) ?? null,
