@@ -303,6 +303,19 @@ function EditProfilePage() {
           </div>
         )}
 
+        <div className="space-y-1.5 rounded-sm border-2 border-border p-3">
+          <div className="text-sm font-black uppercase tracking-wide">Mes publications</div>
+          <p className="text-[11px] text-muted-foreground">
+            Retrouve toutes tes publications (mur général, page perso, abonnés) pour changer leur diffusion ou les supprimer.
+          </p>
+          <Link
+            to="/profile/publications"
+            className="inline-flex items-center gap-1.5 border-2 border-border bg-background px-3 py-2 text-xs font-black uppercase tracking-widest"
+          >
+            Gérer mes publications
+          </Link>
+        </div>
+
         {(profile.role === "artiste" || (profile as any).role === "media") && (
           <div className="space-y-1.5 rounded-sm border-2 border-primary/60 bg-primary/5 p-3">
             <div className="text-sm font-black uppercase tracking-wide">Ma page artiste</div>
