@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
 import { flipHtml5ThumbnailUrl, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
+import { vimeoThumbnail } from "@/lib/teevi-share-image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen, Tv } from "lucide-react";
