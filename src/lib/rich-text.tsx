@@ -32,8 +32,12 @@ const FORMAT_RULES: Array<{ re: RegExp; render: (inner: ReactNode, key: number) 
  * Render a plain string with clickable #hashtags, highlighted @mentions and
  * simple text formatting. Emojis pass through natively. Safe: no HTML injection.
  */
-export function renderRich(text: string | null | undefined): ReactNode {
+export function renderRich(
+  text: string | null | undefined,
+  opts?: { plain?: boolean },
+): ReactNode {
   if (!text) return null;
+  const plain = opts?.plain === true;
   // Find the earliest formatting marker and recurse around it.
   let best: { index: number; len: number; inner: string; render: (i: ReactNode, k: number) => ReactNode } | null = null;
   for (const rule of FORMAT_RULES) {
@@ -47,12 +51,13 @@ export function renderRich(text: string | null | undefined): ReactNode {
     const after = text.slice(best.index + best.len);
     return (
       <>
-        {renderRich(before)}
-        {best.render(renderRich(best.inner), 0)}
-        {renderRich(after)}
+        {renderRich(before, opts)}
+        {best.render(renderRich(best.inner, opts), 0)}
+        {renderRich(after, opts)}
       </>
     );
   }
+
   const parts = text.split(TOKEN_RE);
   return parts.map((p, i) => {
     if (!p) return null;
