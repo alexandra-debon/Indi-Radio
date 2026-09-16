@@ -86,10 +86,12 @@ export const Route = createFileRoute("/partage/$slug")({
 });
 
 function NotFoundCard() {
-  const txt = useVillageTxt();
+  const { lang } = useLang();
   return (
     <div className="card-brut p-6 text-center">
-      <p className="text-sm text-muted-foreground">{txt.notFound}</p>
+      <p className="text-sm text-muted-foreground">
+        {lang === "en" ? "This link is no longer available." : "Ce lien n'est plus disponible."}
+      </p>
       <Link to="/redak-village" className="mt-3 inline-block font-bold text-primary hover:underline">
         {VILLAGE_NAME}
       </Link>
