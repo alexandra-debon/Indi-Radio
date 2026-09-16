@@ -12,7 +12,8 @@ import {
   type VillageCategory,
 } from "@/components/village/VillageCategory";
 import { toast } from "@/lib/toast";
-import { isValidVideoUrl } from "@/lib/media-embed";
+import { hasMusicLink, isValidVideoUrl } from "@/lib/media-embed";
+import { ChallengePicker } from "@/components/village/ChallengeBits";
 import { Loader2, PenSquare, ShieldAlert } from "lucide-react";
 import {
   Dialog,
@@ -38,6 +39,7 @@ export interface VillageArticle {
   magazine_url?: string | null;
   source_kind?: string | null;
   visibility: string;
+  challenge_id?: string | null;
   created_at: string;
   updated_at: string;
   author?: {
@@ -52,13 +54,16 @@ export interface VillageArticle {
 }
 
 const ACK_KEY = "indi.villageShareAck";
+const CHARTER_KEY = "indi.villageMusicCharterAck";
 
 export function VillageArticleEditor({
   article,
+  challengeId,
   onDone,
   onCancel,
 }: {
   article?: VillageArticle;
+  challengeId?: string | null;
   onDone?: (slug: string) => void;
   onCancel?: () => void;
 }) {
@@ -75,8 +80,14 @@ export function VillageArticleEditor({
   );
   const [freeTag, setFreeTag] = useState(article?.free_tag ?? "");
   const [onFeed, setOnFeed] = useState((article?.visibility ?? "feed") === "feed");
+  const [challenge, setChallenge] = useState<string | null>(
+    article?.challenge_id ?? challengeId ?? null,
+  );
   const [warnOpen, setWarnOpen] = useState(false);
   const [ack, setAck] = useState(false);
+  const [charterOpen, setCharterOpen] = useState(false);
+  const [charterAck, setCharterAck] = useState(false);
+  const [charterSkip, setCharterSkip] = useState(false);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -94,6 +105,7 @@ export function VillageArticleEditor({
         category,
         free_tag: freeTag.trim().slice(0, 40) || null,
         visibility: onFeed ? "feed" : "village_only",
+        challenge_id: challenge,
       };
       if (article) {
         const { data, error } = await supabase
@@ -123,7 +135,7 @@ export function VillageArticleEditor({
     onError: (e) => toast.error((e as Error).message),
   });
 
-  const submit = () => {
+  const afterCharter = () => {
     try {
       if (localStorage.getItem(ACK_KEY) === "1") {
         save.mutate();
@@ -134,6 +146,23 @@ export function VillageArticleEditor({
     }
     setAck(false);
     setWarnOpen(true);
+  };
+
+  const submit = () => {
+    const musical = hasMusicLink(`${content} ${video}`);
+    let charterSeen = false;
+    try {
+      charterSeen = localStorage.getItem(CHARTER_KEY) === "1";
+    } catch {
+      charterSeen = false;
+    }
+    if (musical && !charterSeen) {
+      setCharterAck(false);
+      setCharterSkip(false);
+      setCharterOpen(true);
+      return;
+    }
+    afterCharter();
   };
 
   return (
@@ -193,6 +222,8 @@ export function VillageArticleEditor({
 
       <VillageCategoryPicker value={category} onChange={setCategory} />
 
+      <ChallengePicker value={challenge} onChange={setChallenge} />
+
       <div className="space-y-1.5">
         <Label htmlFor="village-tag">{txt.freeTag}</Label>
         <Input
@@ -250,6 +281,54 @@ export function VillageArticleEditor({
           </Button>
         )}
       </div>
+
+      <Dialog open={charterOpen} onOpenChange={setCharterOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{txt.charterTitle}</DialogTitle>
+            <DialogDescription>{txt.charterBody}</DialogDescription>
+          </DialogHeader>
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={charterAck}
+              onChange={(e) => setCharterAck(e.target.checked)}
+              className="mt-0.5 size-4 accent-primary"
+            />
+            <span>{txt.charterAck}</span>
+          </label>
+          <label className="flex items-start gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={charterSkip}
+              onChange={(e) => setCharterSkip(e.target.checked)}
+              className="mt-0.5 size-4 accent-primary"
+            />
+            <span>{txt.charterDontShow}</span>
+          </label>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setCharterOpen(false)}>
+              {txt.cancel}
+            </Button>
+            <Button
+              disabled={!charterAck || save.isPending}
+              onClick={() => {
+                if (charterSkip) {
+                  try {
+                    localStorage.setItem(CHARTER_KEY, "1");
+                  } catch {
+                    /* ignore */
+                  }
+                }
+                setCharterOpen(false);
+                afterCharter();
+              }}
+            >
+              {txt.charterConfirm}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={warnOpen} onOpenChange={setWarnOpen}>
         <DialogContent>
