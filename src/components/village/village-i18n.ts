@@ -47,6 +47,18 @@ const FR = {
   subscribed: "Abonné : vous serez notifié des nouveaux articles.",
   unsubscribed: "Désabonné de RéDaK'Village.",
   subError: "Action impossible pour le moment.",
+  challenges: "Challenges éditoriaux",
+  challengePick: "Répondre à un challenge (optionnel)",
+  challengeNone: "Aucun challenge",
+  challengeAnswer: "Article en réponse à un challenge",
+  challengeAnswerCta: "Répondre à ce challenge",
+  challengeEnds: "Jusqu'au",
+  charterTitle: "Charte : article avec lien musical",
+  charterBody:
+    "Votre article contient un lien musical (Spotify, SoundCloud, YouTube, Bandcamp…). En publiant, vous confirmez que l'artiste ou la musique évoqués sont indépendants, que vous ne recevez aucune rétribution, directe ou indirecte, pour en parler, et que la modération peut retirer l'article en cas de diffusion rémunérée hors charte.",
+  charterAck: "J'ai lu et j'accepte",
+  charterDontShow: "Ne plus me montrer ce message",
+  charterConfirm: "Publier",
 };
 
 const EN: typeof FR = {
