@@ -961,6 +961,7 @@ export function SocialWall() {
                             image_url: p.image_url ?? null,
                             image_urls: p.image_urls ?? null,
                             category: p.category ?? null,
+                            og_image_url: p.og_image_url ?? null,
                           }}
                         />
                       )}
