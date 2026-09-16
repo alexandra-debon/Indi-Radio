@@ -80,7 +80,7 @@ function ChroniquesPage() {
               <ShareButton
                 target={{
                   url: `/chroniques/${r.slug}`,
-                  title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
+                  title: `${r.title} — ${r.artist} · ${lang === "en" ? "Album review" : "Chronique"} Indi Radio`,
                   text:
                     r.excerpt ??
                     (lang === "en"
