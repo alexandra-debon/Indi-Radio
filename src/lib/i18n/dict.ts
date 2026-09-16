@@ -442,7 +442,7 @@ export const dict = {
     "nav.favorites": "Our favorites",
     "nav.clips": "Clip Addict",
     "nav.teevi": "InDi TeeVi",
-    "nav.teeviAdmin": "Vidéos InDi TeeVi",
+    "nav.teeviAdmin": "InDi TeeVi videos",
     "nav.village": "RéDaK'Village",
     "nav.villageAdmin": "RéDaK'Village articles",
     "nav.magazinesAdmin": "Magazine articles",
