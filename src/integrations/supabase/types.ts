@@ -320,6 +320,45 @@ export type Database = {
         }
         Relationships: []
       }
+      badge_definitions: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          key: string
+          label_en: string | null
+          label_fr: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          key: string
+          label_en?: string | null
+          label_fr: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          key?: string
+          label_en?: string | null
+          label_fr?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_author_invites: {
         Row: {
           accepted_at: string | null
@@ -718,6 +757,45 @@ export type Database = {
           kind?: string
           published?: boolean
           social_links?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      editorial_challenges: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string | null
           title?: string
           updated_at?: string
         }
@@ -2057,6 +2135,7 @@ export type Database = {
         Row: {
           author_id: string
           category: string | null
+          challenge_id: string | null
           content: string
           cover_url: string | null
           created_at: string
@@ -2076,6 +2155,7 @@ export type Database = {
         Insert: {
           author_id: string
           category?: string | null
+          challenge_id?: string | null
           content: string
           cover_url?: string | null
           created_at?: string
@@ -2095,6 +2175,7 @@ export type Database = {
         Update: {
           author_id?: string
           category?: string | null
+          challenge_id?: string | null
           content?: string
           cover_url?: string | null
           created_at?: string
@@ -2117,6 +2198,13 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "village_articles_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "editorial_challenges"
             referencedColumns: ["id"]
           },
         ]

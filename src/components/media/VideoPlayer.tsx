@@ -5,12 +5,32 @@ import type { MediaEmbed } from "@/lib/media-embed";
 
 function providerLabel(m: MediaEmbed): string {
   if (m.kind === "youtube") return m.type === "playlist" ? "Playlist YouTube" : "Vidéo YouTube";
-  return "Vidéo Vimeo";
+  if (m.kind === "vimeo") return "Vidéo Vimeo";
+  if (m.kind === "spotify") return "Lecteur Spotify";
+  return "Lecteur SoundCloud";
 }
 
 export function VideoPlayer({ embed }: { embed: MediaEmbed }) {
   const [open, setOpen] = useState(false);
   const label = providerLabel(embed);
+
+  // Lecteurs audio (Spotify / SoundCloud) : hauteur fixe, pas de plein écran.
+  if (embed.type === "audio") {
+    return (
+      <div className="my-2 overflow-hidden rounded-md border border-border bg-card">
+        <iframe
+          src={embed.embedUrl}
+          title={label}
+          height={embed.height}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          className="w-full"
+          style={{ height: embed.height, border: 0 }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="my-2 overflow-hidden rounded-md border border-border bg-black">
