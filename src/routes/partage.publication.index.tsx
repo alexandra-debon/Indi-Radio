@@ -88,7 +88,7 @@ function defaults(row: Row) {
   return {
     title: (row.title || text.slice(0, 80) || "InDi RaDio").trim(),
     desc: text.slice(0, 220),
-    img: row.og_image_url || row.image_url || row.image_urls?.[0] || "",
+    img: postShareImage(row).image,
   };
 }
 
