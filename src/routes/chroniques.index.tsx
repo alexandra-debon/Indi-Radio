@@ -102,7 +102,11 @@ function ChroniquesPage() {
                     width={192}
                     height={192}
                     responsive={[96, 192, 288]}
-                    alt={`Pochette de ${r.title} par ${r.artist}`}
+                    alt={
+                      lang === "en"
+                        ? `Album cover of ${r.title} by ${r.artist}`
+                        : `Pochette de ${r.title} par ${r.artist}`
+                    }
                     className="size-full object-cover"
                   />
                 ) : (
