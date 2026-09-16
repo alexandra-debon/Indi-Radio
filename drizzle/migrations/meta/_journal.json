@@ -141,6 +141,13 @@
       "when": 1789550976125,
       "tag": "0019_badges_points_challenges",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1789552812501,
+      "tag": "0020_indi_teevi",
+      "breakpoints": true
     }
   ]
 }

@@ -1984,6 +1984,123 @@ export type Database = {
         }
         Relationships: []
       }
+      teevi_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          image_captions: string[]
+          image_urls: string[]
+          video_id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          image_captions?: string[]
+          image_urls?: string[]
+          video_id: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          image_captions?: string[]
+          image_urls?: string[]
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teevi_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teevi_comments_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "teevi_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teevi_likes: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teevi_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teevi_likes_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "teevi_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teevi_videos: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          id: string
+          published: boolean
+          summary: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          summary?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          video_url: string
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
       track_history: {
         Row: {
           artist: string
