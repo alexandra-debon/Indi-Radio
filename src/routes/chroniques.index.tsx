@@ -81,7 +81,11 @@ function ChroniquesPage() {
                 target={{
                   url: `/chroniques/${r.slug}`,
                   title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
-                  text: r.excerpt ?? `Chronique de ${r.title} par ${r.artist}`,
+                  text:
+                    r.excerpt ??
+                    (lang === "en"
+                      ? `Album review of ${r.title} by ${r.artist}`
+                      : `Chronique de ${r.title} par ${r.artist}`),
                 }}
                 className="bg-background/80 backdrop-blur"
               />
