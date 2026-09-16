@@ -65,6 +65,10 @@ export function renderRich(
       const raw = p.slice(1);
       const tag = normalizeHashtag(raw);
       if (!tag) return <span key={i}>{p}</span>;
+      if (plain)
+        return (
+          <span key={i} className="font-semibold text-primary">{`#${tag}`}</span>
+        );
       return (
         <Link
           key={i}
@@ -79,8 +83,15 @@ export function renderRich(
     }
     if (p.startsWith("@") && p.length > 1) {
       const pseudo = p.slice(1);
+      if (plain)
+        return (
+          <span key={i} className="mention font-semibold text-primary">
+            {p}
+          </span>
+        );
       return (
         <span key={i} className="mention-wrap inline-flex items-baseline gap-0.5">
+
           <Link
             to="/u/$pseudo"
             params={{ pseudo }}
