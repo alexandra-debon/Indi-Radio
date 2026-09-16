@@ -73,6 +73,7 @@ import { Route as UPseudoIndexRouteImport } from './routes/u.$pseudo.index'
 import { Route as PartagePublicationIndexRouteImport } from './routes/partage.publication.index'
 import { Route as PartageMagazineIndexRouteImport } from './routes/partage.magazine.index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as PartagePublicationIdRouteImport } from './routes/partage.publication.$id'
 import { Route as PartageMagazineIdRouteImport } from './routes/partage.magazine.$id'
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
 import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
@@ -427,6 +428,11 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const PartagePublicationIdRoute = PartagePublicationIdRouteImport.update({
+  id: '/partage/publication/$id',
+  path: '/partage/publication/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartageMagazineIdRoute = PartageMagazineIdRouteImport.update({
   id: '/partage/magazine/$id',
   path: '/partage/magazine/$id',
@@ -680,6 +686,7 @@ export interface FileRoutesByFullPath {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
+  '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
@@ -775,6 +782,7 @@ export interface FileRoutesByTo {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
+  '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine': typeof PartageMagazineIndexRoute
   '/partage/publication': typeof PartagePublicationIndexRoute
@@ -872,6 +880,7 @@ export interface FileRoutesById {
   '/api/public/prewarm-translation': typeof ApiPublicPrewarmTranslationRoute
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
+  '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
@@ -969,6 +978,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
+    | '/partage/publication/$id'
     | '/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
@@ -1064,6 +1074,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
+    | '/partage/publication/$id'
     | '/profile'
     | '/partage/magazine'
     | '/partage/publication'
@@ -1160,6 +1171,7 @@ export interface FileRouteTypes {
     | '/api/public/prewarm-translation'
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
+    | '/partage/publication/$id'
     | '/_authenticated/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
@@ -1240,6 +1252,7 @@ export interface RootRouteChildren {
   ApiPublicPrewarmTranslationRoute: typeof ApiPublicPrewarmTranslationRoute
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
   PartageMagazineIdRoute: typeof PartageMagazineIdRoute
+  PartagePublicationIdRoute: typeof PartagePublicationIdRoute
   PartageMagazineIndexRoute: typeof PartageMagazineIndexRoute
   PartagePublicationIndexRoute: typeof PartagePublicationIndexRoute
   UPseudoIndexRoute: typeof UPseudoIndexRoute
@@ -1703,6 +1716,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/partage/publication/$id': {
+      id: '/partage/publication/$id'
+      path: '/partage/publication/$id'
+      fullPath: '/partage/publication/$id'
+      preLoaderRoute: typeof PartagePublicationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partage/magazine/$id': {
       id: '/partage/magazine/$id'
       path: '/partage/magazine/$id'
@@ -2039,6 +2059,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicProcessTranslationRetriesRoute:
     ApiPublicProcessTranslationRetriesRoute,
   PartageMagazineIdRoute: PartageMagazineIdRoute,
+  PartagePublicationIdRoute: PartagePublicationIdRoute,
   PartageMagazineIndexRoute: PartageMagazineIndexRoute,
   PartagePublicationIndexRoute: PartagePublicationIndexRoute,
   UPseudoIndexRoute: UPseudoIndexRoute,
