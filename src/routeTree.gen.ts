@@ -72,9 +72,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as UPseudoIndexRouteImport } from './routes/u.$pseudo.index'
+import { Route as PartageTeeviIndexRouteImport } from './routes/partage.teevi.index'
 import { Route as PartagePublicationIndexRouteImport } from './routes/partage.publication.index'
 import { Route as PartageMagazineIndexRouteImport } from './routes/partage.magazine.index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as PartageTeeviIdRouteImport } from './routes/partage.teevi.$id'
 import { Route as PartagePublicationIdRouteImport } from './routes/partage.publication.$id'
 import { Route as PartageMagazineIdRouteImport } from './routes/partage.magazine.$id'
 import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
@@ -427,6 +429,11 @@ const UPseudoIndexRoute = UPseudoIndexRouteImport.update({
   path: '/u/$pseudo/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartageTeeviIndexRoute = PartageTeeviIndexRouteImport.update({
+  id: '/partage/teevi/',
+  path: '/partage/teevi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartagePublicationIndexRoute = PartagePublicationIndexRouteImport.update({
   id: '/partage/publication/',
   path: '/partage/publication/',
@@ -443,6 +450,11 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const PartageTeeviIdRoute = PartageTeeviIdRouteImport.update({
+  id: '/partage/teevi/$id',
+  path: '/partage/teevi/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartagePublicationIdRoute = PartagePublicationIdRouteImport.update({
   id: '/partage/publication/$id',
   path: '/partage/publication/$id',
@@ -724,9 +736,11 @@ export interface FileRoutesByFullPath {
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
+  '/partage/teevi/$id': typeof PartageTeeviIdRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
+  '/partage/teevi/': typeof PartageTeeviIndexRoute
   '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
@@ -825,9 +839,11 @@ export interface FileRoutesByTo {
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
+  '/partage/teevi/$id': typeof PartageTeeviIdRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine': typeof PartageMagazineIndexRoute
   '/partage/publication': typeof PartagePublicationIndexRoute
+  '/partage/teevi': typeof PartageTeeviIndexRoute
   '/u/$pseudo': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
@@ -928,9 +944,11 @@ export interface FileRoutesById {
   '/api/public/process-translation-retries': typeof ApiPublicProcessTranslationRetriesRoute
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
+  '/partage/teevi/$id': typeof PartageTeeviIdRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
+  '/partage/teevi/': typeof PartageTeeviIndexRoute
   '/u/$pseudo/': typeof UPseudoIndexRoute
   '/api/public/hooks/indexnow': typeof ApiPublicHooksIndexnowRoute
   '/api/public/hooks/ping-sitemaps': typeof ApiPublicHooksPingSitemapsRoute
@@ -1031,9 +1049,11 @@ export interface FileRouteTypes {
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
+    | '/partage/teevi/$id'
     | '/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
+    | '/partage/teevi/'
     | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
     | '/api/public/hooks/ping-sitemaps'
@@ -1132,9 +1152,11 @@ export interface FileRouteTypes {
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
+    | '/partage/teevi/$id'
     | '/profile'
     | '/partage/magazine'
     | '/partage/publication'
+    | '/partage/teevi'
     | '/u/$pseudo'
     | '/api/public/hooks/indexnow'
     | '/api/public/hooks/ping-sitemaps'
@@ -1234,9 +1256,11 @@ export interface FileRouteTypes {
     | '/api/public/process-translation-retries'
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
+    | '/partage/teevi/$id'
     | '/_authenticated/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
+    | '/partage/teevi/'
     | '/u/$pseudo/'
     | '/api/public/hooks/indexnow'
     | '/api/public/hooks/ping-sitemaps'
@@ -1317,8 +1341,10 @@ export interface RootRouteChildren {
   ApiPublicProcessTranslationRetriesRoute: typeof ApiPublicProcessTranslationRetriesRoute
   PartageMagazineIdRoute: typeof PartageMagazineIdRoute
   PartagePublicationIdRoute: typeof PartagePublicationIdRoute
+  PartageTeeviIdRoute: typeof PartageTeeviIdRoute
   PartageMagazineIndexRoute: typeof PartageMagazineIndexRoute
   PartagePublicationIndexRoute: typeof PartagePublicationIndexRoute
+  PartageTeeviIndexRoute: typeof PartageTeeviIndexRoute
   UPseudoIndexRoute: typeof UPseudoIndexRoute
   ApiPublicHooksIndexnowRoute: typeof ApiPublicHooksIndexnowRoute
   ApiPublicHooksPingSitemapsRoute: typeof ApiPublicHooksPingSitemapsRoute
@@ -1773,6 +1799,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UPseudoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partage/teevi/': {
+      id: '/partage/teevi/'
+      path: '/partage/teevi'
+      fullPath: '/partage/teevi/'
+      preLoaderRoute: typeof PartageTeeviIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partage/publication/': {
       id: '/partage/publication/'
       path: '/partage/publication'
@@ -1793,6 +1826,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile/'
       preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/partage/teevi/$id': {
+      id: '/partage/teevi/$id'
+      path: '/partage/teevi/$id'
+      fullPath: '/partage/teevi/$id'
+      preLoaderRoute: typeof PartageTeeviIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/partage/publication/$id': {
       id: '/partage/publication/$id'
@@ -2167,8 +2207,10 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicProcessTranslationRetriesRoute,
   PartageMagazineIdRoute: PartageMagazineIdRoute,
   PartagePublicationIdRoute: PartagePublicationIdRoute,
+  PartageTeeviIdRoute: PartageTeeviIdRoute,
   PartageMagazineIndexRoute: PartageMagazineIndexRoute,
   PartagePublicationIndexRoute: PartagePublicationIndexRoute,
+  PartageTeeviIndexRoute: PartageTeeviIndexRoute,
   UPseudoIndexRoute: UPseudoIndexRoute,
   ApiPublicHooksIndexnowRoute: ApiPublicHooksIndexnowRoute,
   ApiPublicHooksPingSitemapsRoute: ApiPublicHooksPingSitemapsRoute,
