@@ -79,6 +79,7 @@ import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/m
 import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
+import { Route as AuthenticatedProfilePublicationsRouteImport } from './routes/_authenticated/profile.publications'
 import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
 import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
 import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
@@ -459,6 +460,12 @@ const ApiPublicAdminMessageEmailRoute =
     path: '/api/public/admin-message-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedProfilePublicationsRoute =
+  AuthenticatedProfilePublicationsRouteImport.update({
+    id: '/profile/publications',
+    path: '/profile/publications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileLikesRoute =
   AuthenticatedProfileLikesRouteImport.update({
     id: '/profile/likes',
@@ -659,6 +666,7 @@ export interface FileRoutesByFullPath {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
+  '/profile/publications': typeof AuthenticatedProfilePublicationsRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
@@ -752,6 +760,7 @@ export interface FileRoutesByTo {
   '/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/profile/edit': typeof AuthenticatedProfileEditRoute
   '/profile/likes': typeof AuthenticatedProfileLikesRoute
+  '/profile/publications': typeof AuthenticatedProfilePublicationsRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
@@ -847,6 +856,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/badges': typeof AuthenticatedProfileBadgesRoute
   '/_authenticated/profile/edit': typeof AuthenticatedProfileEditRoute
   '/_authenticated/profile/likes': typeof AuthenticatedProfileLikesRoute
+  '/_authenticated/profile/publications': typeof AuthenticatedProfilePublicationsRoute
   '/api/public/admin-message-email': typeof ApiPublicAdminMessageEmailRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
@@ -942,6 +952,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/profile/likes'
+    | '/profile/publications'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/indexnow-key.txt'
@@ -1035,6 +1046,7 @@ export interface FileRouteTypes {
     | '/profile/badges'
     | '/profile/edit'
     | '/profile/likes'
+    | '/profile/publications'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/indexnow-key.txt'
@@ -1129,6 +1141,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/badges'
     | '/_authenticated/profile/edit'
     | '/_authenticated/profile/likes'
+    | '/_authenticated/profile/publications'
     | '/api/public/admin-message-email'
     | '/api/public/health'
     | '/api/public/indexnow-key.txt'
@@ -1719,6 +1732,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile/publications': {
+      id: '/_authenticated/profile/publications'
+      path: '/profile/publications'
+      fullPath: '/profile/publications'
+      preLoaderRoute: typeof AuthenticatedProfilePublicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/likes': {
       id: '/_authenticated/profile/likes'
       path: '/profile/likes'
@@ -1910,6 +1930,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileBadgesRoute: typeof AuthenticatedProfileBadgesRoute
   AuthenticatedProfileEditRoute: typeof AuthenticatedProfileEditRoute
   AuthenticatedProfileLikesRoute: typeof AuthenticatedProfileLikesRoute
+  AuthenticatedProfilePublicationsRoute: typeof AuthenticatedProfilePublicationsRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
 }
 
@@ -1923,6 +1944,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileBadgesRoute: AuthenticatedProfileBadgesRoute,
   AuthenticatedProfileEditRoute: AuthenticatedProfileEditRoute,
   AuthenticatedProfileLikesRoute: AuthenticatedProfileLikesRoute,
+  AuthenticatedProfilePublicationsRoute: AuthenticatedProfilePublicationsRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
 }
 
