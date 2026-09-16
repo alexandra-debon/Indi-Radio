@@ -9,7 +9,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { stripMediaUrls } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
-import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock } from "lucide-react";
+import { CalendarDays, Ticket, Heart, HeartOff, Newspaper, Lock, Trash2 } from "lucide-react";
 import { PostInteractions, usePostInteractions } from "@/components/wall/PostInteractions";
 import { CategoryBadge, CategoryFilter, type PostCategory } from "@/components/social/PostCategory";
 import { useState } from "react";
@@ -48,6 +48,10 @@ const TXT = {
     onlyHere: "Exclusivité de cette page",
     followersOnly: "Réservé aux abonnés",
     lockedHint: "Abonne-toi pour voir les publications réservées aux abonnés.",
+    deletePost: "Supprimer",
+    deleteConfirm: "Supprimer cette publication ?",
+    deleted: "Publication supprimée",
+
   },
   en: {
     follow: "Follow",
@@ -63,6 +67,10 @@ const TXT = {
     onlyHere: "Exclusive to this page",
     followersOnly: "Followers only",
     lockedHint: "Follow to see followers-only posts.",
+    deletePost: "Delete",
+    deleteConfirm: "Delete this post?",
+    deleted: "Post deleted",
+
   },
 } as const;
 
@@ -238,6 +246,22 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
   });
 
   const [category, setCategory] = useState<PostCategory | null>(null);
+  const qcPosts = useQueryClient();
+
+  const removePost = useMutation({
+    mutationFn: async (postId: string) => {
+      const { error } = await supabase.from("posts").delete().eq("id", postId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success(txt.deleted);
+      qcPosts.invalidateQueries({ queryKey: ["artist-posts-public", artistId] });
+      qcPosts.invalidateQueries({ queryKey: ["wall-posts"] });
+      qcPosts.invalidateQueries({ queryKey: ["wall-compact"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
 
   const { data: posts = [] } = useQuery<ArtistPost[]>({
     queryKey: ["artist-posts-public", artistId],
@@ -292,7 +316,23 @@ export function ArtistPosts({ artistId, accent }: { artistId: string; accent?: s
                         {p.visibility === "followers_only" ? txt.followersOnly : txt.onlyHere}
                       </span>
                     )}
+                    {isSelf && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-1.5 text-destructive"
+                        aria-label={txt.deletePost}
+                        disabled={removePost.isPending}
+                        onClick={() => {
+                          if (confirm(txt.deleteConfirm)) removePost.mutate(p.id);
+                        }}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    )}
                   </div>
+
                 </div>
                 {text && (
                   <TranslatedText
