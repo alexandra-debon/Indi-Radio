@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/lib/toast";
 import { parseMediaUrl } from "@/lib/media-embed";
+import { fetchVimeoThumbnail, vimeoThumbnail } from "@/lib/teevi-share-image";
+import { ImageUploader } from "@/components/media/ImageUploader";
 import { useTeeviTxt, type TeeviVideo } from "@/components/teevi/teevi-i18n";
 
 export function TeeviVideoEditor({
@@ -29,14 +31,20 @@ export function TeeviVideoEditor({
   const [summary, setSummary] = useState(video?.summary ?? "");
   const [tags, setTags] = useState((video?.tags ?? []).join(", "));
   const [published, setPublished] = useState(video?.published ?? true);
+  const [ogImage, setOgImage] = useState(video?.og_image_url ?? "");
 
   const save = useMutation({
     mutationFn: async () => {
       if (!title.trim()) throw new Error(txt.titleRequired);
       const media = parseMediaUrl(videoUrl.trim());
       if (!media || media.kind !== "vimeo") throw new Error(txt.videoRequired);
+      const url = videoUrl.trim();
+      const auto = ogImage.trim()
+        ? null
+        : (await fetchVimeoThumbnail(url)) || vimeoThumbnail(url);
       const payload = {
         title: title.trim(),
+        og_image_url: ogImage.trim() || auto,
         video_url: videoUrl.trim(),
         summary: summary.trim() || null,
         tags: tags
@@ -96,6 +104,17 @@ export function TeeviVideoEditor({
           rows={4}
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>{txt.formImage}</Label>
+        <ImageUploader
+          value={ogImage}
+          onChange={(v) => setOgImage(v ?? "")}
+          folder="teevi"
+          usage="cover"
+          defaultRatio="16:9"
         />
       </div>
 

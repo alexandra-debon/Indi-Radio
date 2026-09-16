@@ -14,6 +14,7 @@ const FR = {
   formSummary: "Résumé (optionnel)",
   formTags: "Tags (séparés par des virgules)",
   formTagsHint: "ex. live, interview, documentaire",
+  formImage: "Vignette de partage (paysage 1200×630 — générée automatiquement si vide)",
   published: "Publiée",
   save: "Enregistrer",
   cancel: "Annuler",
@@ -48,6 +49,7 @@ const EN: typeof FR = {
   formSummary: "Summary (optional)",
   formTags: "Tags (comma separated)",
   formTagsHint: "e.g. live, interview, documentary",
+  formImage: "Share thumbnail (landscape 1200×630 — auto-generated if empty)",
   published: "Published",
   save: "Save",
   cancel: "Cancel",
@@ -80,6 +82,7 @@ export interface TeeviVideo {
   video_url: string;
   summary: string | null;
   tags: string[] | null;
+  og_image_url: string | null;
   published: boolean;
   author_id: string | null;
   created_at: string;

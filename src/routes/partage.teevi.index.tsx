@@ -9,6 +9,7 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { ShareButton } from "@/components/share/ShareButton";
 import { Copy, Link2 } from "lucide-react";
 import { toast } from "@/lib/toast";
+import { teeviShareImage } from "@/lib/teevi-share-image";
 import { ogImageForLang } from "@/lib/og-image";
 import { useLang } from "@/lib/i18n";
 
@@ -76,13 +77,15 @@ type Row = {
   id: string;
   title: string;
   summary: string | null;
+  video_url: string | null;
+  og_image_url: string | null;
 };
 
 function defaults(row: Row, fallbackImg: string) {
   return {
     title: row.title,
     desc: (row.summary || "").replace(/\s+/g, " ").slice(0, 220).trim(),
-    img: fallbackImg,
+    img: teeviShareImage(row, "fr").image || fallbackImg,
   };
 }
 
@@ -100,7 +103,7 @@ function TeeviShareComposer() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("teevi_videos")
-        .select("id, title, summary")
+        .select("id, title, summary, video_url, og_image_url")
         .eq("published", true)
         .order("created_at", { ascending: false })
         .limit(60);

@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
 import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
 import { flipHtml5ThumbnailUrl, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
+import { vimeoThumbnail } from "@/lib/teevi-share-image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { Heart, MessageCircle, Pin, PenSquare, Newspaper, BookOpen, Tv } from "lucide-react";
@@ -315,7 +316,7 @@ function FeedTeasers() {
           .limit(2),
         supabase
           .from("teevi_videos")
-          .select("id, title, summary, created_at")
+          .select("id, title, summary, video_url, og_image_url, created_at")
           .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
@@ -378,7 +379,7 @@ function FeedTeasers() {
           id: r.id,
           title: r.title,
           excerpt: (r.summary || "").slice(0, 180),
-          cover: null,
+          cover: r.og_image_url || vimeoThumbnail(r.video_url),
           date: r.created_at,
         });
       }
