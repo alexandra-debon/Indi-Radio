@@ -48,6 +48,10 @@ const TXT = {
     onlyHere: "Exclusivité de cette page",
     followersOnly: "Réservé aux abonnés",
     lockedHint: "Abonne-toi pour voir les publications réservées aux abonnés.",
+    deletePost: "Supprimer",
+    deleteConfirm: "Supprimer cette publication ?",
+    deleted: "Publication supprimée",
+
   },
   en: {
     follow: "Follow",
@@ -63,6 +67,10 @@ const TXT = {
     onlyHere: "Exclusive to this page",
     followersOnly: "Followers only",
     lockedHint: "Follow to see followers-only posts.",
+    deletePost: "Delete",
+    deleteConfirm: "Delete this post?",
+    deleted: "Post deleted",
+
   },
 } as const;
 
