@@ -67,7 +67,7 @@ export const Route = createFileRoute("/partage/magazine/")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: MagazineShareComposer;
+  component: MagazineShareComposer,
 });
 
 type Row = {
