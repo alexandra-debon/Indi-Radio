@@ -175,7 +175,7 @@ function ChroniqueDetailPage() {
       <header className="card-brut flex flex-col gap-4 p-4 sm:flex-row">
         <div className="mx-auto size-40 shrink-0 overflow-hidden rounded bg-muted sm:mx-0">
           {r.cover_url ? (
-            <img src={r.cover_url} alt={`Pochette de ${r.title} par ${r.artist}`} className="size-full object-cover" />
+            <img src={r.cover_url} alt={en ? `Album cover of ${r.title} by ${r.artist}` : `Pochette de ${r.title} par ${r.artist}`} className="size-full object-cover" />
           ) : (
             <div className="grid size-full place-items-center"><Disc3 className="size-12 text-muted-foreground" /></div>
           )}
@@ -187,8 +187,8 @@ function ChroniqueDetailPage() {
             </div>
             <ShareButton
               target={{
-                title: `${r.title} — ${r.artist} · Chronique Indi Radio`,
-                text: r.excerpt ?? `Chronique de ${r.title} par ${r.artist}`,
+                title: `${r.title} — ${r.artist} · ${en ? "Album review" : "Chronique"} Indi Radio`,
+                text: r.excerpt ?? (en ? `Album review of ${r.title} by ${r.artist}` : `Chronique de ${r.title} par ${r.artist}`),
               }}
               variant="chip"
             />
