@@ -15,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ShareButton } from "@/components/share/ShareButton";
+import { PostVillageShare } from "@/components/wall/PostVillageShare";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { Input } from "@/components/ui/input";
@@ -938,6 +939,18 @@ export function SocialWall() {
                         <MessageCircle className="size-3.5" />
                         <span>{postComments.length}</span>
                       </button>
+                      {isOwner && (
+                        <PostVillageShare
+                          post={{
+                            id: p.id,
+                            title: p.title ?? null,
+                            content: p.content,
+                            image_url: p.image_url ?? null,
+                            image_urls: p.image_urls ?? null,
+                            category: p.category ?? null,
+                          }}
+                        />
+                      )}
                       <ShareButton
                         target={{
                           url: `/p/${p.id}`,
