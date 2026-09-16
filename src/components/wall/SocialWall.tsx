@@ -938,6 +938,18 @@ export function SocialWall() {
                         <MessageCircle className="size-3.5" />
                         <span>{postComments.length}</span>
                       </button>
+                      {isOwner && (
+                        <PostVillageShare
+                          post={{
+                            id: p.id,
+                            title: p.title ?? null,
+                            content: p.content,
+                            image_url: p.image_url ?? null,
+                            image_urls: p.image_urls ?? null,
+                            category: p.category ?? null,
+                          }}
+                        />
+                      )}
                       <ShareButton
                         target={{
                           url: `/p/${p.id}`,
