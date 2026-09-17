@@ -31,7 +31,9 @@ function AdminTeeviPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("teevi_videos")
-        .select("id, title, video_url, summary, tags, published, author_id, created_at, updated_at")
+        .select(
+          "id, title, video_url, summary, tags, published, author_id, created_at, updated_at, og_image_url",
+        )
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
