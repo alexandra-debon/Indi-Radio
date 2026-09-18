@@ -180,7 +180,22 @@ function ShopCard({ item, accent, isAdmin, compact, artistId }: { item: ShopItem
           className="mt-2"
           style={accent ? { backgroundColor: accent, color: "#000", borderColor: accent } : undefined}
         >
-          <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
+          <a
+            href={item.external_url}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() =>
+              void logShopClick({
+                itemId: item.id,
+                artistId: artistId ?? null,
+                itemTitle: item.title,
+                ctaKind: item.cta_kind,
+                format: item.format,
+                externalUrl: item.external_url,
+                source: "artist",
+              })
+            }
+          >
             <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
           </a>
         </Button>
