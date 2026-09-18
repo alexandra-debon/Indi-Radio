@@ -30,17 +30,21 @@ export const Route = createFileRoute("/sitemap-users.xml")({
           // 301-redirect from `/u/$pseudo`, so they must NOT appear here.
           const { data: profiles } = await sb
             .from("profiles")
-            .select("pseudo, updated_at, quarantined_at, page_indexable")
+            .select("pseudo, updated_at, quarantined_at, page_indexable, role, is_certified, is_team_indi")
             .is("quarantined_at", null)
             .neq("page_indexable", false)
             .order("updated_at", { ascending: false })
             .limit(MAX_PROFILES);
           for (const r of profiles ?? []) {
             if (!r.pseudo) continue;
+            // Les pages artistes/médias certifiés sont les plus utiles en
+            // recherche : priorité et fréquence de crawl plus élevées.
+            const isArtist = r.role === "artiste" || r.role === "media";
+            const isPro = isArtist || r.is_team_indi === true;
             entries.push({
               path: `/u/${encodeURIComponent(r.pseudo)}`,
-              changefreq: "weekly",
-              priority: "0.5",
+              changefreq: isPro ? "daily" : "weekly",
+              priority: isArtist && r.is_certified ? "0.8" : isPro ? "0.7" : "0.5",
               lastmod: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
             });
           }

@@ -134,7 +134,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, social_links, website")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -156,20 +156,33 @@ export const Route = createFileRoute("/u/$pseudo/")({
     const requestedUrl = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
     const aliasedCasing =
       loaderData?.pseudo && loaderData.pseudo !== params.pseudo;
+    const isArtist = loaderData?.role === "artiste" || (loaderData as any)?.role === "media";
     const roleLabel = loaderData?.is_team_indi
       ? "Team InDi"
       : loaderData?.role === "artiste"
-        ? "Artiste"
-        : loaderData?.role === "animateur"
-          ? "Animateur"
-          : "Auditeur";
-    const title = `@${pseudo} — ${roleLabel} sur InDi RaDio`;
+        ? "Artiste indépendant"
+        : (loaderData as any)?.role === "media"
+          ? "Média indépendant"
+          : loaderData?.role === "animateur"
+            ? "Animateur"
+            : "Auditeur";
+    // Le nom de scène est le terme que les internautes recherchent : il passe
+    // en tête du titre, le pseudo reste en repli.
+    const stageName = ((loaderData as any)?.stage_name ?? "").trim();
+    const displayName = stageName || pseudo;
+    const title = isArtist
+      ? `${displayName} — ${roleLabel} sur InDi RaDio`
+      : `@${pseudo} — ${roleLabel} sur InDi RaDio`;
     const bio = (loaderData?.bio ?? "").replace(/\s+/g, " ").trim();
-    const desc =
-      bio.slice(0, 180) ||
-      `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
-        loaderData ? `, niveau ${loaderData.level} · ${loaderData.points} pts` : ""
-      }. Réseau social musique indépendante.`;
+    const pitch = (((loaderData as any)?.gallery_summary ?? "") as string).replace(/\s+/g, " ").trim();
+    const summarySource = pitch || bio;
+    const desc = summarySource
+      ? `${summarySource.slice(0, 150)}${summarySource.length > 150 ? "…" : ""} — ${displayName} sur InDi RaDio, la radio de la culture indépendante.`
+      : isArtist
+        ? `${displayName}, ${roleLabel.toLowerCase()} sur InDi RaDio : actualités, dates de concert, boutique et publications de l'artiste.`
+        : `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
+            loaderData ? `, niveau ${loaderData.level} · ${loaderData.points} pts` : ""
+          }. Réseau social de la musique indépendante.`;
     const meta: Array<Record<string, string>> = [
       { title },
       { name: "description", content: desc },
@@ -180,7 +193,10 @@ export const Route = createFileRoute("/u/$pseudo/")({
       { property: "og:url", content: canonicalUrl },
       { property: "og:type", content: "profile" },
       { property: "profile:username", content: pseudo },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:site_name", content: "InDi RaDio" },
+      { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_US" },
     ];
     // Unresolved pseudo (no profile, no redirect target) — keep it out of the
     // index so stale links don't pollute search results.
@@ -194,6 +210,11 @@ export const Route = createFileRoute("/u/$pseudo/")({
       // canonical URL and not to index this alias.
       meta.push({ name: "robots", content: "noindex, follow" });
     }
+    const socials = ((loaderData as any)?.social_links ?? {}) as Record<string, unknown>;
+    const sameAs = [
+      ...Object.values(socials),
+      (loaderData as any)?.website,
+    ].filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u));
     const ogImage = (loaderData as any)?.banner_url || loaderData?.avatar_url;
     if (ogImage) {
       meta.push({ property: "og:image", content: ogImage });
@@ -210,19 +231,26 @@ export const Route = createFileRoute("/u/$pseudo/")({
             "@type": "ProfilePage",
             url: canonicalUrl,
             ...(aliasedCasing ? { sameAs: [requestedUrl] } : {}),
+            name: title,
+            description: desc,
+            inLanguage: "fr-FR",
             mainEntity: {
-              "@type": "Person",
-              name: pseudo,
+              "@type": isArtist ? "MusicGroup" : "Person",
+              name: displayName,
               alternateName: `@${pseudo}`,
+              url: canonicalUrl,
               ...(loaderData?.avatar_url ? { image: loaderData.avatar_url } : {}),
-              ...(bio ? { description: bio } : {}),
+              ...(summarySource ? { description: summarySource } : {}),
+              ...(sameAs.length > 0 ? { sameAs } : {}),
             },
           }),
         },
         breadcrumbLd([
           HOME_CRUMB,
-          { name: "Top utilisateurs", url: `${SITE_ORIGIN}/top-users` },
-          { name: `@${pseudo}`, url: canonicalUrl },
+          isArtist
+            ? { name: "Artistes", url: `${SITE_ORIGIN}/artistes` }
+            : { name: "Top utilisateurs", url: `${SITE_ORIGIN}/top-users` },
+          { name: isArtist ? displayName : `@${pseudo}`, url: canonicalUrl },
         ]),
       ],
     };
