@@ -53,6 +53,7 @@ const PAGE_TXT = {
       "Les objets mis en boutique publique par les artistes indépendants d'InDi RaDio : disques, merch, billets de concert. Chaque achat va directement à l'artiste.",
     by: "Par",
     empty: "Aucun objet en boutique pour le moment.",
+    viewArtistShop: "Voir la boutique de l'artiste",
   },
   en: {
     title: "InDi Artists Shop",
@@ -60,6 +61,7 @@ const PAGE_TXT = {
       "Items put in the public shop by the independent artists of InDi RaDio: records, merch, gig tickets. Every purchase goes straight to the artist.",
     by: "By",
     empty: "Nothing in the shop yet.",
+    viewArtistShop: "View the artist's shop",
   },
 } as const;
 
@@ -145,6 +147,13 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
           <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
             <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
           </a>
+        </Button>
+      )}
+      {item.artist && (
+        <Button asChild size="sm" variant="outline" className="mt-1.5">
+          <Link to="/u/$pseudo" params={{ pseudo: item.artist.pseudo }} hash="boutique">
+            <ShoppingBag className="size-4" /> {page.viewArtistShop}
+          </Link>
         </Button>
       )}
     </div>
@@ -233,10 +242,28 @@ function BoutiquePage() {
           {visible.length === 0 ? (
             <p className="text-sm text-muted-foreground">{txt.noneForFormat}</p>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {visible.map((i) => (
-                <ItemCard key={i.id} item={i} />
-              ))}
+            <div className="space-y-5">
+              {availableFormats
+                .filter((f) => (format ? f === format : true))
+                .map((f) => {
+                  const group = visible.filter((i) => i.format === f);
+                  if (group.length === 0) return null;
+                  return (
+                    <section key={f} className="card-brut p-3">
+                      <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+                        {f}
+                        <span className="border border-border px-1.5 py-0.5 text-[9px] font-black text-muted-foreground">
+                          {group.length}
+                        </span>
+                      </h2>
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {group.map((i) => (
+                          <ItemCard key={i.id} item={i} />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
             </div>
           )}
         </>
