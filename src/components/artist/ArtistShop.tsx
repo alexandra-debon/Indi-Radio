@@ -44,6 +44,9 @@ const TXT = {
     filterLabel: "Format",
     allFormats: "Tout",
     noneForFormat: "Aucun objet dans ce format.",
+    refundBefore: "Chaque achat que vous effectuez va à ",
+    refundHighlight: "100\u00A0% directement à l'artiste",
+    refundAfter: ", sans la moindre retenue.",
   },
   en: {
     shop: "Shop",
@@ -59,6 +62,9 @@ const TXT = {
     filterLabel: "Format",
     allFormats: "All",
     noneForFormat: "No item in this format.",
+    refundBefore: "Every purchase you make goes ",
+    refundHighlight: "100% straight to the artist",
+    refundAfter: ", with no deduction at all.",
   },
 } as const;
 
