@@ -16,7 +16,9 @@ import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/compon
 import { CategoryPicker, type PostCategory } from "@/components/social/PostCategory";
 import { isValidVideoUrl } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
-import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff, Globe, HelpCircle } from "lucide-react";
+import { PendingCertificationNotice } from "@/components/artist/PendingCertificationNotice";
+import { openArtistTour } from "@/components/onboarding/ArtistTour";
 
 export const Route = createFileRoute("/_authenticated/profile/artiste")({
   head: () => ({
@@ -60,6 +62,9 @@ function ArtistSpacePage() {
   const [showEvents, setShowEvents] = useState(true);
   const [showShop, setShowShop] = useState(true);
   const [showPosts, setShowPosts] = useState(true);
+  const [bannerColor, setBannerColor] = useState("");
+  const [bannerKind, setBannerKind] = useState<"photo" | "color">("photo");
+  const [indexable, setIndexable] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
@@ -69,12 +74,27 @@ function ArtistSpacePage() {
     setShowEvents((profile as any).show_events_section ?? true);
     setShowShop((profile as any).show_shop_section ?? true);
     setShowPosts((profile as any).show_posts_section ?? true);
+    setBannerColor((profile as any).banner_color ?? "");
+    setBannerKind((profile as any).banner_url ? "photo" : (profile as any).banner_color ? "color" : "photo");
+    setIndexable((profile as any).page_indexable ?? true);
     const sl = (profile as any).social_links;
     setLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
   }, [profile]);
 
   const uid = session?.user.id ?? null;
-  const isArtistOrMedia = profile?.role === "artiste" || (profile as any)?.role === "media";
+  const requestedRole = (profile as any)?.role_requested as string | undefined;
+  // Accès dès la candidature déposée : l'artiste peut tout préparer avant la
+  // validation. L'affichage public reste celui d'un auditeur tant que
+  // `role` n'a pas été basculé par l'équipe.
+  const isArtistOrMedia =
+    profile?.role === "artiste" ||
+    (profile as any)?.role === "media" ||
+    requestedRole === "artiste" ||
+    requestedRole === "media";
+  const isPendingArtist =
+    (profile as any)?.role_request_status === "pending" &&
+    profile?.role !== "artiste" &&
+    (profile as any)?.role !== "media";
 
   const { data: events = [] } = useQuery<ArtistEvent[]>({
     queryKey: ["artist-events", uid],
@@ -228,12 +248,18 @@ function ArtistSpacePage() {
       toast.error("Couleur invalide (format #RRGGBB)");
       return;
     }
+    if (bannerKind === "color" && bannerColor && !HEX_RE.test(bannerColor)) {
+      toast.error("Couleur de bannière invalide (format #RRGGBB)");
+      return;
+    }
     setSaving(true);
     try {
       const { error } = await supabase
         .from("profiles")
         .update({
-          banner_url: banner || null,
+          banner_url: bannerKind === "photo" ? banner || null : null,
+          banner_color: bannerKind === "color" ? bannerColor || null : null,
+          page_indexable: indexable,
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
           social_links: sanitizeLinks(links),
@@ -271,8 +297,12 @@ function ArtistSpacePage() {
       <Link to="/profile" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
         <ArrowLeft className="size-4" /> Retour
       </Link>
+      {isPendingArtist && <PendingCertificationNotice />}
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="section-title">Ma page artiste</h1>
+        <Button type="button" variant="outline" size="sm" onClick={() => openArtistTour()}>
+          <HelpCircle className="size-4" /> Visite guidée artiste
+        </Button>
         <div className="text-xs text-muted-foreground">
           {followers} abonné{followers > 1 ? "s" : ""} ·{" "}
           <Link to="/u/$pseudo" params={{ pseudo: profile.pseudo }} className="underline">
@@ -285,15 +315,63 @@ function ArtistSpacePage() {
       <form onSubmit={saveIdentity} className="card-brut space-y-5 p-4">
         <div className="space-y-1.5">
           <Label className="flex items-center gap-1.5"><ImageIcon className="size-4" /> Bannière</Label>
+          <div className="flex gap-2">
+            {([["photo", "Photo"], ["color", "Aplat de couleur"]] as const).map(([k, lbl]) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setBannerKind(k)}
+                aria-pressed={bannerKind === k}
+                className={
+                  "border-2 border-border px-2 py-1 text-[11px] font-black uppercase tracking-wide " +
+                  (bannerKind === k ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground")
+                }
+              >
+                {lbl}
+              </button>
+            ))}
+          </div>
           <p className="text-[11px] text-muted-foreground">
             Format large conseillé 2048 × 1152 px. Garde le texte et le logo au centre : sur mobile, seule la zone
             centrale (environ 1235 × 338 px) reste visible.
           </p>
-          <ImageUploader value={banner} onChange={setBanner} folder={`banners/${session.user.id}`} label="Bannière (2048×1152)" usage="banner" defaultRatio="16:9" />
-          {banner && (
+          {bannerKind === "photo" && (
+            <ImageUploader value={banner} onChange={setBanner} folder={`banners/${session.user.id}`} label="Bannière (2048×1152)" usage="banner" defaultRatio="16:9" />
+          )}
+          {bannerKind === "photo" && banner && (
             <div className="relative overflow-hidden rounded-sm border-2 border-border">
               <img src={banner} alt="Aperçu de la bannière" className="aspect-[16/9] w-full object-cover sm:aspect-[1920/480]" />
               <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[60%] -translate-x-1/2 border-x-2 border-dashed border-primary/70" />
+            </div>
+          )}
+          {bannerKind === "color" && (
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                {ACCENT_PRESETS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    aria-label={`Bannière ${c}`}
+                    onClick={() => setBannerColor(c)}
+                    className={`size-8 rounded-sm border-2 ${bannerColor.toLowerCase() === c.toLowerCase() ? "border-foreground" : "border-border"}`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+                <Input
+                  value={bannerColor}
+                  onChange={(e) => setBannerColor(e.target.value)}
+                  placeholder="#FFD400"
+                  className="w-32"
+                  aria-label="Couleur de la bannière"
+                />
+              </div>
+              <div
+                className="aspect-[6/1] w-full border-2 border-border"
+                style={{ backgroundColor: bannerColor || "hsl(var(--muted))" }}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Sans photo ni couleur choisie, ta couleur d'accent est utilisée pour la bannière.
+              </p>
             </div>
           )}
         </div>
@@ -352,6 +430,19 @@ function ArtistSpacePage() {
           ))}
           <p className="text-[11px] text-muted-foreground">
             Une section masquée disparaît entièrement de ta page publique.
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="flex items-center justify-between gap-3 border-2 border-border p-2 text-sm font-semibold">
+            <span className="flex items-center gap-1.5">
+              <Globe className="size-4" /> Rendre ma page visible sur les sites externes / moteurs de recherche
+            </span>
+            <Switch checked={indexable} onCheckedChange={setIndexable} aria-label="Page visible sur les moteurs de recherche" />
+          </label>
+          <p className="text-[11px] text-muted-foreground">
+            Désactivé, ta page reste accessible par son lien direct mais n'est plus référencée par Google et les
+            autres moteurs, ni listée dans le plan du site.
           </p>
         </div>
 

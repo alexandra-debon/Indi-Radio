@@ -30,8 +30,9 @@ export const Route = createFileRoute("/sitemap-users.xml")({
           // 301-redirect from `/u/$pseudo`, so they must NOT appear here.
           const { data: profiles } = await sb
             .from("profiles")
-            .select("pseudo, updated_at, quarantined_at")
+            .select("pseudo, updated_at, quarantined_at, page_indexable")
             .is("quarantined_at", null)
+            .neq("page_indexable", false)
             .order("updated_at", { ascending: false })
             .limit(MAX_PROFILES);
           for (const r of profiles ?? []) {

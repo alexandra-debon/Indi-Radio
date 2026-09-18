@@ -1729,6 +1729,7 @@ export type Database = {
           accent_color: string | null
           avatar_url: string | null
           badges: string[]
+          banner_color: string | null
           banner_url: string | null
           bio: string | null
           created_at: string
@@ -1740,6 +1741,7 @@ export type Database = {
           is_team_indi: boolean
           lang: string | null
           level: number
+          page_indexable: boolean
           points: number
           pseudo: string
           punchline: string | null
@@ -1763,6 +1765,7 @@ export type Database = {
           accent_color?: string | null
           avatar_url?: string | null
           badges?: string[]
+          banner_color?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
@@ -1774,6 +1777,7 @@ export type Database = {
           is_team_indi?: boolean
           lang?: string | null
           level?: number
+          page_indexable?: boolean
           points?: number
           pseudo: string
           punchline?: string | null
@@ -1797,6 +1801,7 @@ export type Database = {
           accent_color?: string | null
           avatar_url?: string | null
           badges?: string[]
+          banner_color?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
@@ -1808,6 +1813,7 @@ export type Database = {
           is_team_indi?: boolean
           lang?: string | null
           level?: number
+          page_indexable?: boolean
           points?: number
           pseudo?: string
           punchline?: string | null

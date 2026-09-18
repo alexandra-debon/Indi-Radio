@@ -169,6 +169,13 @@
       "when": 1789765736317,
       "tag": "0023_shop_click_events",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1789766380101,
+      "tag": "0024_profiles_banner_color_and_indexable",
+      "breakpoints": true
     }
   ]
 }

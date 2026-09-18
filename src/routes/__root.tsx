@@ -30,6 +30,7 @@ import { SeoLocalizer } from "@/components/i18n/SeoLocalizer";
 import { LangUrlSync } from "@/components/i18n/LangUrlSync";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { StatusTour } from "@/components/onboarding/StatusTour";
+import { ArtistTour } from "@/components/onboarding/ArtistTour";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
 import { redirect } from "@tanstack/react-router";
@@ -316,6 +317,7 @@ function RootComponent() {
           <LangUrlSync />
           <OnboardingTour />
           <StatusTour />
+          <ArtistTour />
           <CookieConsent />
           <PlausibleRouteTracker />
         </RadioPlayerProvider>
