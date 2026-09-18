@@ -16,7 +16,9 @@ import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/compon
 import { CategoryPicker, type PostCategory } from "@/components/social/PostCategory";
 import { isValidVideoUrl } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
-import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff, Globe, HelpCircle } from "lucide-react";
+import { PendingCertificationNotice } from "@/components/artist/PendingCertificationNotice";
+import { openArtistTour } from "@/components/onboarding/ArtistTour";
 
 export const Route = createFileRoute("/_authenticated/profile/artiste")({
   head: () => ({
@@ -60,6 +62,9 @@ function ArtistSpacePage() {
   const [showEvents, setShowEvents] = useState(true);
   const [showShop, setShowShop] = useState(true);
   const [showPosts, setShowPosts] = useState(true);
+  const [bannerColor, setBannerColor] = useState("");
+  const [bannerKind, setBannerKind] = useState<"photo" | "color">("photo");
+  const [indexable, setIndexable] = useState(true);
 
   useEffect(() => {
     if (!profile) return;
@@ -69,12 +74,27 @@ function ArtistSpacePage() {
     setShowEvents((profile as any).show_events_section ?? true);
     setShowShop((profile as any).show_shop_section ?? true);
     setShowPosts((profile as any).show_posts_section ?? true);
+    setBannerColor((profile as any).banner_color ?? "");
+    setBannerKind((profile as any).banner_url ? "photo" : (profile as any).banner_color ? "color" : "photo");
+    setIndexable((profile as any).page_indexable ?? true);
     const sl = (profile as any).social_links;
     setLinks(sl && typeof sl === "object" ? (sl as SocialLinks) : {});
   }, [profile]);
 
   const uid = session?.user.id ?? null;
-  const isArtistOrMedia = profile?.role === "artiste" || (profile as any)?.role === "media";
+  const requestedRole = (profile as any)?.role_requested as string | undefined;
+  // Accès dès la candidature déposée : l'artiste peut tout préparer avant la
+  // validation. L'affichage public reste celui d'un auditeur tant que
+  // `role` n'a pas été basculé par l'équipe.
+  const isArtistOrMedia =
+    profile?.role === "artiste" ||
+    (profile as any)?.role === "media" ||
+    requestedRole === "artiste" ||
+    requestedRole === "media";
+  const isPendingArtist =
+    (profile as any)?.role_request_status === "pending" &&
+    profile?.role !== "artiste" &&
+    (profile as any)?.role !== "media";
 
   const { data: events = [] } = useQuery<ArtistEvent[]>({
     queryKey: ["artist-events", uid],
@@ -228,12 +248,18 @@ function ArtistSpacePage() {
       toast.error("Couleur invalide (format #RRGGBB)");
       return;
     }
+    if (bannerKind === "color" && bannerColor && !HEX_RE.test(bannerColor)) {
+      toast.error("Couleur de bannière invalide (format #RRGGBB)");
+      return;
+    }
     setSaving(true);
     try {
       const { error } = await supabase
         .from("profiles")
         .update({
-          banner_url: banner || null,
+          banner_url: bannerKind === "photo" ? banner || null : null,
+          banner_color: bannerKind === "color" ? bannerColor || null : null,
+          page_indexable: indexable,
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
           social_links: sanitizeLinks(links),
