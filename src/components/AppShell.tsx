@@ -84,15 +84,30 @@ export function AppShell({ children }: { children: ReactNode }) {
     const el = bottomBarRef.current;
     if (!el) return;
     const apply = () => {
-      const h = el.getBoundingClientRect().height;
-      document.documentElement.style.setProperty("--app-bottom-bar-h", `${Math.round(h)}px`);
+      const h = Math.round(el.getBoundingClientRect().height);
+      const next = `${h}px`;
+      const root = document.documentElement;
+      // N'écrire la variable que si la hauteur a réellement changé : sinon
+      // l'écriture modifie la mise en page, l'observateur redéclenche une
+      // mesure, et la boucle ne se stabilise jamais.
+      if (root.style.getPropertyValue("--app-bottom-bar-h") !== next) {
+        root.style.setProperty("--app-bottom-bar-h", next);
+      }
     };
     apply();
-    const ro = new ResizeObserver(apply);
+    // Mesurer au frame suivant : écrire de la mise en page pendant la
+    // notification de l'observateur est ce qui provoque l'avertissement
+    // « ResizeObserver loop completed with undelivered notifications ».
+    let queued = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(queued);
+      queued = requestAnimationFrame(apply);
+    });
     ro.observe(el);
     window.addEventListener("resize", apply);
     window.addEventListener("orientationchange", apply);
     return () => {
+      cancelAnimationFrame(queued);
       ro.disconnect();
       window.removeEventListener("resize", apply);
       window.removeEventListener("orientationchange", apply);
