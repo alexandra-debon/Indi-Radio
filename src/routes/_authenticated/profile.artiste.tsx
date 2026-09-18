@@ -19,6 +19,8 @@ import { toast } from "@/lib/toast";
 import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff, Globe, HelpCircle } from "lucide-react";
 import { PendingCertificationNotice } from "@/components/artist/PendingCertificationNotice";
 import { openArtistTour } from "@/components/onboarding/ArtistTour";
+import { useLang } from "@/lib/i18n";
+import { ARTIST_SPACE_TXT } from "@/components/artist/artist-space-i18n";
 
 export const Route = createFileRoute("/_authenticated/profile/artiste")({
   head: () => ({
@@ -53,6 +55,9 @@ function ArtistSpacePage() {
   const { profile, session } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const lang = useLang();
+  const isEn = lang === "en";
+  const T = ARTIST_SPACE_TXT[isEn ? "en" : "fr"];
 
   const [banner, setBanner] = useState("");
   const [accent, setAccent] = useState("");
@@ -146,8 +151,8 @@ function ArtistSpacePage() {
   const addEvent = useMutation({
     mutationFn: async () => {
       if (!uid) return;
-      if (!evTitle.trim() || !evDate) throw new Error("Titre et date obligatoires");
-      if (evUrl.trim() && !/^https?:\/\/.+\..+/.test(evUrl.trim())) throw new Error("Lien billetterie invalide");
+      if (!evTitle.trim() || !evDate) throw new Error(T.evRequired);
+      if (evUrl.trim() && !/^https?:\/\/.+\..+/.test(evUrl.trim())) throw new Error(T.evBadUrl);
       const { error } = await supabase.from("artist_events").insert({
         artist_id: uid,
         title: evTitle.trim(),
@@ -159,7 +164,7 @@ function ArtistSpacePage() {
     },
     onSuccess: () => {
       setEvTitle(""); setEvDate(""); setEvVenue(""); setEvUrl("");
-      toast.success("Date ajoutée");
+      toast.success(T.dateAdded);
       qc.invalidateQueries({ queryKey: ["artist-events"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -171,7 +176,7 @@ function ArtistSpacePage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Date supprimée");
+      toast.success(T.dateDeleted);
       qc.invalidateQueries({ queryKey: ["artist-events"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -190,8 +195,8 @@ function ArtistSpacePage() {
       if (!uid) return;
       const body = postBody.trim();
       const video = postVideo.trim();
-      if (!body && !video && postImages.length === 0) throw new Error("Écris un message ou ajoute un média");
-      if (video && !isValidVideoUrl(video)) throw new Error("Lien vidéo invalide (YouTube, Vimeo, SoundCloud)");
+      if (!body && !video && postImages.length === 0) throw new Error(T.postEmpty);
+      if (video && !isValidVideoUrl(video)) throw new Error(T.postBadVideo);
       const content = video ? (body ? `${body}\n${video}` : video) : body;
       const { error } = await supabase.from("posts").insert({
         author_id: uid,
@@ -207,7 +212,7 @@ function ArtistSpacePage() {
     },
     onSuccess: () => {
       setPostTitle(""); setPostBody(""); setPostVideo(""); setPostImages([]); setPostCategory(null);
-      toast.success("Publication en ligne");
+      toast.success(T.postPublished);
       qc.invalidateQueries({ queryKey: ["artist-own-posts"] });
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
     },
@@ -221,7 +226,7 @@ function ArtistSpacePage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Publication supprimée");
+      toast.success(T.postDeleted);
       qc.invalidateQueries({ queryKey: ["artist-own-posts"] });
       qc.invalidateQueries({ queryKey: ["wall-posts"] });
       qc.invalidateQueries({ queryKey: ["artist-posts-public"] });
@@ -245,11 +250,11 @@ function ArtistSpacePage() {
     e.preventDefault();
     if (!uid) return;
     if (accent && !HEX_RE.test(accent)) {
-      toast.error("Couleur invalide (format #RRGGBB)");
+      toast.error(T.badColor);
       return;
     }
     if (bannerKind === "color" && bannerColor && !HEX_RE.test(bannerColor)) {
-      toast.error("Couleur de bannière invalide (format #RRGGBB)");
+      toast.error(T.badBannerColor);
       return;
     }
     setSaving(true);
@@ -270,24 +275,24 @@ function ArtistSpacePage() {
         .eq("id", uid);
       if (error) throw error;
       await qc.invalidateQueries({ queryKey: ["profile", uid] });
-      toast.success("Page mise à jour");
+      toast.success(T.pageSaved);
     } catch (err: any) {
-      toast.error(err?.message ?? "Erreur lors de l'enregistrement");
+      toast.error(err?.message ?? T.saveError);
     } finally {
       setSaving(false);
     }
   }
 
-  if (!profile || !session) return <div className="p-4">Chargement…</div>;
+  if (!profile || !session) return <div className="p-4">{ARTIST_SPACE_TXT[lang === "en" ? "en" : "fr"].loading}</div>;
 
   if (!isArtistOrMedia) {
     return (
       <div className="space-y-3 p-2">
-        <h1 className="section-title">Espace artiste</h1>
+        <h1 className="section-title">{T.spaceTitle}</h1>
         <p className="text-sm text-muted-foreground">
-          Cet espace est réservé aux comptes Artiste et Média certifiés. Tu peux déposer une candidature depuis ton profil.
+          {T.reservedHint}
         </p>
-        <Button variant="outline" onClick={() => navigate({ to: "/profile" })}>Retour au profil</Button>
+        <Button variant="outline" onClick={() => navigate({ to: "/profile" })}>{T.backToProfile}</Button>
       </div>
     );
   }
@@ -295,18 +300,18 @@ function ArtistSpacePage() {
   return (
     <div className="space-y-4">
       <Link to="/profile" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
-        <ArrowLeft className="size-4" /> Retour
+        <ArrowLeft className="size-4" /> {T.back}
       </Link>
       {isPendingArtist && <PendingCertificationNotice />}
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="section-title">Ma page artiste</h1>
+        <h1 className="section-title">{T.myArtistPage}</h1>
         <Button type="button" variant="outline" size="sm" onClick={() => openArtistTour()}>
-          <HelpCircle className="size-4" /> Visite guidée artiste
+          <HelpCircle className="size-4" /> {T.artistTour}
         </Button>
         <div className="text-xs text-muted-foreground">
-          {followers} abonné{followers > 1 ? "s" : ""} ·{" "}
+          {followers} {followers > 1 ? T.followersMany : T.followersOne} ·{" "}
           <Link to="/u/$pseudo" params={{ pseudo: profile.pseudo }} className="underline">
-            Voir ma page publique
+            {T.viewPublicPage}
           </Link>
         </div>
       </div>
@@ -314,9 +319,9 @@ function ArtistSpacePage() {
       {/* Identité visuelle */}
       <form onSubmit={saveIdentity} className="card-brut space-y-5 p-4">
         <div className="space-y-1.5">
-          <Label className="flex items-center gap-1.5"><ImageIcon className="size-4" /> Bannière</Label>
+          <Label className="flex items-center gap-1.5"><ImageIcon className="size-4" /> {T.banner}</Label>
           <div className="flex gap-2">
-            {([["photo", "Photo"], ["color", "Aplat de couleur"]] as const).map(([k, lbl]) => (
+            {([["photo", T.bannerPhoto], ["color", T.bannerColor]] as const).map(([k, lbl]) => (
               <button
                 key={k}
                 type="button"
@@ -332,15 +337,14 @@ function ArtistSpacePage() {
             ))}
           </div>
           <p className="text-[11px] text-muted-foreground">
-            Format large conseillé 2048 × 1152 px. Garde le texte et le logo au centre : sur mobile, seule la zone
-            centrale (environ 1235 × 338 px) reste visible.
+            {T.bannerHint}
           </p>
           {bannerKind === "photo" && (
-            <ImageUploader value={banner} onChange={setBanner} folder={`banners/${session.user.id}`} label="Bannière (2048×1152)" usage="banner" defaultRatio="16:9" />
+            <ImageUploader value={banner} onChange={setBanner} folder={`banners/${session.user.id}`} label={T.bannerUploadLabel} usage="banner" defaultRatio="16:9" />
           )}
           {bannerKind === "photo" && banner && (
             <div className="relative overflow-hidden rounded-sm border-2 border-border">
-              <img src={banner} alt="Aperçu de la bannière" className="aspect-[16/9] w-full object-cover sm:aspect-[1920/480]" />
+              <img src={banner} alt={T.bannerPreviewAlt} className="aspect-[16/9] w-full object-cover sm:aspect-[1920/480]" />
               <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[60%] -translate-x-1/2 border-x-2 border-dashed border-primary/70" />
             </div>
           )}
@@ -351,7 +355,7 @@ function ArtistSpacePage() {
                   <button
                     key={c}
                     type="button"
-                    aria-label={`Bannière ${c}`}
+                    aria-label={`${T.bannerSwatch} ${c}`}
                     onClick={() => setBannerColor(c)}
                     className={`size-8 rounded-sm border-2 ${bannerColor.toLowerCase() === c.toLowerCase() ? "border-foreground" : "border-border"}`}
                     style={{ backgroundColor: c }}
@@ -362,7 +366,7 @@ function ArtistSpacePage() {
                   onChange={(e) => setBannerColor(e.target.value)}
                   placeholder="#FFD400"
                   className="w-32"
-                  aria-label="Couleur de la bannière"
+                  aria-label={T.bannerColorAria}
                 />
               </div>
               <div
@@ -370,20 +374,20 @@ function ArtistSpacePage() {
                 style={{ backgroundColor: bannerColor || "hsl(var(--muted))" }}
               />
               <p className="text-[11px] text-muted-foreground">
-                Sans photo ni couleur choisie, ta couleur d'accent est utilisée pour la bannière.
+                {T.bannerFallbackHint}
               </p>
             </div>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="accent" className="flex items-center gap-1.5"><Palette className="size-4" /> Couleur d'accent</Label>
+          <Label htmlFor="accent" className="flex items-center gap-1.5"><Palette className="size-4" /> {T.accent}</Label>
           <div className="flex flex-wrap items-center gap-2">
             {ACCENT_PRESETS.map((c) => (
               <button
                 key={c}
                 type="button"
-                aria-label={`Couleur ${c}`}
+                aria-label={`${T.colorSwatch} ${c}`}
                 onClick={() => setAccent(c)}
                 className={`size-8 rounded-sm border-2 ${accent.toLowerCase() === c.toLowerCase() ? "border-foreground" : "border-border"}`}
                 style={{ backgroundColor: c }}
@@ -397,80 +401,79 @@ function ArtistSpacePage() {
               className="w-32"
             />
             {accent && (
-              <Button type="button" variant="ghost" size="sm" onClick={() => setAccent("")}>Réinitialiser</Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setAccent("")}>{T.reset}</Button>
             )}
           </div>
-          <p className="text-[11px] text-muted-foreground">Utilisée pour les bordures, titres et boutons de ta page publique.</p>
+          <p className="text-[11px] text-muted-foreground">{T.accentHint}</p>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="summary">Résumé de présentation</Label>
-          <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} maxLength={600} placeholder="Ton univers en quelques lignes…" />
+          <Label htmlFor="summary">{T.summary}</Label>
+          <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} maxLength={600} placeholder={T.summaryPlaceholder} />
           <p className="text-[11px] text-muted-foreground">{summary.length}/600</p>
         </div>
 
         <div className="space-y-1.5">
-          <Label>Réseaux & plateformes</Label>
+          <Label>{T.socials}</Label>
           <SocialLinksEditor value={links} onChange={setLinks} />
         </div>
 
         <div className="space-y-2">
-          <Label className="flex items-center gap-1.5"><Eye className="size-4" /> Sections visibles sur ma page publique</Label>
+          <Label className="flex items-center gap-1.5"><Eye className="size-4" /> {T.sectionsLabel}</Label>
           {([
-            ["Dates de concert", showEvents, setShowEvents] as const,
-            ["Boutique", showShop, setShowShop] as const,
-            ["Publications", showPosts, setShowPosts] as const,
+            [T.sectionEvents, showEvents, setShowEvents] as const,
+            [T.sectionShop, showShop, setShowShop] as const,
+            [T.sectionPosts, showPosts, setShowPosts] as const,
           ]).map(([label, val, set]) => (
             <label key={label} className="flex items-center justify-between gap-3 border-2 border-border p-2 text-sm font-semibold">
               <span className="flex items-center gap-1.5">
                 {val ? <Eye className="size-4" /> : <EyeOff className="size-4 text-muted-foreground" />} {label}
               </span>
-              <Switch checked={val} onCheckedChange={set} aria-label={`Afficher la section ${label}`} />
+              <Switch checked={val} onCheckedChange={set} aria-label={`${T.sectionToggleAria} ${label}`} />
             </label>
           ))}
           <p className="text-[11px] text-muted-foreground">
-            Une section masquée disparaît entièrement de ta page publique.
+            {T.sectionsHint}
           </p>
         </div>
 
         <div className="space-y-1.5">
           <label className="flex items-center justify-between gap-3 border-2 border-border p-2 text-sm font-semibold">
             <span className="flex items-center gap-1.5">
-              <Globe className="size-4" /> Rendre ma page visible sur les sites externes / moteurs de recherche
+              <Globe className="size-4" /> {T.indexable}
             </span>
-            <Switch checked={indexable} onCheckedChange={setIndexable} aria-label="Page visible sur les moteurs de recherche" />
+            <Switch checked={indexable} onCheckedChange={setIndexable} aria-label={T.indexableAria} />
           </label>
           <p className="text-[11px] text-muted-foreground">
-            Désactivé, ta page reste accessible par son lien direct mais n'est plus référencée par Google et les
-            autres moteurs, ni listée dans le plan du site.
+            {T.indexableHint}
           </p>
         </div>
 
         <Button type="submit" disabled={saving}>
           {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-          {saving ? "Enregistrement…" : "Enregistrer ma page"}
+          {saving ? T.saving : T.savePage}
         </Button>
       </form>
 
       {/* Dates de concert */}
       <section className="card-brut space-y-3 p-4">
         <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-          <CalendarPlus className="size-4 text-primary" /> Dates de concert
+          <CalendarPlus className="size-4 text-primary" /> {T.events}
         </h2>
         <div className="grid gap-2 sm:grid-cols-2">
-          <Input placeholder="Titre (ex : Release party)" value={evTitle} onChange={(e) => setEvTitle(e.target.value)} />
+          <Input placeholder={T.evTitle} value={evTitle} onChange={(e) => setEvTitle(e.target.value)} />
           <Input type="date" value={evDate} onChange={(e) => setEvDate(e.target.value)} />
-          <Input placeholder="Lieu / ville" value={evVenue} onChange={(e) => setEvVenue(e.target.value)} />
-          <Input placeholder="Lien billetterie (https://…)" value={evUrl} onChange={(e) => setEvUrl(e.target.value)} inputMode="url" />
+          <Input placeholder={T.evVenue} value={evVenue} onChange={(e) => setEvVenue(e.target.value)} />
+          <Input placeholder={T.evUrl} value={evUrl} onChange={(e) => setEvUrl(e.target.value)} inputMode="url" />
         </div>
         <Button type="button" onClick={() => addEvent.mutate()} disabled={addEvent.isPending}>
-          {addEvent.isPending ? <Loader2 className="size-4 animate-spin" /> : <CalendarPlus className="size-4" />} Ajouter la date
+          {addEvent.isPending ? <Loader2 className="size-4 animate-spin" /> : <CalendarPlus className="size-4" />} {T.addDate}
         </Button>
         <p className="text-[11px] text-muted-foreground">
-          Les dates passées restent affichées sur ta page en historique, jusqu'à ce que tu les supprimes.
+          {T.eventsHint}
         </p>
         {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucune date pour l'instant.</p>
+          <p className="text-sm text-muted-foreground">{T.noEvents}</p>
         ) : (
           <ul className="space-y-2">
             {events.map((ev) => (
@@ -478,7 +481,7 @@ function ArtistSpacePage() {
                 <div className="min-w-0 flex-1">
                   <div className="font-bold">{ev.title}</div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(`${ev.event_date}T12:00:00Z`).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
+                    {new Date(`${ev.event_date}T12:00:00Z`).toLocaleDateString(isEn ? "en-US" : "fr-FR", { day: "2-digit", month: "long", year: "numeric" })}
                     {ev.venue ? ` · ${ev.venue}` : ""}
                   </div>
                 </div>
@@ -497,19 +500,19 @@ function ArtistSpacePage() {
       {/* Blog artiste */}
       <section className="card-brut space-y-3 p-4">
         <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-          <Send className="size-4 text-primary" /> Publier
+          <Send className="size-4 text-primary" /> {T.publish}
         </h2>
-        <Input placeholder="Titre (optionnel)" value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />
-        <Textarea rows={4} placeholder="Ton actualité, ton nouveau morceau…" value={postBody} onChange={(e) => setPostBody(e.target.value)} />
-        <Input placeholder="Lien vidéo / audio (YouTube, Vimeo, SoundCloud)" value={postVideo} onChange={(e) => setPostVideo(e.target.value)} inputMode="url" />
+        <Input placeholder={T.postTitle} value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />
+        <Textarea rows={4} placeholder={T.postBody} value={postBody} onChange={(e) => setPostBody(e.target.value)} />
+        <Input placeholder={T.postVideo} value={postVideo} onChange={(e) => setPostVideo(e.target.value)} inputMode="url" />
         <MultiImageUploader values={postImages} onChange={setPostImages} folder={`artist/${session.user.id}`} />
         <VisibilityPicker value={postVisibility} onChange={setPostVisibility} name="new-post-visibility" />
         <CategoryPicker value={postCategory} onChange={setPostCategory} name="new-post-category" />
         <Button type="button" onClick={() => publish.mutate()} disabled={publish.isPending}>
-          {publish.isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} Publier
+          {publish.isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} {T.publish}
         </Button>
         <p className="text-[11px] text-muted-foreground">
-          Mes abonnés sont prévenus à chaque publication, quel que soit le mode de diffusion choisi.
+          {T.publishHint}
         </p>
 
         {ownPosts.length > 0 && (
@@ -517,20 +520,20 @@ function ArtistSpacePage() {
             {ownPosts.map((p) => (
               <li key={p.id} className="flex flex-wrap items-center gap-2 border-2 border-border p-2 text-sm">
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-bold">{p.title || p.content.slice(0, 60) || "Publication"}</div>
+                  <div className="truncate font-bold">{p.title || p.content.slice(0, 60) || T.post}</div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(p.created_at).toLocaleDateString("fr-FR")} · {visibilityLabel(p.visibility)}
+                    {new Date(p.created_at).toLocaleDateString(isEn ? "en-US" : "fr-FR")} · {visibilityLabel(p.visibility, isEn)}
                   </div>
                 </div>
                 <select
-                  aria-label="Diffusion de la publication"
+                  aria-label={T.visibilityAria}
                   value={p.visibility}
                   onChange={(e) => setVisibility.mutate({ id: p.id, visibility: e.target.value })}
                   className="border-2 border-border bg-background px-2 py-1 text-xs font-semibold"
                 >
-                  <option value="feed">Feed général + ma page</option>
-                  <option value="profile_only">Ma page uniquement</option>
-                  <option value="followers_only">Réservé à mes abonnés</option>
+                  <option value="feed">{T.visFeed}</option>
+                  <option value="profile_only">{T.visProfile}</option>
+                  <option value="followers_only">{T.visFollowers}</option>
                 </select>
                 <Button
                   type="button"
@@ -538,7 +541,7 @@ function ArtistSpacePage() {
                   size="sm"
                   className="text-destructive"
                   onClick={() => {
-                    if (window.confirm("Supprimer définitivement cette publication ?")) deletePost.mutate(p.id);
+                    if (window.confirm(T.confirmDeletePost)) deletePost.mutate(p.id);
                   }}
                 >
                   <Trash2 className="size-4" />
