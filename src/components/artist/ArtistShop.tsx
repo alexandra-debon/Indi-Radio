@@ -19,7 +19,12 @@ export type ShopItem = {
   external_url: string | null;
   tags: string[] | null;
   is_visible: boolean;
+  cta_kind?: string | null;
+  in_public_shop?: boolean | null;
 };
+
+export const SHOP_CTA_KINDS = ["buy", "preorder", "ticket"] as const;
+export type ShopCtaKind = (typeof SHOP_CTA_KINDS)[number];
 
 export const SHOP_FORMATS = ["Vinyle", "CD", "K7", "Livre", "Merch", "Autre"] as const;
 
@@ -28,6 +33,9 @@ const TXT = {
     shop: "Boutique",
     empty: "Aucun objet en boutique pour le moment.",
     buy: "Acheter",
+    preorder: "Pré-commander",
+    ticket: "Acheter mon billet",
+    publicShop: "Boutique publique InDi",
     featured: "Mise en avant",
     tags: "Tags éditoriaux (admin)",
     save: "Enregistrer les tags",
@@ -40,6 +48,9 @@ const TXT = {
     shop: "Shop",
     empty: "Nothing in the shop yet.",
     buy: "Buy",
+    preorder: "Pre-order",
+    ticket: "Get my ticket",
+    publicShop: "InDi public shop",
     featured: "Featured",
     tags: "Editorial tags (admin)",
     save: "Save tags",
@@ -61,7 +72,7 @@ export function useArtistShopItems(artistId: string, opts: { onlyVisible?: boole
     queryFn: async () => {
       let q = supabase
         .from("artist_shop_items")
-        .select("id, title, format, image_url, summary, external_url, tags, is_visible")
+        .select("id, title, format, image_url, summary, external_url, tags, is_visible, cta_kind, in_public_shop")
         .eq("artist_id", artistId)
         .order("position", { ascending: true })
         .order("created_at", { ascending: false });
@@ -110,6 +121,16 @@ function AdminTags({ item }: { item: ShopItem }) {
   );
 }
 
+/** Libellé du bouton d'action choisi par l'artiste pour cet objet. */
+export function shopCtaLabel(
+  kind: string | null | undefined,
+  txt: { buy: string; preorder: string; ticket: string },
+) {
+  if (kind === "preorder") return txt.preorder;
+  if (kind === "ticket") return txt.ticket;
+  return txt.buy;
+}
+
 function ShopCard({ item, accent, isAdmin, compact }: { item: ShopItem; accent?: string | null; isAdmin: boolean; compact?: boolean }) {
   const txt = useShopTxt();
   return (
@@ -153,7 +174,7 @@ function ShopCard({ item, accent, isAdmin, compact }: { item: ShopItem; accent?:
           style={accent ? { backgroundColor: accent, color: "#000", borderColor: accent } : undefined}
         >
           <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
-            <ExternalLink className="size-4" /> {txt.buy}
+            <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
           </a>
         </Button>
       )}
