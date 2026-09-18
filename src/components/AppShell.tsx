@@ -361,54 +361,70 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div data-tour="language-toggle" className="mb-2 flex justify-end px-1">
               <LanguageToggle />
             </div>
-            {NAV.map((item) => {
-              const active = item.to === "/"
-                ? pathname === "/"
-                : pathname === item.to || pathname.startsWith(`${item.to}/`);
-              const Icon = item.icon;
-              const needsAuth = item.to === "/profile/edit" && !session;
-              const shared = cn(
-                "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-[background-color,border-color,color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
-                active
-                  ? "border-primary bg-primary/15 font-semibold text-foreground shadow-sm"
-                  : "hover:bg-muted",
-              );
-              const label = (
-                <>
-                  <Icon className={cn("size-4", active && "text-primary")} />
-                  {t(item.key)}
-                </>
-              );
-              if (needsAuth) {
-                // Non connecté : ouvrir la modale de connexion plutôt que
-                // d'arriver sur une route protégée (404/redirect).
+            {(() => {
+              const renderNavItem = (item: NavItem) => {
+                const active = item.to === "/"
+                  ? pathname === "/"
+                  : pathname === item.to || pathname.startsWith(`${item.to}/`);
+                const Icon = item.icon;
+                const needsAuth = item.to === "/profile/edit" && !session;
+                const shared = cn(
+                  "flex items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-sm transition-[background-color,border-color,color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
+                  active
+                    ? "border-primary bg-primary/15 font-semibold text-foreground shadow-sm"
+                    : "hover:bg-muted",
+                );
+                const label = (
+                  <>
+                    <Icon className={cn("size-4 shrink-0", active && "text-primary")} />
+                    <span className="min-w-0 truncate">{t(item.key)}</span>
+                  </>
+                );
+                if (needsAuth) {
+                  // Non connecté : ouvrir la modale de connexion plutôt que
+                  // d'arriver sur une route protégée (404/redirect).
+                  return (
+                    <button
+                      key={item.to}
+                      type="button"
+                      onClick={() => { setOpen(false); openAuth(); }}
+                      title={item.seo}
+                      aria-label={item.seo}
+                      className={shared}
+                    >
+                      {label}
+                    </button>
+                  );
+                }
                 return (
-                  <button
+                  <Link
                     key={item.to}
-                    type="button"
-                    onClick={() => { setOpen(false); openAuth(); }}
+                    to={item.to}
+                    onClick={() => setOpen(false)}
                     title={item.seo}
                     aria-label={item.seo}
+                    aria-current={active ? "page" : undefined}
                     className={shared}
                   >
                     {label}
-                  </button>
+                  </Link>
                 );
-              }
+              };
               return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  title={item.seo}
-                  aria-label={item.seo}
-                  aria-current={active ? "page" : undefined}
-                  className={shared}
-                >
-                  {label}
-                </Link>
+                <>
+                  {NAV_TOP.map(renderNavItem)}
+                  <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+                    {t("nav.editorialGroup")}
+                  </p>
+                  <div className="rounded-lg border border-primary/25 bg-primary/5 p-1">
+                    {NAV_EDITORIAL.map(renderNavItem)}
+                  </div>
+                  <div className="mt-2">
+                    {NAV.slice(NAV_TOP.length + NAV_EDITORIAL.length).map(renderNavItem)}
+                  </div>
+                </>
               );
-            })}
+            })()}
             {isAdmin && (
               <Link
                 to="/admin"
