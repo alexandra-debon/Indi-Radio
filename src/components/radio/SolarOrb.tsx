@@ -35,12 +35,21 @@ export function SolarOrb({ className }: { className?: string }) {
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      const w = Math.max(1, Math.round(rect.width * dpr));
+      const h = Math.max(1, Math.round(rect.height * dpr));
+      // Réécrire les mêmes dimensions relancerait l'observateur : on ne
+      // touche au canevas que si la taille a réellement changé.
+      if (canvas.width === w && canvas.height === h) return;
+      canvas.width = w;
+      canvas.height = h;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
-    const ro = new ResizeObserver(resize);
+    let queued = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(queued);
+      queued = requestAnimationFrame(resize);
+    });
     ro.observe(canvas);
 
     const draw = () => {
@@ -105,6 +114,7 @@ export function SolarOrb({ className }: { className?: string }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(queued);
       ro.disconnect();
     };
   }, []);

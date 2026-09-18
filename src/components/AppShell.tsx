@@ -47,14 +47,14 @@ const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
   { to: "/profile/edit", key: "profile.mySpace", icon: UserCog, seo: "Ma page perso — Espace membre InDi RaDio" },
   { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
   { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Blog InDi ArT CulTuRe — Radio musique indépendante & Réseau social musique" },
+  { to: "/redak-village", key: "nav.village", icon: Feather, seo: "RéDaK'Village — Les articles de la communauté InDi RaDio" },
+  { to: "/indi-teevi", key: "nav.teevi", icon: Tv, seo: "InDi TeeVi — Chaîne vidéo gratuite de la musique indépendante" },
+  { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
   { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
   { to: "/podcasts", key: "nav.podcasts", icon: Headphones, seo: "Podcasts Radio musique indépendante sans pub" },
-  { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
   { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
   { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
   { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
-  { to: "/indi-teevi", key: "nav.teevi", icon: Tv, seo: "InDi TeeVi — Chaîne vidéo gratuite de la musique indépendante" },
-  { to: "/redak-village", key: "nav.village", icon: Feather, seo: "RéDaK'Village — Les articles de la communauté InDi RaDio" },
   { to: "/artistes", key: "nav.gallery", icon: Mic, seo: "Galerie Artistes certifiés — Radio musique indé" },
   { to: "/playlists", key: "nav.playlists", icon: ListMusic, seo: "Playlists InDi RaDio — Spotify & Apple Music, musique indépendante" },
   { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
@@ -84,15 +84,30 @@ export function AppShell({ children }: { children: ReactNode }) {
     const el = bottomBarRef.current;
     if (!el) return;
     const apply = () => {
-      const h = el.getBoundingClientRect().height;
-      document.documentElement.style.setProperty("--app-bottom-bar-h", `${Math.round(h)}px`);
+      const h = Math.round(el.getBoundingClientRect().height);
+      const next = `${h}px`;
+      const root = document.documentElement;
+      // N'écrire la variable que si la hauteur a réellement changé : sinon
+      // l'écriture modifie la mise en page, l'observateur redéclenche une
+      // mesure, et la boucle ne se stabilise jamais.
+      if (root.style.getPropertyValue("--app-bottom-bar-h") !== next) {
+        root.style.setProperty("--app-bottom-bar-h", next);
+      }
     };
     apply();
-    const ro = new ResizeObserver(apply);
+    // Mesurer au frame suivant : écrire de la mise en page pendant la
+    // notification de l'observateur est ce qui provoque l'avertissement
+    // « ResizeObserver loop completed with undelivered notifications ».
+    let queued = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(queued);
+      queued = requestAnimationFrame(apply);
+    });
     ro.observe(el);
     window.addEventListener("resize", apply);
     window.addEventListener("orientationchange", apply);
     return () => {
+      cancelAnimationFrame(queued);
       ro.disconnect();
       window.removeEventListener("resize", apply);
       window.removeEventListener("orientationchange", apply);

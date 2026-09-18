@@ -35,12 +35,23 @@ function DevicePane({
     if (!el) return;
     const update = () => {
       const available = el.clientWidth;
-      if (available > 0) setScale(Math.min(1, available / width));
+      if (available <= 0) return;
+      const next = Math.min(1, available / width);
+      // Les allers-retours d'arrondis de largeur font osciller l'échelle
+      // d'un pixel : on n'étatise que les changements réellement visibles.
+      setScale((prev) => (Math.abs(prev - next) < 0.01 ? prev : next));
     };
     update();
-    const ro = new ResizeObserver(update);
+    let queued = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(queued);
+      queued = requestAnimationFrame(update);
+    });
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => {
+      cancelAnimationFrame(queued);
+      ro.disconnect();
+    };
   }, [width]);
 
   const frameHeight = height && height > 0 ? Math.min(Math.max(height, 200), 2000) : Math.round((width * 9) / 16);
