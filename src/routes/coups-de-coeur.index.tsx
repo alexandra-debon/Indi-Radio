@@ -293,7 +293,13 @@ function CoupsDeCoeurPage() {
                         : "Album"}
                   </div>
                   <h2 className="text-xl font-bold leading-tight">
-                    {c.title}
+                    <Link
+                      to="/coups-de-coeur/$coupId"
+                      params={{ coupId: c.id }}
+                      className="hover:underline"
+                    >
+                      {c.title}
+                    </Link>
                   </h2>
                   <div className="text-sm text-muted-foreground">
                     par <span className="font-medium text-foreground">{c.artist}</span>
