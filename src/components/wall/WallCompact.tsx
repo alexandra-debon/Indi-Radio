@@ -407,6 +407,11 @@ function FeedTeasers() {
         const mag = sorted.find((t) => t.kind === "magazine");
         if (mag) top[top.length - 1] = mag;
       }
+      // Idem pour le coup de cœur le plus récent.
+      if (!top.some((t) => t.kind === "coupdecoeur")) {
+        const coup = sorted.find((t) => t.kind === "coupdecoeur");
+        if (coup) top[top.length - 2] = coup;
+      }
       return top;
     },
   });
