@@ -49,8 +49,13 @@ type GlobalShopItem = {
 const PAGE_TXT = {
   fr: {
     title: "Boutique Artistes InDi",
-    intro:
-      "Les objets mis en boutique publique par les artistes indépendants d'InDi RaDio : disques, merch, billets de concert. Chaque achat va directement à l'artiste.",
+    introLead:
+      "Les objets mis en boutique publique par les artistes indépendants d'InDi RaDio : disques, merch, billets de concert.",
+    introBefore: "Chaque achat que vous effectuez va à ",
+    introHighlight: "100\u00A0% directement à l'artiste",
+    introAfter:
+      ", sans la moindre retenue, via ses propres liens de paiement.",
+    introThanks: "Merci de soutenir la culture indépendante et ses artistes !",
     by: "Par",
     empty: "Aucun objet en boutique pour le moment.",
     viewArtistShop: "Voir la boutique de l'artiste",
@@ -59,8 +64,12 @@ const PAGE_TXT = {
   },
   en: {
     title: "InDi Artists Shop",
-    intro:
-      "Items put in the public shop by the independent artists of InDi RaDio: records, merch, gig tickets. Every purchase goes straight to the artist.",
+    introLead:
+      "Items put in the public shop by the independent artists of InDi RaDio: records, merch, gig tickets.",
+    introBefore: "Every purchase you make goes ",
+    introHighlight: "100% straight to the artist",
+    introAfter: ", with no deduction at all, through the artist's own payment links.",
+    introThanks: "Thank you for supporting independent culture and its artists!",
     by: "By",
     empty: "Nothing in the shop yet.",
     viewArtistShop: "View the artist's shop",
@@ -208,7 +217,15 @@ function BoutiquePage() {
         <h1 className="flex items-center gap-2 text-2xl font-black uppercase tracking-tight">
           <ShoppingBag className="size-6" /> {page.title}
         </h1>
-        <p className="text-sm text-muted-foreground">{page.intro}</p>
+        <div className="space-y-1.5 text-sm leading-relaxed text-muted-foreground">
+          <p>{page.introLead}</p>
+          <p>
+            {page.introBefore}
+            <span className="font-black text-radio-yellow">{page.introHighlight}</span>
+            {page.introAfter}
+          </p>
+          <p className="font-black text-foreground">{page.introThanks}</p>
+        </div>
       </header>
 
       {isLoading ? null : items.length === 0 ? (
