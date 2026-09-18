@@ -138,7 +138,7 @@ export function shopCtaLabel(
   return txt.buy;
 }
 
-function ShopCard({ item, accent, isAdmin, compact }: { item: ShopItem; accent?: string | null; isAdmin: boolean; compact?: boolean }) {
+function ShopCard({ item, accent, isAdmin, compact, artistId }: { item: ShopItem; accent?: string | null; isAdmin: boolean; compact?: boolean; artistId?: string }) {
   const txt = useShopTxt();
   return (
     <div className={`flex flex-col border-2 border-border p-2 ${compact ? "w-52 shrink-0" : ""}`} style={accent ? { borderColor: accent } : undefined}>
