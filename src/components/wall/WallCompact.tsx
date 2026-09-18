@@ -249,7 +249,7 @@ function clipThumb(url: string | null): string | null {
   return null;
 }
 
-type TeaserKind = "village" | "news" | "clip" | "review" | "magazine" | "teevi";
+type TeaserKind = "village" | "news" | "clip" | "review" | "magazine" | "teevi" | "coupdecoeur";
 
 interface Teaser {
   kind: TeaserKind;
@@ -269,6 +269,7 @@ const TEASER_LABEL: Record<TeaserKind, { fr: string; en: string }> = {
   review: { fr: "Chronique", en: "Album review" },
   magazine: { fr: "Magazine interactif", en: "Interactive magazine" },
   teevi: { fr: "InDi TeeVi", en: "InDi TeeVi" },
+  coupdecoeur: { fr: "Coup de cœur", en: "Editor's pick" },
 };
 
 /**
@@ -284,7 +285,7 @@ function FeedTeasers() {
     queryKey: ["wall-compact-teasers"],
     staleTime: 60_000,
     queryFn: async () => {
-      const [village, news, clips, reviews, magazines, teevi] = await Promise.all([
+      const [village, news, clips, reviews, magazines, teevi, coups] = await Promise.all([
         supabase
           .from("village_articles")
           .select("slug, title, excerpt, content, cover_url, created_at")
@@ -317,6 +318,12 @@ function FeedTeasers() {
         supabase
           .from("teevi_videos")
           .select("id, title, summary, video_url, og_image_url, created_at")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .limit(2),
+        supabase
+          .from("coups_de_coeur")
+          .select("id, artist, title, comment, cover_url, created_at")
           .eq("published", true)
           .order("created_at", { ascending: false })
           .limit(2),
@@ -383,12 +390,27 @@ function FeedTeasers() {
           date: r.created_at,
         });
       }
+      for (const r of coups.data ?? []) {
+        out.push({
+          kind: "coupdecoeur",
+          id: r.id,
+          title: `${r.artist} — ${r.title}`,
+          excerpt: (r.comment || "").slice(0, 180),
+          cover: r.cover_url,
+          date: r.created_at,
+        });
+      }
       const sorted = out.sort((a, b) => b.date.localeCompare(a.date));
       const top = sorted.slice(0, 6);
       // Garantit la présence du teaser magazine le plus récent.
       if (!top.some((t) => t.kind === "magazine")) {
         const mag = sorted.find((t) => t.kind === "magazine");
         if (mag) top[top.length - 1] = mag;
+      }
+      // Idem pour le coup de cœur le plus récent.
+      if (!top.some((t) => t.kind === "coupdecoeur")) {
+        const coup = sorted.find((t) => t.kind === "coupdecoeur");
+        if (coup) top[top.length - 2] = coup;
       }
       return top;
     },
@@ -435,6 +457,8 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
               <BookOpen className="size-3" aria-hidden="true" />
             ) : item.kind === "teevi" ? (
               <Tv className="size-3" aria-hidden="true" />
+            ) : item.kind === "coupdecoeur" ? (
+              <Heart className="size-3" aria-hidden="true" />
             ) : (
               <Newspaper className="size-3" aria-hidden="true" />
             )}{" "}
@@ -489,6 +513,12 @@ function TeaserCard({ item, label, locale }: { item: Teaser; label: string; loca
   if (item.kind === "teevi")
     return (
       <Link to="/indi-teevi/$videoId" params={{ videoId: item.id }} className={cls}>
+        {inner}
+      </Link>
+    );
+  if (item.kind === "coupdecoeur")
+    return (
+      <Link to="/coups-de-coeur" hash={`coup-${item.id}`} className={cls}>
         {inner}
       </Link>
     );
