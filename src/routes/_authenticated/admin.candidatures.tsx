@@ -24,38 +24,63 @@ type Candidate = {
   punchline: string | null;
   bio: string | null;
   social_links: SocialLinks | null;
+  role: string | null;
   role_requested: string | null;
   role_request_note: string | null;
+  role_request_status: string | null;
   role_request_submitted_at: string | null;
+  role_request_reviewed_at?: string | null;
 };
+
+const SELECT_COLS =
+  "id, pseudo, stage_name, avatar_url, punchline, bio, social_links, role, role_requested, role_request_note, role_request_status, role_request_submitted_at, role_request_reviewed_at";
 
 function AdminApplicationsPage() {
   const { isAdmin } = useAuth();
   const [rows, setRows] = useState<Candidate[]>([]);
+  const [history, setHistory] = useState<Candidate[]>([]);
+  const [tab, setTab] = useState<"pending" | "history">("pending");
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const review = useServerFn(reviewRoleRequest);
 
   async function load() {
     setLoading(true);
-    const { data, error } = await (supabase as any)
-      .from("profiles")
-      .select(
-        "id, pseudo, stage_name, avatar_url, punchline, bio, social_links, role_requested, role_request_note, role_request_submitted_at",
-      )
-      .eq("role_request_status", "pending")
-      .order("role_request_submitted_at", { ascending: true });
+    const [pendingRes, historyRes] = await Promise.all([
+      (supabase as any)
+        .from("profiles")
+        .select(SELECT_COLS)
+        .eq("role_request_status", "pending")
+        .order("role_request_submitted_at", { ascending: true }),
+      (supabase as any)
+        .from("profiles")
+        .select(SELECT_COLS)
+        .in("role_request_status", ["approved", "rejected"])
+        .order("role_request_reviewed_at", { ascending: false })
+        .limit(200),
+    ]);
     setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    if (pendingRes.error || historyRes.error) {
+      toast.error((pendingRes.error ?? historyRes.error).message);
       return;
     }
-    setRows((data ?? []) as Candidate[]);
+    setRows((pendingRes.data ?? []) as Candidate[]);
+    setHistory((historyRes.data ?? []) as Candidate[]);
   }
 
   useEffect(() => {
     if (isAdmin) void load();
   }, [isAdmin]);
+
+  const q = query.trim().toLowerCase();
+  const filteredHistory = q
+    ? history.filter((c) =>
+        [c.pseudo, c.stage_name ?? "", c.role_requested ?? ""].some((v) =>
+          v.toLowerCase().includes(q),
+        ),
+      )
+    : history;
 
   async function decide(userId: string, decision: "approved" | "rejected") {
     setBusy(userId);
