@@ -151,16 +151,23 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
         />
       )}
       {item.external_url && (
-        <Button asChild size="sm" className="mt-2">
+        <Button asChild size="sm" className="mt-2 h-7 px-1.5 text-[10px] sm:h-8 sm:px-3 sm:text-xs">
           <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
-            <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
+            <ExternalLink className="size-3 shrink-0 sm:size-4" />
+            <span className="truncate">{shopCtaLabel(item.cta_kind, txt)}</span>
           </a>
         </Button>
       )}
       {item.artist && (
-        <Button asChild size="sm" variant="outline" className="mt-1.5">
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="mt-1.5 h-7 px-1.5 text-[10px] sm:h-8 sm:px-3 sm:text-xs"
+        >
           <Link to="/u/$pseudo" params={{ pseudo: item.artist.pseudo }} hash="boutique">
-            <ShoppingBag className="size-4" /> {page.viewArtistShop}
+            <ShoppingBag className="size-3 shrink-0 sm:size-4" />
+            <span className="truncate">{page.viewArtistShop}</span>
           </Link>
         </Button>
       )}
@@ -320,7 +327,7 @@ function BoutiquePage() {
                           {group.length}
                         </span>
                       </h2>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid grid-cols-3 gap-2 sm:gap-3">
                         {group.map((i) => (
                           <ItemCard key={i.id} item={i} />
                         ))}
