@@ -168,7 +168,13 @@ function BoutiquePage() {
   const [format, setFormat] = useState<string | null>(null);
 
   const featured = items.filter((i) => (i.tags ?? []).length > 0);
-  const availableFormats = SHOP_FORMATS.filter((f) => items.some((i) => i.format === f));
+  const extraFormats = Array.from(new Set(items.map((i) => i.format))).filter(
+    (f) => !SHOP_FORMATS.includes(f as (typeof SHOP_FORMATS)[number]),
+  );
+  const availableFormats = [
+    ...SHOP_FORMATS.filter((f) => items.some((i) => i.format === f)),
+    ...extraFormats,
+  ];
   const visible = format ? items.filter((i) => i.format === format) : items;
 
   return (
