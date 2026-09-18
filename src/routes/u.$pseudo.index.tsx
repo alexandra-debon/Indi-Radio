@@ -134,7 +134,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -186,6 +186,9 @@ export const Route = createFileRoute("/u/$pseudo/")({
     // index so stale links don't pollute search results.
     if (!loaderData) {
       meta.push({ name: "robots", content: "noindex, follow" });
+    } else if ((loaderData as any).page_indexable === false) {
+      // L'artiste a désactivé la visibilité de sa page sur les moteurs.
+      meta.push({ name: "robots", content: "noindex, nofollow" });
     } else if (aliasedCasing) {
       // Different casing than the canonical: tell crawlers to prefer the
       // canonical URL and not to index this alias.
@@ -249,6 +252,7 @@ type Profile = {
   website: string | null;
   social_links: SocialLinks | null;
   banner_url: string | null;
+  banner_color: string | null;
   accent_color: string | null;
   stage_name: string | null;
   gallery_summary: string | null;
@@ -305,7 +309,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, accent_color, stage_name, gallery_summary, show_events_section, show_shop_section, show_posts_section")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, banner_color, accent_color, stage_name, gallery_summary, show_events_section, show_shop_section, show_posts_section")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -439,6 +443,16 @@ function UserProfilePage() {
             className="aspect-[2/1] w-full object-cover sm:aspect-[1920/480]"
           />
         </div>
+      )}
+      {isArtistPage && !profile.banner_url && (profile.banner_color || accent) && (
+        <div
+          className="aspect-[6/1] w-full border-2 border-border"
+          style={{
+            backgroundColor: profile.banner_color || accent || undefined,
+            borderColor: accent || undefined,
+          }}
+          aria-hidden="true"
+        />
       )}
 
       <div className="card-brut p-4 space-y-4" style={accent ? { borderColor: accent } : undefined}>
