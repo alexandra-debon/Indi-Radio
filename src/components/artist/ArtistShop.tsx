@@ -9,6 +9,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { ShoppingBag, ExternalLink, Sparkles, Tag, Filter } from "lucide-react";
+import { ShopMissionNote } from "@/components/artist/ShopMissionNote";
 
 export type ShopItem = {
   id: string;
@@ -264,6 +265,7 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
           )}
         </>
       )}
+      <ShopMissionNote accent={accent} />
     </div>
   );
 }
