@@ -155,6 +155,13 @@
       "when": 1789553968367,
       "tag": "0021_teevi_videos_og_image",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1789763209954,
+      "tag": "0022_shop_item_cta_and_public_shop",
+      "breakpoints": true
     }
   ]
 }

@@ -8,8 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { toast } from "@/lib/toast";
-import { ShoppingBag, Loader2, Trash2, Plus, Pencil, X } from "lucide-react";
-import { SHOP_FORMATS, useArtistShopItems, type ShopItem } from "@/components/artist/ArtistShop";
+import { ShoppingBag, Loader2, Trash2, Plus, Pencil, X, Store } from "lucide-react";
+import { SHOP_FORMATS, SHOP_CTA_KINDS, useArtistShopItems, type ShopItem } from "@/components/artist/ArtistShop";
+
+const CTA_LABEL: Record<string, string> = {
+  buy: "Acheter",
+  preorder: "Pré-commander",
+  ticket: "Acheter mon billet",
+};
 
 export function ArtistShopManager({ artistId }: { artistId: string }) {
   const qc = useQueryClient();
@@ -20,6 +26,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
   const [image, setImage] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
+  const [ctaKind, setCtaKind] = useState<string>("buy");
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const resetForm = () => {
@@ -29,6 +36,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
     setSummary("");
     setUrl("");
     setFormat("Vinyle");
+    setCtaKind("buy");
   };
 
   const startEdit = (it: ShopItem) => {
@@ -38,6 +46,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
     setImage(it.image_url ?? "");
     setSummary(it.summary ?? "");
     setUrl(it.external_url ?? "");
+    setCtaKind(it.cta_kind ?? "buy");
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -54,6 +63,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         image_url: image || null,
         summary: summary.trim() || null,
         external_url: url.trim() || null,
+        cta_kind: ctaKind,
       };
       if (editingId) {
         const { error } = await supabase
@@ -86,6 +96,25 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
       if (error) throw error;
     },
     onSuccess: invalidate,
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const togglePublic = useMutation({
+    mutationFn: async ({ id, in_public_shop }: { id: string; in_public_shop: boolean }) => {
+      const { error } = await supabase
+        .from("artist_shop_items")
+        .update({ in_public_shop } as any)
+        .eq("id", id);
+      if (error) throw error;
+      return in_public_shop;
+    },
+    onSuccess: (on) => {
+      toast.success(
+        on ? "Objet ajouté à la Boutique Artistes InDi" : "Objet retiré de la boutique publique",
+      );
+      invalidate();
+      qc.invalidateQueries({ queryKey: ["global-shop-items"] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -132,6 +161,25 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="shop-cta">Bouton affiché aux visiteurs</Label>
+        <select
+          id="shop-cta"
+          value={ctaKind}
+          onChange={(e) => setCtaKind(e.target.value)}
+          className="w-full border-2 border-border bg-background px-2 py-2 text-sm font-semibold"
+        >
+          {SHOP_CTA_KINDS.map((k) => (
+            <option key={k} value={k}>
+              {CTA_LABEL[k]}
+            </option>
+          ))}
+        </select>
+        <p className="text-[11px] text-muted-foreground">
+          Choisis « Acheter mon billet » pour un concert, « Pré-commander » pour une sortie à venir.
+        </p>
       </div>
 
       <div className="space-y-1.5">
@@ -228,6 +276,18 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
               </label>
               <Button
                 type="button"
+                size="sm"
+                variant={it.in_public_shop ? "default" : "outline"}
+                onClick={() =>
+                  togglePublic.mutate({ id: it.id, in_public_shop: !it.in_public_shop })
+                }
+                className="gap-1.5"
+              >
+                <Store className="size-4" />
+                {it.in_public_shop ? "Dans la boutique InDi" : "Mettre en boutique publique InDi"}
+              </Button>
+              <Button
+                type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => startEdit(it)}
@@ -251,7 +311,8 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         </ul>
       )}
       <p className="text-[11px] text-muted-foreground">
-        Les tags éditoriaux (« Choix de la rédaction », « Découverte InDi »…) sont attribués par
+        Le bouton « Mettre en boutique publique InDi » fait apparaître l'objet sur la page Boutique
+        Artistes InDi, visible par tous. Les tags éditoriaux (« Choix de la rédaction », « Découverte InDi »…) sont attribués par
         l'équipe InDi.
       </p>
     </section>

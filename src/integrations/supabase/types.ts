@@ -235,10 +235,12 @@ export type Database = {
         Row: {
           artist_id: string
           created_at: string
+          cta_kind: string
           external_url: string | null
           format: string
           id: string
           image_url: string | null
+          in_public_shop: boolean
           is_visible: boolean
           position: number
           summary: string | null
@@ -249,10 +251,12 @@ export type Database = {
         Insert: {
           artist_id: string
           created_at?: string
+          cta_kind?: string
           external_url?: string | null
           format?: string
           id?: string
           image_url?: string | null
+          in_public_shop?: boolean
           is_visible?: boolean
           position?: number
           summary?: string | null
@@ -263,10 +267,12 @@ export type Database = {
         Update: {
           artist_id?: string
           created_at?: string
+          cta_kind?: string
           external_url?: string | null
           format?: string
           id?: string
           image_url?: string | null
+          in_public_shop?: boolean
           is_visible?: boolean
           position?: number
           summary?: string | null
