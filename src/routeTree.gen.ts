@@ -38,6 +38,7 @@ import { Route as DedicacesRouteImport } from './routes/dedicaces'
 import { Route as CoupsDeCoeurRouteImport } from './routes/coups-de-coeur'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChartRouteImport } from './routes/chart'
+import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlogInvitationRouteImport } from './routes/blog-invitation'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArtistesRouteImport } from './routes/artistes'
@@ -255,6 +256,11 @@ const ContactRoute = ContactRouteImport.update({
 const ChartRoute = ChartRouteImport.update({
   id: '/chart',
   path: '/chart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiqueRoute = BoutiqueRouteImport.update({
+  id: '/boutique',
+  path: '/boutique',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogInvitationRoute = BlogInvitationRouteImport.update({
@@ -654,6 +660,7 @@ export interface FileRoutesByFullPath {
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/blog-invitation': typeof BlogInvitationRoute
+  '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
@@ -757,6 +764,7 @@ export interface FileRoutesByTo {
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/blog-invitation': typeof BlogInvitationRoute
+  '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
@@ -862,6 +870,7 @@ export interface FileRoutesById {
   '/artistes': typeof ArtistesRoute
   '/auth': typeof AuthRoute
   '/blog-invitation': typeof BlogInvitationRoute
+  '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
   '/coups-de-coeur': typeof CoupsDeCoeurRoute
@@ -967,6 +976,7 @@ export interface FileRouteTypes {
     | '/artistes'
     | '/auth'
     | '/blog-invitation'
+    | '/boutique'
     | '/chart'
     | '/contact'
     | '/coups-de-coeur'
@@ -1070,6 +1080,7 @@ export interface FileRouteTypes {
     | '/artistes'
     | '/auth'
     | '/blog-invitation'
+    | '/boutique'
     | '/chart'
     | '/contact'
     | '/coups-de-coeur'
@@ -1174,6 +1185,7 @@ export interface FileRouteTypes {
     | '/artistes'
     | '/auth'
     | '/blog-invitation'
+    | '/boutique'
     | '/chart'
     | '/contact'
     | '/coups-de-coeur'
@@ -1279,6 +1291,7 @@ export interface RootRouteChildren {
   ArtistesRoute: typeof ArtistesRoute
   AuthRoute: typeof AuthRoute
   BlogInvitationRoute: typeof BlogInvitationRoute
+  BoutiqueRoute: typeof BoutiqueRoute
   ChartRoute: typeof ChartRoute
   ContactRoute: typeof ContactRoute
   CoupsDeCoeurRoute: typeof CoupsDeCoeurRoute
@@ -1559,6 +1572,13 @@ declare module '@tanstack/react-router' {
       path: '/chart'
       fullPath: '/chart'
       preLoaderRoute: typeof ChartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique': {
+      id: '/boutique'
+      path: '/boutique'
+      fullPath: '/boutique'
+      preLoaderRoute: typeof BoutiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog-invitation': {
@@ -2143,6 +2163,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArtistesRoute: ArtistesRoute,
   AuthRoute: AuthRoute,
   BlogInvitationRoute: BlogInvitationRoute,
+  BoutiqueRoute: BoutiqueRoute,
   ChartRoute: ChartRoute,
   ContactRoute: ContactRoute,
   CoupsDeCoeurRoute: CoupsDeCoeurRoute,
