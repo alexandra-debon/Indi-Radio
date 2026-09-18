@@ -10,15 +10,18 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 import { toast } from "@/lib/toast";
 import { ShoppingBag, Loader2, Trash2, Plus, Pencil, X, Store } from "lucide-react";
 import { SHOP_FORMATS, SHOP_CTA_KINDS, useArtistShopItems, type ShopItem } from "@/components/artist/ArtistShop";
-
-const CTA_LABEL: Record<string, string> = {
-  buy: "Acheter",
-  preorder: "Pré-commander",
-  ticket: "Acheter mon billet",
-};
+import { useLang } from "@/lib/i18n";
+import { ARTIST_SPACE_TXT } from "@/components/artist/artist-space-i18n";
 
 export function ArtistShopManager({ artistId }: { artistId: string }) {
   const qc = useQueryClient();
+  const lang = useLang();
+  const T = ARTIST_SPACE_TXT[lang === "en" ? "en" : "fr"];
+  const CTA_LABEL: Record<string, string> = {
+    buy: T.ctaBuy,
+    preorder: T.ctaPreorder,
+    ticket: T.ctaTicket,
+  };
   const { data: items = [] } = useArtistShopItems(artistId, { onlyVisible: false });
 
   const [title, setTitle] = useState("");
@@ -54,9 +57,9 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
 
   const add = useMutation({
     mutationFn: async () => {
-      if (!title.trim()) throw new Error("Titre obligatoire");
+      if (!title.trim()) throw new Error(T.itemTitleRequired);
       if (url.trim() && !/^https?:\/\/.+\..+/.test(url.trim()))
-        throw new Error("Lien d'achat invalide");
+        throw new Error(T.itemBadUrl);
       const payload = {
         title: title.trim(),
         format,
@@ -81,7 +84,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
     },
     onSuccess: (mode) => {
       resetForm();
-      toast.success(mode === "update" ? "Objet mis à jour" : "Objet ajouté à ta boutique");
+      toast.success(mode === "update" ? T.itemUpdated : T.itemAdded);
       invalidate();
     },
     onError: (e) => toast.error((e as Error).message),
@@ -110,7 +113,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
     },
     onSuccess: (on) => {
       toast.success(
-        on ? "Objet ajouté à la Boutique Artistes InDi" : "Objet retiré de la boutique publique",
+        on ? T.itemPublicOn : T.itemPublicOff,
       );
       invalidate();
       qc.invalidateQueries({ queryKey: ["global-shop-items"] });
@@ -124,7 +127,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Objet supprimé");
+      toast.success(T.itemDeleted);
       invalidate();
     },
     onError: (e) => toast.error((e as Error).message),
@@ -133,21 +136,21 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
   return (
     <section className="card-brut space-y-3 p-4">
       <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide">
-        <ShoppingBag className="size-4 text-primary" /> Ma boutique
+        <ShoppingBag className="size-4 text-primary" /> {T.myShop}
       </h2>
 
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="shop-title">Titre *</Label>
+          <Label htmlFor="shop-title">{T.shopTitle}</Label>
           <Input
             id="shop-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nom de l'objet"
+            placeholder={T.shopTitlePlaceholder}
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="shop-format">Format</Label>
+          <Label htmlFor="shop-format">{T.format}</Label>
           <select
             id="shop-format"
             value={format}
@@ -164,7 +167,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="shop-cta">Bouton affiché aux visiteurs</Label>
+        <Label htmlFor="shop-cta">{T.ctaLabel}</Label>
         <select
           id="shop-cta"
           value={ctaKind}
@@ -178,36 +181,36 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
           ))}
         </select>
         <p className="text-[11px] text-muted-foreground">
-          Choisis « Acheter mon billet » pour un concert, « Pré-commander » pour une sortie à venir.
+          {T.ctaHint}
         </p>
       </div>
 
       <div className="space-y-1.5">
-        <Label>Photo (carrée)</Label>
+        <Label>{T.shopPhoto}</Label>
         <ImageUploader
           value={image}
           onChange={setImage}
           folder={`shop/${artistId}`}
-          label="Photo de l'objet"
+          label={T.shopPhotoLabel}
           usage="cover"
           defaultRatio="1:1"
         />
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="shop-summary">Présentation (optionnel)</Label>
+        <Label htmlFor="shop-summary">{T.shopSummary}</Label>
         <Textarea
           id="shop-summary"
           rows={3}
           maxLength={600}
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
-          placeholder="Quelques mots sur cet objet…"
+          placeholder={T.shopSummaryPlaceholder}
         />
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="shop-url">Lien d'achat</Label>
+        <Label htmlFor="shop-url">{T.shopUrl}</Label>
         <Input
           id="shop-url"
           value={url}
@@ -216,8 +219,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
           inputMode="url"
         />
         <p className="text-[11px] text-muted-foreground">
-          Le lien n'est jamais affiché tel quel : les visiteurs voient uniquement un bouton «
-          Acheter ».
+          {T.shopUrlHint}
         </p>
       </div>
 
@@ -230,17 +232,17 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
           ) : (
             <Plus className="size-4" />
           )}
-          {editingId ? "Enregistrer les modifications" : "Ajouter à la boutique"}
+          {editingId ? T.saveChanges : T.addToShop}
         </Button>
         {editingId && (
           <Button type="button" variant="ghost" onClick={resetForm}>
-            <X className="size-4" /> Annuler
+            <X className="size-4" /> {T.cancel}
           </Button>
         )}
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aucun objet pour l'instant.</p>
+        <p className="text-sm text-muted-foreground">{T.noItems}</p>
       ) : (
         <ul className="space-y-2 pt-2">
           {items.map((it: ShopItem) => (
@@ -270,9 +272,9 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
                 <Switch
                   checked={it.is_visible}
                   onCheckedChange={(v) => toggleVisible.mutate({ id: it.id, is_visible: v })}
-                  aria-label="Afficher cet objet"
+                  aria-label={T.visibleAria}
                 />
-                Visible
+                {T.visible}
               </label>
               <Button
                 type="button"
@@ -284,14 +286,14 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
                 className="gap-1.5"
               >
                 <Store className="size-4" />
-                {it.in_public_shop ? "Dans la boutique InDi" : "Mettre en boutique publique InDi"}
+                {it.in_public_shop ? T.inPublicShop : T.putInPublicShop}
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => startEdit(it)}
-                aria-label="Modifier cet objet"
+                aria-label={T.editItemAria}
               >
                 <Pencil className="size-4" />
               </Button>
@@ -301,7 +303,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
                 size="sm"
                 className="text-destructive"
                 onClick={() => {
-                  if (window.confirm("Supprimer cet objet ?")) remove.mutate(it.id);
+                  if (window.confirm(T.confirmDeleteItem)) remove.mutate(it.id);
                 }}
               >
                 <Trash2 className="size-4" />
@@ -311,9 +313,7 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         </ul>
       )}
       <p className="text-[11px] text-muted-foreground">
-        Le bouton « Mettre en boutique publique InDi » fait apparaître l'objet sur la page Boutique
-        Artistes InDi, visible par tous. Les tags éditoriaux (« Choix de la rédaction », « Découverte InDi »…) sont attribués par
-        l'équipe InDi.
+        {T.shopFooter}
       </p>
     </section>
   );
