@@ -450,6 +450,7 @@ export const dict = {
     "nav.shop": "InDi Artists Shop",
     "nav.village": "RéDaK'Village",
     "nav.villageAdmin": "RéDaK'Village articles",
+    "nav.coupsAdmin": "Favourites",
     "nav.magazinesAdmin": "Magazine articles",
     "nav.badgesAdmin": "Badges",
     "nav.challengesAdmin": "Editorial challenges",
