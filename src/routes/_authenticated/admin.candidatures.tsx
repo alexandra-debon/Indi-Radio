@@ -86,7 +86,21 @@ function AdminApplicationsPage() {
     setBusy(userId);
     try {
       await review({ data: { userId, decision } });
-      setRows((r) => r.filter((x) => x.id !== userId));
+      setRows((r) => {
+        const done = r.find((x) => x.id === userId);
+        if (done) {
+          setHistory((h) => [
+            {
+              ...done,
+              role_request_status: decision,
+              role_request_reviewed_at: new Date().toISOString(),
+              role: decision === "approved" ? (done.role_requested ?? done.role) : done.role,
+            },
+            ...h,
+          ]);
+        }
+        return r.filter((x) => x.id !== userId);
+      });
       toast.success(decision === "approved" ? "Candidature approuvée." : "Candidature refusée.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action impossible.");
