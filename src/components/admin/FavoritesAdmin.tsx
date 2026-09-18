@@ -30,7 +30,7 @@ function DraftStatus({
   onDiscard,
 }: {
   savedAt: number | null;
-  restoredAt: boolean;
+  restoredAt: number | null;
   onDiscard: () => void;
 }) {
   if (!savedAt) return null;
