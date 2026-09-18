@@ -10,6 +10,7 @@ import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { ShoppingBag, ExternalLink, Sparkles, Tag, Filter } from "lucide-react";
 import { ShopMissionNote } from "@/components/artist/ShopMissionNote";
+import { logShopClick } from "@/lib/shop-clicks";
 
 export type ShopItem = {
   id: string;
@@ -237,7 +238,7 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
               <div className="flex snap-x gap-3 overflow-x-auto pb-2">
                 {featured.map((i) => (
                   <div key={i.id} className="snap-start">
-                    <ShopCard item={i} accent={accent} isAdmin={isAdmin} compact />
+                    <ShopCard item={i} accent={accent} isAdmin={isAdmin} artistId={artistId} compact />
                   </div>
                 ))}
               </div>
@@ -285,7 +286,7 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((i) => (
-                <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} />
+                <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} artistId={artistId} />
               ))}
             </div>
           )}
