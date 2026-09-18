@@ -67,7 +67,7 @@ const NAV: NavItem[] = [
   { to: "/chroniques", key: "nav.reviews", icon: Disc3, seo: "Chroniques Radio musique indé — Albums indépendants" },
   { to: "/clips", key: "nav.clips", icon: Film, seo: "Clips Radio musique indé — Vidéos indépendantes" },
   { to: "/artistes", key: "nav.gallery", icon: Mic, seo: "Galerie Artistes certifiés — Radio musique indé" },
-  { to: "/boutique", key: "nav.shop", icon: ShoppingBag, seo: "Boutique — Vinyles, CD et merch des artistes indépendants" },
+  { to: "/boutique", key: "nav.shop", icon: ShoppingBag, seo: "Boutique Artistes InDi — Vinyles, CD, merch et billets des artistes indépendants" },
   { to: "/playlists", key: "nav.playlists", icon: ListMusic, seo: "Playlists InDi RaDio — Spotify & Apple Music, musique indépendante" },
   { to: "/chart", key: "nav.chart", icon: BarChart3, seo: "Top 25 titres — Radio musique indé" },
   { to: "/top-users", key: "nav.topUsers", icon: Trophy, seo: "Réseau social musique — Top membres" },

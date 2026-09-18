@@ -6,18 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { SmartImg } from "@/components/media/SmartImg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
-import { SHOP_FORMATS, useShopTxt } from "@/components/artist/ArtistShop";
+import { SHOP_FORMATS, shopCtaLabel, useShopTxt } from "@/components/artist/ArtistShop";
 import { useLang } from "@/lib/i18n";
 import { ShoppingBag, ExternalLink, Sparkles, Filter } from "lucide-react";
 
 export const Route = createFileRoute("/boutique")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/boutique", match.search, [
-      { title: "Boutique — Vinyles, CD et merch des artistes indépendants InDi RaDio" },
+      { title: "Boutique Artistes InDi — Vinyles, CD, merch et billets des artistes indépendants" },
       { name: "description", content: "Tous les objets en vente par les artistes indépendants diffusés sur InDi RaDio : vinyles, CD, K7, livres et merch, en soutien direct aux artistes." },
-      { property: "og:title", content: "Boutique — Vinyles, CD et merch des artistes indépendants InDi RaDio" },
+      { property: "og:title", content: "Boutique Artistes InDi — Vinyles, CD, merch et billets des artistes indépendants" },
       { property: "og:description", content: "Vinyles, CD, K7, livres et merch des artistes indépendants diffusés sur InDi RaDio." },
-      { name: "twitter:title", content: "Boutique — Artistes indépendants InDi RaDio" },
+      { name: "twitter:title", content: "Boutique Artistes InDi — Artistes indépendants" },
       { name: "twitter:description", content: "Vinyles, CD, K7, livres et merch des artistes indépendants diffusés sur InDi RaDio." },
       { property: "og:url", content: "https://www.radio.indi-art-culture.com/boutique" },
       { property: "og:type", content: "website" },
@@ -41,22 +41,23 @@ type GlobalShopItem = {
   summary: string | null;
   external_url: string | null;
   tags: string[] | null;
+  cta_kind: string | null;
   created_at: string;
   artist: { id: string; pseudo: string; stage_name: string | null } | null;
 };
 
 const PAGE_TXT = {
   fr: {
-    title: "Boutique",
+    title: "Boutique Artistes InDi",
     intro:
-      "Les objets proposés par les artistes indépendants d'InDi RaDio. Chaque achat va directement à l'artiste.",
+      "Les objets mis en boutique publique par les artistes indépendants d'InDi RaDio : disques, merch, billets de concert. Chaque achat va directement à l'artiste.",
     by: "Par",
     empty: "Aucun objet en boutique pour le moment.",
   },
   en: {
-    title: "Shop",
+    title: "InDi Artists Shop",
     intro:
-      "Items offered by the independent artists of InDi RaDio. Every purchase goes straight to the artist.",
+      "Items put in the public shop by the independent artists of InDi RaDio: records, merch, gig tickets. Every purchase goes straight to the artist.",
     by: "By",
     empty: "Nothing in the shop yet.",
   },
@@ -69,9 +70,10 @@ function useItems() {
       const { data, error } = await supabase
         .from("artist_shop_items")
         .select(
-          "id, title, format, image_url, summary, external_url, tags, created_at, artist:profiles!artist_shop_items_artist_id_fkey(id, pseudo, stage_name)",
+          "id, title, format, image_url, summary, external_url, tags, cta_kind, created_at, artist:profiles!artist_shop_items_artist_id_fkey(id, pseudo, stage_name)",
         )
         .eq("is_visible", true)
+        .eq("in_public_shop", true)
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
@@ -141,7 +143,7 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
       {item.external_url && (
         <Button asChild size="sm" className="mt-2">
           <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
-            <ExternalLink className="size-4" /> {txt.buy}
+            <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
           </a>
         </Button>
       )}
