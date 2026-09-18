@@ -205,6 +205,11 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
       <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
         <ShoppingBag className="size-4" style={accent ? { color: accent } : undefined} /> {txt.shop}
       </h2>
+      <p className="mb-3 text-xs font-semibold leading-snug text-muted-foreground">
+        {txt.refundBefore}
+        <span className="font-black text-radio-yellow">{txt.refundHighlight}</span>
+        {txt.refundAfter}
+      </p>
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">{txt.empty}</p>
       ) : (
