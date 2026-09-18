@@ -43,13 +43,24 @@ import { useTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
 // `seo` renders as the anchor `title` attribute: crawlers use it as anchor
 // context for internal maillage while users get an accessible tooltip.
-const NAV: { to: string; key: DictKey; icon: any; seo: string }[] = [
+type NavItem = { to: string; key: DictKey; icon: any; seo: string };
+
+const NAV_TOP: NavItem[] = [
   { to: "/profile/edit", key: "profile.mySpace", icon: UserCog, seo: "Ma page perso — Espace membre InDi RaDio" },
   { to: "/", key: "nav.live", icon: Radio, seo: "Radio musique indé en direct — Radio sans pub" },
+];
+
+// Rubriques éditoriales mises en avant, dans l'ordre prioritaire demandé.
+const NAV_EDITORIAL: NavItem[] = [
   { to: "/actus", key: "nav.news", icon: Newspaper, seo: "Blog InDi ArT CulTuRe — Radio musique indépendante & Réseau social musique" },
   { to: "/redak-village", key: "nav.village", icon: Feather, seo: "RéDaK'Village — Les articles de la communauté InDi RaDio" },
   { to: "/indi-teevi", key: "nav.teevi", icon: Tv, seo: "InDi TeeVi — Chaîne vidéo gratuite de la musique indépendante" },
   { to: "/magazines", key: "nav.magazines", icon: BookOpen, seo: "Magazine interactif — Réseau social musique indépendante" },
+];
+
+const NAV: NavItem[] = [
+  ...NAV_TOP,
+  ...NAV_EDITORIAL,
   { to: "/emissions", key: "nav.shows", icon: Mic2, seo: "Émissions de la Radio sans pub InDi RaDio" },
   { to: "/podcasts", key: "nav.podcasts", icon: Headphones, seo: "Podcasts Radio musique indépendante sans pub" },
   { to: "/coups-de-coeur", key: "nav.favorites", icon: Heart, seo: "Coups de cœur Radio musique indépendante" },
