@@ -54,6 +54,8 @@ const PAGE_TXT = {
     by: "Par",
     empty: "Aucun objet en boutique pour le moment.",
     viewArtistShop: "Voir la boutique de l'artiste",
+    allArtists: "Tous les artistes",
+    filterArtist: "Artiste",
   },
   en: {
     title: "InDi Artists Shop",
@@ -62,6 +64,8 @@ const PAGE_TXT = {
     by: "By",
     empty: "Nothing in the shop yet.",
     viewArtistShop: "View the artist's shop",
+    allArtists: "All artists",
+    filterArtist: "Artist",
   },
 } as const;
 
@@ -166,16 +170,26 @@ function BoutiquePage() {
   const page = PAGE_TXT[lang === "en" ? "en" : "fr"];
   const { data: items = [], isLoading } = useItems();
   const [format, setFormat] = useState<string | null>(null);
+  const [artistId, setArtistId] = useState<string | null>(null);
 
-  const featured = items.filter((i) => (i.tags ?? []).length > 0);
-  const extraFormats = Array.from(new Set(items.map((i) => i.format))).filter(
+  const artists = Array.from(
+    new Map(
+      items
+        .filter((i) => i.artist)
+        .map((i) => [i.artist!.id, i.artist!.stage_name || i.artist!.pseudo]),
+    ).entries(),
+  ).sort((a, b) => a[1].localeCompare(b[1], "fr"));
+
+  const byArtist = artistId ? items.filter((i) => i.artist?.id === artistId) : items;
+  const featured = byArtist.filter((i) => (i.tags ?? []).length > 0);
+  const extraFormats = Array.from(new Set(byArtist.map((i) => i.format))).filter(
     (f) => !SHOP_FORMATS.includes(f as (typeof SHOP_FORMATS)[number]),
   );
   const availableFormats = [
-    ...SHOP_FORMATS.filter((f) => items.some((i) => i.format === f)),
+    ...SHOP_FORMATS.filter((f) => byArtist.some((i) => i.format === f)),
     ...extraFormats,
   ];
-  const visible = format ? items.filter((i) => i.format === format) : items;
+  const visible = format ? byArtist.filter((i) => i.format === format) : byArtist;
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4">
@@ -203,6 +217,46 @@ function BoutiquePage() {
                 ))}
               </div>
             </section>
+          )}
+
+          {artists.length > 1 && (
+            <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={page.filterArtist}>
+              <span className="mr-1 flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <Filter className="size-3" /> {page.filterArtist}
+              </span>
+              <button
+                type="button"
+                onClick={() => setArtistId(null)}
+                aria-pressed={artistId === null}
+                className={
+                  "rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                  (artistId === null
+                    ? "bg-primary text-black shadow-[2px_2px_0_0_#000]"
+                    : "bg-background hover:bg-muted")
+                }
+              >
+                {page.allArtists}
+              </button>
+              {artists.map(([id, name]) => {
+                const active = artistId === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setArtistId(active ? null : id)}
+                    aria-pressed={active}
+                    className={
+                      "rounded-full border-2 border-black px-2 py-0.5 text-[11px] font-semibold transition " +
+                      (active
+                        ? "bg-primary text-black shadow-[2px_2px_0_0_#000]"
+                        : "bg-background hover:bg-muted")
+                    }
+                  >
+                    {name}
+                  </button>
+                );
+              })}
+            </div>
           )}
 
           {availableFormats.length > 1 && (
