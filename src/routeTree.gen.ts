@@ -63,6 +63,7 @@ import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$mag
 import { Route as IndiTeeviVideoIdRouteImport } from './routes/indi-teevi.$videoId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
+import { Route as CoupsDeCoeurCoupIdRouteImport } from './routes/coups-de-coeur.$coupId'
 import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
@@ -382,6 +383,11 @@ const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
   path: '/emissions/$showId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoupsDeCoeurCoupIdRoute = CoupsDeCoeurCoupIdRouteImport.update({
+  id: '/coups-de-coeur/$coupId',
+  path: '/coups-de-coeur/$coupId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
   id: '/clips/$clipId',
   path: '/clips/$clipId',
@@ -698,6 +704,7 @@ export interface FileRoutesByFullPath {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -802,6 +809,7 @@ export interface FileRoutesByTo {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -908,6 +916,7 @@ export interface FileRoutesById {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -1014,6 +1023,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1118,6 +1128,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1223,6 +1234,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1325,6 +1337,7 @@ export interface RootRouteChildren {
   ActusPostIdRoute: typeof ActusPostIdRoute
   ChroniquesSlugRoute: typeof ChroniquesSlugRoute
   ClipsClipIdRoute: typeof ClipsClipIdRoute
+  CoupsDeCoeurCoupIdRoute: typeof CoupsDeCoeurCoupIdRoute
   EmissionsShowIdRoute: typeof EmissionsShowIdRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   IndiTeeviVideoIdRoute: typeof IndiTeeviVideoIdRoute
@@ -1747,6 +1760,13 @@ declare module '@tanstack/react-router' {
       path: '/emissions/$showId'
       fullPath: '/emissions/$showId'
       preLoaderRoute: typeof EmissionsShowIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coups-de-coeur/$coupId': {
+      id: '/coups-de-coeur/$coupId'
+      path: '/coups-de-coeur/$coupId'
+      fullPath: '/coups-de-coeur/$coupId'
+      preLoaderRoute: typeof CoupsDeCoeurCoupIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clips/$clipId': {
@@ -2198,6 +2218,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActusPostIdRoute: ActusPostIdRoute,
   ChroniquesSlugRoute: ChroniquesSlugRoute,
   ClipsClipIdRoute: ClipsClipIdRoute,
+  CoupsDeCoeurCoupIdRoute: CoupsDeCoeurCoupIdRoute,
   EmissionsShowIdRoute: EmissionsShowIdRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   IndiTeeviVideoIdRoute: IndiTeeviVideoIdRoute,
