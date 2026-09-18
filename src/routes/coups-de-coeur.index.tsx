@@ -1,5 +1,5 @@
 import { localizedStaticMeta } from "@/lib/og-static-head";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +28,7 @@ type CoupRow = {
 
 type LikeRow = { coup_id: string; user_id: string };
 
-export const Route = createFileRoute("/coups-de-coeur")({
+export const Route = createFileRoute("/coups-de-coeur/")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/coups-de-coeur", match.search, [
       { title: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },
@@ -293,7 +293,13 @@ function CoupsDeCoeurPage() {
                         : "Album"}
                   </div>
                   <h2 className="text-xl font-bold leading-tight">
-                    {c.title}
+                    <Link
+                      to="/coups-de-coeur/$coupId"
+                      params={{ coupId: c.id }}
+                      className="hover:underline"
+                    >
+                      {c.title}
+                    </Link>
                   </h2>
                   <div className="text-sm text-muted-foreground">
                     par <span className="font-medium text-foreground">{c.artist}</span>

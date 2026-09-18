@@ -35,7 +35,6 @@ import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
-import { Route as CoupsDeCoeurRouteImport } from './routes/coups-de-coeur'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
@@ -51,6 +50,7 @@ import { Route as PartageIndexRouteImport } from './routes/partage.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as IndiTeeviIndexRouteImport } from './routes/indi-teevi.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
+import { Route as CoupsDeCoeurIndexRouteImport } from './routes/coups-de-coeur.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
 import { Route as ActusIndexRouteImport } from './routes/actus.index'
@@ -63,6 +63,7 @@ import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$mag
 import { Route as IndiTeeviVideoIdRouteImport } from './routes/indi-teevi.$videoId'
 import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
 import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
+import { Route as CoupsDeCoeurCoupIdRouteImport } from './routes/coups-de-coeur.$coupId'
 import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
 import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
 import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
@@ -98,6 +99,7 @@ import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminMagazinesRouteImport } from './routes/_authenticated/admin.magazines'
 import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
+import { Route as AuthenticatedAdminCoupsDeCoeurRouteImport } from './routes/_authenticated/admin.coups-de-coeur'
 import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_authenticated/admin.challenges'
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
@@ -243,11 +245,6 @@ const DedicacesRoute = DedicacesRouteImport.update({
   path: '/dedicaces',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoupsDeCoeurRoute = CoupsDeCoeurRouteImport.update({
-  id: '/coups-de-coeur',
-  path: '/coups-de-coeur',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -322,6 +319,11 @@ const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
   path: '/emissions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoupsDeCoeurIndexRoute = CoupsDeCoeurIndexRouteImport.update({
+  id: '/coups-de-coeur/',
+  path: '/coups-de-coeur/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClipsIndexRoute = ClipsIndexRouteImport.update({
   id: '/clips/',
   path: '/clips/',
@@ -380,6 +382,11 @@ const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
 const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
   id: '/emissions/$showId',
   path: '/emissions/$showId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoupsDeCoeurCoupIdRoute = CoupsDeCoeurCoupIdRouteImport.update({
+  id: '/coups-de-coeur/$coupId',
+  path: '/coups-de-coeur/$coupId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
@@ -576,6 +583,12 @@ const AuthenticatedAdminDiagnosticsPseudosRoute =
     path: '/diagnostics-pseudos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCoupsDeCoeurRoute =
+  AuthenticatedAdminCoupsDeCoeurRouteImport.update({
+    id: '/coups-de-coeur',
+    path: '/coups-de-coeur',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminChallengesRoute =
   AuthenticatedAdminChallengesRouteImport.update({
     id: '/challenges',
@@ -663,7 +676,6 @@ export interface FileRoutesByFullPath {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -699,6 +711,7 @@ export interface FileRoutesByFullPath {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -711,6 +724,7 @@ export interface FileRoutesByFullPath {
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
+  '/coups-de-coeur/': typeof CoupsDeCoeurIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
@@ -723,6 +737,7 @@ export interface FileRoutesByFullPath {
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
+  '/admin/coups-de-coeur': typeof AuthenticatedAdminCoupsDeCoeurRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -767,7 +782,6 @@ export interface FileRoutesByTo {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -803,6 +817,7 @@ export interface FileRoutesByTo {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -815,6 +830,7 @@ export interface FileRoutesByTo {
   '/actus': typeof ActusIndexRoute
   '/chroniques': typeof ChroniquesIndexRoute
   '/clips': typeof ClipsIndexRoute
+  '/coups-de-coeur': typeof CoupsDeCoeurIndexRoute
   '/emissions': typeof EmissionsIndexRoute
   '/indi-teevi': typeof IndiTeeviIndexRoute
   '/magazines': typeof MagazinesIndexRoute
@@ -827,6 +843,7 @@ export interface FileRoutesByTo {
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
+  '/admin/coups-de-coeur': typeof AuthenticatedAdminCoupsDeCoeurRoute
   '/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -873,7 +890,6 @@ export interface FileRoutesById {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -909,6 +925,7 @@ export interface FileRoutesById {
   '/actus/$postId': typeof ActusPostIdRoute
   '/chroniques/$slug': typeof ChroniquesSlugRoute
   '/clips/$clipId': typeof ClipsClipIdRoute
+  '/coups-de-coeur/$coupId': typeof CoupsDeCoeurCoupIdRoute
   '/emissions/$showId': typeof EmissionsShowIdRoute
   '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
   '/indi-teevi/$videoId': typeof IndiTeeviVideoIdRoute
@@ -921,6 +938,7 @@ export interface FileRoutesById {
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
+  '/coups-de-coeur/': typeof CoupsDeCoeurIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
@@ -933,6 +951,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
   '/_authenticated/admin/challenges': typeof AuthenticatedAdminChallengesRoute
+  '/_authenticated/admin/coups-de-coeur': typeof AuthenticatedAdminCoupsDeCoeurRoute
   '/_authenticated/admin/diagnostics-pseudos': typeof AuthenticatedAdminDiagnosticsPseudosRoute
   '/_authenticated/admin/magazines': typeof AuthenticatedAdminMagazinesRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -979,7 +998,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1015,6 +1033,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1027,6 +1046,7 @@ export interface FileRouteTypes {
     | '/actus/'
     | '/chroniques/'
     | '/clips/'
+    | '/coups-de-coeur/'
     | '/emissions/'
     | '/indi-teevi/'
     | '/magazines/'
@@ -1039,6 +1059,7 @@ export interface FileRouteTypes {
     | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/challenges'
+    | '/admin/coups-de-coeur'
     | '/admin/diagnostics-pseudos'
     | '/admin/magazines'
     | '/admin/messages'
@@ -1083,7 +1104,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1119,6 +1139,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1131,6 +1152,7 @@ export interface FileRouteTypes {
     | '/actus'
     | '/chroniques'
     | '/clips'
+    | '/coups-de-coeur'
     | '/emissions'
     | '/indi-teevi'
     | '/magazines'
@@ -1143,6 +1165,7 @@ export interface FileRouteTypes {
     | '/admin/boutique'
     | '/admin/candidatures'
     | '/admin/challenges'
+    | '/admin/coups-de-coeur'
     | '/admin/diagnostics-pseudos'
     | '/admin/magazines'
     | '/admin/messages'
@@ -1188,7 +1211,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1224,6 +1246,7 @@ export interface FileRouteTypes {
     | '/actus/$postId'
     | '/chroniques/$slug'
     | '/clips/$clipId'
+    | '/coups-de-coeur/$coupId'
     | '/emissions/$showId'
     | '/episodes/$episodeId'
     | '/indi-teevi/$videoId'
@@ -1236,6 +1259,7 @@ export interface FileRouteTypes {
     | '/actus/'
     | '/chroniques/'
     | '/clips/'
+    | '/coups-de-coeur/'
     | '/emissions/'
     | '/indi-teevi/'
     | '/magazines/'
@@ -1248,6 +1272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
     | '/_authenticated/admin/challenges'
+    | '/_authenticated/admin/coups-de-coeur'
     | '/_authenticated/admin/diagnostics-pseudos'
     | '/_authenticated/admin/magazines'
     | '/_authenticated/admin/messages'
@@ -1294,7 +1319,6 @@ export interface RootRouteChildren {
   BoutiqueRoute: typeof BoutiqueRoute
   ChartRoute: typeof ChartRoute
   ContactRoute: typeof ContactRoute
-  CoupsDeCoeurRoute: typeof CoupsDeCoeurRoute
   DedicacesRoute: typeof DedicacesRoute
   McpRoute: typeof McpRoute
   ModerationRoute: typeof ModerationRoute
@@ -1326,6 +1350,7 @@ export interface RootRouteChildren {
   ActusPostIdRoute: typeof ActusPostIdRoute
   ChroniquesSlugRoute: typeof ChroniquesSlugRoute
   ClipsClipIdRoute: typeof ClipsClipIdRoute
+  CoupsDeCoeurCoupIdRoute: typeof CoupsDeCoeurCoupIdRoute
   EmissionsShowIdRoute: typeof EmissionsShowIdRoute
   EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
   IndiTeeviVideoIdRoute: typeof IndiTeeviVideoIdRoute
@@ -1338,6 +1363,7 @@ export interface RootRouteChildren {
   ActusIndexRoute: typeof ActusIndexRoute
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
   ClipsIndexRoute: typeof ClipsIndexRoute
+  CoupsDeCoeurIndexRoute: typeof CoupsDeCoeurIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   IndiTeeviIndexRoute: typeof IndiTeeviIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
@@ -1553,13 +1579,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DedicacesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/coups-de-coeur': {
-      id: '/coups-de-coeur'
-      path: '/coups-de-coeur'
-      fullPath: '/coups-de-coeur'
-      preLoaderRoute: typeof CoupsDeCoeurRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -1665,6 +1684,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmissionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/coups-de-coeur/': {
+      id: '/coups-de-coeur/'
+      path: '/coups-de-coeur'
+      fullPath: '/coups-de-coeur/'
+      preLoaderRoute: typeof CoupsDeCoeurIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clips/': {
       id: '/clips/'
       path: '/clips'
@@ -1747,6 +1773,13 @@ declare module '@tanstack/react-router' {
       path: '/emissions/$showId'
       fullPath: '/emissions/$showId'
       preLoaderRoute: typeof EmissionsShowIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coups-de-coeur/$coupId': {
+      id: '/coups-de-coeur/$coupId'
+      path: '/coups-de-coeur/$coupId'
+      fullPath: '/coups-de-coeur/$coupId'
+      preLoaderRoute: typeof CoupsDeCoeurCoupIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clips/$clipId': {
@@ -1994,6 +2027,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/coups-de-coeur': {
+      id: '/_authenticated/admin/coups-de-coeur'
+      path: '/coups-de-coeur'
+      fullPath: '/admin/coups-de-coeur'
+      preLoaderRoute: typeof AuthenticatedAdminCoupsDeCoeurRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/challenges': {
       id: '/_authenticated/admin/challenges'
       path: '/challenges'
@@ -2100,6 +2140,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
   AuthenticatedAdminChallengesRoute: typeof AuthenticatedAdminChallengesRoute
+  AuthenticatedAdminCoupsDeCoeurRoute: typeof AuthenticatedAdminCoupsDeCoeurRoute
   AuthenticatedAdminDiagnosticsPseudosRoute: typeof AuthenticatedAdminDiagnosticsPseudosRoute
   AuthenticatedAdminMagazinesRoute: typeof AuthenticatedAdminMagazinesRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -2113,6 +2154,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBoutiqueRoute: AuthenticatedAdminBoutiqueRoute,
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
   AuthenticatedAdminChallengesRoute: AuthenticatedAdminChallengesRoute,
+  AuthenticatedAdminCoupsDeCoeurRoute: AuthenticatedAdminCoupsDeCoeurRoute,
   AuthenticatedAdminDiagnosticsPseudosRoute:
     AuthenticatedAdminDiagnosticsPseudosRoute,
   AuthenticatedAdminMagazinesRoute: AuthenticatedAdminMagazinesRoute,
@@ -2166,7 +2208,6 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueRoute: BoutiqueRoute,
   ChartRoute: ChartRoute,
   ContactRoute: ContactRoute,
-  CoupsDeCoeurRoute: CoupsDeCoeurRoute,
   DedicacesRoute: DedicacesRoute,
   McpRoute: McpRoute,
   ModerationRoute: ModerationRoute,
@@ -2199,6 +2240,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActusPostIdRoute: ActusPostIdRoute,
   ChroniquesSlugRoute: ChroniquesSlugRoute,
   ClipsClipIdRoute: ClipsClipIdRoute,
+  CoupsDeCoeurCoupIdRoute: CoupsDeCoeurCoupIdRoute,
   EmissionsShowIdRoute: EmissionsShowIdRoute,
   EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
   IndiTeeviVideoIdRoute: IndiTeeviVideoIdRoute,
@@ -2211,6 +2253,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActusIndexRoute: ActusIndexRoute,
   ChroniquesIndexRoute: ChroniquesIndexRoute,
   ClipsIndexRoute: ClipsIndexRoute,
+  CoupsDeCoeurIndexRoute: CoupsDeCoeurIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
   IndiTeeviIndexRoute: IndiTeeviIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
