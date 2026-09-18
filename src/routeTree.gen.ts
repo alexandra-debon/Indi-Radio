@@ -104,6 +104,7 @@ import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
 import { Route as AuthenticatedAdminBadgesRouteImport } from './routes/_authenticated/admin.badges'
+import { Route as AuthenticatedAdminArtistesRouteImport } from './routes/_authenticated/admin.artistes'
 import { Route as AuthenticatedAdminAchatsRouteImport } from './routes/_authenticated/admin.achats'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -614,6 +615,12 @@ const AuthenticatedAdminBadgesRoute =
     path: '/badges',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminArtistesRoute =
+  AuthenticatedAdminArtistesRouteImport.update({
+    id: '/artistes',
+    path: '/artistes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAchatsRoute =
   AuthenticatedAdminAchatsRouteImport.update({
     id: '/achats',
@@ -741,6 +748,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/achats': typeof AuthenticatedAdminAchatsRoute
+  '/admin/artistes': typeof AuthenticatedAdminArtistesRoute
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -848,6 +856,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/achats': typeof AuthenticatedAdminAchatsRoute
+  '/admin/artistes': typeof AuthenticatedAdminArtistesRoute
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -957,6 +966,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/achats': typeof AuthenticatedAdminAchatsRoute
+  '/_authenticated/admin/artistes': typeof AuthenticatedAdminArtistesRoute
   '/_authenticated/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -1066,6 +1076,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/achats'
+    | '/admin/artistes'
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
@@ -1173,6 +1184,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/achats'
+    | '/admin/artistes'
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
@@ -1281,6 +1293,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/achats'
+    | '/_authenticated/admin/artistes'
     | '/_authenticated/admin/badges'
     | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
@@ -2075,6 +2088,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBadgesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/artistes': {
+      id: '/_authenticated/admin/artistes'
+      path: '/artistes'
+      fullPath: '/admin/artistes'
+      preLoaderRoute: typeof AuthenticatedAdminArtistesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/achats': {
       id: '/_authenticated/admin/achats'
       path: '/achats'
@@ -2157,6 +2177,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAchatsRoute: typeof AuthenticatedAdminAchatsRoute
+  AuthenticatedAdminArtistesRoute: typeof AuthenticatedAdminArtistesRoute
   AuthenticatedAdminBadgesRoute: typeof AuthenticatedAdminBadgesRoute
   AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
@@ -2172,6 +2193,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAchatsRoute: AuthenticatedAdminAchatsRoute,
+  AuthenticatedAdminArtistesRoute: AuthenticatedAdminArtistesRoute,
   AuthenticatedAdminBadgesRoute: AuthenticatedAdminBadgesRoute,
   AuthenticatedAdminBoutiqueRoute: AuthenticatedAdminBoutiqueRoute,
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
