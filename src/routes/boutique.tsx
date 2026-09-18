@@ -8,6 +8,7 @@ import { SmartImg } from "@/components/media/SmartImg";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { SHOP_FORMATS, shopCtaLabel, useShopTxt } from "@/components/artist/ArtistShop";
 import { useLang } from "@/lib/i18n";
+import { logShopClick } from "@/lib/shop-clicks";
 import { ShoppingBag, ExternalLink, Sparkles, Filter } from "lucide-react";
 
 export const Route = createFileRoute("/boutique")({
@@ -161,7 +162,23 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
       )}
       {item.external_url && (
         <Button asChild size="sm" className="mt-2 h-7 px-1.5 text-[10px] sm:h-8 sm:px-3 sm:text-xs">
-          <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
+          <a
+            href={item.external_url}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() =>
+              void logShopClick({
+                itemId: item.id,
+                artistId: item.artist?.id ?? null,
+                artistPseudo: item.artist?.pseudo ?? null,
+                itemTitle: item.title,
+                ctaKind: item.cta_kind,
+                format: item.format,
+                externalUrl: item.external_url,
+                source: "boutique",
+              })
+            }
+          >
             <ExternalLink className="size-3 shrink-0 sm:size-4" />
             <span className="truncate">{shopCtaLabel(item.cta_kind, txt)}</span>
           </a>
