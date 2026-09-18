@@ -114,6 +114,7 @@ export function SolarOrb({ className }: { className?: string }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(queued);
       ro.disconnect();
     };
   }, []);
