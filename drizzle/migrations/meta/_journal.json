@@ -162,6 +162,13 @@
       "when": 1789763209954,
       "tag": "0022_shop_item_cta_and_public_shop",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1789765736317,
+      "tag": "0023_shop_click_events",
+      "breakpoints": true
     }
   ]
 }

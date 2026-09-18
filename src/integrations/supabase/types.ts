@@ -1930,6 +1930,63 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_click_events: {
+        Row: {
+          artist_id: string | null
+          artist_pseudo: string | null
+          created_at: string
+          cta_kind: string
+          external_url: string | null
+          format: string | null
+          id: string
+          item_id: string | null
+          item_title: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          artist_id?: string | null
+          artist_pseudo?: string | null
+          created_at?: string
+          cta_kind?: string
+          external_url?: string | null
+          format?: string | null
+          id?: string
+          item_id?: string | null
+          item_title: string
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          artist_id?: string | null
+          artist_pseudo?: string | null
+          created_at?: string
+          cta_kind?: string
+          external_url?: string | null
+          format?: string | null
+          id?: string
+          item_id?: string | null
+          item_title?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_click_events_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_click_events_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "artist_shop_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shows: {
         Row: {
           cover_url: string | null

@@ -10,6 +10,7 @@ import { toast } from "@/lib/toast";
 import { useLang } from "@/lib/i18n";
 import { ShoppingBag, ExternalLink, Sparkles, Tag, Filter } from "lucide-react";
 import { ShopMissionNote } from "@/components/artist/ShopMissionNote";
+import { logShopClick } from "@/lib/shop-clicks";
 
 export type ShopItem = {
   id: string;
@@ -138,7 +139,7 @@ export function shopCtaLabel(
   return txt.buy;
 }
 
-function ShopCard({ item, accent, isAdmin, compact }: { item: ShopItem; accent?: string | null; isAdmin: boolean; compact?: boolean }) {
+function ShopCard({ item, accent, isAdmin, compact, artistId }: { item: ShopItem; accent?: string | null; isAdmin: boolean; compact?: boolean; artistId?: string }) {
   const txt = useShopTxt();
   return (
     <div className={`flex flex-col border-2 border-border p-2 ${compact ? "w-52 shrink-0" : ""}`} style={accent ? { borderColor: accent } : undefined}>
@@ -180,7 +181,22 @@ function ShopCard({ item, accent, isAdmin, compact }: { item: ShopItem; accent?:
           className="mt-2"
           style={accent ? { backgroundColor: accent, color: "#000", borderColor: accent } : undefined}
         >
-          <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
+          <a
+            href={item.external_url}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() =>
+              void logShopClick({
+                itemId: item.id,
+                artistId: artistId ?? null,
+                itemTitle: item.title,
+                ctaKind: item.cta_kind,
+                format: item.format,
+                externalUrl: item.external_url,
+                source: "artist",
+              })
+            }
+          >
             <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
           </a>
         </Button>
@@ -222,7 +238,7 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
               <div className="flex snap-x gap-3 overflow-x-auto pb-2">
                 {featured.map((i) => (
                   <div key={i.id} className="snap-start">
-                    <ShopCard item={i} accent={accent} isAdmin={isAdmin} compact />
+                    <ShopCard item={i} accent={accent} isAdmin={isAdmin} artistId={artistId} compact />
                   </div>
                 ))}
               </div>
@@ -270,7 +286,7 @@ export function ArtistShop({ artistId, accent }: { artistId: string; accent?: st
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((i) => (
-                <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} />
+                <ShopCard key={i.id} item={i} accent={accent} isAdmin={isAdmin} artistId={artistId} />
               ))}
             </div>
           )}
