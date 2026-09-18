@@ -71,8 +71,10 @@ export function ArtistTour() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
-  const role = (profile as any)?.role as string | undefined;
-  const requested = (profile as any)?.role_requested as string | undefined;
+  const role = (profile as Record<string, unknown> | null)?.["role"] as string | undefined;
+  const requested = (profile as Record<string, unknown> | null)?.["role_requested"] as
+    | string
+    | undefined;
   const isArtist =
     role === "artiste" || role === "media" || requested === "artiste" || requested === "media";
 
@@ -115,10 +117,18 @@ export function ArtistTour() {
     <Dialog open={open} onOpenChange={(o) => (o ? setOpen(true) : finish())}>
       <DialogContent className="sm:max-w-lg">
         <div className="flex justify-end gap-1">
-          <Button size="sm" variant={l === "fr" ? "default" : "outline"} onClick={() => setLang("fr")}>
+          <Button
+            size="sm"
+            variant={l === "fr" ? "default" : "outline"}
+            onClick={() => setLang("fr")}
+          >
             FR
           </Button>
-          <Button size="sm" variant={l === "en" ? "default" : "outline"} onClick={() => setLang("en")}>
+          <Button
+            size="sm"
+            variant={l === "en" ? "default" : "outline"}
+            onClick={() => setLang("en")}
+          >
             EN
           </Button>
         </div>
@@ -150,7 +160,13 @@ export function ArtistTour() {
               </Button>
             )}
             <Button onClick={() => (isLast ? finish() : setStep((s) => s + 1))}>
-              {isLast ? (l === "en" ? "Got it" : "C'est compris") : l === "en" ? "Next →" : "Suivant →"}
+              {isLast
+                ? l === "en"
+                  ? "Got it"
+                  : "C'est compris"
+                : l === "en"
+                  ? "Next →"
+                  : "Suivant →"}
             </Button>
           </div>
         </DialogFooter>

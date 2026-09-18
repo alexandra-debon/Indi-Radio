@@ -7,14 +7,12 @@ const DISMISS_KEY = "indi.pendingArtistNotice.v1";
 const TXT = {
   fr: {
     title: "Candidature en cours d'examen",
-    body:
-      "Ta page ne s'affichera en mode artiste public qu'après validation par l'équipe. En attendant, tu peux déjà tout personnaliser ici, et tu participes normalement à la communauté avec tes droits d'auditeur-lecteur : écoute, mur, commentaires, likes et dédicaces.",
+    body: "Ta page ne s'affichera en mode artiste public qu'après validation par l'équipe. En attendant, tu peux déjà tout personnaliser ici, et tu participes normalement à la communauté avec tes droits d'auditeur-lecteur : écoute, mur, commentaires, likes et dédicaces.",
     close: "Fermer",
   },
   en: {
     title: "Application under review",
-    body:
-      "Your page will only switch to public artist mode once the team approves it. In the meantime you can already customise everything here, and you take part in the community as usual with your listener-reader rights: radio, wall, comments, likes and dedications.",
+    body: "Your page will only switch to public artist mode once the team approves it. In the meantime you can already customise everything here, and you take part in the community as usual with your listener-reader rights: radio, wall, comments, likes and dedications.",
     close: "Close",
   },
 };
