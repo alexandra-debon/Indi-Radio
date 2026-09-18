@@ -94,7 +94,11 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
   const page = PAGE_TXT[lang === "en" ? "en" : "fr"];
   const artistName = item.artist ? item.artist.stage_name || item.artist.pseudo : null;
   return (
-    <div className={`flex flex-col border-2 border-border p-2 ${compact ? "w-52 shrink-0" : ""}`}>
+    <div
+      className={`flex min-w-0 flex-col border-2 border-border p-1.5 sm:p-2 ${
+        compact ? "w-40 shrink-0 sm:w-52" : ""
+      }`}
+    >
       {item.image_url ? (
         <SmartImg
           src={item.image_url}
@@ -121,9 +125,9 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
           </span>
         ))}
       </div>
-      <div className="mt-1 text-sm font-black">{item.title}</div>
+      <div className="mt-1 truncate text-xs font-black sm:text-sm">{item.title}</div>
       {item.artist && artistName && (
-        <div className="text-xs text-muted-foreground">
+        <div className="truncate text-[11px] text-muted-foreground sm:text-xs">
           {page.by}{" "}
           <Link
             to="/u/$pseudo"
@@ -138,7 +142,7 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
       {item.summary && (
         <TranslatedText
           as="p"
-          className="mt-1 line-clamp-4 whitespace-pre-wrap text-xs text-muted-foreground"
+          className="mt-1 hidden line-clamp-4 whitespace-pre-wrap text-xs text-muted-foreground sm:block"
           entityType="shop_item"
           entityKey={item.id}
           field="summary"
