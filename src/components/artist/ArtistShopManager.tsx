@@ -15,7 +15,7 @@ import { ARTIST_SPACE_TXT } from "@/components/artist/artist-space-i18n";
 
 export function ArtistShopManager({ artistId }: { artistId: string }) {
   const qc = useQueryClient();
-  const lang = useLang();
+  const { lang } = useLang();
   const T = ARTIST_SPACE_TXT[lang === "en" ? "en" : "fr"];
   const CTA_LABEL: Record<string, string> = {
     buy: T.ctaBuy,

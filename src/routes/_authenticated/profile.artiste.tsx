@@ -55,7 +55,7 @@ function ArtistSpacePage() {
   const { profile, session } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const lang = useLang();
+  const { lang } = useLang();
   const isEn = lang === "en";
   const T = ARTIST_SPACE_TXT[isEn ? "en" : "fr"];
 
