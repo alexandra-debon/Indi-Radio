@@ -94,7 +94,11 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
   const page = PAGE_TXT[lang === "en" ? "en" : "fr"];
   const artistName = item.artist ? item.artist.stage_name || item.artist.pseudo : null;
   return (
-    <div className={`flex flex-col border-2 border-border p-2 ${compact ? "w-52 shrink-0" : ""}`}>
+    <div
+      className={`flex min-w-0 flex-col border-2 border-border p-1.5 sm:p-2 ${
+        compact ? "w-40 shrink-0 sm:w-52" : ""
+      }`}
+    >
       {item.image_url ? (
         <SmartImg
           src={item.image_url}
@@ -121,9 +125,9 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
           </span>
         ))}
       </div>
-      <div className="mt-1 text-sm font-black">{item.title}</div>
+      <div className="mt-1 truncate text-xs font-black sm:text-sm">{item.title}</div>
       {item.artist && artistName && (
-        <div className="text-xs text-muted-foreground">
+        <div className="truncate text-[11px] text-muted-foreground sm:text-xs">
           {page.by}{" "}
           <Link
             to="/u/$pseudo"
@@ -138,7 +142,7 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
       {item.summary && (
         <TranslatedText
           as="p"
-          className="mt-1 line-clamp-4 whitespace-pre-wrap text-xs text-muted-foreground"
+          className="mt-1 hidden line-clamp-4 whitespace-pre-wrap text-xs text-muted-foreground sm:block"
           entityType="shop_item"
           entityKey={item.id}
           field="summary"
@@ -147,16 +151,23 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
         />
       )}
       {item.external_url && (
-        <Button asChild size="sm" className="mt-2">
+        <Button asChild size="sm" className="mt-2 h-7 px-1.5 text-[10px] sm:h-8 sm:px-3 sm:text-xs">
           <a href={item.external_url} target="_blank" rel="noopener noreferrer nofollow">
-            <ExternalLink className="size-4" /> {shopCtaLabel(item.cta_kind, txt)}
+            <ExternalLink className="size-3 shrink-0 sm:size-4" />
+            <span className="truncate">{shopCtaLabel(item.cta_kind, txt)}</span>
           </a>
         </Button>
       )}
       {item.artist && (
-        <Button asChild size="sm" variant="outline" className="mt-1.5">
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="mt-1.5 h-7 px-1.5 text-[10px] sm:h-8 sm:px-3 sm:text-xs"
+        >
           <Link to="/u/$pseudo" params={{ pseudo: item.artist.pseudo }} hash="boutique">
-            <ShoppingBag className="size-4" /> {page.viewArtistShop}
+            <ShoppingBag className="size-3 shrink-0 sm:size-4" />
+            <span className="truncate">{page.viewArtistShop}</span>
           </Link>
         </Button>
       )}
@@ -316,7 +327,7 @@ function BoutiquePage() {
                           {group.length}
                         </span>
                       </h2>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid grid-cols-3 gap-2 sm:gap-3">
                         {group.map((i) => (
                           <ItemCard key={i.id} item={i} />
                         ))}
