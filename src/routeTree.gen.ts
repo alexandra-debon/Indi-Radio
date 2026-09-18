@@ -104,6 +104,7 @@ import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
 import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
 import { Route as AuthenticatedAdminBadgesRouteImport } from './routes/_authenticated/admin.badges'
+import { Route as AuthenticatedAdminAchatsRouteImport } from './routes/_authenticated/admin.achats'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
@@ -613,6 +614,12 @@ const AuthenticatedAdminBadgesRoute =
     path: '/badges',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAchatsRoute =
+  AuthenticatedAdminAchatsRouteImport.update({
+    id: '/achats',
+    path: '/achats',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -733,6 +740,7 @@ export interface FileRoutesByFullPath {
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/achats': typeof AuthenticatedAdminAchatsRoute
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -839,6 +847,7 @@ export interface FileRoutesByTo {
   '/redak-village': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/achats': typeof AuthenticatedAdminAchatsRoute
   '/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -947,6 +956,7 @@ export interface FileRoutesById {
   '/redak-village/': typeof RedakVillageIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/achats': typeof AuthenticatedAdminAchatsRoute
   '/_authenticated/admin/badges': typeof AuthenticatedAdminBadgesRoute
   '/_authenticated/admin/boutique': typeof AuthenticatedAdminBoutiqueRoute
   '/_authenticated/admin/candidatures': typeof AuthenticatedAdminCandidaturesRoute
@@ -1055,6 +1065,7 @@ export interface FileRouteTypes {
     | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/achats'
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
@@ -1161,6 +1172,7 @@ export interface FileRouteTypes {
     | '/redak-village'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/achats'
     | '/admin/badges'
     | '/admin/boutique'
     | '/admin/candidatures'
@@ -1268,6 +1280,7 @@ export interface FileRouteTypes {
     | '/redak-village/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/achats'
     | '/_authenticated/admin/badges'
     | '/_authenticated/admin/boutique'
     | '/_authenticated/admin/candidatures'
@@ -2062,6 +2075,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBadgesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/achats': {
+      id: '/_authenticated/admin/achats'
+      path: '/achats'
+      fullPath: '/admin/achats'
+      preLoaderRoute: typeof AuthenticatedAdminAchatsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -2136,6 +2156,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAchatsRoute: typeof AuthenticatedAdminAchatsRoute
   AuthenticatedAdminBadgesRoute: typeof AuthenticatedAdminBadgesRoute
   AuthenticatedAdminBoutiqueRoute: typeof AuthenticatedAdminBoutiqueRoute
   AuthenticatedAdminCandidaturesRoute: typeof AuthenticatedAdminCandidaturesRoute
@@ -2150,6 +2171,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAchatsRoute: AuthenticatedAdminAchatsRoute,
   AuthenticatedAdminBadgesRoute: AuthenticatedAdminBadgesRoute,
   AuthenticatedAdminBoutiqueRoute: AuthenticatedAdminBoutiqueRoute,
   AuthenticatedAdminCandidaturesRoute: AuthenticatedAdminCandidaturesRoute,
