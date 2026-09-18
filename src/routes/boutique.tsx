@@ -52,7 +52,7 @@ const PAGE_TXT = {
     introLead:
       "Les objets mis en boutique publique par les artistes indépendants d'InDi RaDio : disques, merch, billets de concert.",
     introBefore: "Chaque achat que vous effectuez va à ",
-    introHighlight: "100 % directement à l'artiste",
+    introHighlight: "100\u00A0% directement à l'artiste",
     introAfter:
       ", sans la moindre retenue, via ses propres liens de paiement.",
     introThanks: "Merci de soutenir la culture indépendante et ses artistes !",
