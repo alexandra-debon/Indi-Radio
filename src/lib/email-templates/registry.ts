@@ -27,6 +27,7 @@ import { template as mentionNotificationTemplate } from './mention-notification'
 import { template as adminMessageTemplate } from './admin-message'
 import { template as blogAuthorInviteTemplate } from './blog-author-invite'
 import { template as roleRequestTemplate } from './role-request'
+import { template as roleRequestDecisionTemplate } from './role-request-decision'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'user-ban': userBanTemplate,
@@ -39,4 +40,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'admin-message': adminMessageTemplate,
   'blog-author-invite': blogAuthorInviteTemplate,
   'role-request': roleRequestTemplate,
+  'role-request-decision': roleRequestDecisionTemplate,
 }

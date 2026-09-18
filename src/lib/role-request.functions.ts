@@ -34,6 +34,7 @@ const submitSchema = z
 const reviewSchema = z.object({
   userId: z.string().uuid(),
   decision: z.enum(["approved", "rejected"]),
+  message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
@@ -112,7 +113,7 @@ export const reviewRoleRequest = createServerFn({ method: "POST" })
 
     const { data: candidate, error: readErr } = await supabaseAdmin
       .from("profiles")
-      .select("id, role_requested, role_request_status")
+      .select("id, pseudo, role_requested, role_request_status")
       .eq("id", data.userId)
       .maybeSingle();
     if (readErr) throw new Error(readErr.message);
@@ -137,16 +138,40 @@ export const reviewRoleRequest = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("profiles").update(patch).eq("id", data.userId);
     if (error) throw new Error(error.message);
 
+    const adminMessage = (data.message ?? "").trim();
+    const baseMessage =
+      data.decision === "approved"
+        ? "Ta candidature a été acceptée : ton profil est désormais certifié."
+        : "Ta candidature n'a pas été retenue pour le moment. Tu peux en soumettre une nouvelle.";
+
     await supabaseAdmin.from("notifications").insert({
       recipient_id: data.userId,
       actor_id: context.userId,
       type: "role_request",
-      message:
-        data.decision === "approved"
-          ? "Ta candidature a été acceptée : ton profil est désormais certifié."
-          : "Ta candidature n'a pas été retenue pour le moment. Tu peux en soumettre une nouvelle.",
+      message: adminMessage ? `${baseMessage}\n\nMessage de l'équipe : ${adminMessage}` : baseMessage,
       url: "/profile",
     });
+
+    // Email au candidat (ne doit jamais bloquer la décision).
+    try {
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+      const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+      const email = userRes?.user?.email;
+      if (email) {
+        await sendTemplateEmail("role-request-decision", email, {
+          templateData: {
+            pseudo: candidate.pseudo ?? "membre",
+            roleRequested: candidate.role_requested === "media" ? "Média" : "Artiste",
+            decision: data.decision,
+            adminMessage,
+            profileUrl: `${SITE_ORIGIN}/profile`,
+          },
+          idempotencyKey: `role-decision-${data.userId}-${now}`,
+        });
+      }
+    } catch {
+      /* l'email ne doit jamais bloquer la décision */
+    }
 
     return { ok: true as const };
   });

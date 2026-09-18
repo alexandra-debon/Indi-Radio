@@ -43,6 +43,7 @@ function AdminApplicationsPage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Record<string, string>>({});
   const review = useServerFn(reviewRoleRequest);
 
   async function load() {
@@ -85,7 +86,8 @@ function AdminApplicationsPage() {
   async function decide(userId: string, decision: "approved" | "rejected") {
     setBusy(userId);
     try {
-      await review({ data: { userId, decision } });
+      await review({ data: { userId, decision, message: messages[userId]?.trim() || "" } });
+      setMessages((m) => ({ ...m, [userId]: "" }));
       setRows((r) => {
         const done = r.find((x) => x.id === userId);
         if (done) {
@@ -248,7 +250,25 @@ function AdminApplicationsPage() {
                 </p>
               )}
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4">
+                <label
+                  htmlFor={`msg-${c.id}`}
+                  className="text-xs font-semibold text-muted-foreground"
+                >
+                  Message à l'artiste (facultatif, envoyé avec la notification et l'e-mail)
+                </label>
+                <textarea
+                  id={`msg-${c.id}`}
+                  value={messages[c.id] ?? ""}
+                  onChange={(e) => setMessages((m) => ({ ...m, [c.id]: e.target.value }))}
+                  rows={3}
+                  maxLength={1000}
+                  placeholder="Bienvenue ! Pense à compléter ta bio…"
+                  className="mt-1 w-full rounded-md border border-border bg-background p-2 text-sm"
+                />
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
                 <Button size="sm" disabled={busy === c.id} onClick={() => decide(c.id, "approved")}>
                   <Check className="mr-1 size-4" /> Approuver
                 </Button>
