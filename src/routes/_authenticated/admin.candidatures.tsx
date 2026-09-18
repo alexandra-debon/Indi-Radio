@@ -24,44 +24,83 @@ type Candidate = {
   punchline: string | null;
   bio: string | null;
   social_links: SocialLinks | null;
+  role: string | null;
   role_requested: string | null;
   role_request_note: string | null;
+  role_request_status: string | null;
   role_request_submitted_at: string | null;
+  role_request_reviewed_at?: string | null;
 };
+
+const SELECT_COLS =
+  "id, pseudo, stage_name, avatar_url, punchline, bio, social_links, role, role_requested, role_request_note, role_request_status, role_request_submitted_at, role_request_reviewed_at";
 
 function AdminApplicationsPage() {
   const { isAdmin } = useAuth();
   const [rows, setRows] = useState<Candidate[]>([]);
+  const [history, setHistory] = useState<Candidate[]>([]);
+  const [tab, setTab] = useState<"pending" | "history">("pending");
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const review = useServerFn(reviewRoleRequest);
 
   async function load() {
     setLoading(true);
-    const { data, error } = await (supabase as any)
-      .from("profiles")
-      .select(
-        "id, pseudo, stage_name, avatar_url, punchline, bio, social_links, role_requested, role_request_note, role_request_submitted_at",
-      )
-      .eq("role_request_status", "pending")
-      .order("role_request_submitted_at", { ascending: true });
+    const [pendingRes, historyRes] = await Promise.all([
+      (supabase as any)
+        .from("profiles")
+        .select(SELECT_COLS)
+        .eq("role_request_status", "pending")
+        .order("role_request_submitted_at", { ascending: true }),
+      (supabase as any)
+        .from("profiles")
+        .select(SELECT_COLS)
+        .in("role_request_status", ["approved", "rejected"])
+        .order("role_request_reviewed_at", { ascending: false })
+        .limit(200),
+    ]);
     setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    if (pendingRes.error || historyRes.error) {
+      toast.error((pendingRes.error ?? historyRes.error).message);
       return;
     }
-    setRows((data ?? []) as Candidate[]);
+    setRows((pendingRes.data ?? []) as Candidate[]);
+    setHistory((historyRes.data ?? []) as Candidate[]);
   }
 
   useEffect(() => {
     if (isAdmin) void load();
   }, [isAdmin]);
 
+  const q = query.trim().toLowerCase();
+  const filteredHistory = q
+    ? history.filter((c) =>
+        [c.pseudo, c.stage_name ?? "", c.role_requested ?? ""].some((v) =>
+          v.toLowerCase().includes(q),
+        ),
+      )
+    : history;
+
   async function decide(userId: string, decision: "approved" | "rejected") {
     setBusy(userId);
     try {
       await review({ data: { userId, decision } });
-      setRows((r) => r.filter((x) => x.id !== userId));
+      setRows((r) => {
+        const done = r.find((x) => x.id === userId);
+        if (done) {
+          setHistory((h) => [
+            {
+              ...done,
+              role_request_status: decision,
+              role_request_reviewed_at: new Date().toISOString(),
+              role: decision === "approved" ? (done.role_requested ?? done.role) : done.role,
+            },
+            ...h,
+          ]);
+        }
+        return r.filter((x) => x.id !== userId);
+      });
       toast.success(decision === "approved" ? "Candidature approuvée." : "Candidature refusée.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action impossible.");
@@ -86,10 +125,86 @@ function AdminApplicationsPage() {
         Demandes de statut Artiste et Média en attente de validation.
       </p>
 
+      <div className="mt-5 flex flex-wrap items-center gap-2">
+        <Button
+          size="sm"
+          variant={tab === "pending" ? "default" : "outline"}
+          onClick={() => setTab("pending")}
+        >
+          En attente ({rows.length})
+        </Button>
+        <Button
+          size="sm"
+          variant={tab === "history" ? "default" : "outline"}
+          onClick={() => setTab("history")}
+        >
+          Historique ({history.length})
+        </Button>
+        {tab === "history" && (
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rechercher un pseudo ou un nom de scène…"
+            className="ml-auto h-9 w-full max-w-xs rounded-md border border-border bg-background px-3 text-sm"
+          />
+        )}
+      </div>
+
       {loading ? (
         <div className="py-16 text-center">
           <Loader2 className="mx-auto size-6 animate-spin text-muted-foreground" />
         </div>
+      ) : tab === "history" ? (
+        filteredHistory.length === 0 ? (
+          <p className="mt-10 rounded-xl border border-border bg-card p-6 text-center text-muted-foreground">
+            Aucune demande traitée pour le moment.
+          </p>
+        ) : (
+          <ul className="mt-6 space-y-3">
+            {filteredHistory.map((c) => (
+              <li
+                key={c.id}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4"
+              >
+                {c.avatar_url ? (
+                  <img src={c.avatar_url} alt="" className="size-9 rounded-full object-cover" />
+                ) : (
+                  <div className="size-9 rounded-full bg-muted" />
+                )}
+                <div className="min-w-0">
+                  <div className="font-semibold">
+                    {c.stage_name || c.pseudo}{" "}
+                    <span className="text-sm font-normal text-muted-foreground">@{c.pseudo}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {c.role_requested === "media" ? "Média" : "Artiste"}
+                    {c.role_request_reviewed_at
+                      ? ` · traitée le ${new Date(c.role_request_reviewed_at).toLocaleString("fr-FR")}`
+                      : ""}
+                    {c.role ? ` · rôle actuel : ${c.role}` : ""}
+                  </div>
+                </div>
+                <span
+                  className={`ml-auto inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-[11px] uppercase ${
+                    c.role_request_status === "approved"
+                      ? "border-primary text-primary"
+                      : "border-destructive text-destructive"
+                  }`}
+                >
+                  {c.role_request_status === "approved" ? (
+                    <>
+                      <Check className="size-3" /> Approuvée
+                    </>
+                  ) : (
+                    <>
+                      <X className="size-3" /> Refusée
+                    </>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
       ) : rows.length === 0 ? (
         <p className="mt-10 rounded-xl border border-border bg-card p-6 text-center text-muted-foreground">
           Aucune candidature en attente.
