@@ -28,7 +28,7 @@ type CoupRow = {
 
 type LikeRow = { coup_id: string; user_id: string };
 
-export const Route = createFileRoute("/coups-de-coeur")({
+export const Route = createFileRoute("/coups-de-coeur/")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/coups-de-coeur", match.search, [
       { title: "Coups de Cœur InDi RaDiO — Radio 24/7 de la musique indépendante InDi RaDio" },

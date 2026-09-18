@@ -35,7 +35,6 @@ import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DedicacesRouteImport } from './routes/dedicaces'
-import { Route as CoupsDeCoeurRouteImport } from './routes/coups-de-coeur'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
@@ -51,6 +50,7 @@ import { Route as PartageIndexRouteImport } from './routes/partage.index'
 import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
 import { Route as IndiTeeviIndexRouteImport } from './routes/indi-teevi.index'
 import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
+import { Route as CoupsDeCoeurIndexRouteImport } from './routes/coups-de-coeur.index'
 import { Route as ClipsIndexRouteImport } from './routes/clips.index'
 import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
 import { Route as ActusIndexRouteImport } from './routes/actus.index'
@@ -243,11 +243,6 @@ const DedicacesRoute = DedicacesRouteImport.update({
   path: '/dedicaces',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoupsDeCoeurRoute = CoupsDeCoeurRouteImport.update({
-  id: '/coups-de-coeur',
-  path: '/coups-de-coeur',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -320,6 +315,11 @@ const IndiTeeviIndexRoute = IndiTeeviIndexRouteImport.update({
 const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
   id: '/emissions/',
   path: '/emissions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoupsDeCoeurIndexRoute = CoupsDeCoeurIndexRouteImport.update({
+  id: '/coups-de-coeur/',
+  path: '/coups-de-coeur/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClipsIndexRoute = ClipsIndexRouteImport.update({
@@ -663,7 +663,6 @@ export interface FileRoutesByFullPath {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -711,6 +710,7 @@ export interface FileRoutesByFullPath {
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
+  '/coups-de-coeur/': typeof CoupsDeCoeurIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
@@ -767,7 +767,6 @@ export interface FileRoutesByTo {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -815,6 +814,7 @@ export interface FileRoutesByTo {
   '/actus': typeof ActusIndexRoute
   '/chroniques': typeof ChroniquesIndexRoute
   '/clips': typeof ClipsIndexRoute
+  '/coups-de-coeur': typeof CoupsDeCoeurIndexRoute
   '/emissions': typeof EmissionsIndexRoute
   '/indi-teevi': typeof IndiTeeviIndexRoute
   '/magazines': typeof MagazinesIndexRoute
@@ -873,7 +873,6 @@ export interface FileRoutesById {
   '/boutique': typeof BoutiqueRoute
   '/chart': typeof ChartRoute
   '/contact': typeof ContactRoute
-  '/coups-de-coeur': typeof CoupsDeCoeurRoute
   '/dedicaces': typeof DedicacesRoute
   '/mcp': typeof McpRoute
   '/moderation': typeof ModerationRoute
@@ -921,6 +920,7 @@ export interface FileRoutesById {
   '/actus/': typeof ActusIndexRoute
   '/chroniques/': typeof ChroniquesIndexRoute
   '/clips/': typeof ClipsIndexRoute
+  '/coups-de-coeur/': typeof CoupsDeCoeurIndexRoute
   '/emissions/': typeof EmissionsIndexRoute
   '/indi-teevi/': typeof IndiTeeviIndexRoute
   '/magazines/': typeof MagazinesIndexRoute
@@ -979,7 +979,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1027,6 +1026,7 @@ export interface FileRouteTypes {
     | '/actus/'
     | '/chroniques/'
     | '/clips/'
+    | '/coups-de-coeur/'
     | '/emissions/'
     | '/indi-teevi/'
     | '/magazines/'
@@ -1083,7 +1083,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1131,6 +1130,7 @@ export interface FileRouteTypes {
     | '/actus'
     | '/chroniques'
     | '/clips'
+    | '/coups-de-coeur'
     | '/emissions'
     | '/indi-teevi'
     | '/magazines'
@@ -1188,7 +1188,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/chart'
     | '/contact'
-    | '/coups-de-coeur'
     | '/dedicaces'
     | '/mcp'
     | '/moderation'
@@ -1236,6 +1235,7 @@ export interface FileRouteTypes {
     | '/actus/'
     | '/chroniques/'
     | '/clips/'
+    | '/coups-de-coeur/'
     | '/emissions/'
     | '/indi-teevi/'
     | '/magazines/'
@@ -1294,7 +1294,6 @@ export interface RootRouteChildren {
   BoutiqueRoute: typeof BoutiqueRoute
   ChartRoute: typeof ChartRoute
   ContactRoute: typeof ContactRoute
-  CoupsDeCoeurRoute: typeof CoupsDeCoeurRoute
   DedicacesRoute: typeof DedicacesRoute
   McpRoute: typeof McpRoute
   ModerationRoute: typeof ModerationRoute
@@ -1338,6 +1337,7 @@ export interface RootRouteChildren {
   ActusIndexRoute: typeof ActusIndexRoute
   ChroniquesIndexRoute: typeof ChroniquesIndexRoute
   ClipsIndexRoute: typeof ClipsIndexRoute
+  CoupsDeCoeurIndexRoute: typeof CoupsDeCoeurIndexRoute
   EmissionsIndexRoute: typeof EmissionsIndexRoute
   IndiTeeviIndexRoute: typeof IndiTeeviIndexRoute
   MagazinesIndexRoute: typeof MagazinesIndexRoute
@@ -1553,13 +1553,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DedicacesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/coups-de-coeur': {
-      id: '/coups-de-coeur'
-      path: '/coups-de-coeur'
-      fullPath: '/coups-de-coeur'
-      preLoaderRoute: typeof CoupsDeCoeurRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -1663,6 +1656,13 @@ declare module '@tanstack/react-router' {
       path: '/emissions'
       fullPath: '/emissions/'
       preLoaderRoute: typeof EmissionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coups-de-coeur/': {
+      id: '/coups-de-coeur/'
+      path: '/coups-de-coeur'
+      fullPath: '/coups-de-coeur/'
+      preLoaderRoute: typeof CoupsDeCoeurIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clips/': {
@@ -2166,7 +2166,6 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueRoute: BoutiqueRoute,
   ChartRoute: ChartRoute,
   ContactRoute: ContactRoute,
-  CoupsDeCoeurRoute: CoupsDeCoeurRoute,
   DedicacesRoute: DedicacesRoute,
   McpRoute: McpRoute,
   ModerationRoute: ModerationRoute,
@@ -2211,6 +2210,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActusIndexRoute: ActusIndexRoute,
   ChroniquesIndexRoute: ChroniquesIndexRoute,
   ClipsIndexRoute: ClipsIndexRoute,
+  CoupsDeCoeurIndexRoute: CoupsDeCoeurIndexRoute,
   EmissionsIndexRoute: EmissionsIndexRoute,
   IndiTeeviIndexRoute: IndiTeeviIndexRoute,
   MagazinesIndexRoute: MagazinesIndexRoute,
