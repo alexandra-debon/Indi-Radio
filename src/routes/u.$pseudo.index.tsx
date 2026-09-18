@@ -177,7 +177,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
     const pitch = (((loaderData as any)?.gallery_summary ?? "") as string).replace(/\s+/g, " ").trim();
     const summarySource = pitch || bio;
     const desc = summarySource
-      ? `${summarySource.slice(0, 150)}${summarySource.length > 150 ? "…" : ""} — ${displayName} sur InDi RaDio, la radio de la culture indépendante.`
+      ? `${displayName} sur InDi RaDio — ${summarySource.slice(0, 110)}${summarySource.length > 110 ? "…" : ""}`
       : isArtist
         ? `${displayName}, ${roleLabel.toLowerCase()} sur InDi RaDio : actualités, dates de concert, boutique et publications de l'artiste.`
         : `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
