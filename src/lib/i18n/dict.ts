@@ -17,6 +17,7 @@ export const dict = {
     "nav.shop": "Boutique Artistes InDi",
     "nav.village": "RéDaK'Village",
     "nav.villageAdmin": "Articles RéDaK'Village",
+    "nav.coupsAdmin": "Coups de cœur",
     "nav.magazinesAdmin": "Articles magazine",
     "nav.badgesAdmin": "Badges",
     "nav.challengesAdmin": "Challenges éditoriaux",
