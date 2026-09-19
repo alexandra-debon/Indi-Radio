@@ -115,7 +115,7 @@ function RadioModePage() {
   const showImg = artwork && !imgError;
 
   return (
-    <div className="radio-mode-screen relative flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-black text-neutral-200">
+    <div className="radio-mode-screen relative flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-black text-neutral-200 md:h-auto md:min-h-screen">
       {/* Nappe sombre + lueur jaune très diffuse */}
       <div
         aria-hidden
