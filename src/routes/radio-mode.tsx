@@ -115,26 +115,26 @@ function RadioModePage() {
   const showImg = artwork && !imgError;
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-black text-neutral-200">
+    <div className="radio-mode-screen relative flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-black text-neutral-200 md:h-auto md:min-h-screen">
       {/* Nappe sombre + lueur jaune très diffuse */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_10%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%)]"
       />
 
-      <div className="safe-top relative z-10 flex items-center justify-center px-4 pt-6">
+      <div className="safe-top relative z-10 flex shrink-0 items-center justify-center px-4 pt-2 md:pt-6">
         <img
           src={indiRadioLogo}
           alt="InDi RaDio"
-          className="h-10 w-auto opacity-90"
+          className="h-7 w-auto opacity-90 md:h-10"
           loading="eager"
           decoding="async"
         />
       </div>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col items-center px-6 pb-10 pt-4">
+      <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col items-center justify-between px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 md:justify-start md:px-6 md:pb-10 md:pt-4">
         {/* Orbe solaire + pochette */}
-        <div className="relative mt-4 aspect-square w-full max-w-[19rem]">
+        <div className="radio-mode-orb relative aspect-square w-full max-w-[10rem] shrink md:mt-4 md:max-w-[19rem] md:shrink-0">
           <SolarOrb />
           <div className="absolute inset-0 grid place-items-center">
             <div className="grid size-[62%] place-items-center overflow-hidden rounded-full border-2 border-primary/70 bg-neutral-950 shadow-[0_0_60px_-10px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
@@ -155,14 +155,14 @@ function RadioModePage() {
         </div>
 
         {/* Titre en cours */}
-        <div className="mt-7 w-full text-center">
+        <div className="mt-1 w-full shrink-0 text-center md:mt-7">
           <div className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">
             {playing ? t("live.onAir") : t("radio.nowPlaying")}
           </div>
-          <h1 className="mt-2 truncate text-xl font-black tracking-tight text-neutral-50">
+          <h1 className="mt-0.5 truncate text-base font-black tracking-tight text-neutral-50 md:mt-2 md:text-xl">
             {currentTrack?.title ?? t("live.defaultTitle")}
           </h1>
-          <p className="mt-1 truncate text-sm text-neutral-400">
+          <p className="truncate text-xs text-neutral-400 md:mt-1 md:text-sm">
             {currentTrack?.artist ?? t("live.defaultArtist")}
           </p>
         </div>
@@ -172,31 +172,31 @@ function RadioModePage() {
           type="button"
           onClick={toggle}
           aria-label={playing ? "Pause" : "Play"}
-          className="mt-8 grid size-20 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_50px_-8px_color-mix(in_oklab,var(--primary)_75%,transparent)] transition active:scale-95 disabled:opacity-70"
+          className="mt-1 grid size-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_50px_-8px_color-mix(in_oklab,var(--primary)_75%,transparent)] transition active:scale-95 disabled:opacity-70 md:mt-8 md:size-20"
         >
           {playing ? (
-            <Pause className="size-8" aria-hidden />
+            <Pause className="size-5 md:size-8" aria-hidden />
           ) : (
-            <Play className="size-8 translate-x-[2px]" aria-hidden />
+            <Play className="size-5 translate-x-[2px] md:size-8" aria-hidden />
           )}
         </button>
         {loading && (
-          <span className="mt-2 text-[11px] uppercase tracking-widest text-neutral-500">
+          <span className="mt-0.5 text-[9px] uppercase tracking-widest text-neutral-500 md:mt-2 md:text-[11px]">
             {t("live.connecting")}
           </span>
         )}
 
         {/* Volume + mute */}
-        <div className="mt-6">
+        <div className="mt-1 shrink-0 md:mt-6">
           <VolumeControl />
         </div>
 
         {/* Trois derniers titres */}
-        <section className="mt-9 w-full">
-          <h2 className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-neutral-500">
+        <section className="mt-1 w-full shrink-0 md:mt-9">
+          <h2 className="mb-1 text-[9px] font-black uppercase tracking-[0.25em] text-neutral-500 md:mb-3 md:text-[10px]">
             {t("radio.recent")}
           </h2>
-          <ul className="space-y-2">
+          <ul className="space-y-1 md:space-y-2">
             {history.map((row) => (
               <HistoryItem key={row.id} row={row} />
             ))}
@@ -207,7 +207,7 @@ function RadioModePage() {
         <button
           type="button"
           onClick={() => navigate({ to: "/" })}
-          className="safe-bottom mt-10 inline-flex items-center gap-2 rounded-full border-2 border-primary/70 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-primary transition hover:bg-primary hover:text-primary-foreground"
+          className="mt-1 inline-flex shrink-0 items-center gap-2 rounded-full border-2 border-primary/70 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary transition hover:bg-primary hover:text-primary-foreground md:mt-10 md:px-5 md:py-2.5 md:text-xs"
         >
           <Unlock className="size-4" aria-hidden />
           {t("radio.unlock")}
@@ -227,8 +227,8 @@ function HistoryItem({ row }: { row: TrackRow }) {
   });
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2">
-      <div className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-md bg-neutral-900">
+    <li className="flex min-h-10 items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] p-1 md:min-h-0 md:gap-3 md:p-2">
+      <div className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-md bg-neutral-900 md:size-11">
         {art && !err ? (
           <img
             src={art}
@@ -245,8 +245,8 @@ function HistoryItem({ row }: { row: TrackRow }) {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold text-neutral-100">{row.title}</div>
-        <div className="truncate text-xs text-neutral-500">{row.artist}</div>
+        <div className="truncate text-xs font-semibold text-neutral-100 md:text-sm">{row.title}</div>
+        <div className="truncate text-[10px] text-neutral-500 md:text-xs">{row.artist}</div>
       </div>
       <span className="shrink-0 text-[11px] tabular-nums text-neutral-600">{time}</span>
     </li>
