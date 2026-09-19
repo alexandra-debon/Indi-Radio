@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
-import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock } from "lucide-react";
+import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock, MapPin, Music2 } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { FollowButton, ArtistEvents, ArtistPosts } from "@/components/artist/ArtistPageSections";
 import { ArtistShop } from "@/components/artist/ArtistShop";
+import { clampDescription } from "@/lib/i18n/seo-meta";
+import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
+import { localizedOgText } from "@/lib/og-lang-head";
 
 type SectionKey = "events" | "shop" | "posts";
 
@@ -134,7 +137,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, social_links, website")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, artist_genres, artist_location, social_links, website")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -147,12 +150,14 @@ export const Route = createFileRoute("/u/$pseudo/")({
     }
     return data;
   },
-  head: ({ params, loaderData }) => {
+  head: async ({ params, loaderData, match }) => {
     // Canonical always points at the CURRENT pseudo (the one stored in the
     // profile), so old-pseudo URLs and different-case URLs consolidate to a
     // single canonical after the loader's redirect resolves them.
     const pseudo = loaderData?.pseudo ?? params.pseudo;
-    const canonicalUrl = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(pseudo)}`;
+    const lang = hlFromSearch(match.search);
+    const canonicalBase = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(pseudo)}`;
+    const canonicalUrl = withHl(canonicalBase, lang);
     const requestedUrl = `https://www.radio.indi-art-culture.com/u/${encodeURIComponent(params.pseudo)}`;
     const aliasedCasing =
       loaderData?.pseudo && loaderData.pseudo !== params.pseudo;
@@ -170,19 +175,30 @@ export const Route = createFileRoute("/u/$pseudo/")({
     // en tête du titre, le pseudo reste en repli.
     const stageName = ((loaderData as any)?.stage_name ?? "").trim();
     const displayName = stageName || pseudo;
-    const title = isArtist
+    const genres = (((loaderData as any)?.artist_genres ?? []) as string[]).filter(Boolean);
+    const artistLocation = (((loaderData as any)?.artist_location ?? "") as string).trim();
+    const identity = [genres.slice(0, 3).join(", "), artistLocation].filter(Boolean).join(" · ");
+    const baseTitle = isArtist
       ? `${displayName} — ${roleLabel} sur InDi RaDio`
       : `@${pseudo} — ${roleLabel} sur InDi RaDio`;
     const bio = (loaderData?.bio ?? "").replace(/\s+/g, " ").trim();
     const pitch = (((loaderData as any)?.gallery_summary ?? "") as string).replace(/\s+/g, " ").trim();
     const summarySource = pitch || bio;
-    const desc = summarySource
-      ? `${displayName} sur InDi RaDio — ${summarySource.slice(0, 110)}${summarySource.length > 110 ? "…" : ""}`
+    const baseDesc = summarySource
+      ? `${displayName}${identity ? ` — ${identity}` : ""}. ${summarySource}`
       : isArtist
-        ? `${displayName}, ${roleLabel.toLowerCase()} sur InDi RaDio : actualités, dates de concert, boutique et publications de l'artiste.`
+        ? `${displayName}, ${roleLabel.toLowerCase()}${identity ? ` — ${identity}` : ""} sur InDi RaDio : musique, actualités, concerts et publications.`
         : `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
             loaderData ? `, niveau ${loaderData.level} · ${loaderData.points} pts` : ""
           }. Réseau social de la musique indépendante.`;
+    const localized = await localizedOgText(lang, {
+      entityType: "profile",
+      entityKey: pseudo,
+      title: baseTitle,
+      description: baseDesc,
+    });
+    const title = localized.title;
+    const desc = clampDescription(localized.description);
     const meta: Array<Record<string, string>> = [
       { title },
       { name: "description", content: desc },
@@ -195,8 +211,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
       { property: "profile:username", content: pseudo },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "InDi RaDio" },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_US" },
+      ...ogLocaleTags(lang),
     ];
     // Unresolved pseudo (no profile, no redirect target) — keep it out of the
     // index so stale links don't pollute search results.
@@ -233,14 +248,16 @@ export const Route = createFileRoute("/u/$pseudo/")({
             ...(aliasedCasing ? { sameAs: [requestedUrl] } : {}),
             name: title,
             description: desc,
-            inLanguage: "fr-FR",
+            inLanguage: lang === "en" ? "en-US" : "fr-FR",
             mainEntity: {
               "@type": isArtist ? "MusicGroup" : "Person",
               name: displayName,
               alternateName: `@${pseudo}`,
               url: canonicalUrl,
               ...(loaderData?.avatar_url ? { image: loaderData.avatar_url } : {}),
-              ...(summarySource ? { description: summarySource } : {}),
+              ...(desc ? { description: desc } : {}),
+              ...(genres.length > 0 ? { genre: genres } : {}),
+              ...(artistLocation ? { homeLocation: { "@type": "Place", name: artistLocation } } : {}),
               ...(sameAs.length > 0 ? { sameAs } : {}),
             },
           }),
@@ -284,6 +301,8 @@ type Profile = {
   accent_color: string | null;
   stage_name: string | null;
   gallery_summary: string | null;
+  artist_genres: string[];
+  artist_location: string | null;
   show_events_section: boolean | null;
   show_shop_section: boolean | null;
   show_posts_section: boolean | null;
@@ -337,7 +356,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, banner_color, accent_color, stage_name, gallery_summary, show_events_section, show_shop_section, show_posts_section")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, banner_color, accent_color, stage_name, gallery_summary, artist_genres, artist_location, show_events_section, show_shop_section, show_posts_section")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -524,6 +543,30 @@ function UserProfilePage() {
             text={profile.gallery_summary}
             manual={false}
           />
+        )}
+
+        {isArtistPage && (profile.artist_genres.length > 0 || profile.artist_location) && (
+          <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+            {profile.artist_genres.length > 0 && (
+              <span className="inline-flex items-center gap-1.5 border border-border px-2 py-1">
+                <Music2 className="size-3.5" aria-hidden="true" />
+                <TranslatedText
+                  as="span"
+                  entityType="profile"
+                  entityKey={profile.id}
+                  field="artist_genres"
+                  text={profile.artist_genres.join(" · ")}
+                  manual={false}
+                />
+              </span>
+            )}
+            {profile.artist_location && (
+              <span className="inline-flex items-center gap-1.5 border border-border px-2 py-1">
+                <MapPin className="size-3.5" aria-hidden="true" />
+                {profile.artist_location}
+              </span>
+            )}
+          </div>
         )}
 
         <LevelBar points={profile.points} level={profile.level} />

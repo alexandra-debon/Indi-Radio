@@ -1727,6 +1727,8 @@ export type Database = {
       profiles: {
         Row: {
           accent_color: string | null
+          artist_genres: string[]
+          artist_location: string | null
           avatar_url: string | null
           badges: string[]
           banner_color: string | null
@@ -1763,6 +1765,8 @@ export type Database = {
         }
         Insert: {
           accent_color?: string | null
+          artist_genres?: string[]
+          artist_location?: string | null
           avatar_url?: string | null
           badges?: string[]
           banner_color?: string | null
@@ -1799,6 +1803,8 @@ export type Database = {
         }
         Update: {
           accent_color?: string | null
+          artist_genres?: string[]
+          artist_location?: string | null
           avatar_url?: string | null
           badges?: string[]
           banner_color?: string | null

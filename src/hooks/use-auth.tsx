@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, pseudo, role, is_certified, avatar_url, points, level, created_at, is_team_indi, badges, quarantined_at, bio, website, social_links, lang, updated_at, stage_name, gallery_visible, gallery_cover_url, gallery_summary, banner_url, accent_color, show_events_section, show_shop_section, show_posts_section",
+          "id, pseudo, role, is_certified, avatar_url, points, level, created_at, is_team_indi, badges, quarantined_at, bio, website, social_links, lang, updated_at, stage_name, gallery_visible, gallery_cover_url, gallery_summary, artist_genres, artist_location, banner_url, banner_color, page_indexable, accent_color, show_events_section, show_shop_section, show_posts_section, role_requested, role_request_status",
         )
         .eq("id", session!.user.id)
         .maybeSingle();

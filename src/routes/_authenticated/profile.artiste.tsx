@@ -62,6 +62,8 @@ function ArtistSpacePage() {
   const [banner, setBanner] = useState("");
   const [accent, setAccent] = useState("");
   const [summary, setSummary] = useState("");
+  const [genres, setGenres] = useState("");
+  const [artistLocation, setArtistLocation] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
   const [saving, setSaving] = useState(false);
   const [showEvents, setShowEvents] = useState(true);
@@ -76,6 +78,8 @@ function ArtistSpacePage() {
     setBanner((profile as any).banner_url ?? "");
     setAccent((profile as any).accent_color ?? "");
     setSummary((profile as any).gallery_summary ?? "");
+    setGenres(((profile as any).artist_genres ?? []).join(", "));
+    setArtistLocation((profile as any).artist_location ?? "");
     setShowEvents((profile as any).show_events_section ?? true);
     setShowShop((profile as any).show_shop_section ?? true);
     setShowPosts((profile as any).show_posts_section ?? true);
@@ -259,6 +263,9 @@ function ArtistSpacePage() {
     }
     setSaving(true);
     try {
+      const artistGenres = Array.from(
+        new Set(genres.split(",").map((genre) => genre.trim()).filter(Boolean)),
+      ).slice(0, 8);
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -267,6 +274,8 @@ function ArtistSpacePage() {
           page_indexable: indexable,
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
+          artist_genres: artistGenres,
+          artist_location: artistLocation.trim() || null,
           social_links: sanitizeLinks(links),
           show_events_section: showEvents,
           show_shop_section: showShop,
@@ -411,6 +420,31 @@ function ArtistSpacePage() {
           <Label htmlFor="summary">{T.summary}</Label>
           <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} maxLength={600} placeholder={T.summaryPlaceholder} />
           <p className="text-[11px] text-muted-foreground">{summary.length}/600</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="artist-genres">{T.genres}</Label>
+            <Input
+              id="artist-genres"
+              value={genres}
+              onChange={(e) => setGenres(e.target.value)}
+              maxLength={240}
+              placeholder={T.genresPlaceholder}
+            />
+            <p className="text-[11px] text-muted-foreground">{T.genresHint}</p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="artist-location">{T.location}</Label>
+            <Input
+              id="artist-location"
+              value={artistLocation}
+              onChange={(e) => setArtistLocation(e.target.value)}
+              maxLength={120}
+              placeholder={T.locationPlaceholder}
+            />
+            <p className="text-[11px] text-muted-foreground">{T.locationHint}</p>
+          </div>
         </div>
 
         <div className="space-y-1.5">
