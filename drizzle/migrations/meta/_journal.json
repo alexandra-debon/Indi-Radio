@@ -176,6 +176,13 @@
       "when": 1789766380101,
       "tag": "0024_profiles_banner_color_and_indexable",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1789802343433,
+      "tag": "0025_profiles_artist_genres_location",
+      "breakpoints": true
     }
   ]
 }
