@@ -255,7 +255,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
               alternateName: `@${pseudo}`,
               url: canonicalUrl,
               ...(loaderData?.avatar_url ? { image: loaderData.avatar_url } : {}),
-              ...(summarySource ? { description: summarySource } : {}),
+              ...(desc ? { description: desc } : {}),
               ...(genres.length > 0 ? { genre: genres } : {}),
               ...(artistLocation ? { homeLocation: { "@type": "Place", name: artistLocation } } : {}),
               ...(sameAs.length > 0 ? { sameAs } : {}),
