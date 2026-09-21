@@ -321,7 +321,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
               key={s.id}
               role="option"
               aria-selected={i === hashActive}
-              onMouseDown={(e) => { e.preventDefault(); insertHashtag(s.tag); }}
+              onPointerDown={(e) => { e.preventDefault(); insertHashtag(s.tag); }}
               onMouseEnter={() => setHashActive(i)}
               className={cn(
                 "flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-sm",
