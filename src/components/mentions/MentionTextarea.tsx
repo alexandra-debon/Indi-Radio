@@ -215,6 +215,20 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   const open = query !== null && suggestions.length > 0;
   const hashOpen = hashQuery !== null && hashSuggestions.length > 0;
 
+  // On small screens the on-screen keyboard covers the lower half: open the
+  // suggestion list above the field when the field sits low in the viewport.
+  const [openUp, setOpenUp] = useState(false);
+  useEffect(() => {
+    if (!open && !hashOpen) return;
+    const el = localRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setOpenUp(rect.top > window.innerHeight * 0.55);
+  }, [open, hashOpen]);
+  const listPos = openUp
+    ? "bottom-full mb-1"
+    : "top-full mt-1";
+
   return (
     <div className="relative">
       <div
