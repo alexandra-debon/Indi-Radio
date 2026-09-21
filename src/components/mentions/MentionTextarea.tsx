@@ -215,6 +215,20 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   const open = query !== null && suggestions.length > 0;
   const hashOpen = hashQuery !== null && hashSuggestions.length > 0;
 
+  // On small screens the on-screen keyboard covers the lower half: open the
+  // suggestion list above the field when the field sits low in the viewport.
+  const [openUp, setOpenUp] = useState(false);
+  useEffect(() => {
+    if (!open && !hashOpen) return;
+    const el = localRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setOpenUp(rect.top > window.innerHeight * 0.55);
+  }, [open, hashOpen]);
+  const listPos = openUp
+    ? "bottom-full mb-1"
+    : "top-full mt-1";
+
   return (
     <div className="relative">
       <div
@@ -272,14 +286,14 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg"
+          className={cn("absolute left-0 right-0 z-30 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg", listPos)}
         >
           {suggestions.map((s, i) => (
             <li
               key={s.id}
               role="option"
               aria-selected={i === activeIdx}
-              onMouseDown={(e) => { e.preventDefault(); insert(s.pseudo); }}
+              onPointerDown={(e) => { e.preventDefault(); insert(s.pseudo); }}
               onMouseEnter={() => setActiveIdx(i)}
               className={cn(
                 "cursor-pointer px-3 py-2 text-sm",
@@ -300,14 +314,14 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
       {hashOpen && !open && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg"
+          className={cn("absolute left-0 right-0 z-30 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg", listPos)}
         >
           {hashSuggestions.map((s, i) => (
             <li
               key={s.id}
               role="option"
               aria-selected={i === hashActive}
-              onMouseDown={(e) => { e.preventDefault(); insertHashtag(s.tag); }}
+              onPointerDown={(e) => { e.preventDefault(); insertHashtag(s.tag); }}
               onMouseEnter={() => setHashActive(i)}
               className={cn(
                 "flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-sm",

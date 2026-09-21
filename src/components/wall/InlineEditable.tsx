@@ -99,6 +99,7 @@ export function InlineEditable({
       {multiline ? (
         <textarea
           aria-label={ariaLabel}
+          lang="fr"
           ref={(el) => { inputRef.current = el; }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -112,6 +113,7 @@ export function InlineEditable({
       ) : (
         <input
           aria-label={ariaLabel}
+          lang="fr"
           ref={(el) => { inputRef.current = el; }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
