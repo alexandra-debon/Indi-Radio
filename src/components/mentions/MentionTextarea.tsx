@@ -286,7 +286,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg"
+          className={cn("absolute left-0 right-0 z-30 max-h-60 overflow-auto rounded border-2 border-border bg-background shadow-lg", listPos)}
         >
           {suggestions.map((s, i) => (
             <li
