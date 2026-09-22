@@ -175,3 +175,93 @@ export const reviewRoleRequest = createServerFn({ method: "POST" })
 
     return { ok: true as const };
   });
+
+const certifySchema = z.object({
+  userId: z.string().uuid(),
+  role: z.enum(["auditeur", "artiste", "animateur", "admin", "media"]).optional(),
+  certified: z.boolean().optional(),
+  stageName: z.string().trim().max(120).nullable().optional(),
+  gallerySummary: z.string().trim().max(2000).nullable().optional(),
+  galleryCoverUrl: z.string().trim().max(1000).nullable().optional(),
+  galleryVisible: z.boolean().optional(),
+});
+
+/**
+ * Admin : certifie / change le rôle d'un membre depuis la console générale.
+ * Clôture aussi toute candidature encore « pending » et prévient le membre
+ * (notification in-app + email), comme le fait la page Candidatures.
+ */
+export const certifyUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => certifySchema.parse(raw))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: target, error: readErr } = await supabaseAdmin
+      .from("profiles")
+      .select("id, pseudo, role, is_certified, role_requested, role_request_status")
+      .eq("id", data.userId)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    if (!target) throw new Error("Membre introuvable.");
+
+    const patch: Record<string, unknown> = {};
+    if (data.role !== undefined) patch.role = data.role;
+    if (data.certified !== undefined) patch.is_certified = data.certified;
+    if (data.stageName !== undefined) patch.stage_name = data.stageName || null;
+    if (data.gallerySummary !== undefined) patch.gallery_summary = data.gallerySummary || null;
+    if (data.galleryCoverUrl !== undefined) patch.gallery_cover_url = data.galleryCoverUrl || null;
+    if (data.galleryVisible !== undefined) patch.gallery_visible = data.galleryVisible;
+
+    const nextRole = (data.role ?? target.role) as string;
+    const nextCertified = data.certified ?? target.is_certified;
+    const becomesPro = (nextRole === "artiste" || nextRole === "media") && !!nextCertified;
+    const resolvesRequest = becomesPro && target.role_request_status === "pending";
+
+    const now = new Date().toISOString();
+    if (resolvesRequest) {
+      patch.role_request_status = "approved";
+      patch.role_request_reviewed_at = now;
+      if (!target.role_requested) patch.role_requested = nextRole;
+    }
+
+    if (Object.keys(patch).length > 0) {
+      const { error } = await supabaseAdmin.from("profiles").update(patch).eq("id", data.userId);
+      if (error) throw new Error(error.message);
+    }
+
+    const newlyCertified =
+      becomesPro && (!target.is_certified || target.role !== nextRole || resolvesRequest);
+    if (!newlyCertified) return { ok: true as const, notified: false };
+
+    await supabaseAdmin.from("notifications").insert({
+      recipient_id: data.userId,
+      actor_id: context.userId,
+      type: "role_request",
+      message: "Ta candidature a été acceptée : ton profil est désormais certifié.",
+      url: "/profile/artiste",
+    });
+
+    try {
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+      const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+      const email = userRes?.user?.email;
+      if (email) {
+        await sendTemplateEmail("role-request-decision", email, {
+          templateData: {
+            pseudo: target.pseudo ?? "membre",
+            roleRequested: nextRole === "media" ? "Média" : "Artiste",
+            decision: "approved",
+            adminMessage: "",
+            profileUrl: `${SITE_ORIGIN}/profile/artiste`,
+          },
+          idempotencyKey: `role-certify-${data.userId}-${now}`,
+        });
+      }
+    } catch {
+      /* l'email ne doit jamais bloquer la certification */
+    }
+
+    return { ok: true as const, notified: true };
+  });
