@@ -37,12 +37,15 @@ type ArtistRow = {
   gallery_cover_url: string | null;
   gallery_summary: string | null;
   social_links: SocialLinks | null;
+  artist_genres: string[] | null;
+  artist_location: string | null;
+  ep_download_url: string | null;
 };
 
 async function fetchArtists(): Promise<ArtistRow[]> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, stage_name, gallery_cover_url, gallery_summary, social_links")
+    .select("id, pseudo, avatar_url, stage_name, gallery_cover_url, gallery_summary, social_links, artist_genres, artist_location, ep_download_url")
     .eq("role", "artiste")
     .eq("is_certified", true)
     .eq("gallery_visible", true)
