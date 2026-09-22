@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, Search, MessageCircle, ShoppingBag } from "lucide-react";
+import { BadgeCheck, Search, MessageCircle, ShoppingBag, MapPin, Music2, Download } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
@@ -37,12 +37,15 @@ type ArtistRow = {
   gallery_cover_url: string | null;
   gallery_summary: string | null;
   social_links: SocialLinks | null;
+  artist_genres: string[] | null;
+  artist_location: string | null;
+  ep_download_url: string | null;
 };
 
 async function fetchArtists(): Promise<ArtistRow[]> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, stage_name, gallery_cover_url, gallery_summary, social_links")
+    .select("id, pseudo, avatar_url, stage_name, gallery_cover_url, gallery_summary, social_links, artist_genres, artist_location, ep_download_url")
     .eq("role", "artiste")
     .eq("is_certified", true)
     .eq("gallery_visible", true)
@@ -170,6 +173,23 @@ function ArtistesPage() {
                         className="mt-1 line-clamp-3 whitespace-pre-wrap text-xs text-foreground/80"
                       />
                     )}
+                    {(a.artist_genres?.length || a.artist_location) && (
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                        {a.artist_genres?.slice(0, 3).map((g) => (
+                          <span
+                            key={g}
+                            className="inline-flex items-center gap-0.5 border border-border bg-muted px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide text-muted-foreground"
+                          >
+                            <Music2 className="size-2.5" aria-hidden="true" /> {g}
+                          </span>
+                        ))}
+                        {a.artist_location && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                            <MapPin className="size-3" aria-hidden="true" /> {a.artist_location}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 {a.social_links && Object.keys(a.social_links).some((k) => k !== "__order" && k !== "__labels") && (
@@ -186,6 +206,13 @@ function ArtistesPage() {
                       <MessageCircle className="size-4" /> {t("gallery.writeTo")}
                     </a>
                   </Button>
+                  {a.ep_download_url && (
+                    <Button asChild size="sm" variant="outline" className="w-full gap-1.5">
+                      <a href={a.ep_download_url} target="_blank" rel="noopener noreferrer nofollow">
+                        <Download className="size-4" /> {t("gallery.downloadEp")}
+                      </a>
+                    </Button>
+                  )}
                 </div>
               </li>
             );
