@@ -109,6 +109,25 @@ Comme `capacitor.config.ts` pointe `server.url` vers ton site web, Apple peut re
 - Soit tu retires `server.url` et l'app tourne 100% offline (recompile `bun run build && bunx cap sync` — mais tu perds les updates auto)
 - Soit tu justifies dans la note à la review : *"L'app apporte lecture audio en arrière-plan, Media Session pour CarPlay/Bluetooth, notifications push, partage natif — fonctionnalités impossibles en Safari."*
 
+### ⚠️ `limitsNavigationsToAppBoundDomains` (iOS)
+`capacitor.config.ts` active `limitsNavigationsToAppBoundDomains: true`. Sans déclaration, la connexion Google et les liens externes (boutique, magazines FlipHTML5, lecteurs Spotify/SoundCloud) échouent silencieusement en production. Ajoute dans `ios/App/App/Info.plist` :
+
+```xml
+<key>WKAppBoundDomains</key>
+<array>
+  <string>www.radio.indi-art-culture.com</string>
+  <string>radio.indi-art-culture.com</string>
+  <string>ceqmejsvjpgpvfiannhj.supabase.co</string>
+  <string>accounts.google.com</string>
+</array>
+```
+
+(maximum 10 domaines ; à défaut, passe `limitsNavigationsToAppBoundDomains` à `false`.)
+
+### Boutique — Guideline 3.1.1
+La boutique n'accepte que des **biens physiques** (vinyle, CD, K7, livre, merch) et des **billets de concert**, vendus par l'artiste sur son propre site. Aucun contenu numérique payant consommé dans l'app. Le bouton « Télécharger mon EP » doit pointer vers un téléchargement **gratuit** — vérifie les liens déposés par les artistes avant la soumission.
+
+
 ---
 
 ## Étape 5B — Publier sur Google Play (Android)
