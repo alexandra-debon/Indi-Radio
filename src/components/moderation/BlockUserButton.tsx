@@ -42,6 +42,7 @@ export function BlockUserButton({
       {
         onSuccess: () => {
           toast.success(blocked ? t("block.unblocked") : t("block.blocked"));
+          setReason("");
           setOpen(false);
         },
         onError: (e) => toast.error((e as Error).message),
