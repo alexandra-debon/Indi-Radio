@@ -158,7 +158,9 @@ export function SocialWall() {
     if (postId) setOpenThread(postId);
   }, [hash]);
 
-  const { data: posts = [] } = useQuery<PostRow[]>({
+  const blockedIds = useBlockedIds();
+
+  const { data: allPosts = [] } = useQuery<PostRow[]>({
     queryKey: ["wall-posts", activeTag, activeCategory],
     queryFn: async () => {
       let req = supabase
@@ -178,6 +180,9 @@ export function SocialWall() {
       return (data ?? []) as unknown as PostRow[];
     },
   });
+
+  // Les contenus des membres bloqués disparaissent du fil (exigence stores).
+  const posts = blockedIds.length ? allPosts.filter((p) => !blockedIds.includes(p.author_id)) : allPosts;
 
   const { data: popularTags = [] } = useQuery<HashtagSuggestion[]>({
     queryKey: ["wall-popular-tags"],
