@@ -244,7 +244,7 @@ export function SocialWall() {
     },
   });
 
-  const { data: comments = [] } = useQuery<CommentRow[]>({
+  const { data: allComments = [] } = useQuery<CommentRow[]>({
     queryKey: ["wall-comments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -255,6 +255,10 @@ export function SocialWall() {
       return (data ?? []) as unknown as CommentRow[];
     },
   });
+
+  const comments = blockedIds.length
+    ? allComments.filter((c) => !blockedIds.includes(c.author_id))
+    : allComments;
 
   const toggleLike = useMutation({
     mutationFn: async (postId: string) => {
