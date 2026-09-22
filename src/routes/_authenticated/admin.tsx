@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
 import { certifyUserRole } from "@/lib/role-request.functions";
-import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
+import { listUserEmails, listQuarantineReasons, deleteUserAccount } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, SocialLinksBar, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
@@ -410,6 +410,18 @@ function UserAdmin() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const deleteAccount = useServerFn(deleteUserAccount);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const deleteMut = useMutation({
+    mutationFn: async (id: string) => await deleteAccount({ data: { userId: id } }),
+    onSuccess: () => {
+      toast.success("Profil supprimé définitivement");
+      setDeleteTarget(null);
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [pseudoTarget, setPseudoTarget] = useState<{ id: string; pseudo: string } | null>(null);
@@ -573,6 +585,15 @@ function UserAdmin() {
               >
                 <Pencil className="size-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setDeleteTarget({ id: p.id, pseudo: p.pseudo })}
+                title="Supprimer le profil"
+              >
+                <Trash2 className="size-4" />
+              </Button>
             </div>
             <BadgeEditor
               badges={(p as any).badges ?? []}
@@ -592,6 +613,32 @@ function UserAdmin() {
         onClose={() => setBanTarget(null)}
         onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
       />
+      <Dialog open={!!deleteTarget} onOpenChange={(v) => !v && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="size-5 text-destructive" />
+              Êtes-vous sûre ?
+            </DialogTitle>
+            <DialogDescription>
+              Le profil @{deleteTarget?.pseudo} et son compte seront supprimés définitivement, ainsi
+              que ses publications, commentaires et notifications. Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteMut.isPending}
+              onClick={() => deleteTarget && deleteMut.mutate(deleteTarget.id)}
+            >
+              {deleteMut.isPending ? "Suppression…" : "Supprimer définitivement"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <AdminEditPseudoDialog
         target={pseudoTarget}
         onClose={() => setPseudoTarget(null)}

@@ -62,3 +62,22 @@ export const listUserEmails = createServerFn({ method: "POST" })
     );
     return result;
   });
+/**
+ * Admin-only: suppression définitive d'un compte membre (profil + compte auth).
+ * Les tables liées suivent les ON DELETE CASCADE des FKs vers auth.users.
+ */
+export const deleteUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => z.object({ userId: z.string().uuid() }).parse(raw))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) {
+      throw new Error("Impossible de supprimer votre propre compte administrateur ici.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("notifications").delete().eq("recipient_id", data.userId);
+    await supabaseAdmin.from("profiles").delete().eq("id", data.userId);
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
