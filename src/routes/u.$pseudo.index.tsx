@@ -531,9 +531,13 @@ function UserProfilePage() {
               <span>· {t("upub.memberSince")} {joined}</span>
             </div>
           </div>
-          <div className="flex shrink-0 flex-col items-end">
+          <div className="flex shrink-0 flex-col items-end gap-1">
             <span className="text-2xl font-black tabular-nums text-primary sm:text-3xl">{profile.points}</span>
             <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("upub.points")}</span>
+            <div className="flex items-center gap-2">
+              <ReportButton commentType="profile" commentId={profile.id} />
+              <BlockUserButton userId={profile.id} pseudo={profile.pseudo} />
+            </div>
           </div>
         </div>
 
