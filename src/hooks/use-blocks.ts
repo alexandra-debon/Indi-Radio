@@ -20,7 +20,7 @@ export function useBlockedIds() {
       const { data, error } = await supabase
         .from("user_blocks")
         .select("blocked_id")
-        .eq("blocker_id", uid);
+        .eq("blocker_id", uid!);
       if (error) throw error;
       return (data ?? []).map((r) => r.blocked_id as string);
     },
