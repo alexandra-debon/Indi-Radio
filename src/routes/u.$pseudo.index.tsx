@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
-import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock, MapPin, Music2 } from "lucide-react";
+import { BadgeCheck, Trophy, Star, MessageSquare, Heart, FileText, Globe, Images, Award, Mic2, CalendarCheck, Lock, MapPin, Music2, Download, Video } from "lucide-react";
 import { SocialLinksBar, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { useT, useLang } from "@/lib/i18n";
@@ -16,6 +16,7 @@ import { ArtistShop } from "@/components/artist/ArtistShop";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
+import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 
 type SectionKey = "events" | "shop" | "posts";
 
@@ -137,7 +138,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, artist_genres, artist_location, social_links, website")
+      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, artist_genres, artist_location, social_links, website, artist_video_urls, ep_download_url")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -229,6 +230,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
     const sameAs = [
       ...Object.values(socials),
       (loaderData as any)?.website,
+      (loaderData as any)?.ep_download_url,
     ].filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u));
     const ogImage = (loaderData as any)?.banner_url || loaderData?.avatar_url;
     if (ogImage) {
@@ -306,6 +308,8 @@ type Profile = {
   show_events_section: boolean | null;
   show_shop_section: boolean | null;
   show_posts_section: boolean | null;
+  artist_video_urls: string[];
+  ep_download_url: string | null;
 };
 
 type Stats = { posts: number; comments: number; likesGiven: number };
@@ -356,7 +360,7 @@ async function fetchAchievements(userId: string) {
 async function fetchProfile(pseudo: string): Promise<{ profile: Profile; stats: Stats }> {
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, banner_color, accent_color, stage_name, gallery_summary, artist_genres, artist_location, show_events_section, show_shop_section, show_posts_section")
+    .select("id, pseudo, avatar_url, points, level, role, is_certified, is_team_indi, badges, created_at, bio, website, social_links, banner_url, banner_color, accent_color, stage_name, gallery_summary, artist_genres, artist_location, show_events_section, show_shop_section, show_posts_section, artist_video_urls, ep_download_url")
     .ilike("pseudo", pseudo)
     .maybeSingle();
   if (error) throw error;
@@ -581,8 +585,9 @@ function UserProfilePage() {
         )}
       </div>
 
-      {(profile.bio || profile.website || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
+      {(profile.bio || profile.website || profile.ep_download_url || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
         <div className="card-brut space-y-2 p-4">
+          {profile.bio && <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide"><FileText className="size-4 text-primary" /> {t("upub.biography")}</h2>}
           {profile.bio && (
             <TranslatedText
               as="p"
@@ -605,7 +610,23 @@ function UserProfilePage() {
             </a>
           )}
           {profile.social_links && <SocialLinksBar links={profile.social_links} />}
+          {profile.ep_download_url && (
+            <Button asChild className="mt-2 w-full sm:w-auto" style={accent ? { backgroundColor: accent, borderColor: accent } : undefined}>
+              <a href={profile.ep_download_url} target="_blank" rel="noopener noreferrer nofollow">
+                <Download className="size-4" /> {t("upub.downloadEp")}
+              </a>
+            </Button>
+          )}
         </div>
+      )}
+
+      {isArtistPage && profile.artist_video_urls.length > 0 && (
+        <section className="card-brut p-4">
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide">
+            <Video className="size-4 text-primary" /> {t("upub.videos")}
+          </h2>
+          <UrlEmbeds text={profile.artist_video_urls.join("\n")} hidePreviews />
+        </section>
       )}
 
       <ArtistSections

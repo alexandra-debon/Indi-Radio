@@ -14,9 +14,9 @@ import { MultiImageUploader } from "@/components/media/MultiImageUploader";
 import { SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
 import { VisibilityPicker, visibilityLabel, type PostVisibility } from "@/components/social/VisibilityPicker";
 import { CategoryPicker, type PostCategory } from "@/components/social/PostCategory";
-import { isValidVideoUrl } from "@/lib/media-embed";
+import { parseMediaUrl } from "@/lib/media-embed";
 import { toast } from "@/lib/toast";
-import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff, Globe, HelpCircle } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, CalendarPlus, Palette, Image as ImageIcon, Send, Eye, EyeOff, Globe, HelpCircle, Images, Download, Video } from "lucide-react";
 import { PendingCertificationNotice } from "@/components/artist/PendingCertificationNotice";
 import { openArtistTour } from "@/components/onboarding/ArtistTour";
 import { useLang } from "@/lib/i18n";
@@ -62,6 +62,10 @@ function ArtistSpacePage() {
   const [banner, setBanner] = useState("");
   const [accent, setAccent] = useState("");
   const [summary, setSummary] = useState("");
+  const [biography, setBiography] = useState("");
+  const [website, setWebsite] = useState("");
+  const [featuredVideos, setFeaturedVideos] = useState("");
+  const [epDownloadUrl, setEpDownloadUrl] = useState("");
   const [genres, setGenres] = useState("");
   const [artistLocation, setArtistLocation] = useState("");
   const [links, setLinks] = useState<SocialLinks>({});
@@ -78,6 +82,10 @@ function ArtistSpacePage() {
     setBanner((profile as any).banner_url ?? "");
     setAccent((profile as any).accent_color ?? "");
     setSummary((profile as any).gallery_summary ?? "");
+    setBiography(profile.bio ?? "");
+    setWebsite((profile as any).website ?? "");
+    setFeaturedVideos(((profile as any).artist_video_urls ?? []).join("\n"));
+    setEpDownloadUrl((profile as any).ep_download_url ?? "");
     setGenres(((profile as any).artist_genres ?? []).join(", "));
     setArtistLocation((profile as any).artist_location ?? "");
     setShowEvents((profile as any).show_events_section ?? true);
@@ -200,7 +208,7 @@ function ArtistSpacePage() {
       const body = postBody.trim();
       const video = postVideo.trim();
       if (!body && !video && postImages.length === 0) throw new Error(T.postEmpty);
-      if (video && !isValidVideoUrl(video)) throw new Error(T.postBadVideo);
+      if (video && !parseMediaUrl(video)) throw new Error(T.postBadVideo);
       const content = video ? (body ? `${body}\n${video}` : video) : body;
       const { error } = await supabase.from("posts").insert({
         author_id: uid,
@@ -261,6 +269,24 @@ function ArtistSpacePage() {
       toast.error(T.badBannerColor);
       return;
     }
+    const normalizedWebsite = website.trim();
+    const normalizedEpUrl = epDownloadUrl.trim();
+    const isHttpsUrl = (value: string) => {
+      try { return new URL(value).protocol === "https:"; } catch { return false; }
+    };
+    if (normalizedWebsite && !isHttpsUrl(normalizedWebsite)) {
+      toast.error(T.badWebsite);
+      return;
+    }
+    if (normalizedEpUrl && !isHttpsUrl(normalizedEpUrl)) {
+      toast.error(T.badEpUrl);
+      return;
+    }
+    const videoUrls = Array.from(new Set(featuredVideos.split(/\r?\n/).map((url) => url.trim()).filter(Boolean))).slice(0, 6);
+    if (videoUrls.some((url) => !parseMediaUrl(url))) {
+      toast.error(T.badFeaturedVideo);
+      return;
+    }
     setSaving(true);
     try {
       const artistGenres = Array.from(
@@ -274,6 +300,10 @@ function ArtistSpacePage() {
           page_indexable: indexable,
           accent_color: accent || null,
           gallery_summary: summary.trim() || null,
+          bio: biography.trim() || null,
+          website: normalizedWebsite || null,
+          artist_video_urls: videoUrls,
+          ep_download_url: normalizedEpUrl || null,
           artist_genres: artistGenres,
           artist_location: artistLocation.trim() || null,
           social_links: sanitizeLinks(links),
@@ -421,6 +451,34 @@ function ArtistSpacePage() {
           <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} maxLength={600} placeholder={T.summaryPlaceholder} />
           <p className="text-[11px] text-muted-foreground">{summary.length}/600</p>
         </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="artist-biography">{T.biography}</Label>
+          <Textarea id="artist-biography" value={biography} onChange={(e) => setBiography(e.target.value)} rows={7} maxLength={4000} placeholder={T.biographyPlaceholder} />
+          <p className="text-[11px] text-muted-foreground">{T.biographyHint} · {biography.length}/4000</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="artist-website" className="flex items-center gap-1.5"><Globe className="size-4" /> {T.website}</Label>
+            <Input id="artist-website" value={website} onChange={(e) => setWebsite(e.target.value)} maxLength={1000} placeholder={T.websitePlaceholder} inputMode="url" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="artist-ep" className="flex items-center gap-1.5"><Download className="size-4" /> {T.epDownload}</Label>
+            <Input id="artist-ep" value={epDownloadUrl} onChange={(e) => setEpDownloadUrl(e.target.value)} maxLength={1000} placeholder={T.epDownloadPlaceholder} inputMode="url" />
+            <p className="text-[11px] text-muted-foreground">{T.epDownloadHint}</p>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="artist-videos" className="flex items-center gap-1.5"><Video className="size-4" /> {T.featuredVideos}</Label>
+          <Textarea id="artist-videos" value={featuredVideos} onChange={(e) => setFeaturedVideos(e.target.value)} rows={5} maxLength={6000} placeholder={T.featuredVideosPlaceholder} />
+          <p className="text-[11px] text-muted-foreground">{T.featuredVideosHint}</p>
+        </div>
+
+        <Button asChild type="button" variant="outline">
+          <Link to="/profile/albums"><Images className="size-4" /> {T.managePhotos}</Link>
+        </Button>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
