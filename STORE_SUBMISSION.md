@@ -15,7 +15,9 @@ Ce guide t'accompagne pas-à-pas pour publier l'app sur les deux stores. **Tout 
 - ✅ Privacy Manifest iOS
 - ✅ Scripts npm : `cap:sync`, `cap:ios`, `cap:android`, `cap:assets`
 - ✅ **Suppression de compte in-app** (`/profile` → Zone dangereuse) — obligatoire Apple 5.1.1(v)
-- ✅ **Bundle web embarqué** (pas de `server.url`) — évite le rejet 4.2 « repackaged web »
+- ⚠️ **L'app charge le site en ligne** via `server.url = https://www.radio.indi-art-culture.com` (`capacitor.config.ts`). Le dossier `dist/client` sert de coquille offline. Prévoir la note de review « 4.2 » (voir plus bas) et déclarer `WKAppBoundDomains`.
+- ✅ **Signalement de contenu et de profil + blocage d'un membre** (mur, articles RéDaK'Village, pages membres) — exigences Apple 1.2 / Google UGC
+- ✅ **Boutique = biens physiques et billets uniquement**, vente réalisée par l'artiste sur son propre site (règle affichée aux artistes et aux visiteurs) — évite le rejet 3.1.1
 - ✅ **Checklist anti-rejet complète** : `store/anti-rejection-checklist.md` **← LIS-LA AVANT DE SOUMETTRE**
 
 ## ⚠️ Ce que tu dois faire toi-même

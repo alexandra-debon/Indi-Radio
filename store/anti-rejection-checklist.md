@@ -9,7 +9,7 @@ les plus fréquents pour les apps de radio / streaming audio.
 **Risque le plus fréquent pour les apps radio.**
 
 ⚠️ **Configuration actuelle assumée** : `capacitor.config.ts` utilise
-`server.url = "https://radio.indi-art-culture.com"` (webDir = `dist/client`
+`server.url = "https://www.radio.indi-art-culture.com"` (webDir = `dist/client`
 comme fallback offline via `scripts/capacitor-shell.mjs`). La stack
 TanStack Start + Nitro n'émet pas de bundle SPA autonome, donc l'app
 native charge le site publié dans la WebView. Pour éviter le rejet 4.2,
@@ -57,7 +57,7 @@ aussi Sign in with Apple sur iOS.
 - ✅ Modération sous 24 h annoncée dans la fiche Store.
 
 ### Guideline 5.1.1 — Politique de confidentialité
-- ✅ URL publique : https://radio.indi-art-culture.com/privacy
+- ✅ URL publique : https://www.radio.indi-art-culture.com/privacy
 - ✅ Privacy Manifest `PrivacyInfo.xcprivacy` (fourni).
 - ✅ Répondre au questionnaire « App Privacy » sur App Store Connect
   (voir `store/privacy-policy-fr.md` § « Data Safety »).
