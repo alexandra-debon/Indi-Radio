@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "radio-indie-vibes"
+const SITE_NAME = "InDi RaDio - Hub InDi ArT CulTuRe"
 const ROOT_DOMAIN = "radio.indi-art-culture.com"
 
 // Sample data for preview mode ONLY (not used in actual email sending).
