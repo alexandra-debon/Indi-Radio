@@ -585,6 +585,15 @@ function UserAdmin() {
               >
                 <Pencil className="size-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setDeleteTarget({ id: p.id, pseudo: p.pseudo })}
+                title="Supprimer le profil"
+              >
+                <Trash2 className="size-4" />
+              </Button>
             </div>
             <BadgeEditor
               badges={(p as any).badges ?? []}
