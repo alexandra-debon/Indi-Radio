@@ -32,12 +32,13 @@ export function BlockUserButton({
   const blocked = useIsBlocked(userId);
   const toggle = useToggleBlock();
   const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
 
   if (session?.user.id === userId) return null;
 
   const run = () => {
     toggle.mutate(
-      { userId, block: !blocked },
+      { userId, block: !blocked, reason },
       {
         onSuccess: () => {
           toast.success(blocked ? t("block.unblocked") : t("block.blocked"));
