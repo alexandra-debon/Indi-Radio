@@ -221,7 +221,7 @@ export const certifyUserRole = createServerFn({ method: "POST" })
     if (data.galleryCoverUrl !== undefined) patch.gallery_cover_url = data.galleryCoverUrl || null;
     if (data.galleryVisible !== undefined) patch.gallery_visible = data.galleryVisible;
 
-    const nextRole = (data.role ?? target.role) as string;
+    const nextRole = (impliedRole ?? target.role) as string;
     const nextCertified = data.certified ?? target.is_certified;
     const becomesPro = (nextRole === "artiste" || nextRole === "media") && !!nextCertified;
     const resolvesRequest = becomesPro && target.role_request_status === "pending";
