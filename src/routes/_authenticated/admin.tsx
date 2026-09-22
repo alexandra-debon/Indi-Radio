@@ -19,6 +19,7 @@ import { StarRating } from "@/components/rating/StarRating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
+import { certifyUserRole } from "@/lib/role-request.functions";
 import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
@@ -367,21 +368,27 @@ function UserAdmin() {
     staleTime: 60_000,
   });
 
+  const certify = useServerFn(certifyUserRole);
+
   const updateRole = useMutation({
     mutationFn: async ({ id, role }: { id: string; role: "auditeur" | "artiste" | "animateur" | "admin" }) => {
-      const { error } = await supabase.from("profiles").update({ role }).eq("id", id);
-      if (error) throw error;
+      return await certify({ data: { userId: id, role } });
     },
-    onSuccess: () => { toast.success("Rôle mis à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); },
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Rôle mis à jour — membre notifié par email" : "Rôle mis à jour");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
   const toggleCert = useMutation({
     mutationFn: async ({ id, is_certified }: { id: string; is_certified: boolean }) => {
-      const { error } = await supabase.from("profiles").update({ is_certified }).eq("id", id);
-      if (error) throw error;
+      return await certify({ data: { userId: id, certified: is_certified } });
     },
-    onSuccess: () => { toast.success("Certification mise à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); },
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Certification mise à jour — membre notifié par email" : "Certification mise à jour");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
@@ -414,20 +421,19 @@ function UserAdmin() {
   const saveCertify = useMutation({
     mutationFn: async () => {
       if (!certifyTarget) return;
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          is_certified: true,
-          stage_name: certifyStageName.trim() || null,
-          gallery_summary: certifySummary.trim() || null,
-          gallery_cover_url: certifyCover || null,
-          gallery_visible: true,
-        } as any)
-        .eq("id", certifyTarget.id);
-      if (error) throw error;
+      return await certify({
+        data: {
+          userId: certifyTarget.id,
+          certified: true,
+          stageName: certifyStageName.trim() || null,
+          gallerySummary: certifySummary.trim() || null,
+          galleryCoverUrl: certifyCover || null,
+          galleryVisible: true,
+        },
+      });
     },
-    onSuccess: () => {
-      toast.success("Artiste certifié");
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Artiste certifié — notifié par email" : "Artiste certifié");
       qc.invalidateQueries({ queryKey: ["admin-profiles"] });
       qc.invalidateQueries({ queryKey: ["artistes-gallery"] });
       setCertifyTarget(null);
