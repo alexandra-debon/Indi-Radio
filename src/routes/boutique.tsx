@@ -184,6 +184,11 @@ function ItemCard({ item, compact }: { item: GlobalShopItem; compact?: boolean }
           </a>
         </Button>
       )}
+      {item.external_url && (
+        <p className="mt-1 hidden text-[10px] leading-snug text-muted-foreground sm:block">
+          {txt.externalSale}
+        </p>
+      )}
       {item.artist && (
         <Button
           asChild
