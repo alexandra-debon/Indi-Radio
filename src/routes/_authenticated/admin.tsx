@@ -368,21 +368,27 @@ function UserAdmin() {
     staleTime: 60_000,
   });
 
+  const certify = useServerFn(certifyUserRole);
+
   const updateRole = useMutation({
     mutationFn: async ({ id, role }: { id: string; role: "auditeur" | "artiste" | "animateur" | "admin" }) => {
-      const { error } = await supabase.from("profiles").update({ role }).eq("id", id);
-      if (error) throw error;
+      return await certify({ data: { userId: id, role } });
     },
-    onSuccess: () => { toast.success("Rôle mis à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); },
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Rôle mis à jour — membre notifié par email" : "Rôle mis à jour");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
   const toggleCert = useMutation({
     mutationFn: async ({ id, is_certified }: { id: string; is_certified: boolean }) => {
-      const { error } = await supabase.from("profiles").update({ is_certified }).eq("id", id);
-      if (error) throw error;
+      return await certify({ data: { userId: id, certified: is_certified } });
     },
-    onSuccess: () => { toast.success("Certification mise à jour"); qc.invalidateQueries({ queryKey: ["admin-profiles"] }); },
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Certification mise à jour — membre notifié par email" : "Certification mise à jour");
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
     onError: (e) => toast.error((e as Error).message),
   });
 
