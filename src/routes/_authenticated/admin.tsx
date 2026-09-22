@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
 import { certifyUserRole } from "@/lib/role-request.functions";
-import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
+import { listUserEmails, listQuarantineReasons, deleteUserAccount } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { SocialLinksEditor, SocialLinksBar, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
