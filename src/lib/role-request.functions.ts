@@ -206,7 +206,7 @@ export const certifyUserRole = createServerFn({ method: "POST" })
     if (readErr) throw new Error(readErr.message);
     if (!target) throw new Error("Membre introuvable.");
 
-    const patch: Record<string, unknown> = {};
+    const patch: any = {};
     if (data.role !== undefined) patch.role = data.role;
     if (data.certified !== undefined) patch.is_certified = data.certified;
     if (data.stageName !== undefined) patch.stage_name = data.stageName || null;
