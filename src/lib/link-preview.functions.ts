@@ -14,19 +14,39 @@ const TTL_MS = 1000 * 60 * 30; // 30 minutes
 function pickMeta(html: string, patterns: RegExp[]): string | null {
   for (const re of patterns) {
     const m = html.match(re);
-    if (m && m[1]) return decodeEntities(m[1].trim());
+    if (m && m[1]) return decodePreviewText(m[1]);
   }
   return null;
 }
 
-function decodeEntities(s: string): string {
-  return s
+function decodeEntitiesOnce(value: string): string {
+  return value
+    .replace(/&#x([0-9a-f]+);?/gi, (entity, hex: string) => {
+      const codePoint = Number.parseInt(hex, 16);
+      try { return String.fromCodePoint(codePoint); } catch { return entity; }
+    })
+    .replace(/&#([0-9]+);?/g, (entity, decimal: string) => {
+      const codePoint = Number.parseInt(decimal, 10);
+      try { return String.fromCodePoint(codePoint); } catch { return entity; }
+    })
     .replace(/&amp;/gi, "&")
     .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
+    .replace(/&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
     .replace(/&nbsp;/gi, " ");
+}
+
+export function decodePreviewText(value: string): string {
+  let decoded = value;
+  // Instagram and some other providers return entities encoded twice, for
+  // example `&amp;#039;`. A bounded loop handles those safely.
+  for (let pass = 0; pass < 3; pass += 1) {
+    const next = decodeEntitiesOnce(decoded);
+    if (next === decoded) break;
+    decoded = next;
+  }
+  return decoded.replace(/\s+/g, " ").trim();
 }
 
 function metaRegex(prop: string, key: "property" | "name"): RegExp {
@@ -76,7 +96,9 @@ export const fetchLinkPreview = createServerFn({ method: "GET" })
 
       const title =
         pickMeta(html, [metaRegex("og:title", "property"), metaRegex("twitter:title", "name")]) ??
-        (html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim() ?? null);
+        (html.match(/<title>([^<]+)<\/title>/i)?.[1]
+          ? decodePreviewText(html.match(/<title>([^<]+)<\/title>/i)?.[1] ?? "")
+          : null);
       const description = pickMeta(html, [
         metaRegex("og:description", "property"),
         metaRegex("twitter:description", "name"),

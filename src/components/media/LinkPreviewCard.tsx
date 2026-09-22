@@ -4,7 +4,7 @@ import { fetchLinkPreview } from "@/lib/link-preview.functions";
 
 export function LinkPreviewCard({ url }: { url: string }) {
   const { data, isLoading } = useQuery({
-    queryKey: ["link-preview", url],
+    queryKey: ["link-preview-v2", url],
     queryFn: () => fetchLinkPreview({ data: { url } }),
     staleTime: 1000 * 60 * 30,
     gcTime: 1000 * 60 * 60,
