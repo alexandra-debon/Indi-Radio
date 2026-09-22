@@ -1729,12 +1729,14 @@ export type Database = {
           accent_color: string | null
           artist_genres: string[]
           artist_location: string | null
+          artist_video_urls: string[]
           avatar_url: string | null
           badges: string[]
           banner_color: string | null
           banner_url: string | null
           bio: string | null
           created_at: string
+          ep_download_url: string | null
           gallery_cover_url: string | null
           gallery_summary: string | null
           gallery_visible: boolean
@@ -1767,12 +1769,14 @@ export type Database = {
           accent_color?: string | null
           artist_genres?: string[]
           artist_location?: string | null
+          artist_video_urls?: string[]
           avatar_url?: string | null
           badges?: string[]
           banner_color?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
+          ep_download_url?: string | null
           gallery_cover_url?: string | null
           gallery_summary?: string | null
           gallery_visible?: boolean
@@ -1805,12 +1809,14 @@ export type Database = {
           accent_color?: string | null
           artist_genres?: string[]
           artist_location?: string | null
+          artist_video_urls?: string[]
           avatar_url?: string | null
           badges?: string[]
           banner_color?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
+          ep_download_url?: string | null
           gallery_cover_url?: string | null
           gallery_summary?: string | null
           gallery_visible?: boolean
