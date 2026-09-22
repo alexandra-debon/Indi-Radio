@@ -207,7 +207,14 @@ export const certifyUserRole = createServerFn({ method: "POST" })
     if (!target) throw new Error("Membre introuvable.");
 
     const patch: any = {};
-    if (data.role !== undefined) patch.role = data.role;
+    // Certifier depuis la console sans préciser de rôle = passer le membre en artiste
+    // (ou dans le rôle demandé) s'il est encore auditeur.
+    const impliedRole =
+      data.role ??
+      (data.certified === true && target.role === "auditeur"
+        ? ((target.role_requested as string | null) ?? "artiste")
+        : undefined);
+    if (impliedRole !== undefined) patch.role = impliedRole;
     if (data.certified !== undefined) patch.is_certified = data.certified;
     if (data.stageName !== undefined) patch.stage_name = data.stageName || null;
     if (data.gallerySummary !== undefined) patch.gallery_summary = data.gallerySummary || null;
