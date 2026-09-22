@@ -190,6 +190,13 @@
       "when": 1790041219907,
       "tag": "0026_profiles_artist_media_and_ep",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1790041331612,
+      "tag": "0027_validate_artist_media_links",
+      "breakpoints": true
     }
   ]
 }

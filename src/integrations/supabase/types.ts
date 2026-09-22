@@ -2452,6 +2452,7 @@ export type Database = {
       }
     }
     Functions: {
+      artist_media_urls_valid: { Args: { _urls: string[] }; Returns: boolean }
       award_points: {
         Args: { p_action: string; p_points: number; p_user_id: string }
         Returns: undefined
