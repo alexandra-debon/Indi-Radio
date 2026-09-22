@@ -661,9 +661,17 @@ export function SocialWall() {
               )}
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
-                <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
-                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  {!isOwner && (
+                    <>
+                      <ReportButton commentType="post" commentId={p.id} />
+                      <BlockUserButton userId={p.author_id} pseudo={p.author?.pseudo} />
+                    </>
+                  )}
+                  <span className="text-[10px] text-muted-foreground">
+                    {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
+                  </span>
+                </div>
               </div>
               {isEditing ? (
                 <div className="space-y-2">
