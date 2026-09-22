@@ -192,7 +192,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       { name: "description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info." },
-      { name: "keywords", content: "radio gratuite, radio musique indé, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, radio indépendante, InDi RaDio" },
+      { name: "keywords", content: "hub musique indé, hub InDi ArT CulTuRe, radio 24/7 gratuite, 100 % musique et culture indé, radio gratuite, radio musique indé, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, radio indépendante, InDi RaDio" },
       { name: "author", content: "InDi ArT CulTuRe" },
       { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
