@@ -621,6 +621,8 @@ export const dict = {
     "block.confirm": "Block this member",
     "block.description":
       "Their posts and comments will no longer appear in your feed. You can unblock them at any time.",
+    "block.reason": "Reason (optional)",
+    "block.reasonPlaceholder": "E.g. aggressive language, spam…",
     "block.blocked": "Member blocked",
     "block.unblocked": "Member unblocked",
     "share.copy": "Copy link",
