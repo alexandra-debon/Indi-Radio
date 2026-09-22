@@ -410,6 +410,18 @@ function UserAdmin() {
     onError: (e) => toast.error((e as Error).message),
   });
 
+  const deleteAccount = useServerFn(deleteUserAccount);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; pseudo: string } | null>(null);
+  const deleteMut = useMutation({
+    mutationFn: async (id: string) => await deleteAccount({ data: { userId: id } }),
+    onSuccess: () => {
+      toast.success("Profil supprimé définitivement");
+      setDeleteTarget(null);
+      qc.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   const [banTarget, setBanTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [quarantineTarget, setQuarantineTarget] = useState<{ id: string; pseudo: string } | null>(null);
   const [pseudoTarget, setPseudoTarget] = useState<{ id: string; pseudo: string } | null>(null);
