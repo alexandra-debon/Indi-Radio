@@ -421,20 +421,19 @@ function UserAdmin() {
   const saveCertify = useMutation({
     mutationFn: async () => {
       if (!certifyTarget) return;
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          is_certified: true,
-          stage_name: certifyStageName.trim() || null,
-          gallery_summary: certifySummary.trim() || null,
-          gallery_cover_url: certifyCover || null,
-          gallery_visible: true,
-        } as any)
-        .eq("id", certifyTarget.id);
-      if (error) throw error;
+      return await certify({
+        data: {
+          userId: certifyTarget.id,
+          certified: true,
+          stageName: certifyStageName.trim() || null,
+          gallerySummary: certifySummary.trim() || null,
+          galleryCoverUrl: certifyCover || null,
+          galleryVisible: true,
+        },
+      });
     },
-    onSuccess: () => {
-      toast.success("Artiste certifié");
+    onSuccess: (res) => {
+      toast.success(res?.notified ? "Artiste certifié — notifié par email" : "Artiste certifié");
       qc.invalidateQueries({ queryKey: ["admin-profiles"] });
       qc.invalidateQueries({ queryKey: ["artistes-gallery"] });
       setCertifyTarget(null);
