@@ -26,7 +26,7 @@ InDi RaDio est la radio d'InDi ArT CulTuRe : 100% musique indépendante, sans pu
 
 Développée par une équipe indépendante, InDi RaDio soutient les artistes non-signés et la culture indé francophone.
 
-Site : https://radio.indi-art-culture.com
+Site : https://www.radio.indi-art-culture.com
 Contact : radio@indi-art-culture.com
 
 ## Mots-clés App Store (100 car., séparés par virgules, sans espaces)
@@ -41,9 +41,9 @@ radio,musique,indé,podcast,live,indie,streaming,chronique,clip,charts
 - Play Store : PEGI 12 / Teen
 
 ## URLs obligatoires
-- Site web : https://radio.indi-art-culture.com
-- Politique de confidentialité : https://radio.indi-art-culture.com/privacy
-- Conditions d'utilisation : https://radio.indi-art-culture.com/terms
+- Site web : https://www.radio.indi-art-culture.com
+- Politique de confidentialité : https://www.radio.indi-art-culture.com/privacy
+- Conditions d'utilisation : https://www.radio.indi-art-culture.com/terms
 - Support : radio@indi-art-culture.com
 
 ## Coordonnées éditeur

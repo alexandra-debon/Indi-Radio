@@ -1,7 +1,7 @@
 # Politique de confidentialité — InDi RaDio (FR)
 
 > Version courte prête à copier-coller dans les champs "Politique de confidentialité" de l'App Store et du Google Play Console.
-> URL publique : `https://radio.indi-art-culture.com/privacy`
+> URL publique : `https://www.radio.indi-art-culture.com/privacy`
 
 ---
 
@@ -15,7 +15,7 @@ InDi RaDio collecte l'email, le pseudo, le mot de passe hashé, les commentaires
 
 La politique de confidentialité complète est disponible ici :
 
-**https://radio.indi-art-culture.com/privacy**
+**https://www.radio.indi-art-culture.com/privacy**
 
 ---
 
@@ -71,7 +71,7 @@ Les données sont conservées pendant la durée de vie du compte ou jusqu'à dem
 - **Responsable :** Alexandra Debon
 - **Email :** radio@indi-art-culture.com
 - **Téléphone :** +33 4 81 09 51 52
-- **Site :** https://radio.indi-art-culture.com
+- **Site :** https://www.radio.indi-art-culture.com
 
 ---
 

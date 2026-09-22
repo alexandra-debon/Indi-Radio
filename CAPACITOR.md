@@ -3,7 +3,7 @@
 Ce projet est enveloppé avec **Capacitor** : le site web devient une vraie
 application native, publiable sur l'App Store et Google Play, tout en
 continuant à recevoir les mises à jour de contenu automatiquement (l'app
-native charge `https://radio.indi-art-culture.com`).
+native charge `https://www.radio.indi-art-culture.com`).
 
 ---
 

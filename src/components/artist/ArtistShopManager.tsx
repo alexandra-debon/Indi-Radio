@@ -139,6 +139,15 @@ export function ArtistShopManager({ artistId }: { artistId: string }) {
         <ShoppingBag className="size-4 text-primary" /> {T.myShop}
       </h2>
 
+      <div className="border-2 border-dashed border-border p-3">
+        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+          {T.shopRuleTitle}
+        </div>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{T.shopRuleBody}</p>
+      </div>
+
+
+
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="shop-title">{T.shopTitle}</Label>

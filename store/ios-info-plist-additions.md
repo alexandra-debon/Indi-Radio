@@ -16,6 +16,18 @@ Après `bunx cap add ios`, ouvre `ios/App/App/Info.plist` et ajoute les clés su
   <false/>
 </dict>
 
+<!-- OBLIGATOIRE : capacitor.config.ts active limitsNavigationsToAppBoundDomains.
+     Sans cette liste, la connexion Google, les magazines FlipHTML5 et les
+     lecteurs Spotify/SoundCloud restent bloqués sur écran blanc. -->
+<key>WKAppBoundDomains</key>
+<array>
+  <string>www.radio.indi-art-culture.com</string>
+  <string>radio.indi-art-culture.com</string>
+  <string>ceqmejsvjpgpvfiannhj.supabase.co</string>
+  <string>accounts.google.com</string>
+</array>
+
+
 <!-- Localisation utilisateur : NON demandée -->
 <!-- Micro : NON demandé (radio en écoute seule) -->
 <!-- Caméra / Photos : NON demandés -->

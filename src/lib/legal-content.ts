@@ -30,7 +30,9 @@ export const PRIVACY: Record<"fr" | "en", LegalPage> = {
 <ul class="list-disc space-y-1 pl-5">
 <li><strong>Compte utilisateur :</strong> adresse email, mot de passe hashé, nom d'affichage / pseudo, identifiant unique.</li>
 <li><strong>Profil public :</strong> pseudo, avatar, bio, badges, niveau et points de présence.</li>
-<li><strong>Contenu généré :</strong> commentaires, réponses, likes, votes, notes (étoiles), signalements, dédicaces et messages envoyés via les formulaires.</li>
+<li><strong>Contenu généré :</strong> publications, articles et brouillons, photos et albums déposés, vidéos et liens partagés, commentaires, réponses, likes, votes, notes (étoiles), signalements, blocages d'autres membres, dédicaces et messages envoyés via les formulaires.</li>
+<li><strong>Boutique artistes :</strong> objets mis en vente par les artistes et clics sur les liens d'achat externes (date, objet, artiste) — aucun paiement n'est encaissé ni traité par nos soins.</li>
+<li><strong>Communauté :</strong> abonnements aux artistes et aux auteurs, badges et points attribués.</li>
 <li><strong>Présence et écoute :</strong> historique de connexion quotidienne utilisé pour les points et les niveaux (pas d'historique détaillé des morceaux écoutés).</li>
 <li><strong>Données techniques :</strong> type d'appareil, système d'exploitation, navigateur et adresse IP lors des connexions, pour la sécurité et le bon fonctionnement du service.</li>
 </ul>
@@ -130,7 +132,9 @@ export const PRIVACY: Record<"fr" | "en", LegalPage> = {
 <ul class="list-disc space-y-1 pl-5">
 <li><strong>User account:</strong> email address, hashed password, display name / handle, unique identifier.</li>
 <li><strong>Public profile:</strong> handle, avatar, bio, badges, level and presence points.</li>
-<li><strong>User-generated content:</strong> comments, replies, likes, votes, star ratings, reports, dedications and messages sent through our forms.</li>
+<li><strong>User-generated content:</strong> posts, articles and drafts, uploaded photos and albums, shared videos and links, comments, replies, likes, votes, star ratings, reports, blocks of other members, dedications and messages sent through our forms.</li>
+<li><strong>Artist shop:</strong> items listed by artists and clicks on their external purchase links (date, item, artist) — we never process or collect any payment.</li>
+<li><strong>Community:</strong> subscriptions to artists and authors, badges and points earned.</li>
 <li><strong>Presence and listening:</strong> daily sign-in history used for points and levels (no detailed track-by-track listening history).</li>
 <li><strong>Technical data:</strong> device type, operating system, browser and IP address at sign-in, used for security and service reliability.</li>
 </ul>

@@ -17,6 +17,8 @@ import { clampDescription } from "@/lib/i18n/seo-meta";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { ReportButton } from "@/components/moderation/ReportButton";
+import { BlockUserButton } from "@/components/moderation/BlockUserButton";
 
 type SectionKey = "events" | "shop" | "posts";
 
@@ -531,9 +533,13 @@ function UserProfilePage() {
               <span>· {t("upub.memberSince")} {joined}</span>
             </div>
           </div>
-          <div className="flex shrink-0 flex-col items-end">
+          <div className="flex shrink-0 flex-col items-end gap-1">
             <span className="text-2xl font-black tabular-nums text-primary sm:text-3xl">{profile.points}</span>
             <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("upub.points")}</span>
+            <div className="flex items-center gap-2">
+              <ReportButton commentType="profile" commentId={profile.id} />
+              <BlockUserButton userId={profile.id} pseudo={profile.pseudo} />
+            </div>
           </div>
         </div>
 

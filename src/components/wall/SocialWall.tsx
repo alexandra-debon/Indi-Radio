@@ -18,6 +18,8 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { PostVillageShare } from "@/components/wall/PostVillageShare";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { ReportButton } from "@/components/moderation/ReportButton";
+import { BlockUserButton } from "@/components/moderation/BlockUserButton";
+import { useBlockedIds } from "@/hooks/use-blocks";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
@@ -156,7 +158,9 @@ export function SocialWall() {
     if (postId) setOpenThread(postId);
   }, [hash]);
 
-  const { data: posts = [] } = useQuery<PostRow[]>({
+  const blockedIds = useBlockedIds();
+
+  const { data: allPosts = [] } = useQuery<PostRow[]>({
     queryKey: ["wall-posts", activeTag, activeCategory],
     queryFn: async () => {
       let req = supabase
@@ -176,6 +180,9 @@ export function SocialWall() {
       return (data ?? []) as unknown as PostRow[];
     },
   });
+
+  // Les contenus des membres bloqués disparaissent du fil (exigence stores).
+  const posts = blockedIds.length ? allPosts.filter((p) => !blockedIds.includes(p.author_id)) : allPosts;
 
   const { data: popularTags = [] } = useQuery<HashtagSuggestion[]>({
     queryKey: ["wall-popular-tags"],
@@ -237,7 +244,7 @@ export function SocialWall() {
     },
   });
 
-  const { data: comments = [] } = useQuery<CommentRow[]>({
+  const { data: allComments = [] } = useQuery<CommentRow[]>({
     queryKey: ["wall-comments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -248,6 +255,10 @@ export function SocialWall() {
       return (data ?? []) as unknown as CommentRow[];
     },
   });
+
+  const comments = blockedIds.length
+    ? allComments.filter((c) => !blockedIds.includes(c.author_id))
+    : allComments;
 
   const toggleLike = useMutation({
     mutationFn: async (postId: string) => {
@@ -650,9 +661,17 @@ export function SocialWall() {
               )}
               <div className="mb-1 flex items-center justify-between gap-2">
                 <UserBadge profile={p.author} className="text-xs" />
-                <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
-                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  {!isOwner && (
+                    <>
+                      <ReportButton commentType="post" commentId={p.id} />
+                      <BlockUserButton userId={p.author_id} pseudo={p.author?.pseudo} />
+                    </>
+                  )}
+                  <span className="text-[10px] text-muted-foreground">
+                    {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateLocale })}
+                  </span>
+                </div>
               </div>
               {isEditing ? (
                 <div className="space-y-2">

@@ -9,7 +9,7 @@ les plus fréquents pour les apps de radio / streaming audio.
 **Risque le plus fréquent pour les apps radio.**
 
 ⚠️ **Configuration actuelle assumée** : `capacitor.config.ts` utilise
-`server.url = "https://radio.indi-art-culture.com"` (webDir = `dist/client`
+`server.url = "https://www.radio.indi-art-culture.com"` (webDir = `dist/client`
 comme fallback offline via `scripts/capacitor-shell.mjs`). La stack
 TanStack Start + Nitro n'émet pas de bundle SPA autonome, donc l'app
 native charge le site publié dans la WebView. Pour éviter le rejet 4.2,
@@ -50,14 +50,22 @@ aussi Sign in with Apple sur iOS.
   pour le bundle `com.indiartculture.radio` avant soumission.
 
 ### Guideline 1.2 — Contenu généré par utilisateurs (UGC)
-**Obligatoire dès qu'il y a commentaires publics :**
-- ✅ Signalement d'un commentaire (`ReportButton` implémenté).
-- ✅ Blocage / bannissement d'un utilisateur abusif (admin panel).
-- ✅ CGU accessibles publiquement (à ajouter dans le footer).
-- ✅ Modération sous 24 h annoncée dans la fiche Store.
+**Obligatoire dès qu'il y a du contenu public :**
+- ✅ Signalement d'un **commentaire** (`ReportButton`).
+- ✅ Signalement d'une **publication du mur**, d'un **article RéDaK'Village** et d'un **profil membre** (`ReportButton` avec `commentType` `post` / `village_post` / `profile`).
+- ✅ **Blocage d'un membre par l'utilisateur lui-même** (`BlockUserButton`, table `user_blocks`) : les publications et commentaires d'un membre bloqué disparaissent immédiatement du mur.
+- ✅ Bannissement d'un utilisateur abusif par l'équipe (console de modération).
+- ✅ CGU accessibles publiquement (`/terms`) et acceptées à l'inscription.
+- ✅ Modération sous 24 h — à annoncer dans les fiches Apple **et** Google.
+
+### Guideline 3.1.1 — Achats externes (boutique artistes)
+- ✅ Boutique limitée aux **biens physiques** (vinyle, CD, K7, livre, merch) et **billets de concert** ; règle affichée à l'artiste dans son espace et au visiteur sur chaque fiche.
+- ✅ Mention « Vente réalisée par l'artiste sur son propre site » sous chaque bouton d'achat.
+- ⬜ Vérifier avant soumission qu'aucun lien « Télécharger mon EP » ne pointe vers une page de paiement (le bouton doit rester **gratuit**).
+
 
 ### Guideline 5.1.1 — Politique de confidentialité
-- ✅ URL publique : https://radio.indi-art-culture.com/privacy
+- ✅ URL publique : https://www.radio.indi-art-culture.com/privacy
 - ✅ Privacy Manifest `PrivacyInfo.xcprivacy` (fourni).
 - ✅ Répondre au questionnaire « App Privacy » sur App Store Connect
   (voir `store/privacy-policy-fr.md` § « Data Safety »).

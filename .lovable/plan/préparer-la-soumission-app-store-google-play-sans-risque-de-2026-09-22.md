@@ -5,6 +5,7 @@ Depuis la rédaction des documents de soumission, l'app a beaucoup évolué : bo
 ## 1. Corriger les documents contradictoires (risque immédiat)
 
 Les notes internes se contredisent et enverraient de mauvaises informations à la review :
+
 - `STORE_SUBMISSION.md` affirme que le contenu web est embarqué dans l'app, alors que l'app charge en réalité le site en ligne.
 - Les notes de review et la checklist citent l'ancienne adresse `radio.indi-art-culture.com`, alors que l'app pointe désormais sur `www.radio.indi-art-culture.com`.
 
@@ -15,6 +16,7 @@ Action : réécrire ces deux documents pour décrire exactement la configuration
 Les boutons « Acheter », « Pré-commander », « Acheter mon billet » ouvrent des liens de paiement extérieurs. Apple l'accepte pour des biens physiques (vinyles, CD, merch, billets de concert), mais refuse (règle 3.1.1) tout achat de contenu numérique consommé dans l'app (album en téléchargement, EP payant, contenu débloqué).
 
 Actions :
+
 - Règle écrite et affichée aux artistes : la boutique publique n'accepte que des biens physiques et des billets ; pas de fichier numérique payant.
 - Ajouter une mention courte sur chaque fiche : « Vente réalisée par l'artiste sur son propre site » (déjà en partie couvert par le manifeste).
 - Vérifier que le bouton « Télécharger mon EP » pointe bien vers un téléchargement gratuit, jamais vers une page de paiement.
@@ -23,6 +25,7 @@ Actions :
 ## 3. Contenu écrit par les utilisateurs — exigences renforcées
 
 RéDaK'Village, le mur, les commentaires, les profils artistes : Apple (règle 1.2) et Google exigent quatre choses visibles dans l'app, pas seulement côté équipe :
+
 - signalement d'un contenu et d'un utilisateur — vérifier que c'est présent sur les articles RéDaK'Village et les fiches artistes, pas uniquement sur les commentaires ;
 - blocage d'un autre utilisateur par l'utilisateur lui-même ;
 - conditions d'utilisation acceptées à l'inscription, accessibles depuis l'app ;
@@ -55,3 +58,9 @@ Les magazines interactifs (FlipHTML5), les lecteurs Spotify/SoundCloud/YouTube/V
 ## Ce que je ne peux pas faire à ta place
 
 Comptes développeur, signature, archive Xcode, keystore Android, upload et remplissage des formulaires stores restent de ton côté : je prépare le code, les textes et les procédures exactes.
+
+&nbsp;
+
+N'oublie pas que la boutique est avec des lien externes oui mais que nous e touchons pas un centime 
+
+&nbsp;

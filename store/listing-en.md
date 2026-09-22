@@ -26,7 +26,7 @@ Listen to the 24/7 live stream, catch shows and reviews on demand, discover musi
 
 Built by an independent team supporting unsigned artists and francophone indie culture.
 
-Website: https://radio.indi-art-culture.com
+Website: https://www.radio.indi-art-culture.com
 Contact: radio@indi-art-culture.com
 
 ## App Store keywords (100 chars)

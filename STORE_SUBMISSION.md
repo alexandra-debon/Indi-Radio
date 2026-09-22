@@ -15,7 +15,9 @@ Ce guide t'accompagne pas-à-pas pour publier l'app sur les deux stores. **Tout 
 - ✅ Privacy Manifest iOS
 - ✅ Scripts npm : `cap:sync`, `cap:ios`, `cap:android`, `cap:assets`
 - ✅ **Suppression de compte in-app** (`/profile` → Zone dangereuse) — obligatoire Apple 5.1.1(v)
-- ✅ **Bundle web embarqué** (pas de `server.url`) — évite le rejet 4.2 « repackaged web »
+- ⚠️ **L'app charge le site en ligne** via `server.url = https://www.radio.indi-art-culture.com` (`capacitor.config.ts`). Le dossier `dist/client` sert de coquille offline. Prévoir la note de review « 4.2 » (voir plus bas) et déclarer `WKAppBoundDomains`.
+- ✅ **Signalement de contenu et de profil + blocage d'un membre** (mur, articles RéDaK'Village, pages membres) — exigences Apple 1.2 / Google UGC
+- ✅ **Boutique = biens physiques et billets uniquement**, vente réalisée par l'artiste sur son propre site (règle affichée aux artistes et aux visiteurs) — évite le rejet 3.1.1
 - ✅ **Checklist anti-rejet complète** : `store/anti-rejection-checklist.md` **← LIS-LA AVANT DE SOUMETTRE**
 
 ## ⚠️ Ce que tu dois faire toi-même
@@ -80,8 +82,8 @@ bun run cap:sync
 Copie/colle depuis `store/listing-fr.md` (et `listing-en.md` pour la version anglaise) :
 - Sous-titre, description, mots-clés
 - Catégorie primaire : **Musique**, secondaire : **Divertissement**
-- URL support : `https://radio.indi-art-culture.com`
-- URL politique de confidentialité : `https://radio.indi-art-culture.com/privacy` *(⚠️ à créer si absente)*
+- URL support : `https://www.radio.indi-art-culture.com`
+- URL politique de confidentialité : `https://www.radio.indi-art-culture.com/privacy` *(⚠️ à créer si absente)*
 
 ### 5A.3 — Captures d'écran obligatoires
 Prépare des screenshots pour :
@@ -106,6 +108,25 @@ Délai review Apple : 24-72 h en général.
 Comme `capacitor.config.ts` pointe `server.url` vers ton site web, Apple peut refuser en disant "cette app n'est qu'un site web". Pour éviter :
 - Soit tu retires `server.url` et l'app tourne 100% offline (recompile `bun run build && bunx cap sync` — mais tu perds les updates auto)
 - Soit tu justifies dans la note à la review : *"L'app apporte lecture audio en arrière-plan, Media Session pour CarPlay/Bluetooth, notifications push, partage natif — fonctionnalités impossibles en Safari."*
+
+### ⚠️ `limitsNavigationsToAppBoundDomains` (iOS)
+`capacitor.config.ts` active `limitsNavigationsToAppBoundDomains: true`. Sans déclaration, la connexion Google et les liens externes (boutique, magazines FlipHTML5, lecteurs Spotify/SoundCloud) échouent silencieusement en production. Ajoute dans `ios/App/App/Info.plist` :
+
+```xml
+<key>WKAppBoundDomains</key>
+<array>
+  <string>www.radio.indi-art-culture.com</string>
+  <string>radio.indi-art-culture.com</string>
+  <string>ceqmejsvjpgpvfiannhj.supabase.co</string>
+  <string>accounts.google.com</string>
+</array>
+```
+
+(maximum 10 domaines ; à défaut, passe `limitsNavigationsToAppBoundDomains` à `false`.)
+
+### Boutique — Guideline 3.1.1
+La boutique n'accepte que des **biens physiques** (vinyle, CD, K7, livre, merch) et des **billets de concert**, vendus par l'artiste sur son propre site. Aucun contenu numérique payant consommé dans l'app. Le bouton « Télécharger mon EP » doit pointer vers un téléchargement **gratuit** — vérifie les liens déposés par les artistes avant la soumission.
+
 
 ---
 
@@ -154,9 +175,9 @@ Puis **Envoyer pour examen**. Délai Google : 1-7 jours.
 
 ## Étape 6 — Politique de confidentialité (obligatoire pour les deux stores)
 
-Actuellement, l'app collecte : email, mot de passe hashé, pseudo, commentaires, notes, votes, présence quotidienne.
+Actuellement, l'app collecte : email, mot de passe hashé, pseudo, commentaires, notes, votes, présence quotidienne, photos et albums déposés, articles et brouillons, abonnements aux auteurs, clics sur les liens d'achat, badges et points, statistiques d'audience anonymisées (Plausible), signalements et blocages.
 
-Tu dois publier une page `/privacy` sur https://radio.indi-art-culture.com/privacy expliquant :
+Tu dois publier une page `/privacy` sur https://www.radio.indi-art-culture.com/privacy expliquant :
 - Quelles données sont collectées
 - Pourquoi
 - Où elles sont stockées (Lovable Cloud / Supabase, région UE)
@@ -164,7 +185,7 @@ Tu dois publier une page `/privacy` sur https://radio.indi-art-culture.com/priva
 - Cookies utilisés
 
 La page `/privacy` a été générée et est disponible sur :
-`https://radio.indi-art-culture.com/privacy`
+`https://www.radio.indi-art-culture.com/privacy`
 
 Un texte court prêt à copier-coller dans les champs store se trouve dans `store/privacy-policy-fr.md`.
 

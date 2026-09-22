@@ -105,6 +105,9 @@ export const ARTIST_SPACE_TXT = {
     saveError: "Erreur lors de l'enregistrement",
     // Boutique (gestion)
     myShop: "Ma boutique",
+    shopRuleTitle: "Règle de la boutique",
+    shopRuleBody:
+      "La boutique n'accepte que des objets physiques (vinyle, CD, K7, livre, merch) et des billets de concert. Les fichiers numériques payants (album ou titre en téléchargement, contenu à débloquer) ne sont pas autorisés ici. La vente est réalisée par toi, sur ton propre site : InDi ArT CulTuRe ne prend aucune commission et n'encaisse rien.",
     shopTitle: "Titre *",
     shopTitlePlaceholder: "Nom de l'objet",
     format: "Format",
@@ -235,6 +238,9 @@ export const ARTIST_SPACE_TXT = {
     pageSaved: "Page updated",
     saveError: "Could not save",
     myShop: "My shop",
+    shopRuleTitle: "Shop rule",
+    shopRuleBody:
+      "The shop only accepts physical items (vinyl, CD, cassette, book, merch) and concert tickets. Paid digital files (album or track downloads, unlockable content) are not allowed here. The sale is made by you, on your own website: InDi ArT CulTuRe takes no commission and collects nothing.",
     shopTitle: "Title *",
     shopTitlePlaceholder: "Item name",
     format: "Format",
