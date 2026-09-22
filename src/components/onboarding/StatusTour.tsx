@@ -71,7 +71,8 @@ export function StatusTour() {
 
   const status = (profile as any)?.role_request_status as string | undefined;
   const requested = (profile as any)?.role_requested as string | undefined;
-  const isPending = status === "pending";
+  const alreadyPro = profile?.role === "artiste" || (profile as any)?.role === "media";
+  const isPending = status === "pending" && !alreadyPro;
 
   useEffect(() => {
     if (loading || !profile) return;

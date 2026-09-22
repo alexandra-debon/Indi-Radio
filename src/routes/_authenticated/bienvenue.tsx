@@ -74,7 +74,10 @@ function WelcomePage() {
     );
   }, [profile]);
 
-  const pendingAlready = (profile as any)?.role_request_status === "pending";
+  const alreadyPro =
+    profile?.role === "artiste" || (profile as any)?.role === "media";
+  const pendingAlready =
+    (profile as any)?.role_request_status === "pending" && !alreadyPro;
 
   async function saveListener() {
     if (!session) return;
