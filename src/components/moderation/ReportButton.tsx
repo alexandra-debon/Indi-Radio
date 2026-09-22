@@ -8,7 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { toast } from "@/lib/toast";
 import { useT } from "@/lib/i18n";
 
-type CommentType = "content_comment" | "news_comment" | "post_comment";
+type CommentType =
+  | "content_comment"
+  | "news_comment"
+  | "post_comment"
+  | "post"
+  | "village_post"
+  | "teevi_video"
+  | "profile"
+  | "shop_item";
+
+const CONTENT_TYPES: CommentType[] = ["post", "village_post", "teevi_video", "shop_item"];
 
 export function ReportButton({ commentType, commentId }: { commentType: CommentType; commentId: string }) {
   const { session, requireAuth } = useAuth();
