@@ -613,6 +613,32 @@ function UserAdmin() {
         onClose={() => setBanTarget(null)}
         onDone={() => qc.invalidateQueries({ queryKey: ["admin-profiles"] })}
       />
+      <Dialog open={!!deleteTarget} onOpenChange={(v) => !v && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="size-5 text-destructive" />
+              Êtes-vous sûre ?
+            </DialogTitle>
+            <DialogDescription>
+              Le profil @{deleteTarget?.pseudo} et son compte seront supprimés définitivement, ainsi
+              que ses publications, commentaires et notifications. Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteMut.isPending}
+              onClick={() => deleteTarget && deleteMut.mutate(deleteTarget.id)}
+            >
+              {deleteMut.isPending ? "Suppression…" : "Supprimer définitivement"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <AdminEditPseudoDialog
         target={pseudoTarget}
         onClose={() => setPseudoTarget(null)}
