@@ -78,6 +78,18 @@ export function BlockUserButton({
             </DialogTitle>
             <DialogDescription>{t("block.description")}</DialogDescription>
           </DialogHeader>
+          <label className="block text-sm">
+            <span className="mb-1 block text-muted-foreground">{t("block.reason")}</span>
+            <textarea
+              lang="fr"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              maxLength={300}
+              rows={3}
+              placeholder={t("block.reasonPlaceholder")}
+              className="w-full rounded-md border border-border bg-background p-2 text-sm"
+            />
+          </label>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)}>
               {t("comment.cancel")}
