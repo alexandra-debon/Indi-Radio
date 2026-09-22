@@ -211,6 +211,13 @@
       "when": 1790068141267,
       "tag": "0029_user_blocks_reason",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1790074031491,
+      "tag": "0030_allow_service_role_profile_privileged_updates",
+      "breakpoints": true
     }
   ]
 }
