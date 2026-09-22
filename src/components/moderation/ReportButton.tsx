@@ -50,19 +50,26 @@ export function ReportButton({ commentType, commentId }: { commentType: CommentT
     setOpen(false);
   }
 
+  const title =
+    commentType === "profile"
+      ? t("report.profile")
+      : CONTENT_TYPES.includes(commentType)
+        ? t("report.content")
+        : t("report.comment");
+
   return (
     <>
       <button
         onClick={() => requireAuth(() => setOpen(true))}
         className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive"
-        aria-label={t("report.comment")}
+        aria-label={title}
       >
         <Flag className="size-3" /> {t("report.short")}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("report.comment")}</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{t("report.description")}</DialogDescription>
           </DialogHeader>
           <Textarea rows={3} maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("report.placeholder")} />
