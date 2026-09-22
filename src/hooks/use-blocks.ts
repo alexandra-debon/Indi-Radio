@@ -37,13 +37,21 @@ export function useToggleBlock() {
   const { session } = useAuth();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ userId, block }: { userId: string; block: boolean }) => {
+    mutationFn: async ({
+      userId,
+      block,
+      reason,
+    }: {
+      userId: string;
+      block: boolean;
+      reason?: string | null;
+    }) => {
       const uid = session?.user.id;
       if (!uid) throw new Error("auth");
       if (block) {
         const { error } = await supabase
           .from("user_blocks")
-          .insert({ blocker_id: uid, blocked_id: userId });
+          .insert({ blocker_id: uid, blocked_id: userId, reason: reason?.trim() || null });
         if (error && error.code !== "23505") throw error;
       } else {
         const { error } = await supabase
