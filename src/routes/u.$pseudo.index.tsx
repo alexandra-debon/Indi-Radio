@@ -17,6 +17,8 @@ import { clampDescription } from "@/lib/i18n/seo-meta";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
+import { ReportButton } from "@/components/moderation/ReportButton";
+import { BlockUserButton } from "@/components/moderation/BlockUserButton";
 
 type SectionKey = "events" | "shop" | "posts";
 
