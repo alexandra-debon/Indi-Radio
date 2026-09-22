@@ -11,6 +11,8 @@ import { VillageCategoryBadge, FreeTagBadge } from "@/components/village/Village
 import { ChallengeBadge } from "@/components/village/ChallengeBits";
 import { MagazineSourceBadge } from "@/components/village/MagazineSource";
 import { ShareButton } from "@/components/share/ShareButton";
+import { ReportButton } from "@/components/moderation/ReportButton";
+import { BlockUserButton } from "@/components/moderation/BlockUserButton";
 import { VillageSubscribeButton } from "@/components/village/VillageSubscribeButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { FlipbookViewer } from "@/components/magazines/FlipbookViewer";
@@ -258,6 +260,14 @@ function VillageArticlePage() {
                 text: (article.excerpt || article.content).slice(0, 200),
               }}
             />
+            {!canEdit && (
+              <>
+                <ReportButton commentType="village_post" commentId={article.id} />
+                {article.author_id && (
+                  <BlockUserButton userId={article.author_id} pseudo={article.author?.pseudo} />
+                )}
+              </>
+            )}
             {canEdit && (
               <>
                 <Button
