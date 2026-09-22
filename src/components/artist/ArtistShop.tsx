@@ -48,6 +48,7 @@ const TXT = {
     refundBefore: "Chaque achat que vous effectuez va à ",
     refundHighlight: "100\u00A0% directement à l'artiste",
     refundAfter: ", sans la moindre retenue.",
+    externalSale: "Vente réalisée par l'artiste sur son propre site.",
   },
   en: {
     shop: "Shop",
@@ -66,6 +67,7 @@ const TXT = {
     refundBefore: "Every purchase you make goes ",
     refundHighlight: "100% straight to the artist",
     refundAfter: ", with no deduction at all.",
+    externalSale: "Sale handled by the artist on their own website.",
   },
 } as const;
 
