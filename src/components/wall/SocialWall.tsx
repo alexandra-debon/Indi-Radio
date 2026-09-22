@@ -18,6 +18,8 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { PostVillageShare } from "@/components/wall/PostVillageShare";
 import { CommentLikeButton } from "@/components/CommentLikeButton";
 import { ReportButton } from "@/components/moderation/ReportButton";
+import { BlockUserButton } from "@/components/moderation/BlockUserButton";
+import { useBlockedIds } from "@/hooks/use-blocks";
 import { Input } from "@/components/ui/input";
 import { isValidVideoUrl, stripMediaUrls } from "@/lib/media-embed";
 import { SocialLinksBar, SocialLinksEditor, sanitizeLinks, type SocialLinks } from "@/components/social/SocialLinksBar";
