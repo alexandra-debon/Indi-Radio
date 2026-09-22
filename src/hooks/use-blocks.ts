@@ -14,7 +14,13 @@ export function useBlockedIds() {
     enabled: !!uid,
     staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await supabase.from("user_blocks").select("blocked_id");
+      // Filtre explicite : la policy RLS autorise aussi les admins à tout lire
+      // (modération), sans quoi un admin verrait les blocages des autres membres
+      // appliqués à son propre fil.
+      const { data, error } = await supabase
+        .from("user_blocks")
+        .select("blocked_id")
+        .eq("blocker_id", uid);
       if (error) throw error;
       return (data ?? []).map((r) => r.blocked_id as string);
     },
