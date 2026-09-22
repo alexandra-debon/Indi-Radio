@@ -19,6 +19,7 @@ import { StarRating } from "@/components/rating/StarRating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useServerFn } from "@tanstack/react-start";
 import { banUser, quarantineUser, releaseUser } from "@/lib/admin-ban.functions";
+import { certifyUserRole } from "@/lib/role-request.functions";
 import { listUserEmails, listQuarantineReasons } from "@/lib/admin-users.functions";
 import { EmailStatusPanel } from "@/components/admin/EmailStatusPanel";
 import { getUserCount } from "@/lib/public-stats.functions";
