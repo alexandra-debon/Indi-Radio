@@ -172,6 +172,8 @@ export const dict = {
     "block.confirm": "Bloquer ce membre",
     "block.description":
       "Ses publications et commentaires n'apparaîtront plus dans ton fil. Tu peux le débloquer à tout moment.",
+    "block.reason": "Motif (facultatif)",
+    "block.reasonPlaceholder": "Ex. : propos agressifs, spam…",
     "block.blocked": "Membre bloqué",
     "block.unblocked": "Membre débloqué",
     "share.copy": "Copier le lien",
