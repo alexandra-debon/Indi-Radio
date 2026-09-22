@@ -82,8 +82,8 @@ bun run cap:sync
 Copie/colle depuis `store/listing-fr.md` (et `listing-en.md` pour la version anglaise) :
 - Sous-titre, description, mots-clés
 - Catégorie primaire : **Musique**, secondaire : **Divertissement**
-- URL support : `https://radio.indi-art-culture.com`
-- URL politique de confidentialité : `https://radio.indi-art-culture.com/privacy` *(⚠️ à créer si absente)*
+- URL support : `https://www.radio.indi-art-culture.com`
+- URL politique de confidentialité : `https://www.radio.indi-art-culture.com/privacy` *(⚠️ à créer si absente)*
 
 ### 5A.3 — Captures d'écran obligatoires
 Prépare des screenshots pour :
@@ -175,9 +175,9 @@ Puis **Envoyer pour examen**. Délai Google : 1-7 jours.
 
 ## Étape 6 — Politique de confidentialité (obligatoire pour les deux stores)
 
-Actuellement, l'app collecte : email, mot de passe hashé, pseudo, commentaires, notes, votes, présence quotidienne.
+Actuellement, l'app collecte : email, mot de passe hashé, pseudo, commentaires, notes, votes, présence quotidienne, photos et albums déposés, articles et brouillons, abonnements aux auteurs, clics sur les liens d'achat, badges et points, statistiques d'audience anonymisées (Plausible), signalements et blocages.
 
-Tu dois publier une page `/privacy` sur https://radio.indi-art-culture.com/privacy expliquant :
+Tu dois publier une page `/privacy` sur https://www.radio.indi-art-culture.com/privacy expliquant :
 - Quelles données sont collectées
 - Pourquoi
 - Où elles sont stockées (Lovable Cloud / Supabase, région UE)
@@ -185,7 +185,7 @@ Tu dois publier une page `/privacy` sur https://radio.indi-art-culture.com/priva
 - Cookies utilisés
 
 La page `/privacy` a été générée et est disponible sur :
-`https://radio.indi-art-culture.com/privacy`
+`https://www.radio.indi-art-culture.com/privacy`
 
 Un texte court prêt à copier-coller dans les champs store se trouve dans `store/privacy-policy-fr.md`.
 
