@@ -203,6 +203,9 @@ function ShopCard({ item, accent, isAdmin, compact, artistId }: { item: ShopItem
           </a>
         </Button>
       )}
+      {item.external_url && (
+        <p className="mt-1 text-[10px] leading-snug text-muted-foreground">{txt.externalSale}</p>
+      )}
       {isAdmin && <AdminTags item={item} />}
     </div>
   );
