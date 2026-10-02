@@ -9,278 +9,119 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as ArtistesRouteImport } from './routes/artistes'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BlogInvitationRouteImport } from './routes/blog-invitation'
-import { Route as BoutiqueRouteImport } from './routes/boutique'
-import { Route as ChartRouteImport } from './routes/chart'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as DedicacesRouteImport } from './routes/dedicaces'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as ModerationRouteImport } from './routes/moderation'
-import { Route as NewsletterRouteImport } from './routes/newsletter'
-import { Route as PodcastDotxmlRouteImport } from './routes/podcast[.]xml'
-import { Route as PodcastsRouteImport } from './routes/podcasts'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as RadioModeRouteImport } from './routes/radio-mode'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RssActusDotxmlRouteImport } from './routes/rss-actus[.]xml'
-import { Route as RssChroniquesDotxmlRouteImport } from './routes/rss-chroniques[.]xml'
-import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
-import { Route as RssCoupsDeCoeurDotxmlRouteImport } from './routes/rss-coups-de-coeur[.]xml'
-import { Route as RssMagazineDotxmlRouteImport } from './routes/rss-magazine[.]xml'
-import { Route as RssTestRouteImport } from './routes/rss-test'
-import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
-import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
-import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
-import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
-import { Route as SitemapUsersDotxmlRouteImport } from './routes/sitemap-users[.]xml'
-import { Route as SitemapVideoDotxmlRouteImport } from './routes/sitemap-video[.]xml'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TopRouteImport } from './routes/top'
 import { Route as TopUsersRouteImport } from './routes/top-users'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedBienvenueRouteImport } from './routes/_authenticated/bienvenue'
-import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
-import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
-import { Route as ActusIndexRouteImport } from './routes/actus.index'
-import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
-import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
-import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
-import { Route as ClipsIndexRouteImport } from './routes/clips.index'
-import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
-import { Route as CoupsDeCoeurIndexRouteImport } from './routes/coups-de-coeur.index'
-import { Route as CoupsDeCoeurCoupIdRouteImport } from './routes/coups-de-coeur.$coupId'
-import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
-import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
-import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
-import { Route as IndiTeeviIndexRouteImport } from './routes/indi-teevi.index'
-import { Route as IndiTeeviVideoIdRouteImport } from './routes/indi-teevi.$videoId'
-import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
-import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
-import { Route as PPostIdRouteImport } from './routes/p.$postId'
-import { Route as PartageIndexRouteImport } from './routes/partage.index'
-import { Route as PartageSlugRouteImport } from './routes/partage.$slug'
-import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
-import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
+import { Route as TopRouteImport } from './routes/top'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SoumissionArtistesRouteImport } from './routes/soumission-artistes'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapVideoDotxmlRouteImport } from './routes/sitemap-video[.]xml'
+import { Route as SitemapUsersDotxmlRouteImport } from './routes/sitemap-users[.]xml'
+import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
+import { Route as SitemapFrDotxmlRouteImport } from './routes/sitemap-fr[.]xml'
+import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RssTestRouteImport } from './routes/rss-test'
+import { Route as RssMagazineDotxmlRouteImport } from './routes/rss-magazine[.]xml'
+import { Route as RssCoupsDeCoeurDotxmlRouteImport } from './routes/rss-coups-de-coeur[.]xml'
+import { Route as RssClipsDotxmlRouteImport } from './routes/rss-clips[.]xml'
+import { Route as RssChroniquesDotxmlRouteImport } from './routes/rss-chroniques[.]xml'
+import { Route as RssActusDotxmlRouteImport } from './routes/rss-actus[.]xml'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RadioModeRouteImport } from './routes/radio-mode'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PodcastsRouteImport } from './routes/podcasts'
+import { Route as PodcastDotxmlRouteImport } from './routes/podcast[.]xml'
+import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as ModerationRouteImport } from './routes/moderation'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as DedicacesRouteImport } from './routes/dedicaces'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ChartRouteImport } from './routes/chart'
+import { Route as BoutiqueRouteImport } from './routes/boutique'
+import { Route as BlogInvitationRouteImport } from './routes/blog-invitation'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ArtistesRouteImport } from './routes/artistes'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as RedakVillageIndexRouteImport } from './routes/redak-village.index'
-import { Route as RedakVillageSlugRouteImport } from './routes/redak-village.$slug'
+import { Route as PlaylistsIndexRouteImport } from './routes/playlists.index'
+import { Route as PartageIndexRouteImport } from './routes/partage.index'
+import { Route as MagazinesIndexRouteImport } from './routes/magazines.index'
+import { Route as IndiTeeviIndexRouteImport } from './routes/indi-teevi.index'
+import { Route as EmissionsIndexRouteImport } from './routes/emissions.index'
+import { Route as CoupsDeCoeurIndexRouteImport } from './routes/coups-de-coeur.index'
+import { Route as ClipsIndexRouteImport } from './routes/clips.index'
+import { Route as ChroniquesIndexRouteImport } from './routes/chroniques.index'
+import { Route as ActusIndexRouteImport } from './routes/actus.index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as AuthenticatedAdminAchatsRouteImport } from './routes/_authenticated/admin.achats'
-import { Route as AuthenticatedAdminArtistesRouteImport } from './routes/_authenticated/admin.artistes'
-import { Route as AuthenticatedAdminBadgesRouteImport } from './routes/_authenticated/admin.badges'
-import { Route as AuthenticatedAdminBlocagesRouteImport } from './routes/_authenticated/admin.blocages'
-import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
-import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
-import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_authenticated/admin.challenges'
-import { Route as AuthenticatedAdminCoupsDeCoeurRouteImport } from './routes/_authenticated/admin.coups-de-coeur'
-import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
-import { Route as AuthenticatedAdminMagazinesRouteImport } from './routes/_authenticated/admin.magazines'
-import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
-import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_authenticated/admin.redak-village'
-import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
-import { Route as AuthenticatedAdminSignalementsRouteImport } from './routes/_authenticated/admin.signalements'
-import { Route as AuthenticatedAdminTeeviRouteImport } from './routes/_authenticated/admin.teevi'
-import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
-import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
-import { Route as AuthenticatedProfileArtisteRouteImport } from './routes/_authenticated/profile.artiste'
-import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
-import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
-import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
-import { Route as AuthenticatedProfilePublicationsRouteImport } from './routes/_authenticated/profile.publications'
-import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
-import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
-import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
-import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
-import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
-import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
-import { Route as PartageMagazineIndexRouteImport } from './routes/partage.magazine.index'
-import { Route as PartageMagazineIdRouteImport } from './routes/partage.magazine.$id'
-import { Route as PartagePublicationIndexRouteImport } from './routes/partage.publication.index'
-import { Route as PartagePublicationIdRouteImport } from './routes/partage.publication.$id'
-import { Route as PartageTeeviIndexRouteImport } from './routes/partage.teevi.index'
-import { Route as PartageTeeviIdRouteImport } from './routes/partage.teevi.$id'
+import { Route as RedakVillageSlugRouteImport } from './routes/redak-village.$slug'
+import { Route as PlaylistsSlugRouteImport } from './routes/playlists.$slug'
+import { Route as PartageSlugRouteImport } from './routes/partage.$slug'
+import { Route as PPostIdRouteImport } from './routes/p.$postId'
+import { Route as MagazinesMagazineIdRouteImport } from './routes/magazines.$magazineId'
+import { Route as IndiTeeviVideoIdRouteImport } from './routes/indi-teevi.$videoId'
+import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes.$episodeId'
+import { Route as EmissionsShowIdRouteImport } from './routes/emissions.$showId'
+import { Route as CoupsDeCoeurCoupIdRouteImport } from './routes/coups-de-coeur.$coupId'
+import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
+import { Route as ChroniquesSlugRouteImport } from './routes/chroniques.$slug'
+import { Route as ActusPostIdRouteImport } from './routes/actus.$postId'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedNotifTestRouteImport } from './routes/_authenticated/notif-test'
+import { Route as AuthenticatedBienvenueRouteImport } from './routes/_authenticated/bienvenue'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as UPseudoIndexRouteImport } from './routes/u.$pseudo.index'
-import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
-import { Route as ApiPublicHooksPingSitemapsRouteImport } from './routes/api/public/hooks/ping-sitemaps'
-import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
-import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as PartageTeeviIndexRouteImport } from './routes/partage.teevi.index'
+import { Route as PartagePublicationIndexRouteImport } from './routes/partage.publication.index'
+import { Route as PartageMagazineIndexRouteImport } from './routes/partage.magazine.index'
+import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile.index'
+import { Route as PartageTeeviIdRouteImport } from './routes/partage.teevi.$id'
+import { Route as PartagePublicationIdRouteImport } from './routes/partage.publication.$id'
+import { Route as PartageMagazineIdRouteImport } from './routes/partage.magazine.$id'
+import { Route as ApiPublicProcessTranslationRetriesRouteImport } from './routes/api/public/process-translation-retries'
+import { Route as ApiPublicPrewarmTranslationRouteImport } from './routes/api/public/prewarm-translation'
+import { Route as ApiPublicMentionEmailRouteImport } from './routes/api/public/mention-email'
+import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
+import { Route as ApiPublicAdminMessageEmailRouteImport } from './routes/api/public/admin-message-email'
+import { Route as AuthenticatedProfilePublicationsRouteImport } from './routes/_authenticated/profile.publications'
+import { Route as AuthenticatedProfileLikesRouteImport } from './routes/_authenticated/profile.likes'
+import { Route as AuthenticatedProfileEditRouteImport } from './routes/_authenticated/profile.edit'
+import { Route as AuthenticatedProfileBadgesRouteImport } from './routes/_authenticated/profile.badges'
+import { Route as AuthenticatedProfileArtisteRouteImport } from './routes/_authenticated/profile.artiste'
+import { Route as AuthenticatedProfileAlbumsRouteImport } from './routes/_authenticated/profile.albums'
+import { Route as AuthenticatedAdminTeeviRouteImport } from './routes/_authenticated/admin.teevi'
+import { Route as AuthenticatedAdminSignalementsRouteImport } from './routes/_authenticated/admin.signalements'
+import { Route as AuthenticatedAdminSeoPreviewRouteImport } from './routes/_authenticated/admin.seo-preview'
+import { Route as AuthenticatedAdminRedakVillageRouteImport } from './routes/_authenticated/admin.redak-village'
+import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminMagazinesRouteImport } from './routes/_authenticated/admin.magazines'
+import { Route as AuthenticatedAdminDiagnosticsPseudosRouteImport } from './routes/_authenticated/admin.diagnostics-pseudos'
+import { Route as AuthenticatedAdminCoupsDeCoeurRouteImport } from './routes/_authenticated/admin.coups-de-coeur'
+import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_authenticated/admin.challenges'
+import { Route as AuthenticatedAdminCandidaturesRouteImport } from './routes/_authenticated/admin.candidatures'
+import { Route as AuthenticatedAdminBoutiqueRouteImport } from './routes/_authenticated/admin.boutique'
+import { Route as AuthenticatedAdminBlocagesRouteImport } from './routes/_authenticated/admin.blocages'
+import { Route as AuthenticatedAdminBadgesRouteImport } from './routes/_authenticated/admin.badges'
+import { Route as AuthenticatedAdminArtistesRouteImport } from './routes/_authenticated/admin.artistes'
+import { Route as AuthenticatedAdminAchatsRouteImport } from './routes/_authenticated/admin.achats'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as UPseudoAlbumsAlbumIdRouteImport } from './routes/u.$pseudo.albums.$albumId'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicRadioStreamRouteImport } from './routes/api/public/radio/stream'
+import { Route as ApiPublicRadioArtworkRouteImport } from './routes/api/public/radio/artwork'
+import { Route as ApiPublicHooksPingSitemapsRouteImport } from './routes/api/public/hooks/ping-sitemaps'
+import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArtistesRoute = ArtistesRouteImport.update({
-  id: '/artistes',
-  path: '/artistes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogInvitationRoute = BlogInvitationRouteImport.update({
-  id: '/blog-invitation',
-  path: '/blog-invitation',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoutiqueRoute = BoutiqueRouteImport.update({
-  id: '/boutique',
-  path: '/boutique',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChartRoute = ChartRouteImport.update({
-  id: '/chart',
-  path: '/chart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DedicacesRoute = DedicacesRouteImport.update({
-  id: '/dedicaces',
-  path: '/dedicaces',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ModerationRoute = ModerationRouteImport.update({
-  id: '/moderation',
-  path: '/moderation',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsletterRoute = NewsletterRouteImport.update({
-  id: '/newsletter',
-  path: '/newsletter',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PodcastDotxmlRoute = PodcastDotxmlRouteImport.update({
-  id: '/podcast.xml',
-  path: '/podcast.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PodcastsRoute = PodcastsRouteImport.update({
-  id: '/podcasts',
-  path: '/podcasts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RadioModeRoute = RadioModeRouteImport.update({
-  id: '/radio-mode',
-  path: '/radio-mode',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssActusDotxmlRoute = RssActusDotxmlRouteImport.update({
-  id: '/rss-actus.xml',
-  path: '/rss-actus.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssChroniquesDotxmlRoute = RssChroniquesDotxmlRouteImport.update({
-  id: '/rss-chroniques.xml',
-  path: '/rss-chroniques.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssClipsDotxmlRoute = RssClipsDotxmlRouteImport.update({
-  id: '/rss-clips.xml',
-  path: '/rss-clips.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssCoupsDeCoeurDotxmlRoute = RssCoupsDeCoeurDotxmlRouteImport.update({
-  id: '/rss-coups-de-coeur.xml',
-  path: '/rss-coups-de-coeur.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssMagazineDotxmlRoute = RssMagazineDotxmlRouteImport.update({
-  id: '/rss-magazine.xml',
-  path: '/rss-magazine.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssTestRoute = RssTestRouteImport.update({
-  id: '/rss-test',
-  path: '/rss-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssDotxmlRoute = RssDotxmlRouteImport.update({
-  id: '/rss.xml',
-  path: '/rss.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
-  id: '/sitemap-en.xml',
-  path: '/sitemap-en.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapFrDotxmlRoute = SitemapFrDotxmlRouteImport.update({
-  id: '/sitemap-fr.xml',
-  path: '/sitemap-fr.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
-  id: '/sitemap-images.xml',
-  path: '/sitemap-images.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapUsersDotxmlRoute = SitemapUsersDotxmlRouteImport.update({
-  id: '/sitemap-users.xml',
-  path: '/sitemap-users.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapVideoDotxmlRoute = SitemapVideoDotxmlRouteImport.update({
-  id: '/sitemap-video.xml',
-  path: '/sitemap-video.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
-  id: '/soumission-artistes',
-  path: '/soumission-artistes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const TopUsersRoute = TopUsersRouteImport.update({
+  id: '/top-users',
+  path: '/top-users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TopRoute = TopRouteImport.update({
@@ -288,142 +129,168 @@ const TopRoute = TopRouteImport.update({
   path: '/top',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TopUsersRoute = TopUsersRouteImport.update({
-  id: '/top-users',
-  path: '/top-users',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedBienvenueRoute = AuthenticatedBienvenueRouteImport.update({
-  id: '/bienvenue',
-  path: '/bienvenue',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedNotifTestRoute = AuthenticatedNotifTestRouteImport.update({
-  id: '/notif-test',
-  path: '/notif-test',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedNotificationsRoute =
-  AuthenticatedNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const ActusIndexRoute = ActusIndexRouteImport.update({
-  id: '/actus/',
-  path: '/actus/',
+const SoumissionArtistesRoute = SoumissionArtistesRouteImport.update({
+  id: '/soumission-artistes',
+  path: '/soumission-artistes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ActusPostIdRoute = ActusPostIdRouteImport.update({
-  id: '/actus/$postId',
-  path: '/actus/$postId',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChroniquesIndexRoute = ChroniquesIndexRouteImport.update({
-  id: '/chroniques/',
-  path: '/chroniques/',
+const SitemapVideoDotxmlRoute = SitemapVideoDotxmlRouteImport.update({
+  id: '/sitemap-video.xml',
+  path: '/sitemap-video.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
-  id: '/chroniques/$slug',
-  path: '/chroniques/$slug',
+const SitemapUsersDotxmlRoute = SitemapUsersDotxmlRouteImport.update({
+  id: '/sitemap-users.xml',
+  path: '/sitemap-users.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClipsIndexRoute = ClipsIndexRouteImport.update({
-  id: '/clips/',
-  path: '/clips/',
+const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
+  id: '/sitemap-images.xml',
+  path: '/sitemap-images.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
-  id: '/clips/$clipId',
-  path: '/clips/$clipId',
+const SitemapFrDotxmlRoute = SitemapFrDotxmlRouteImport.update({
+  id: '/sitemap-fr.xml',
+  path: '/sitemap-fr.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoupsDeCoeurIndexRoute = CoupsDeCoeurIndexRouteImport.update({
-  id: '/coups-de-coeur/',
-  path: '/coups-de-coeur/',
+const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
+  id: '/sitemap-en.xml',
+  path: '/sitemap-en.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoupsDeCoeurCoupIdRoute = CoupsDeCoeurCoupIdRouteImport.update({
-  id: '/coups-de-coeur/$coupId',
-  path: '/coups-de-coeur/$coupId',
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
-  id: '/emissions/',
-  path: '/emissions/',
+const RssTestRoute = RssTestRouteImport.update({
+  id: '/rss-test',
+  path: '/rss-test',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
-  id: '/emissions/$showId',
-  path: '/emissions/$showId',
+const RssMagazineDotxmlRoute = RssMagazineDotxmlRouteImport.update({
+  id: '/rss-magazine.xml',
+  path: '/rss-magazine.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
-  id: '/episodes/$episodeId',
-  path: '/episodes/$episodeId',
+const RssCoupsDeCoeurDotxmlRoute = RssCoupsDeCoeurDotxmlRouteImport.update({
+  id: '/rss-coups-de-coeur.xml',
+  path: '/rss-coups-de-coeur.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndiTeeviIndexRoute = IndiTeeviIndexRouteImport.update({
-  id: '/indi-teevi/',
-  path: '/indi-teevi/',
+const RssClipsDotxmlRoute = RssClipsDotxmlRouteImport.update({
+  id: '/rss-clips.xml',
+  path: '/rss-clips.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndiTeeviVideoIdRoute = IndiTeeviVideoIdRouteImport.update({
-  id: '/indi-teevi/$videoId',
-  path: '/indi-teevi/$videoId',
+const RssChroniquesDotxmlRoute = RssChroniquesDotxmlRouteImport.update({
+  id: '/rss-chroniques.xml',
+  path: '/rss-chroniques.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
-  id: '/magazines/',
-  path: '/magazines/',
+const RssActusDotxmlRoute = RssActusDotxmlRouteImport.update({
+  id: '/rss-actus.xml',
+  path: '/rss-actus.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
-  id: '/magazines/$magazineId',
-  path: '/magazines/$magazineId',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PPostIdRoute = PPostIdRouteImport.update({
-  id: '/p/$postId',
-  path: '/p/$postId',
+const RadioModeRoute = RadioModeRouteImport.update({
+  id: '/radio-mode',
+  path: '/radio-mode',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PartageIndexRoute = PartageIndexRouteImport.update({
-  id: '/partage/',
-  path: '/partage/',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PartageSlugRoute = PartageSlugRouteImport.update({
-  id: '/partage/$slug',
-  path: '/partage/$slug',
+const PodcastsRoute = PodcastsRouteImport.update({
+  id: '/podcasts',
+  path: '/podcasts',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
-  id: '/playlists/',
-  path: '/playlists/',
+const PodcastDotxmlRoute = PodcastDotxmlRouteImport.update({
+  id: '/podcast.xml',
+  path: '/podcast.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
-  id: '/playlists/$slug',
-  path: '/playlists/$slug',
+const NewsletterRoute = NewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModerationRoute = ModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DedicacesRoute = DedicacesRouteImport.update({
+  id: '/dedicaces',
+  path: '/dedicaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartRoute = ChartRouteImport.update({
+  id: '/chart',
+  path: '/chart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiqueRoute = BoutiqueRouteImport.update({
+  id: '/boutique',
+  path: '/boutique',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogInvitationRoute = BlogInvitationRouteImport.update({
+  id: '/blog-invitation',
+  path: '/blog-invitation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtistesRoute = ArtistesRouteImport.update({
+  id: '/artistes',
+  path: '/artistes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedakVillageIndexRoute = RedakVillageIndexRouteImport.update({
@@ -431,9 +298,49 @@ const RedakVillageIndexRoute = RedakVillageIndexRouteImport.update({
   path: '/redak-village/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RedakVillageSlugRoute = RedakVillageSlugRouteImport.update({
-  id: '/redak-village/$slug',
-  path: '/redak-village/$slug',
+const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
+  id: '/playlists/',
+  path: '/playlists/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageIndexRoute = PartageIndexRouteImport.update({
+  id: '/partage/',
+  path: '/partage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MagazinesIndexRoute = MagazinesIndexRouteImport.update({
+  id: '/magazines/',
+  path: '/magazines/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndiTeeviIndexRoute = IndiTeeviIndexRouteImport.update({
+  id: '/indi-teevi/',
+  path: '/indi-teevi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmissionsIndexRoute = EmissionsIndexRouteImport.update({
+  id: '/emissions/',
+  path: '/emissions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoupsDeCoeurIndexRoute = CoupsDeCoeurIndexRouteImport.update({
+  id: '/coups-de-coeur/',
+  path: '/coups-de-coeur/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsIndexRoute = ClipsIndexRouteImport.update({
+  id: '/clips/',
+  path: '/clips/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChroniquesIndexRoute = ChroniquesIndexRouteImport.update({
+  id: '/chroniques/',
+  path: '/chroniques/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActusIndexRoute = ActusIndexRouteImport.update({
+  id: '/actus/',
+  path: '/actus/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagTagRoute = TagTagRouteImport.update({
@@ -441,105 +348,118 @@ const TagTagRoute = TagTagRouteImport.update({
   path: '/tag/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
+const RedakVillageSlugRoute = RedakVillageSlugRouteImport.update({
+  id: '/redak-village/$slug',
+  path: '/redak-village/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
+const PlaylistsSlugRoute = PlaylistsSlugRouteImport.update({
+  id: '/playlists/$slug',
+  path: '/playlists/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageSlugRoute = PartageSlugRouteImport.update({
+  id: '/partage/$slug',
+  path: '/partage/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PPostIdRoute = PPostIdRouteImport.update({
+  id: '/p/$postId',
+  path: '/p/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MagazinesMagazineIdRoute = MagazinesMagazineIdRouteImport.update({
+  id: '/magazines/$magazineId',
+  path: '/magazines/$magazineId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndiTeeviVideoIdRoute = IndiTeeviVideoIdRouteImport.update({
+  id: '/indi-teevi/$videoId',
+  path: '/indi-teevi/$videoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
+  id: '/episodes/$episodeId',
+  path: '/episodes/$episodeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmissionsShowIdRoute = EmissionsShowIdRouteImport.update({
+  id: '/emissions/$showId',
+  path: '/emissions/$showId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoupsDeCoeurCoupIdRoute = CoupsDeCoeurCoupIdRouteImport.update({
+  id: '/coups-de-coeur/$coupId',
+  path: '/coups-de-coeur/$coupId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
+  id: '/clips/$clipId',
+  path: '/clips/$clipId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChroniquesSlugRoute = ChroniquesSlugRouteImport.update({
+  id: '/chroniques/$slug',
+  path: '/chroniques/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActusPostIdRoute = ActusPostIdRouteImport.update({
+  id: '/actus/$postId',
+  path: '/actus/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedNotifTestRoute = AuthenticatedNotifTestRouteImport.update({
+  id: '/notif-test',
+  path: '/notif-test',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBienvenueRoute = AuthenticatedBienvenueRouteImport.update({
+  id: '/bienvenue',
+  path: '/bienvenue',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedAdminAchatsRoute =
-  AuthenticatedAdminAchatsRouteImport.update({
-    id: '/achats',
-    path: '/achats',
-    getParentRoute: () => AuthenticatedAdminRoute,
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedAdminArtistesRoute =
-  AuthenticatedAdminArtistesRouteImport.update({
-    id: '/artistes',
-    path: '/artistes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBadgesRoute =
-  AuthenticatedAdminBadgesRouteImport.update({
-    id: '/badges',
-    path: '/badges',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBlocagesRoute =
-  AuthenticatedAdminBlocagesRouteImport.update({
-    id: '/blocages',
-    path: '/blocages',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBoutiqueRoute =
-  AuthenticatedAdminBoutiqueRouteImport.update({
-    id: '/boutique',
-    path: '/boutique',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCandidaturesRoute =
-  AuthenticatedAdminCandidaturesRouteImport.update({
-    id: '/candidatures',
-    path: '/candidatures',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminChallengesRoute =
-  AuthenticatedAdminChallengesRouteImport.update({
-    id: '/challenges',
-    path: '/challenges',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCoupsDeCoeurRoute =
-  AuthenticatedAdminCoupsDeCoeurRouteImport.update({
-    id: '/coups-de-coeur',
-    path: '/coups-de-coeur',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminDiagnosticsPseudosRoute =
-  AuthenticatedAdminDiagnosticsPseudosRouteImport.update({
-    id: '/diagnostics-pseudos',
-    path: '/diagnostics-pseudos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminMagazinesRoute =
-  AuthenticatedAdminMagazinesRouteImport.update({
-    id: '/magazines',
-    path: '/magazines',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminMessagesRoute =
-  AuthenticatedAdminMessagesRouteImport.update({
-    id: '/messages',
-    path: '/messages',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminRedakVillageRoute =
-  AuthenticatedAdminRedakVillageRouteImport.update({
-    id: '/redak-village',
-    path: '/redak-village',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSeoPreviewRoute =
-  AuthenticatedAdminSeoPreviewRouteImport.update({
-    id: '/seo-preview',
-    path: '/seo-preview',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSignalementsRoute =
-  AuthenticatedAdminSignalementsRouteImport.update({
-    id: '/signalements',
-    path: '/signalements',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminTeeviRoute = AuthenticatedAdminTeeviRouteImport.update({
-  id: '/teevi',
-  path: '/teevi',
-  getParentRoute: () => AuthenticatedAdminRoute,
+const UPseudoIndexRoute = UPseudoIndexRouteImport.update({
+  id: '/u/$pseudo/',
+  path: '/u/$pseudo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageTeeviIndexRoute = PartageTeeviIndexRouteImport.update({
+  id: '/partage/teevi/',
+  path: '/partage/teevi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartagePublicationIndexRoute = PartagePublicationIndexRouteImport.update({
+  id: '/partage/publication/',
+  path: '/partage/publication/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageMagazineIndexRoute = PartageMagazineIndexRouteImport.update({
+  id: '/partage/magazine/',
+  path: '/partage/magazine/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedProfileIndexRoute =
   AuthenticatedProfileIndexRouteImport.update({
@@ -547,51 +467,36 @@ const AuthenticatedProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedProfileAlbumsRoute =
-  AuthenticatedProfileAlbumsRouteImport.update({
-    id: '/profile/albums',
-    path: '/profile/albums',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfileArtisteRoute =
-  AuthenticatedProfileArtisteRouteImport.update({
-    id: '/profile/artiste',
-    path: '/profile/artiste',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfileBadgesRoute =
-  AuthenticatedProfileBadgesRouteImport.update({
-    id: '/profile/badges',
-    path: '/profile/badges',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfileEditRoute =
-  AuthenticatedProfileEditRouteImport.update({
-    id: '/profile/edit',
-    path: '/profile/edit',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfileLikesRoute =
-  AuthenticatedProfileLikesRouteImport.update({
-    id: '/profile/likes',
-    path: '/profile/likes',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedProfilePublicationsRoute =
-  AuthenticatedProfilePublicationsRouteImport.update({
-    id: '/profile/publications',
-    path: '/profile/publications',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const ApiPublicAdminMessageEmailRoute =
-  ApiPublicAdminMessageEmailRouteImport.update({
-    id: '/api/public/admin-message-email',
-    path: '/api/public/admin-message-email',
+const PartageTeeviIdRoute = PartageTeeviIdRouteImport.update({
+  id: '/partage/teevi/$id',
+  path: '/partage/teevi/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartagePublicationIdRoute = PartagePublicationIdRouteImport.update({
+  id: '/partage/publication/$id',
+  path: '/partage/publication/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartageMagazineIdRoute = PartageMagazineIdRouteImport.update({
+  id: '/partage/magazine/$id',
+  path: '/partage/magazine/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicProcessTranslationRetriesRoute =
+  ApiPublicProcessTranslationRetriesRouteImport.update({
+    id: '/api/public/process-translation-retries',
+    path: '/api/public/process-translation-retries',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
-  id: '/api/public/health',
-  path: '/api/public/health',
+const ApiPublicPrewarmTranslationRoute =
+  ApiPublicPrewarmTranslationRouteImport.update({
+    id: '/api/public/prewarm-translation',
+    path: '/api/public/prewarm-translation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
+  id: '/api/public/mention-email',
+  path: '/api/public/mention-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicIndexnowKeyDottxtRoute =
@@ -600,87 +505,156 @@ const ApiPublicIndexnowKeyDottxtRoute =
     path: '/api/public/indexnow-key.txt',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicMentionEmailRoute = ApiPublicMentionEmailRouteImport.update({
-  id: '/api/public/mention-email',
-  path: '/api/public/mention-email',
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPrewarmTranslationRoute =
-  ApiPublicPrewarmTranslationRouteImport.update({
-    id: '/api/public/prewarm-translation',
-    path: '/api/public/prewarm-translation',
+const ApiPublicAdminMessageEmailRoute =
+  ApiPublicAdminMessageEmailRouteImport.update({
+    id: '/api/public/admin-message-email',
+    path: '/api/public/admin-message-email',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicProcessTranslationRetriesRoute =
-  ApiPublicProcessTranslationRetriesRouteImport.update({
-    id: '/api/public/process-translation-retries',
-    path: '/api/public/process-translation-retries',
+const AuthenticatedProfilePublicationsRoute =
+  AuthenticatedProfilePublicationsRouteImport.update({
+    id: '/profile/publications',
+    path: '/profile/publications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileLikesRoute =
+  AuthenticatedProfileLikesRouteImport.update({
+    id: '/profile/likes',
+    path: '/profile/likes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileEditRoute =
+  AuthenticatedProfileEditRouteImport.update({
+    id: '/profile/edit',
+    path: '/profile/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileBadgesRoute =
+  AuthenticatedProfileBadgesRouteImport.update({
+    id: '/profile/badges',
+    path: '/profile/badges',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileArtisteRoute =
+  AuthenticatedProfileArtisteRouteImport.update({
+    id: '/profile/artiste',
+    path: '/profile/artiste',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileAlbumsRoute =
+  AuthenticatedProfileAlbumsRouteImport.update({
+    id: '/profile/albums',
+    path: '/profile/albums',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminTeeviRoute = AuthenticatedAdminTeeviRouteImport.update({
+  id: '/teevi',
+  path: '/teevi',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminSignalementsRoute =
+  AuthenticatedAdminSignalementsRouteImport.update({
+    id: '/signalements',
+    path: '/signalements',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSeoPreviewRoute =
+  AuthenticatedAdminSeoPreviewRouteImport.update({
+    id: '/seo-preview',
+    path: '/seo-preview',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRedakVillageRoute =
+  AuthenticatedAdminRedakVillageRouteImport.update({
+    id: '/redak-village',
+    path: '/redak-village',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMessagesRoute =
+  AuthenticatedAdminMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMagazinesRoute =
+  AuthenticatedAdminMagazinesRouteImport.update({
+    id: '/magazines',
+    path: '/magazines',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDiagnosticsPseudosRoute =
+  AuthenticatedAdminDiagnosticsPseudosRouteImport.update({
+    id: '/diagnostics-pseudos',
+    path: '/diagnostics-pseudos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCoupsDeCoeurRoute =
+  AuthenticatedAdminCoupsDeCoeurRouteImport.update({
+    id: '/coups-de-coeur',
+    path: '/coups-de-coeur',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminChallengesRoute =
+  AuthenticatedAdminChallengesRouteImport.update({
+    id: '/challenges',
+    path: '/challenges',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCandidaturesRoute =
+  AuthenticatedAdminCandidaturesRouteImport.update({
+    id: '/candidatures',
+    path: '/candidatures',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBoutiqueRoute =
+  AuthenticatedAdminBoutiqueRouteImport.update({
+    id: '/boutique',
+    path: '/boutique',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlocagesRoute =
+  AuthenticatedAdminBlocagesRouteImport.update({
+    id: '/blocages',
+    path: '/blocages',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBadgesRoute =
+  AuthenticatedAdminBadgesRouteImport.update({
+    id: '/badges',
+    path: '/badges',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminArtistesRoute =
+  AuthenticatedAdminArtistesRouteImport.update({
+    id: '/artistes',
+    path: '/artistes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAchatsRoute =
+  AuthenticatedAdminAchatsRouteImport.update({
+    id: '/achats',
+    path: '/achats',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const PartageMagazineIndexRoute = PartageMagazineIndexRouteImport.update({
-  id: '/partage/magazine/',
-  path: '/partage/magazine/',
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PartageMagazineIdRoute = PartageMagazineIdRouteImport.update({
-  id: '/partage/magazine/$id',
-  path: '/partage/magazine/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartagePublicationIndexRoute = PartagePublicationIndexRouteImport.update({
-  id: '/partage/publication/',
-  path: '/partage/publication/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartagePublicationIdRoute = PartagePublicationIdRouteImport.update({
-  id: '/partage/publication/$id',
-  path: '/partage/publication/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartageTeeviIndexRoute = PartageTeeviIndexRouteImport.update({
-  id: '/partage/teevi/',
-  path: '/partage/teevi/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartageTeeviIdRoute = PartageTeeviIdRouteImport.update({
-  id: '/partage/teevi/$id',
-  path: '/partage/teevi/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UPseudoIndexRoute = UPseudoIndexRouteImport.update({
-  id: '/u/$pseudo/',
-  path: '/u/$pseudo/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
-  id: '/api/public/hooks/indexnow',
-  path: '/api/public/hooks/indexnow',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksPingSitemapsRoute =
-  ApiPublicHooksPingSitemapsRouteImport.update({
-    id: '/api/public/hooks/ping-sitemaps',
-    path: '/api/public/hooks/ping-sitemaps',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
-  id: '/api/public/radio/artwork',
-  path: '/api/public/radio/artwork',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicRadioStreamRoute = ApiPublicRadioStreamRouteImport.update({
-  id: '/api/public/radio/stream',
-  path: '/api/public/radio/stream',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
+const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
+  id: '/u/$pseudo/albums/$albumId',
+  path: '/u/$pseudo/albums/$albumId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailTransactionalPreviewRoute =
@@ -689,9 +663,35 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const UPseudoAlbumsAlbumIdRoute = UPseudoAlbumsAlbumIdRouteImport.update({
-  id: '/u/$pseudo/albums/$albumId',
-  path: '/u/$pseudo/albums/$albumId',
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRadioStreamRoute = ApiPublicRadioStreamRouteImport.update({
+  id: '/api/public/radio/stream',
+  path: '/api/public/radio/stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRadioArtworkRoute = ApiPublicRadioArtworkRouteImport.update({
+  id: '/api/public/radio/artwork',
+  path: '/api/public/radio/artwork',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksPingSitemapsRoute =
+  ApiPublicHooksPingSitemapsRouteImport.update({
+    id: '/api/public/hooks/ping-sitemaps',
+    path: '/api/public/hooks/ping-sitemaps',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksIndexnowRoute = ApiPublicHooksIndexnowRouteImport.update({
+  id: '/api/public/hooks/indexnow',
+  path: '/api/public/hooks/indexnow',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -1449,235 +1449,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/artistes': {
-      id: '/artistes'
-      path: '/artistes'
-      fullPath: '/artistes'
-      preLoaderRoute: typeof ArtistesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog-invitation': {
-      id: '/blog-invitation'
-      path: '/blog-invitation'
-      fullPath: '/blog-invitation'
-      preLoaderRoute: typeof BlogInvitationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/boutique': {
-      id: '/boutique'
-      path: '/boutique'
-      fullPath: '/boutique'
-      preLoaderRoute: typeof BoutiqueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chart': {
-      id: '/chart'
-      path: '/chart'
-      fullPath: '/chart'
-      preLoaderRoute: typeof ChartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dedicaces': {
-      id: '/dedicaces'
-      path: '/dedicaces'
-      fullPath: '/dedicaces'
-      preLoaderRoute: typeof DedicacesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/moderation': {
-      id: '/moderation'
-      path: '/moderation'
-      fullPath: '/moderation'
-      preLoaderRoute: typeof ModerationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/newsletter': {
-      id: '/newsletter'
-      path: '/newsletter'
-      fullPath: '/newsletter'
-      preLoaderRoute: typeof NewsletterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/podcast.xml': {
-      id: '/podcast.xml'
-      path: '/podcast.xml'
-      fullPath: '/podcast.xml'
-      preLoaderRoute: typeof PodcastDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/podcasts': {
-      id: '/podcasts'
-      path: '/podcasts'
-      fullPath: '/podcasts'
-      preLoaderRoute: typeof PodcastsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/radio-mode': {
-      id: '/radio-mode'
-      path: '/radio-mode'
-      fullPath: '/radio-mode'
-      preLoaderRoute: typeof RadioModeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-actus.xml': {
-      id: '/rss-actus.xml'
-      path: '/rss-actus.xml'
-      fullPath: '/rss-actus.xml'
-      preLoaderRoute: typeof RssActusDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-chroniques.xml': {
-      id: '/rss-chroniques.xml'
-      path: '/rss-chroniques.xml'
-      fullPath: '/rss-chroniques.xml'
-      preLoaderRoute: typeof RssChroniquesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-clips.xml': {
-      id: '/rss-clips.xml'
-      path: '/rss-clips.xml'
-      fullPath: '/rss-clips.xml'
-      preLoaderRoute: typeof RssClipsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-coups-de-coeur.xml': {
-      id: '/rss-coups-de-coeur.xml'
-      path: '/rss-coups-de-coeur.xml'
-      fullPath: '/rss-coups-de-coeur.xml'
-      preLoaderRoute: typeof RssCoupsDeCoeurDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-magazine.xml': {
-      id: '/rss-magazine.xml'
-      path: '/rss-magazine.xml'
-      fullPath: '/rss-magazine.xml'
-      preLoaderRoute: typeof RssMagazineDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss-test': {
-      id: '/rss-test'
-      path: '/rss-test'
-      fullPath: '/rss-test'
-      preLoaderRoute: typeof RssTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss.xml': {
-      id: '/rss.xml'
-      path: '/rss.xml'
-      fullPath: '/rss.xml'
-      preLoaderRoute: typeof RssDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-en.xml': {
-      id: '/sitemap-en.xml'
-      path: '/sitemap-en.xml'
-      fullPath: '/sitemap-en.xml'
-      preLoaderRoute: typeof SitemapEnDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-fr.xml': {
-      id: '/sitemap-fr.xml'
-      path: '/sitemap-fr.xml'
-      fullPath: '/sitemap-fr.xml'
-      preLoaderRoute: typeof SitemapFrDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-images.xml': {
-      id: '/sitemap-images.xml'
-      path: '/sitemap-images.xml'
-      fullPath: '/sitemap-images.xml'
-      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-users.xml': {
-      id: '/sitemap-users.xml'
-      path: '/sitemap-users.xml'
-      fullPath: '/sitemap-users.xml'
-      preLoaderRoute: typeof SitemapUsersDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-video.xml': {
-      id: '/sitemap-video.xml'
-      path: '/sitemap-video.xml'
-      fullPath: '/sitemap-video.xml'
-      preLoaderRoute: typeof SitemapVideoDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/soumission-artistes': {
-      id: '/soumission-artistes'
-      path: '/soumission-artistes'
-      fullPath: '/soumission-artistes'
-      preLoaderRoute: typeof SoumissionArtistesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/top-users': {
+      id: '/top-users'
+      path: '/top-users'
+      fullPath: '/top-users'
+      preLoaderRoute: typeof TopUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/top': {
@@ -1687,193 +1463,235 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TopRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/top-users': {
-      id: '/top-users'
-      path: '/top-users'
-      fullPath: '/top-users'
-      preLoaderRoute: typeof TopUsersRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/soumission-artistes': {
+      id: '/soumission-artistes'
+      path: '/soumission-artistes'
+      fullPath: '/soumission-artistes'
+      preLoaderRoute: typeof SoumissionArtistesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/bienvenue': {
-      id: '/_authenticated/bienvenue'
-      path: '/bienvenue'
-      fullPath: '/bienvenue'
-      preLoaderRoute: typeof AuthenticatedBienvenueRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/notif-test': {
-      id: '/_authenticated/notif-test'
-      path: '/notif-test'
-      fullPath: '/notif-test'
-      preLoaderRoute: typeof AuthenticatedNotifTestRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/notifications': {
-      id: '/_authenticated/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/actus/': {
-      id: '/actus/'
-      path: '/actus'
-      fullPath: '/actus/'
-      preLoaderRoute: typeof ActusIndexRouteImport
+    '/sitemap-video.xml': {
+      id: '/sitemap-video.xml'
+      path: '/sitemap-video.xml'
+      fullPath: '/sitemap-video.xml'
+      preLoaderRoute: typeof SitemapVideoDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/actus/$postId': {
-      id: '/actus/$postId'
-      path: '/actus/$postId'
-      fullPath: '/actus/$postId'
-      preLoaderRoute: typeof ActusPostIdRouteImport
+    '/sitemap-users.xml': {
+      id: '/sitemap-users.xml'
+      path: '/sitemap-users.xml'
+      fullPath: '/sitemap-users.xml'
+      preLoaderRoute: typeof SitemapUsersDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chroniques/': {
-      id: '/chroniques/'
-      path: '/chroniques'
-      fullPath: '/chroniques/'
-      preLoaderRoute: typeof ChroniquesIndexRouteImport
+    '/sitemap-images.xml': {
+      id: '/sitemap-images.xml'
+      path: '/sitemap-images.xml'
+      fullPath: '/sitemap-images.xml'
+      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chroniques/$slug': {
-      id: '/chroniques/$slug'
-      path: '/chroniques/$slug'
-      fullPath: '/chroniques/$slug'
-      preLoaderRoute: typeof ChroniquesSlugRouteImport
+    '/sitemap-fr.xml': {
+      id: '/sitemap-fr.xml'
+      path: '/sitemap-fr.xml'
+      fullPath: '/sitemap-fr.xml'
+      preLoaderRoute: typeof SitemapFrDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/clips/': {
-      id: '/clips/'
-      path: '/clips'
-      fullPath: '/clips/'
-      preLoaderRoute: typeof ClipsIndexRouteImport
+    '/sitemap-en.xml': {
+      id: '/sitemap-en.xml'
+      path: '/sitemap-en.xml'
+      fullPath: '/sitemap-en.xml'
+      preLoaderRoute: typeof SitemapEnDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/clips/$clipId': {
-      id: '/clips/$clipId'
-      path: '/clips/$clipId'
-      fullPath: '/clips/$clipId'
-      preLoaderRoute: typeof ClipsClipIdRouteImport
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/coups-de-coeur/': {
-      id: '/coups-de-coeur/'
-      path: '/coups-de-coeur'
-      fullPath: '/coups-de-coeur/'
-      preLoaderRoute: typeof CoupsDeCoeurIndexRouteImport
+    '/rss-test': {
+      id: '/rss-test'
+      path: '/rss-test'
+      fullPath: '/rss-test'
+      preLoaderRoute: typeof RssTestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/coups-de-coeur/$coupId': {
-      id: '/coups-de-coeur/$coupId'
-      path: '/coups-de-coeur/$coupId'
-      fullPath: '/coups-de-coeur/$coupId'
-      preLoaderRoute: typeof CoupsDeCoeurCoupIdRouteImport
+    '/rss-magazine.xml': {
+      id: '/rss-magazine.xml'
+      path: '/rss-magazine.xml'
+      fullPath: '/rss-magazine.xml'
+      preLoaderRoute: typeof RssMagazineDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/emissions/': {
-      id: '/emissions/'
-      path: '/emissions'
-      fullPath: '/emissions/'
-      preLoaderRoute: typeof EmissionsIndexRouteImport
+    '/rss-coups-de-coeur.xml': {
+      id: '/rss-coups-de-coeur.xml'
+      path: '/rss-coups-de-coeur.xml'
+      fullPath: '/rss-coups-de-coeur.xml'
+      preLoaderRoute: typeof RssCoupsDeCoeurDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/emissions/$showId': {
-      id: '/emissions/$showId'
-      path: '/emissions/$showId'
-      fullPath: '/emissions/$showId'
-      preLoaderRoute: typeof EmissionsShowIdRouteImport
+    '/rss-clips.xml': {
+      id: '/rss-clips.xml'
+      path: '/rss-clips.xml'
+      fullPath: '/rss-clips.xml'
+      preLoaderRoute: typeof RssClipsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/episodes/$episodeId': {
-      id: '/episodes/$episodeId'
-      path: '/episodes/$episodeId'
-      fullPath: '/episodes/$episodeId'
-      preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
+    '/rss-chroniques.xml': {
+      id: '/rss-chroniques.xml'
+      path: '/rss-chroniques.xml'
+      fullPath: '/rss-chroniques.xml'
+      preLoaderRoute: typeof RssChroniquesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indi-teevi/': {
-      id: '/indi-teevi/'
-      path: '/indi-teevi'
-      fullPath: '/indi-teevi/'
-      preLoaderRoute: typeof IndiTeeviIndexRouteImport
+    '/rss-actus.xml': {
+      id: '/rss-actus.xml'
+      path: '/rss-actus.xml'
+      fullPath: '/rss-actus.xml'
+      preLoaderRoute: typeof RssActusDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indi-teevi/$videoId': {
-      id: '/indi-teevi/$videoId'
-      path: '/indi-teevi/$videoId'
-      fullPath: '/indi-teevi/$videoId'
-      preLoaderRoute: typeof IndiTeeviVideoIdRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/magazines/': {
-      id: '/magazines/'
-      path: '/magazines'
-      fullPath: '/magazines/'
-      preLoaderRoute: typeof MagazinesIndexRouteImport
+    '/radio-mode': {
+      id: '/radio-mode'
+      path: '/radio-mode'
+      fullPath: '/radio-mode'
+      preLoaderRoute: typeof RadioModeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/magazines/$magazineId': {
-      id: '/magazines/$magazineId'
-      path: '/magazines/$magazineId'
-      fullPath: '/magazines/$magazineId'
-      preLoaderRoute: typeof MagazinesMagazineIdRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/$postId': {
-      id: '/p/$postId'
-      path: '/p/$postId'
-      fullPath: '/p/$postId'
-      preLoaderRoute: typeof PPostIdRouteImport
+    '/podcasts': {
+      id: '/podcasts'
+      path: '/podcasts'
+      fullPath: '/podcasts'
+      preLoaderRoute: typeof PodcastsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/partage/': {
-      id: '/partage/'
-      path: '/partage'
-      fullPath: '/partage/'
-      preLoaderRoute: typeof PartageIndexRouteImport
+    '/podcast.xml': {
+      id: '/podcast.xml'
+      path: '/podcast.xml'
+      fullPath: '/podcast.xml'
+      preLoaderRoute: typeof PodcastDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/partage/$slug': {
-      id: '/partage/$slug'
-      path: '/partage/$slug'
-      fullPath: '/partage/$slug'
-      preLoaderRoute: typeof PartageSlugRouteImport
+    '/newsletter': {
+      id: '/newsletter'
+      path: '/newsletter'
+      fullPath: '/newsletter'
+      preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/playlists/': {
-      id: '/playlists/'
-      path: '/playlists'
-      fullPath: '/playlists/'
-      preLoaderRoute: typeof PlaylistsIndexRouteImport
+    '/moderation': {
+      id: '/moderation'
+      path: '/moderation'
+      fullPath: '/moderation'
+      preLoaderRoute: typeof ModerationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/playlists/$slug': {
-      id: '/playlists/$slug'
-      path: '/playlists/$slug'
-      fullPath: '/playlists/$slug'
-      preLoaderRoute: typeof PlaylistsSlugRouteImport
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dedicaces': {
+      id: '/dedicaces'
+      path: '/dedicaces'
+      fullPath: '/dedicaces'
+      preLoaderRoute: typeof DedicacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chart': {
+      id: '/chart'
+      path: '/chart'
+      fullPath: '/chart'
+      preLoaderRoute: typeof ChartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique': {
+      id: '/boutique'
+      path: '/boutique'
+      fullPath: '/boutique'
+      preLoaderRoute: typeof BoutiqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog-invitation': {
+      id: '/blog-invitation'
+      path: '/blog-invitation'
+      fullPath: '/blog-invitation'
+      preLoaderRoute: typeof BlogInvitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artistes': {
+      id: '/artistes'
+      path: '/artistes'
+      fullPath: '/artistes'
+      preLoaderRoute: typeof ArtistesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/redak-village/': {
@@ -1883,11 +1701,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedakVillageIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/redak-village/$slug': {
-      id: '/redak-village/$slug'
-      path: '/redak-village/$slug'
-      fullPath: '/redak-village/$slug'
-      preLoaderRoute: typeof RedakVillageSlugRouteImport
+    '/playlists/': {
+      id: '/playlists/'
+      path: '/playlists'
+      fullPath: '/playlists/'
+      preLoaderRoute: typeof PlaylistsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partage/': {
+      id: '/partage/'
+      path: '/partage'
+      fullPath: '/partage/'
+      preLoaderRoute: typeof PartageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/magazines/': {
+      id: '/magazines/'
+      path: '/magazines'
+      fullPath: '/magazines/'
+      preLoaderRoute: typeof MagazinesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/indi-teevi/': {
+      id: '/indi-teevi/'
+      path: '/indi-teevi'
+      fullPath: '/indi-teevi/'
+      preLoaderRoute: typeof IndiTeeviIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emissions/': {
+      id: '/emissions/'
+      path: '/emissions'
+      fullPath: '/emissions/'
+      preLoaderRoute: typeof EmissionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coups-de-coeur/': {
+      id: '/coups-de-coeur/'
+      path: '/coups-de-coeur'
+      fullPath: '/coups-de-coeur/'
+      preLoaderRoute: typeof CoupsDeCoeurIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips/': {
+      id: '/clips/'
+      path: '/clips'
+      fullPath: '/clips/'
+      preLoaderRoute: typeof ClipsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chroniques/': {
+      id: '/chroniques/'
+      path: '/chroniques'
+      fullPath: '/chroniques/'
+      preLoaderRoute: typeof ChroniquesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/actus/': {
+      id: '/actus/'
+      path: '/actus'
+      fullPath: '/actus/'
+      preLoaderRoute: typeof ActusIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tag/$tag': {
@@ -1897,256 +1771,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagTagRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+    '/redak-village/$slug': {
+      id: '/redak-village/$slug'
+      path: '/redak-village/$slug'
+      fullPath: '/redak-village/$slug'
+      preLoaderRoute: typeof RedakVillageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+    '/playlists/$slug': {
+      id: '/playlists/$slug'
+      path: '/playlists/$slug'
+      fullPath: '/playlists/$slug'
+      preLoaderRoute: typeof PlaylistsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/achats': {
-      id: '/_authenticated/admin/achats'
-      path: '/achats'
-      fullPath: '/admin/achats'
-      preLoaderRoute: typeof AuthenticatedAdminAchatsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/partage/$slug': {
+      id: '/partage/$slug'
+      path: '/partage/$slug'
+      fullPath: '/partage/$slug'
+      preLoaderRoute: typeof PartageSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/artistes': {
-      id: '/_authenticated/admin/artistes'
-      path: '/artistes'
-      fullPath: '/admin/artistes'
-      preLoaderRoute: typeof AuthenticatedAdminArtistesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/p/$postId': {
+      id: '/p/$postId'
+      path: '/p/$postId'
+      fullPath: '/p/$postId'
+      preLoaderRoute: typeof PPostIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/badges': {
-      id: '/_authenticated/admin/badges'
-      path: '/badges'
-      fullPath: '/admin/badges'
-      preLoaderRoute: typeof AuthenticatedAdminBadgesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/magazines/$magazineId': {
+      id: '/magazines/$magazineId'
+      path: '/magazines/$magazineId'
+      fullPath: '/magazines/$magazineId'
+      preLoaderRoute: typeof MagazinesMagazineIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/blocages': {
-      id: '/_authenticated/admin/blocages'
-      path: '/blocages'
-      fullPath: '/admin/blocages'
-      preLoaderRoute: typeof AuthenticatedAdminBlocagesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/indi-teevi/$videoId': {
+      id: '/indi-teevi/$videoId'
+      path: '/indi-teevi/$videoId'
+      fullPath: '/indi-teevi/$videoId'
+      preLoaderRoute: typeof IndiTeeviVideoIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/boutique': {
-      id: '/_authenticated/admin/boutique'
-      path: '/boutique'
-      fullPath: '/admin/boutique'
-      preLoaderRoute: typeof AuthenticatedAdminBoutiqueRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/episodes/$episodeId': {
+      id: '/episodes/$episodeId'
+      path: '/episodes/$episodeId'
+      fullPath: '/episodes/$episodeId'
+      preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/candidatures': {
-      id: '/_authenticated/admin/candidatures'
-      path: '/candidatures'
-      fullPath: '/admin/candidatures'
-      preLoaderRoute: typeof AuthenticatedAdminCandidaturesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/emissions/$showId': {
+      id: '/emissions/$showId'
+      path: '/emissions/$showId'
+      fullPath: '/emissions/$showId'
+      preLoaderRoute: typeof EmissionsShowIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/challenges': {
-      id: '/_authenticated/admin/challenges'
-      path: '/challenges'
-      fullPath: '/admin/challenges'
-      preLoaderRoute: typeof AuthenticatedAdminChallengesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/coups-de-coeur/$coupId': {
+      id: '/coups-de-coeur/$coupId'
+      path: '/coups-de-coeur/$coupId'
+      fullPath: '/coups-de-coeur/$coupId'
+      preLoaderRoute: typeof CoupsDeCoeurCoupIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/coups-de-coeur': {
-      id: '/_authenticated/admin/coups-de-coeur'
-      path: '/coups-de-coeur'
-      fullPath: '/admin/coups-de-coeur'
-      preLoaderRoute: typeof AuthenticatedAdminCoupsDeCoeurRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/clips/$clipId': {
+      id: '/clips/$clipId'
+      path: '/clips/$clipId'
+      fullPath: '/clips/$clipId'
+      preLoaderRoute: typeof ClipsClipIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/diagnostics-pseudos': {
-      id: '/_authenticated/admin/diagnostics-pseudos'
-      path: '/diagnostics-pseudos'
-      fullPath: '/admin/diagnostics-pseudos'
-      preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/chroniques/$slug': {
+      id: '/chroniques/$slug'
+      path: '/chroniques/$slug'
+      fullPath: '/chroniques/$slug'
+      preLoaderRoute: typeof ChroniquesSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/magazines': {
-      id: '/_authenticated/admin/magazines'
-      path: '/magazines'
-      fullPath: '/admin/magazines'
-      preLoaderRoute: typeof AuthenticatedAdminMagazinesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+    '/actus/$postId': {
+      id: '/actus/$postId'
+      path: '/actus/$postId'
+      fullPath: '/actus/$postId'
+      preLoaderRoute: typeof ActusPostIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/messages': {
-      id: '/_authenticated/admin/messages'
-      path: '/messages'
-      fullPath: '/admin/messages'
-      preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/redak-village': {
-      id: '/_authenticated/admin/redak-village'
-      path: '/redak-village'
-      fullPath: '/admin/redak-village'
-      preLoaderRoute: typeof AuthenticatedAdminRedakVillageRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/seo-preview': {
-      id: '/_authenticated/admin/seo-preview'
-      path: '/seo-preview'
-      fullPath: '/admin/seo-preview'
-      preLoaderRoute: typeof AuthenticatedAdminSeoPreviewRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/signalements': {
-      id: '/_authenticated/admin/signalements'
-      path: '/signalements'
-      fullPath: '/admin/signalements'
-      preLoaderRoute: typeof AuthenticatedAdminSignalementsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/teevi': {
-      id: '/_authenticated/admin/teevi'
-      path: '/teevi'
-      fullPath: '/admin/teevi'
-      preLoaderRoute: typeof AuthenticatedAdminTeeviRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/profile/': {
-      id: '/_authenticated/profile/'
-      path: '/profile'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile/albums': {
-      id: '/_authenticated/profile/albums'
-      path: '/profile/albums'
-      fullPath: '/profile/albums'
-      preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
+    '/_authenticated/notif-test': {
+      id: '/_authenticated/notif-test'
+      path: '/notif-test'
+      fullPath: '/notif-test'
+      preLoaderRoute: typeof AuthenticatedNotifTestRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile/artiste': {
-      id: '/_authenticated/profile/artiste'
-      path: '/profile/artiste'
-      fullPath: '/profile/artiste'
-      preLoaderRoute: typeof AuthenticatedProfileArtisteRouteImport
+    '/_authenticated/bienvenue': {
+      id: '/_authenticated/bienvenue'
+      path: '/bienvenue'
+      fullPath: '/bienvenue'
+      preLoaderRoute: typeof AuthenticatedBienvenueRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile/badges': {
-      id: '/_authenticated/profile/badges'
-      path: '/profile/badges'
-      fullPath: '/profile/badges'
-      preLoaderRoute: typeof AuthenticatedProfileBadgesRouteImport
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile/edit': {
-      id: '/_authenticated/profile/edit'
-      path: '/profile/edit'
-      fullPath: '/profile/edit'
-      preLoaderRoute: typeof AuthenticatedProfileEditRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/profile/likes': {
-      id: '/_authenticated/profile/likes'
-      path: '/profile/likes'
-      fullPath: '/profile/likes'
-      preLoaderRoute: typeof AuthenticatedProfileLikesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/profile/publications': {
-      id: '/_authenticated/profile/publications'
-      path: '/profile/publications'
-      fullPath: '/profile/publications'
-      preLoaderRoute: typeof AuthenticatedProfilePublicationsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/api/public/admin-message-email': {
-      id: '/api/public/admin-message-email'
-      path: '/api/public/admin-message-email'
-      fullPath: '/api/public/admin-message-email'
-      preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/health': {
-      id: '/api/public/health'
-      path: '/api/public/health'
-      fullPath: '/api/public/health'
-      preLoaderRoute: typeof ApiPublicHealthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/indexnow-key.txt': {
-      id: '/api/public/indexnow-key.txt'
-      path: '/api/public/indexnow-key.txt'
-      fullPath: '/api/public/indexnow-key.txt'
-      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/mention-email': {
-      id: '/api/public/mention-email'
-      path: '/api/public/mention-email'
-      fullPath: '/api/public/mention-email'
-      preLoaderRoute: typeof ApiPublicMentionEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/prewarm-translation': {
-      id: '/api/public/prewarm-translation'
-      path: '/api/public/prewarm-translation'
-      fullPath: '/api/public/prewarm-translation'
-      preLoaderRoute: typeof ApiPublicPrewarmTranslationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/process-translation-retries': {
-      id: '/api/public/process-translation-retries'
-      path: '/api/public/process-translation-retries'
-      fullPath: '/api/public/process-translation-retries'
-      preLoaderRoute: typeof ApiPublicProcessTranslationRetriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/magazine/': {
-      id: '/partage/magazine/'
-      path: '/partage/magazine'
-      fullPath: '/partage/magazine/'
-      preLoaderRoute: typeof PartageMagazineIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/magazine/$id': {
-      id: '/partage/magazine/$id'
-      path: '/partage/magazine/$id'
-      fullPath: '/partage/magazine/$id'
-      preLoaderRoute: typeof PartageMagazineIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/publication/': {
-      id: '/partage/publication/'
-      path: '/partage/publication'
-      fullPath: '/partage/publication/'
-      preLoaderRoute: typeof PartagePublicationIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/publication/$id': {
-      id: '/partage/publication/$id'
-      path: '/partage/publication/$id'
-      fullPath: '/partage/publication/$id'
-      preLoaderRoute: typeof PartagePublicationIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/teevi/': {
-      id: '/partage/teevi/'
-      path: '/partage/teevi'
-      fullPath: '/partage/teevi/'
-      preLoaderRoute: typeof PartageTeeviIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partage/teevi/$id': {
-      id: '/partage/teevi/$id'
-      path: '/partage/teevi/$id'
-      fullPath: '/partage/teevi/$id'
-      preLoaderRoute: typeof PartageTeeviIdRouteImport
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/u/$pseudo/': {
@@ -2156,46 +1904,263 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UPseudoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/indexnow': {
-      id: '/api/public/hooks/indexnow'
-      path: '/api/public/hooks/indexnow'
-      fullPath: '/api/public/hooks/indexnow'
-      preLoaderRoute: typeof ApiPublicHooksIndexnowRouteImport
+    '/partage/teevi/': {
+      id: '/partage/teevi/'
+      path: '/partage/teevi'
+      fullPath: '/partage/teevi/'
+      preLoaderRoute: typeof PartageTeeviIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/ping-sitemaps': {
-      id: '/api/public/hooks/ping-sitemaps'
-      path: '/api/public/hooks/ping-sitemaps'
-      fullPath: '/api/public/hooks/ping-sitemaps'
-      preLoaderRoute: typeof ApiPublicHooksPingSitemapsRouteImport
+    '/partage/publication/': {
+      id: '/partage/publication/'
+      path: '/partage/publication'
+      fullPath: '/partage/publication/'
+      preLoaderRoute: typeof PartagePublicationIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/radio/artwork': {
-      id: '/api/public/radio/artwork'
-      path: '/api/public/radio/artwork'
-      fullPath: '/api/public/radio/artwork'
-      preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
+    '/partage/magazine/': {
+      id: '/partage/magazine/'
+      path: '/partage/magazine'
+      fullPath: '/partage/magazine/'
+      preLoaderRoute: typeof PartageMagazineIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/radio/stream': {
-      id: '/api/public/radio/stream'
-      path: '/api/public/radio/stream'
-      fullPath: '/api/public/radio/stream'
-      preLoaderRoute: typeof ApiPublicRadioStreamRouteImport
+    '/_authenticated/profile/': {
+      id: '/_authenticated/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/partage/teevi/$id': {
+      id: '/partage/teevi/$id'
+      path: '/partage/teevi/$id'
+      fullPath: '/partage/teevi/$id'
+      preLoaderRoute: typeof PartageTeeviIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/partage/publication/$id': {
+      id: '/partage/publication/$id'
+      path: '/partage/publication/$id'
+      fullPath: '/partage/publication/$id'
+      preLoaderRoute: typeof PartagePublicationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+    '/partage/magazine/$id': {
+      id: '/partage/magazine/$id'
+      path: '/partage/magazine/$id'
+      fullPath: '/partage/magazine/$id'
+      preLoaderRoute: typeof PartageMagazineIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/process-translation-retries': {
+      id: '/api/public/process-translation-retries'
+      path: '/api/public/process-translation-retries'
+      fullPath: '/api/public/process-translation-retries'
+      preLoaderRoute: typeof ApiPublicProcessTranslationRetriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/prewarm-translation': {
+      id: '/api/public/prewarm-translation'
+      path: '/api/public/prewarm-translation'
+      fullPath: '/api/public/prewarm-translation'
+      preLoaderRoute: typeof ApiPublicPrewarmTranslationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mention-email': {
+      id: '/api/public/mention-email'
+      path: '/api/public/mention-email'
+      fullPath: '/api/public/mention-email'
+      preLoaderRoute: typeof ApiPublicMentionEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/indexnow-key.txt': {
+      id: '/api/public/indexnow-key.txt'
+      path: '/api/public/indexnow-key.txt'
+      fullPath: '/api/public/indexnow-key.txt'
+      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin-message-email': {
+      id: '/api/public/admin-message-email'
+      path: '/api/public/admin-message-email'
+      fullPath: '/api/public/admin-message-email'
+      preLoaderRoute: typeof ApiPublicAdminMessageEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profile/publications': {
+      id: '/_authenticated/profile/publications'
+      path: '/profile/publications'
+      fullPath: '/profile/publications'
+      preLoaderRoute: typeof AuthenticatedProfilePublicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile/likes': {
+      id: '/_authenticated/profile/likes'
+      path: '/profile/likes'
+      fullPath: '/profile/likes'
+      preLoaderRoute: typeof AuthenticatedProfileLikesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile/edit': {
+      id: '/_authenticated/profile/edit'
+      path: '/profile/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof AuthenticatedProfileEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile/badges': {
+      id: '/_authenticated/profile/badges'
+      path: '/profile/badges'
+      fullPath: '/profile/badges'
+      preLoaderRoute: typeof AuthenticatedProfileBadgesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile/artiste': {
+      id: '/_authenticated/profile/artiste'
+      path: '/profile/artiste'
+      fullPath: '/profile/artiste'
+      preLoaderRoute: typeof AuthenticatedProfileArtisteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile/albums': {
+      id: '/_authenticated/profile/albums'
+      path: '/profile/albums'
+      fullPath: '/profile/albums'
+      preLoaderRoute: typeof AuthenticatedProfileAlbumsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/teevi': {
+      id: '/_authenticated/admin/teevi'
+      path: '/teevi'
+      fullPath: '/admin/teevi'
+      preLoaderRoute: typeof AuthenticatedAdminTeeviRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/signalements': {
+      id: '/_authenticated/admin/signalements'
+      path: '/signalements'
+      fullPath: '/admin/signalements'
+      preLoaderRoute: typeof AuthenticatedAdminSignalementsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/seo-preview': {
+      id: '/_authenticated/admin/seo-preview'
+      path: '/seo-preview'
+      fullPath: '/admin/seo-preview'
+      preLoaderRoute: typeof AuthenticatedAdminSeoPreviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/redak-village': {
+      id: '/_authenticated/admin/redak-village'
+      path: '/redak-village'
+      fullPath: '/admin/redak-village'
+      preLoaderRoute: typeof AuthenticatedAdminRedakVillageRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/messages': {
+      id: '/_authenticated/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/magazines': {
+      id: '/_authenticated/admin/magazines'
+      path: '/magazines'
+      fullPath: '/admin/magazines'
+      preLoaderRoute: typeof AuthenticatedAdminMagazinesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/diagnostics-pseudos': {
+      id: '/_authenticated/admin/diagnostics-pseudos'
+      path: '/diagnostics-pseudos'
+      fullPath: '/admin/diagnostics-pseudos'
+      preLoaderRoute: typeof AuthenticatedAdminDiagnosticsPseudosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/coups-de-coeur': {
+      id: '/_authenticated/admin/coups-de-coeur'
+      path: '/coups-de-coeur'
+      fullPath: '/admin/coups-de-coeur'
+      preLoaderRoute: typeof AuthenticatedAdminCoupsDeCoeurRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/challenges': {
+      id: '/_authenticated/admin/challenges'
+      path: '/challenges'
+      fullPath: '/admin/challenges'
+      preLoaderRoute: typeof AuthenticatedAdminChallengesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/candidatures': {
+      id: '/_authenticated/admin/candidatures'
+      path: '/candidatures'
+      fullPath: '/admin/candidatures'
+      preLoaderRoute: typeof AuthenticatedAdminCandidaturesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/boutique': {
+      id: '/_authenticated/admin/boutique'
+      path: '/boutique'
+      fullPath: '/admin/boutique'
+      preLoaderRoute: typeof AuthenticatedAdminBoutiqueRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/blocages': {
+      id: '/_authenticated/admin/blocages'
+      path: '/blocages'
+      fullPath: '/admin/blocages'
+      preLoaderRoute: typeof AuthenticatedAdminBlocagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/badges': {
+      id: '/_authenticated/admin/badges'
+      path: '/badges'
+      fullPath: '/admin/badges'
+      preLoaderRoute: typeof AuthenticatedAdminBadgesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/artistes': {
+      id: '/_authenticated/admin/artistes'
+      path: '/artistes'
+      fullPath: '/admin/artistes'
+      preLoaderRoute: typeof AuthenticatedAdminArtistesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/achats': {
+      id: '/_authenticated/admin/achats'
+      path: '/achats'
+      fullPath: '/admin/achats'
+      preLoaderRoute: typeof AuthenticatedAdminAchatsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$pseudo/albums/$albumId': {
+      id: '/u/$pseudo/albums/$albumId'
+      path: '/u/$pseudo/albums/$albumId'
+      fullPath: '/u/$pseudo/albums/$albumId'
+      preLoaderRoute: typeof UPseudoAlbumsAlbumIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/transactional/preview': {
@@ -2205,11 +2170,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u/$pseudo/albums/$albumId': {
-      id: '/u/$pseudo/albums/$albumId'
-      path: '/u/$pseudo/albums/$albumId'
-      fullPath: '/u/$pseudo/albums/$albumId'
-      preLoaderRoute: typeof UPseudoAlbumsAlbumIdRouteImport
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/radio/stream': {
+      id: '/api/public/radio/stream'
+      path: '/api/public/radio/stream'
+      fullPath: '/api/public/radio/stream'
+      preLoaderRoute: typeof ApiPublicRadioStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/radio/artwork': {
+      id: '/api/public/radio/artwork'
+      path: '/api/public/radio/artwork'
+      fullPath: '/api/public/radio/artwork'
+      preLoaderRoute: typeof ApiPublicRadioArtworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/ping-sitemaps': {
+      id: '/api/public/hooks/ping-sitemaps'
+      path: '/api/public/hooks/ping-sitemaps'
+      fullPath: '/api/public/hooks/ping-sitemaps'
+      preLoaderRoute: typeof ApiPublicHooksPingSitemapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/indexnow': {
+      id: '/api/public/hooks/indexnow'
+      path: '/api/public/hooks/indexnow'
+      fullPath: '/api/public/hooks/indexnow'
+      preLoaderRoute: typeof ApiPublicHooksIndexnowRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
