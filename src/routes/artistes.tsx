@@ -25,7 +25,7 @@ export const Route = createFileRoute("/artistes")({
     links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/artistes" }],
   }),
   component: ArtistesPage,
-  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{(error as Error).message}</div>,
   notFoundComponent: () => <div className="p-4">Introuvable.</div>,
 });
 

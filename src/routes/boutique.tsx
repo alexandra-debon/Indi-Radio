@@ -28,7 +28,7 @@ export const Route = createFileRoute("/boutique")({
   component: BoutiquePage,
   errorComponent: ({ error }) => (
     <div className="p-4 text-sm text-destructive" role="alert">
-      {error.message}
+      {(error as Error).message}
     </div>
   ),
   notFoundComponent: () => <div className="p-4">Introuvable.</div>,

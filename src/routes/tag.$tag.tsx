@@ -50,7 +50,7 @@ function NotFoundComponent() {
 
 export const Route = createFileRoute("/tag/$tag")({
   component: TagPage,
-  errorComponent: ErrorComponent,
+  errorComponent: (props) => <ErrorComponent error={props.error as Error} reset={props.reset} />,
   notFoundComponent: NotFoundComponent,
   head: ({ params }) => {
     const t = params.tag;
