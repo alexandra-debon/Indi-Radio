@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
  */
 export function useArtwork(artist?: string | null, title?: string | null) {
   return useQuery({
-    queryKey: ["artwork", "v4", artist, title],
+    queryKey: ["artwork", "v5", artist, title],
     enabled: !!(artist && title),
     staleTime: 30 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,

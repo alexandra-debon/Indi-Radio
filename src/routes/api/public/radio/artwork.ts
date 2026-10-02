@@ -93,11 +93,9 @@ const JINGLE_COVER_PATH = "/jingle-cover.png";
 function isJingle(value: string | null | undefined) {
   if (!value) return false;
   const s = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (s.includes("jingle")) return true;
-  // Laurent Oleff = jingles maison → toujours afficher la pochette « L »
-  if (s.includes("laurent") && s.includes("oleff")) return true;
-  if (s.includes("oleff")) return true;
-  return false;
+  // Seuls les titres mentionnant explicitement « jingle » reçoivent le logo.
+  // Les singles de Laurent Oleff sans cette mention suivent la recherche normale.
+  return /\bjingles?\b/.test(s);
 }
 
 function looksLikeJingle(artist?: string | null, title?: string | null) {

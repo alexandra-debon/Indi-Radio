@@ -449,14 +449,7 @@ export function RadioPlayerProvider({ children }: { children: ReactNode }) {
     // Match exact "jingle" — sans fuzzy pour éviter d'attraper "single",
     // "jungle", etc.
     const hay = `${a} ${ti}`;
-    if (/\bjingle[s]?\b/.test(hay)) return true;
-    // Fuzzy "laurent" + "oleff" : les deux tokens doivent dépasser le seuil
-    // dans la même chaîne (artist OU title), sinon on rejette. Évite les
-    // faux positifs sur "Laurent Voulzy" ou "Oleg ...".
-    const check = (s: string) =>
-      bestTokenSimilarity(s, "laurent") >= JINGLE_SIM_THRESHOLD &&
-      bestTokenSimilarity(s, "oleff") >= JINGLE_SIM_THRESHOLD;
-    return check(a) || check(ti);
+    return /\bjingle[s]?\b/.test(hay);
   };
   const startedAtRef = useRef<number>(Date.now());
   const wasPlayingRef = useRef(false);
