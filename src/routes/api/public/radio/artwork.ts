@@ -75,6 +75,9 @@ const FORCED_ARTWORK: Record<string, string> = {
     "/__l5e/assets-v1/e6604de1-1729-4d95-abf6-ff2cba4f5b95/reach-art-not-a-slave.jpg",
   "reach art|not a slave":
     "/__l5e/assets-v1/e6604de1-1729-4d95-abf6-ff2cba4f5b95/reach-art-not-a-slave.jpg",
+  // Pochette fournie par l'équipe — uniquement ce titre de Laurent Oleff
+  "laurent oleff|deep soul tears":
+    "/__l5e/assets-v1/d7256cb7-ae88-4eb8-8ab8-19e9c6666741/laurent-oleff-deep-soul-tears.jpg",
 };
 
 function keyPart(value: string) {
