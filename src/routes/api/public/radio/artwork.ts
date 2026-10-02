@@ -70,6 +70,11 @@ const FORCED_ARTWORK: Record<string, string> = {
     "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/34/8d/c7/348dc71c-d75e-9baf-671a-994e9e74b018/dj.pimdxdmf.jpg/512x512bb.jpg",
   "will sellenraad eric mcpherson rene hart|alter ego":
     "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/fa/aa/d6/faaad670-7149-c44c-cba2-af3bf47a46fa/605491104215.jpg/512x512bb.jpg",
+  // Pochette fournie par l'équipe (titre absent d'Apple Music)
+  "reachart|not a slave":
+    "/__l5e/assets-v1/e6604de1-1729-4d95-abf6-ff2cba4f5b95/reach-art-not-a-slave.jpg",
+  "reach art|not a slave":
+    "/__l5e/assets-v1/e6604de1-1729-4d95-abf6-ff2cba4f5b95/reach-art-not-a-slave.jpg",
 };
 
 function keyPart(value: string) {
@@ -279,7 +284,7 @@ export const Route = createFileRoute("/api/public/radio/artwork")({
           });
 
           return Response.json(
-            { url: result.url },
+            { url: result.url && result.url.startsWith("/") ? new URL(result.url, request.url).toString() : result.url },
             { headers: { ...CORS_HEADERS, "Cache-Control": result.url ? HIT_CACHE : MISS_CACHE } },
           );
         } catch (e) {
