@@ -91,8 +91,8 @@ export const Route = createFileRoute("/indi-teevi/$videoId")({
       ],
     };
   },
-  notFoundComponent: TeeviNotFound,
-  errorComponent: TeeviNotFound,
+  notFoundComponent: () => <TeeviNotFound />,
+  errorComponent: () => <TeeviNotFound />,
   component: TeeviDetailPage,
 });
 

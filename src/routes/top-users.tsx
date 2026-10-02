@@ -22,7 +22,7 @@ export const Route = createFileRoute("/top-users")({
     links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/top-users" }],
   }),
   component: TopUsersPage,
-  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive" role="alert">{(error as Error).message}</div>,
   notFoundComponent: () => <div className="p-4">Introuvable.</div>,
 });
 

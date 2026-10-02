@@ -22,7 +22,7 @@ export const Route = createFileRoute("/u/$pseudo/albums/$albumId")({
     ],
   }),
   component: AlbumGallery,
-  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive">{(error as Error).message}</div>,
   notFoundComponent: () => <div className="p-4">Album introuvable.</div>,
 });
 

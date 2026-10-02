@@ -13,7 +13,7 @@ import { ImageUploader } from "@/components/media/ImageUploader";
 export const Route = createFileRoute("/_authenticated/profile/albums")({
   head: () => ({ meta: [{ title: "Mes albums photos — InDi RaDio" }] }),
   component: AlbumsManager,
-  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-4 text-sm text-destructive">{(error as Error).message}</div>,
   notFoundComponent: () => <div className="p-4">Introuvable.</div>,
 });
 
