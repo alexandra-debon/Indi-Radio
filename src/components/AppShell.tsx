@@ -173,7 +173,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             to="/"
             aria-label="InDi RaDio — Radio musique indé sans pub"
             title="InDi RaDio — Radio musique indé, Radio sans pub & Réseau social musique"
-            className="flex min-w-0 items-center justify-center gap-2 overflow-hidden"
+            className="flex min-w-0 items-center justify-center gap-1 overflow-hidden sm:gap-2"
           >
             <img
               src={logoAsset.url}
@@ -183,7 +183,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               height={72}
               decoding="async"
               fetchPriority="high"
-              className="size-8 shrink-0 rounded-sm object-contain sm:size-9"
+              className="size-7 shrink-0 rounded-sm object-contain sm:size-9"
             />
             <img
               src={wordmarkHeaderAsset.url}
@@ -192,7 +192,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               height={309}
               decoding="async"
               fetchPriority="high"
-              className="h-auto w-14 shrink-0 object-contain sm:h-9 sm:w-auto md:h-10"
+              className="h-auto w-10 shrink-0 object-contain sm:h-9 sm:w-auto md:h-10"
             />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
