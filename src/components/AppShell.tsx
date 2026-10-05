@@ -188,8 +188,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <img
               src={wordmarkHeaderAsset.url}
               alt="InDi HuB"
-              width={480}
-              height={120}
+              width={748}
+              height={309}
               decoding="async"
               fetchPriority="high"
               className="h-7 w-auto max-w-full shrink object-contain sm:h-9 md:h-10"
