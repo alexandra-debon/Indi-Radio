@@ -192,7 +192,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               height={309}
               decoding="async"
               fetchPriority="high"
-              className="h-6 w-auto min-w-0 max-w-full shrink object-contain object-left sm:h-9 md:h-10"
+              className="h-auto w-14 shrink-0 object-contain sm:h-9 sm:w-auto md:h-10"
             />
           </Link>
           <div className="flex min-w-0 shrink-0 items-center justify-end gap-1">
