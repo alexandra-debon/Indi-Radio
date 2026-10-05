@@ -35,7 +35,7 @@ import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/indi-radio-logo.png.asset.json";
 import wordmarkAsset from "@/assets/indi-radio-wordmark-v2.png.asset.json";
-import wordmarkHeaderAsset from "@/assets/indi-radio-wordmark-header.jpeg.asset.json";
+import wordmarkHeaderAsset from "@/assets/indi-hub-wordmark.png.asset.json";
 import { useT } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import type { DictKey } from "@/lib/i18n/dict";
@@ -187,9 +187,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
             <img
               src={wordmarkHeaderAsset.url}
-              alt="Indi Radio"
-              width={480}
-              height={120}
+              alt="InDi HuB"
+              width={748}
+              height={309}
               decoding="async"
               fetchPriority="high"
               className="h-7 w-auto max-w-full shrink object-contain sm:h-9 md:h-10"
