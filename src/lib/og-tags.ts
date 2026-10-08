@@ -16,6 +16,28 @@ export function absoluteImage(image: string, baseUrl: string): string {
   return `${baseUrl}${image.startsWith("/") ? "" : "/"}${image}`;
 }
 
+/**
+ * Facebook, LinkedIn et WhatsApp ne lisent pas l'AVIF/HEIC : ils retombent
+ * alors sur l'image générique du site. On fait passer ces images par un
+ * convertisseur public (wsrv.nl) qui renvoie un JPEG 1200x630.
+ */
+export function facebookSafeImage(
+  src: string,
+  opts: { width?: number; height?: number; crop?: boolean } = {},
+): string {
+  if (!/^https:\/\//i.test(src)) return src;
+  if (!/\.(avif|heic|heif)(\?|$)/i.test(src)) return src;
+  const params = new URLSearchParams({ url: src, output: "jpg", q: "85" });
+  if (opts.crop !== false) {
+    params.set("w", String(opts.width ?? 1200));
+    params.set("h", String(opts.height ?? 630));
+    params.set("fit", "cover");
+  } else {
+    params.set("w", "1200");
+  }
+  return `https://wsrv.nl/?${params.toString()}`;
+}
+
 export function ogImageTags(
   image: string,
   opts: {
@@ -31,9 +53,13 @@ export function ogImageTags(
     declareSize?: boolean;
   } = { baseUrl: "" },
 ): MetaTag[] {
-  const src = absoluteImage(image, opts.baseUrl);
   const width = opts.width ?? 1200;
   const height = opts.height ?? 630;
+  const src = facebookSafeImage(absoluteImage(image, opts.baseUrl), {
+    width,
+    height,
+    crop: opts.declareSize !== false,
+  });
   const type = /\.png(\?|$)/i.test(src)
     ? "image/png"
     : /\.webp(\?|$)/i.test(src)
