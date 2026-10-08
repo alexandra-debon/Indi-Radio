@@ -134,10 +134,10 @@ function RadioModePage() {
 
       <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col items-center justify-between px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 md:justify-start md:px-6 md:pb-10 md:pt-4">
         {/* Orbe solaire + pochette */}
-        <div className="radio-mode-orb relative aspect-square w-full max-w-[10rem] shrink md:mt-4 md:max-w-[19rem] md:shrink-0">
+        <div className="radio-mode-orb relative my-auto aspect-square w-[min(100%,38dvh,24rem)] shrink-0 md:mt-4 md:mb-0 md:w-full md:max-w-[26rem]">
           <SolarOrb />
           <div className="absolute inset-0 grid place-items-center">
-            <div className="grid size-[62%] place-items-center overflow-hidden rounded-full border-2 border-primary/70 bg-neutral-950 shadow-[0_0_60px_-10px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
+            <div className="grid size-[72%] place-items-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-[0_0_60px_-10px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
               {showImg ? (
                 <img
                   src={artwork}

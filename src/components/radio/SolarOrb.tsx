@@ -25,12 +25,16 @@ export function SolarOrb({ className }: { className?: string }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const color = getComputedStyle(canvas).color || "gold";
-    const FLARES = 48;
+    const color = getComputedStyle(canvas).color;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const FLARES = 64;
     const seeds = Array.from({ length: FLARES }, () => Math.random() * 1000);
     let raf = 0;
     let smooth = 0;
     let t = 0;
+    let previousTime = 0;
+    let previousLevel = 0;
+    let burst = 0;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -52,33 +56,38 @@ export function SolarOrb({ className }: { className?: string }) {
     });
     ro.observe(canvas);
 
-    const draw = () => {
-      raf = requestAnimationFrame(draw);
-      t += 0.016;
+    const draw = (now: number) => {
+      if (!reducedMotion.matches) raf = requestAnimationFrame(draw);
+      const dt = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0.016;
+      previousTime = now;
+      t += dt;
       const rect = canvas.getBoundingClientRect();
       const w = rect.width;
       const h = rect.height;
       if (!w || !h) return;
       const cx = w / 2;
       const cy = h / 2;
-      const base = Math.min(w, h) * 0.32;
+      const base = Math.min(w, h) * 0.365;
 
       const raw = playingRef.current ? levelRef.current : 0;
-      const idle = 0.12 + Math.sin(t * 1.4) * 0.04;
-      const target = Math.max(raw, playingRef.current ? idle : idle * 0.5);
-      smooth += (target - smooth) * 0.18;
+      const idle = 0.14 + Math.sin(t * 1.4) * 0.05;
+      const target = reducedMotion.matches ? 0.12 : Math.max(Math.min(1, raw * 3), playingRef.current ? idle : 0.04);
+      smooth += (target - smooth) * (1 - Math.exp(-dt * (target > smooth ? 24 : 6)));
+      // Fast attacks flare outward; a slower release lets each solar burst dissipate.
+      burst = reducedMotion.matches ? 0 : Math.max(burst * Math.exp(-dt * 4), Math.min(1, Math.max(0, raw - previousLevel) * 14));
+      previousLevel = raw;
 
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
 
       // Halo
-      const halo = ctx.createRadialGradient(cx, cy, base * 0.8, cx, cy, base * (1.5 + smooth));
+      const halo = ctx.createRadialGradient(cx, cy, base * 0.85, cx, cy, Math.min(w, h) * 0.5);
       halo.addColorStop(0, color);
       halo.addColorStop(1, "transparent");
-      ctx.globalAlpha = 0.14 + smooth * 0.25;
+      ctx.globalAlpha = 0.2 + smooth * 0.3 + burst * 0.15;
       ctx.fillStyle = halo;
       ctx.beginPath();
-      ctx.arc(cx, cy, base * (1.6 + smooth), 0, Math.PI * 2);
+      ctx.arc(cx, cy, Math.min(w, h) * 0.5, 0, Math.PI * 2);
       ctx.fill();
 
       // Éruptions
@@ -89,14 +98,35 @@ export function SolarOrb({ className }: { className?: string }) {
         const a = (i / FLARES) * Math.PI * 2;
         const noise =
           Math.sin(t * 2.2 + seeds[i]) * 0.5 + Math.sin(t * 5.3 + seeds[i] * 1.7) * 0.5;
-        const len = base * (0.12 + smooth * (0.7 + noise * 0.55));
+        const len = base * (0.13 + (smooth * 0.17 + burst * 0.12) * (0.75 + noise * 0.25));
         const r0 = base * 1.02;
         const r1 = r0 + Math.max(2, len);
-        ctx.globalAlpha = 0.25 + smooth * 0.6;
-        ctx.lineWidth = 1.5 + smooth * 2.5;
+        ctx.globalAlpha = 0.5 + smooth * 0.35;
+        ctx.lineWidth = 1.5 + smooth * 3 + burst * 1.5;
         ctx.beginPath();
         ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
-        ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+        const bend = a + Math.sin(t * 2 + seeds[i]) * 0.065;
+        ctx.quadraticCurveTo(
+          cx + Math.cos(bend) * (r0 + len * 0.6),
+          cy + Math.sin(bend) * (r0 + len * 0.6),
+          cx + Math.cos(a) * r1, cy + Math.sin(a) * r1,
+        );
+        ctx.stroke();
+      }
+
+      // Broad looping prominences between the fine rays.
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2 + Math.sin(t * 0.4) * 0.08;
+        const reach = base * (1.15 + smooth * 0.14 + burst * 0.06);
+        ctx.globalAlpha = 0.22 + smooth * 0.45;
+        ctx.lineWidth = 1.5 + smooth * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a - 0.04) * base, cy + Math.sin(a - 0.04) * base);
+        ctx.bezierCurveTo(
+          cx + Math.cos(a - 0.09) * reach, cy + Math.sin(a - 0.09) * reach,
+          cx + Math.cos(a + 0.09) * reach, cy + Math.sin(a + 0.09) * reach,
+          cx + Math.cos(a + 0.04) * base, cy + Math.sin(a + 0.04) * base,
+        );
         ctx.stroke();
       }
 
@@ -104,7 +134,7 @@ export function SolarOrb({ className }: { className?: string }) {
       ctx.globalAlpha = 0.9;
       ctx.lineWidth = 2 + smooth * 3;
       ctx.beginPath();
-      ctx.arc(cx, cy, base * (1 + smooth * 0.05), 0, Math.PI * 2);
+      ctx.arc(cx, cy, base * (1 + smooth * 0.025), 0, Math.PI * 2);
       ctx.stroke();
 
       ctx.globalCompositeOperation = "source-over";
