@@ -12,6 +12,7 @@ import { shareNative, isNative } from "@/lib/native";
 import { useT, useLang } from "@/lib/i18n";
 import { trackEvent } from "@/lib/plausible";
 import { withHl } from "@/lib/og-lang";
+import { SITE_ORIGIN } from "@/lib/canonical";
 
 export type ShareTarget = {
   /**
@@ -24,14 +25,26 @@ export type ShareTarget = {
   text?: string;
 };
 
+/**
+ * Facebook ne peut lire que le site public : un lien depuis l'aperçu, l'app
+ * iPhone/Android (capacitor://) ou un autre domaine interne ne donnerait
+ * aucune image ni aucun titre. On réécrit donc toujours vers le domaine public.
+ */
 function resolveUrl(url?: string): string {
-  if (typeof window === "undefined") return url ?? "";
-  if (!url) return window.location.href;
-  if (/^https?:\/\//i.test(url)) return url;
+  const raw = url ?? (typeof window !== "undefined" ? window.location.href : "/");
   try {
-    return new URL(url, window.location.origin).toString();
+    const base = typeof window !== "undefined" ? window.location.origin : SITE_ORIGIN;
+    const u = new URL(raw, /^[a-z]+:\/\//i.test(base) ? base : SITE_ORIGIN);
+    const local = typeof window !== "undefined" ? window.location.host : "";
+    const isInternal =
+      u.host === local ||
+      /(^|\.)lovable\.app$|(^|\.)lovableproject\.com$|^localhost(:\d+)?$/i.test(u.host) ||
+      !/^https?:$/.test(u.protocol);
+    if (!isInternal) return u.toString();
+    const pub = new URL(SITE_ORIGIN);
+    return `${pub.origin}${u.pathname}${u.search}${u.hash}`;
   } catch {
-    return url;
+    return raw;
   }
 }
 
