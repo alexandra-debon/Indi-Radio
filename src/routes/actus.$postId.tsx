@@ -138,9 +138,9 @@ function NewsDetailPage() {
         <ArrowLeft className="size-3.5" /> Blog InDi ArT CulTuRe
       </Link>
       <article className="card-brut overflow-hidden">
-        {post.image_url && <img src={post.image_url} alt="" className="h-56 w-full object-cover" />}
-        <div className="space-y-3 p-4">
-          <h1 className="text-2xl font-bold">
+        {post.image_url && <img src={post.image_url} alt="" className="h-64 w-full object-cover sm:h-80" />}
+        <div className="space-y-4 p-4 sm:p-6">
+          <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
             <TranslatedText entityType="news_post" entityKey={post.id} field="title" text={post.title} />
           </h1>
           <div className="flex items-center justify-between gap-2">
@@ -148,13 +148,15 @@ function NewsDetailPage() {
             <span className="text-[10px] text-muted-foreground">Publié par {author}</span>
           </div>
           {body && (
-            <p className="whitespace-pre-wrap text-sm">
+            <p className="whitespace-pre-wrap text-base leading-relaxed sm:text-[15px]">
               <TranslatedText entityType="news_post" entityKey={post.id} field="content" text={body}>
                 {(txt) => <>{renderRich(txt)}</>}
               </TranslatedText>
             </p>
           )}
-          <UrlEmbeds text={post.content ?? ""} />
+          <div className="-mx-4 sm:mx-0">
+            <UrlEmbeds text={post.content ?? ""} />
+          </div>
           {post.embed_url && (
             <EmbedFrame url={post.embed_url} height={post.embed_height} title={post.title} className="mt-3" />
           )}
