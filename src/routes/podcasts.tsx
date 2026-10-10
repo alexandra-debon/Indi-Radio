@@ -130,12 +130,12 @@ function PodcastsPage() {
         ))}
       </div>
 
-      {openId && <PodcastEpisodes podcastId={openId} podcast={podcasts.find((p) => p.id === openId)} />}
+      {openId && <PodcastEpisodes podcastId={openId} />}
     </div>
   );
 }
 
-function PodcastEpisodes({ podcastId, podcast }: { podcastId: string; podcast?: { id: string; title: string; description: string | null } }) {
+function PodcastEpisodes({ podcastId }: { podcastId: string }) {
   const t = useT();
   const { data: episodes = [] } = useQuery({
     queryKey: ["episodes", podcastId],
@@ -150,18 +150,7 @@ function PodcastEpisodes({ podcastId, podcast }: { podcastId: string; podcast?: 
       <div className="card-brut space-y-3 p-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold uppercase tracking-widest text-primary">{t("page.podcasts.rate")}</h2>
-          <div className="flex items-center gap-2">
-            {podcast && (
-              <ShareButton
-                target={{
-                  url: `/podcasts#podcast-${podcast.id}`,
-                  title: `${podcast.title} — Podcasts Indi Radio`,
-                  text: podcast.description ?? podcast.title,
-                }}
-              />
-            )}
-            <ContentLikeButton contentType="podcast" contentId={podcastId} />
-          </div>
+          <ContentLikeButton contentType="podcast" contentId={podcastId} />
         </div>
         <ContentRatingSection contentType="podcast" contentId={podcastId} />
         <div className="border-t pt-3">

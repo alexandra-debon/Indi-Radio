@@ -16,7 +16,6 @@ import { ArtistShop } from "@/components/artist/ArtistShop";
 import { clampDescription } from "@/lib/i18n/seo-meta";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
-import { ogImageTags } from "@/lib/og-tags";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { BlockUserButton } from "@/components/moderation/BlockUserButton";
@@ -236,9 +235,9 @@ export const Route = createFileRoute("/u/$pseudo/")({
       (loaderData as any)?.ep_download_url,
     ].filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u));
     const ogImage = (loaderData as any)?.banner_url || loaderData?.avatar_url;
-    if (ogImage && /^https:\/\//i.test(ogImage)) {
-      // Bannière (ou avatar) convertie en JPEG 1200x630 lisible par Facebook.
-      meta.push(...ogImageTags(ogImage, { baseUrl: SITE_ORIGIN, forceJpeg: true }));
+    if (ogImage) {
+      meta.push({ property: "og:image", content: ogImage });
+      meta.push({ name: "twitter:image", content: ogImage });
     }
     return {
       meta,

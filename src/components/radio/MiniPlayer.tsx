@@ -6,7 +6,8 @@ import { LikeButton } from "./LikeButton";
 import { LiveIndicator } from "./LiveIndicator";
 import { useArtwork } from "@/hooks/use-artwork";
 import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
-import { useT, useLang } from "@/lib/i18n";
+import { ShareButton } from "@/components/share/ShareButton";
+import { useT } from "@/lib/i18n";
 
 function formatElapsed(sec: number): string {
   if (!Number.isFinite(sec) || sec < 0) return "0:00";
@@ -18,7 +19,6 @@ function formatElapsed(sec: number): string {
 export function MiniPlayer() {
   const { playing, toggle, currentTrack, elapsedSeconds } = useRadio();
   const t = useT();
-  const { lang } = useLang();
   const { data: artwork } = useArtwork(currentTrack?.artist, currentTrack?.title);
   const [imgError, setImgError] = useState(false);
   useEffect(() => {
@@ -86,6 +86,15 @@ export function MiniPlayer() {
           </div>
           {currentTrack && (
             <>
+              <ShareButton
+                target={{
+                  url: "/",
+                  title: `${currentTrack.artist} — ${currentTrack.title}`,
+                  text: t("live.shareText").replace("{title}", currentTrack.title),
+                }}
+                label={t("live.shareTrack")}
+                variant="icon"
+              />
               <LikeButton trackId={currentTrack.id} />
             </>
           )}

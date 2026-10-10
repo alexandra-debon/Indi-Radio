@@ -13,6 +13,7 @@ import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
 import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
+import { ShareButton } from "@/components/share/ShareButton";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
@@ -31,7 +32,7 @@ const OG_HOME = ogImageForLang("fr");
 
 export const Route = createFileRoute("/")({
   head: async ({ match }) => ({
-    meta: (await localizedStaticMeta("/", match.search, [
+    meta: await localizedStaticMeta("/", match.search, [
       { title: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       {
         name: "description",
@@ -58,7 +59,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       { name: "twitter:description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info." },
       { name: "twitter:image", content: OG_HOME },
-    ])),
+    ]),
     links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/" }],
     scripts: [
       {
@@ -287,6 +288,15 @@ function LivePage() {
                 )}
                 {currentTrack && (
                   <div className="flex items-center gap-1">
+                    <ShareButton
+                      target={{
+                        url: "/",
+                        title: `${currentTrack.artist} — ${currentTrack.title}`,
+                        text: t("live.shareText").replace("{title}", currentTrack.title),
+                      }}
+                      label={t("live.shareTrack")}
+                      variant="icon"
+                    />
                     <LikeButton trackId={currentTrack.id} />
                   </div>
                 )}

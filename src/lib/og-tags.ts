@@ -23,14 +23,10 @@ export function absoluteImage(image: string, baseUrl: string): string {
  */
 export function facebookSafeImage(
   src: string,
-  opts: { width?: number; height?: number; crop?: boolean; force?: boolean } = {},
+  opts: { width?: number; height?: number; crop?: boolean } = {},
 ): string {
   if (!/^https:\/\//i.test(src)) return src;
-  if (/^https:\/\/wsrv\.nl\//i.test(src)) return src;
-  const unreadable = /\.(avif|heic|heif)(\?|$)/i.test(src);
-  // `force` : on convertit toujours (pochettes de chroniques, avatars,
-  // bannières) en JPEG recadré 1200x630, conforme aux dimensions déclarées.
-  if (!unreadable && !opts.force) return src;
+  if (!/\.(avif|heic|heif)(\?|$)/i.test(src)) return src;
   const params = new URLSearchParams({ url: src, output: "jpg", q: "85" });
   if (opts.crop !== false) {
     params.set("w", String(opts.width ?? 1200));
@@ -55,24 +51,14 @@ export function ogImageTags(
      * recadrer ou refuser l'aperçu. Passer `false` pour les omettre.
      */
     declareSize?: boolean;
-    /** Convertit aussi les WebP / formats douteux en JPEG 1200x630. */
-    forceJpeg?: boolean;
   } = { baseUrl: "" },
 ): MetaTag[] {
   const width = opts.width ?? 1200;
   const height = opts.height ?? 630;
-  const abs = absoluteImage(image, opts.baseUrl);
-  // Nos visuels statiques (JPEG/PNG du site) sont déjà au bon format. Toute
-  // autre image (photos d'articles en WebP, liens signés, pochettes externes)
-  // passe en JPEG aux dimensions déclarées : l'app Facebook ignore sinon
-  // l'image et publie le lien sans miniature.
-  const ownStatic =
-    abs.startsWith(opts.baseUrl || "\u0000") && /\.(jpe?g|png)(\?|$)/i.test(abs);
-  const src = facebookSafeImage(abs, {
+  const src = facebookSafeImage(absoluteImage(image, opts.baseUrl), {
     width,
     height,
     crop: opts.declareSize !== false,
-    force: opts.forceJpeg ?? !ownStatic,
   });
   const type = /\.png(\?|$)/i.test(src)
     ? "image/png"
