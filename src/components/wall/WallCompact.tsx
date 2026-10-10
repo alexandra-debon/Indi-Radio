@@ -9,7 +9,7 @@ import { enUS, fr } from "date-fns/locale";
 import type { Locale } from "date-fns";
 import { Link } from "@tanstack/react-router";
 import { renderRich } from "@/lib/rich-text";
-import { parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
+import { extractUrls, parseMediaUrl, stripMediaUrls } from "@/lib/media-embed";
 import { flipHtml5ThumbnailUrl, normalizeFlipHtml5Url } from "@/lib/fliphtml5";
 import { vimeoThumbnail } from "@/lib/teevi-share-image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -295,7 +295,7 @@ function FeedTeasers() {
           .limit(3),
         supabase
           .from("news_posts")
-          .select("id, title, content, image_url, created_at")
+          .select("id, title, content, image_url, image_urls, embed_url, created_at")
           .order("created_at", { ascending: false })
           .limit(2),
         supabase
@@ -351,12 +351,16 @@ function FeedTeasers() {
         });
       }
       for (const r of news.data ?? []) {
+        const videoUrls = extractUrls(`${r.content || ""}\n${r.embed_url || ""}`);
+        const videoCover = videoUrls
+          .map((url) => clipThumb(url) || vimeoThumbnail(url))
+          .find((thumbnail) => thumbnail !== null) ?? null;
         out.push({
           kind: "news",
           id: r.id,
           title: r.title,
           excerpt: stripMediaUrls(r.content || "").slice(0, 180),
-          cover: r.image_url,
+          cover: r.image_url || r.image_urls?.[0] || videoCover,
           date: r.created_at,
         });
       }
