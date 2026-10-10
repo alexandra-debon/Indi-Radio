@@ -61,11 +61,18 @@ export function ogImageTags(
 ): MetaTag[] {
   const width = opts.width ?? 1200;
   const height = opts.height ?? 630;
-  const src = facebookSafeImage(absoluteImage(image, opts.baseUrl), {
+  const abs = absoluteImage(image, opts.baseUrl);
+  // Nos visuels statiques (JPEG/PNG du site) sont déjà au bon format. Toute
+  // autre image (photos d'articles en WebP, liens signés, pochettes externes)
+  // passe en JPEG aux dimensions déclarées : l'app Facebook ignore sinon
+  // l'image et publie le lien sans miniature.
+  const ownStatic =
+    abs.startsWith(opts.baseUrl || "\u0000") && /\.(jpe?g|png)(\?|$)/i.test(abs);
+  const src = facebookSafeImage(abs, {
     width,
     height,
     crop: opts.declareSize !== false,
-    force: opts.forceJpeg,
+    force: opts.forceJpeg ?? !ownStatic,
   });
   const type = /\.png(\?|$)/i.test(src)
     ? "image/png"
