@@ -90,9 +90,6 @@ export function ShareButton({
   // Libellé traduit par défaut, surchargeable par la prop `label`.
   const shareLabel = label ?? (en ? "Share" : "Partager");
   const otherAppsLabel = en ? "Other apps…" : "Autres apps…";
-  const pasteHint = en
-    ? "Link copied — paste it into your Facebook post."
-    : "Lien copié — colle-le dans ta publication Facebook.";
   useEffect(() => {
     const native = isNative();
     const hasShare = typeof navigator !== "undefined" && "share" in navigator;
@@ -128,18 +125,6 @@ export function ShareButton({
     const w = window.open(href, "_blank");
     if (w) w.opener = null;
     else window.location.href = href;
-  }
-
-  /** Feuille de partage du téléphone avec le lien SEUL (aperçu Facebook garanti). */
-  async function shareLinkOnly(network: string): Promise<boolean> {
-    if (!canSheet) return false;
-    try {
-      await shareNative({ url });
-      trackShare(`${network}_sheet`);
-      return true;
-    } catch {
-      return false;
-    }
   }
 
   function shareFacebook() {
