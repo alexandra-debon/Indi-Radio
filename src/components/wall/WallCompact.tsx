@@ -335,7 +335,7 @@ function FeedTeasers() {
           id: r.id,
           title: r.title,
           excerpt: stripMediaUrls(r.body || "").slice(0, 180),
-          cover: r.og_image_url || r.cover_url || flipHtml5ThumbnailUrl(r.magazine_url),
+          cover: r.cover_url || r.og_image_url || flipHtml5ThumbnailUrl(r.magazine_url),
           date: r.created_at,
           url: r.magazine_url,
         });
