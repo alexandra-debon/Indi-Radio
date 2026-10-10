@@ -135,7 +135,7 @@ function PodcastsPage() {
   );
 }
 
-function PodcastEpisodes({ podcastId }: { podcastId: string }) {
+function PodcastEpisodes({ podcastId, podcast }: { podcastId: string; podcast?: { id: string; title: string; description: string | null } }) {
   const t = useT();
   const { data: episodes = [] } = useQuery({
     queryKey: ["episodes", podcastId],
