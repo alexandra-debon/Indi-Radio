@@ -26,7 +26,10 @@ export function facebookSafeImage(
   opts: { width?: number; height?: number; crop?: boolean } = {},
 ): string {
   if (!/^https:\/\//i.test(src)) return src;
-  if (!/\.(avif|heic|heif)(\?|$)/i.test(src)) return src;
+  // Images du stockage (renvoient `x-robots-tag: none`, que Facebook respecte)
+  // et formats peu lus (AVIF/HEIC/WebP) → JPEG via le convertisseur.
+  const fromStorage = /\.supabase\.co\/storage\//i.test(src);
+  if (!fromStorage && !/\.(avif|heic|heif|webp)(\?|$)/i.test(src)) return src;
   const params = new URLSearchParams({ url: src, output: "jpg", q: "85" });
   if (opts.crop !== false) {
     params.set("w", String(opts.width ?? 1200));
