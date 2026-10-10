@@ -8,7 +8,6 @@ import { useArtwork } from "@/hooks/use-artwork";
 import { AdminChatTrigger } from "@/components/chat/AdminChatTrigger";
 import { ShareButton } from "@/components/share/ShareButton";
 import { useT, useLang } from "@/lib/i18n";
-import { nowPlayingLabel, nowPlayingShareUrl } from "@/lib/now-playing-share";
 
 function formatElapsed(sec: number): string {
   if (!Number.isFinite(sec) || sec < 0) return "0:00";

@@ -60,4 +60,4 @@ Key points:
 4. **Admin override** is allowed because `has_role(auth.uid(), 'admin')` is checked inside the trigger function.
 
 Therefore, the RLS policy is intentionally broad at the row level, while the trigger enforces the column-level restriction. This is the recommended pattern from the finding itself ("Add a trigger or column-level grants/policy…"). Do not narrow the RLS policy or add column-level grants; the trigger is the intended control.
-- On phones, the Facebook entry in `ShareButton` uses the system share sheet with the URL only — the Facebook app swallows `sharer.php` links, and Android drops the preview when text is mixed with the URL.
+- `ShareButton` opens the official network share URLs (Facebook `sharer.php`) on every device; the radio now-playing share was removed at the owner's request — keep pages statically tagged instead.
