@@ -213,8 +213,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       { name: "twitter:description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info." },
       { property: "og:image", content: ogImageForLang("fr") },
-      { property: "og:image:secure_url", content: ogImageForLang("fr") },
-      { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:image", content: ogImageForLang("fr") },

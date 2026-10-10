@@ -23,10 +23,14 @@ export function absoluteImage(image: string, baseUrl: string): string {
  */
 export function facebookSafeImage(
   src: string,
-  opts: { width?: number; height?: number; crop?: boolean } = {},
+  opts: { width?: number; height?: number; crop?: boolean; force?: boolean } = {},
 ): string {
   if (!/^https:\/\//i.test(src)) return src;
-  if (!/\.(avif|heic|heif)(\?|$)/i.test(src)) return src;
+  if (/^https:\/\/wsrv\.nl\//i.test(src)) return src;
+  const unreadable = /\.(avif|heic|heif)(\?|$)/i.test(src);
+  // `force` : on convertit toujours (pochettes de chroniques, avatars,
+  // bannières) en JPEG recadré 1200x630, conforme aux dimensions déclarées.
+  if (!unreadable && !opts.force) return src;
   const params = new URLSearchParams({ url: src, output: "jpg", q: "85" });
   if (opts.crop !== false) {
     params.set("w", String(opts.width ?? 1200));
@@ -51,6 +55,8 @@ export function ogImageTags(
      * recadrer ou refuser l'aperçu. Passer `false` pour les omettre.
      */
     declareSize?: boolean;
+    /** Convertit aussi les WebP / formats douteux en JPEG 1200x630. */
+    forceJpeg?: boolean;
   } = { baseUrl: "" },
 ): MetaTag[] {
   const width = opts.width ?? 1200;
@@ -59,6 +65,7 @@ export function ogImageTags(
     width,
     height,
     crop: opts.declareSize !== false,
+    force: opts.forceJpeg,
   });
   const type = /\.png(\?|$)/i.test(src)
     ? "image/png"
