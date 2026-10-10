@@ -31,15 +31,27 @@ export async function shareNative(payload: { title?: string; text?: string; url?
   const { title, text, url } = payload;
   if (isNative()) {
     const { Share } = await import("@capacitor/share");
-    await Share.share({ title, text, url, dialogTitle: title });
+    // Ne transmettre que les champs remplis : sur Android, Facebook n'affiche
+    // l'aperçu que si l'envoi contient le lien seul.
+    await Share.share({
+      ...(title ? { title, dialogTitle: title } : {}),
+      ...(text ? { text } : {}),
+      ...(url ? { url } : {}),
+    });
     return;
   }
   if (typeof navigator !== "undefined" && "share" in navigator) {
     try {
-      await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title, text, url });
+      await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({
+        ...(title ? { title } : {}),
+        ...(text ? { text } : {}),
+        ...(url ? { url } : {}),
+      });
       return;
-    } catch {
-      /* user cancelled */
+    } catch (err) {
+      // Annulation par l'utilisateur : on s'arrête là, sans copier.
+      if ((err as { name?: string })?.name === "AbortError") return;
+      throw err;
     }
   }
   if (typeof navigator !== "undefined" && navigator.clipboard && url) {
