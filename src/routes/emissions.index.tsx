@@ -106,6 +106,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-black/70 p-2 text-left text-xs font-semibold">{s.title}</div>
               </button>
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
