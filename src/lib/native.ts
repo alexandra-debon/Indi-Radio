@@ -54,7 +54,8 @@ export async function shareNative(payload: { title?: string; text?: string; url?
       throw err;
     }
   }
-  if (typeof navigator !== "undefined" && navigator.clipboard && url) {
-    await navigator.clipboard.writeText(url);
+  const nav = (typeof navigator !== "undefined" ? navigator : undefined) as Navigator | undefined;
+  if (nav?.clipboard && url) {
+    await nav.clipboard.writeText(url);
   }
 }
