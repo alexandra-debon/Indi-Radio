@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send } from "lucide-react";
+import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send, Twitter } from "lucide-react";
 import { toast } from "@/lib/toast";
 import {
   DropdownMenu,
@@ -162,6 +162,20 @@ export function ShareButton({
         >
           <Facebook className="size-4" /> Facebook
         </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            // Même ouverture explicite que Facebook : un lien simple peut être
+            // perdu quand le menu se ferme avant que le téléphone ne suive.
+            e.preventDefault();
+            trackShare("twitter");
+            const w = window.open(links.twitter, "_blank");
+            if (w) w.opener = null;
+            if (!w) window.location.href = links.twitter;
+            setOpen(false);
+          }}
+        >
+          <Twitter className="size-4" /> X (Twitter)
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href={links.linkedin} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("linkedin")}>
             <Linkedin className="size-4" /> LinkedIn
@@ -202,6 +216,7 @@ function buildShareLinks({ url, title, text }: { url: string; title: string; tex
   const body = encodeURIComponent(`${text}\n\n${url}`);
   return {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+    twitter: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
     whatsapp: `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`,
     telegram: `https://t.me/share/url?url=${u}&text=${t}`,
