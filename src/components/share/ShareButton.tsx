@@ -148,10 +148,19 @@ export function ShareButton({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuItem asChild>
-          <a href={links.facebook} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("facebook")}>
-            <Facebook className="size-4" /> Facebook
-          </a>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            // Ouverture explicite : un lien dans le menu peut être perdu quand
+            // le menu se ferme avant que le téléphone ne suive le lien.
+            e.preventDefault();
+            trackShare("facebook");
+            const w = window.open(links.facebook, "_blank");
+            if (w) w.opener = null;
+            if (!w) window.location.href = links.facebook;
+            setOpen(false);
+          }}
+        >
+          <Facebook className="size-4" /> Facebook
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href={links.linkedin} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("linkedin")}>
