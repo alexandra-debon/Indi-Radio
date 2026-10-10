@@ -28,10 +28,9 @@ export function facebookSafeImage(
   if (!/^https:\/\//i.test(src)) return src;
   if (/^https:\/\/wsrv\.nl\//i.test(src)) return src;
   const unreadable = /\.(avif|heic|heif)(\?|$)/i.test(src);
-  // `force` : on convertit aussi les WebP / images sans extension (pochettes
-  // de chroniques, avatars, bannières) en JPEG 1200x630 lisible partout.
-  const alreadyJpegOrPng = /\.(jpe?g|png)(\?|$)/i.test(src);
-  if (!unreadable && !(opts.force && !alreadyJpegOrPng)) return src;
+  // `force` : on convertit toujours (pochettes de chroniques, avatars,
+  // bannières) en JPEG recadré 1200x630, conforme aux dimensions déclarées.
+  if (!unreadable && !opts.force) return src;
   const params = new URLSearchParams({ url: src, output: "jpg", q: "85" });
   if (opts.crop !== false) {
     params.set("w", String(opts.width ?? 1200));
