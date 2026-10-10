@@ -66,8 +66,8 @@ export function magazineShareImage(
   entry: { og_image_url?: string | null; cover_url?: string | null; magazine_url?: string | null },
   fallback: string,
 ): { image: string; landscape: boolean } {
-  if (entry.og_image_url) return { image: entry.og_image_url, landscape: true };
   if (entry.cover_url) return { image: entry.cover_url, landscape: true };
+  if (entry.og_image_url) return { image: entry.og_image_url, landscape: true };
   const shot = entry.magazine_url ? flipHtml5ThumbnailUrl(entry.magazine_url) : null;
   if (shot) return { image: shot, landscape: false };
   return { image: fallback, landscape: true };
