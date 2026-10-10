@@ -2,7 +2,11 @@
  *  (le module référence `document` au top-level et casse le rendu serveur). */
 function getCapacitor(): { isNativePlatform: () => boolean; getPlatform: () => string } | null {
   if (typeof window === "undefined" || typeof document === "undefined") return null;
-  const cap = (globalThis as unknown as { Capacitor?: { isNativePlatform: () => boolean; getPlatform: () => string } }).Capacitor;
+  const cap = (
+    globalThis as unknown as {
+      Capacitor?: { isNativePlatform: () => boolean; getPlatform: () => string };
+    }
+  ).Capacitor;
   return cap ?? null;
 }
 
@@ -27,7 +31,11 @@ export function getPlatform(): "ios" | "android" | "web" {
 }
 
 /** Partage natif (feuille système sur mobile, navigator.share sinon, fallback clipboard). */
-export async function shareNative(payload: { title?: string; text?: string; url?: string }): Promise<void> {
+export async function shareNative(payload: {
+  title?: string;
+  text?: string;
+  url?: string;
+}): Promise<void> {
   const { title, text, url } = payload;
   if (isNative()) {
     const { Share } = await import("@capacitor/share");
@@ -54,7 +62,7 @@ export async function shareNative(payload: { title?: string; text?: string; url?
       throw err;
     }
   }
-  const nav = (typeof navigator !== "undefined" ? navigator : undefined) as Navigator | undefined;
+  const nav = (globalThis as { navigator?: Navigator }).navigator;
   if (nav?.clipboard && url) {
     await nav.clipboard.writeText(url);
   }

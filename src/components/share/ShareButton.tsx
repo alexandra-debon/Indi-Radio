@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
-import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send, Twitter, Smartphone } from "lucide-react";
+import {
+  Share2,
+  Copy,
+  Mail,
+  Link as LinkIcon,
+  Facebook,
+  Linkedin,
+  MessageCircle,
+  Send,
+  Twitter,
+  Smartphone,
+} from "lucide-react";
 import { toast } from "@/lib/toast";
 import {
   DropdownMenu,
@@ -135,12 +146,10 @@ export function ShareButton({
     if (!mobile) {
       // Ordinateur : la fenêtre de partage Facebook lit l'aperçu de la page.
       trackShare("facebook");
-      const w = window.open(
-        links.facebook,
-        "fb-share",
-        "width=626,height=560,noopener,noreferrer",
-      );
-      if (!w) window.location.href = links.facebook;
+      // Pas de « noopener » ici : il ferait renvoyer null à window.open.
+      const w = window.open(links.facebook, "fb-share", "width=626,height=560");
+      if (w) w.opener = null;
+      else window.location.href = links.facebook;
       return;
     }
     if (await shareLinkOnly("facebook")) return;
@@ -178,7 +187,9 @@ export function ShareButton({
           type="button"
           aria-label={shareLabel}
           title={shareLabel}
-          onClick={(e) => { e.stopPropagation(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           className={`${triggerClass} ${className}`}
         >
           <Share2 className="size-3.5" />
@@ -264,7 +275,12 @@ export function ShareButton({
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); copy(); }}>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            copy();
+          }}
+        >
           <Copy className="size-4" /> {t("share.copy")}
         </DropdownMenuItem>
       </DropdownMenuContent>
