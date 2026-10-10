@@ -130,7 +130,7 @@ function PodcastsPage() {
         ))}
       </div>
 
-      {openId && <PodcastEpisodes podcastId={openId} />}
+      {openId && <PodcastEpisodes podcastId={openId} podcast={podcasts.find((p) => p.id === openId)} />}
     </div>
   );
 }
