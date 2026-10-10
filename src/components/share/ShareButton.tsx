@@ -142,26 +142,17 @@ export function ShareButton({
     }
   }
 
-  async function shareFacebook() {
+  function shareFacebook() {
+    // Lien officiel de partage Facebook : ouvre directement la fenêtre de
+    // publication avec la miniature de la page (site, iPhone, Android).
+    trackShare("facebook");
     if (!mobile) {
-      // Ordinateur : la fenêtre de partage Facebook lit l'aperçu de la page.
-      trackShare("facebook");
-      // Pas de « noopener » ici : il ferait renvoyer null à window.open.
       const w = window.open(links.facebook, "fb-share", "width=626,height=560");
       if (w) w.opener = null;
       else window.location.href = links.facebook;
       return;
     }
-    if (await shareLinkOnly("facebook")) return;
-    // Secours (téléphone sans feuille de partage) : copier puis ouvrir Facebook.
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      /* noop */
-    }
-    trackShare("facebook_paste");
-    toast.success(pasteHint);
-    openExternal("https://www.facebook.com/");
+    openExternal(links.facebook);
   }
 
   async function shareOtherApps() {

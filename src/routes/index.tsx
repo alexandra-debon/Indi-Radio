@@ -13,7 +13,6 @@ import { VolumeControl } from "@/components/radio/VolumeControl";
 import { AudioBars } from "@/components/radio/AudioBars";
 import { LiveIndicator } from "@/components/radio/LiveIndicator";
 import { Link } from "@tanstack/react-router";
-import { ShareButton } from "@/components/share/ShareButton";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { PresenceTicker } from "@/components/radio/PresenceTicker";
@@ -23,7 +22,6 @@ import { useHashHighlight } from "@/lib/notif-navigate";
 import { useServerFn } from "@tanstack/react-start";
 import { getUserCount } from "@/lib/public-stats.functions";
 import { ogImageForLang } from "@/lib/og-image";
-import { applyNowPlayingMeta, nowPlayingLabel, nowPlayingShareUrl } from "@/lib/now-playing-share";
 
 
 import { useLang, useT } from "@/lib/i18n";
@@ -33,7 +31,7 @@ const OG_HOME = ogImageForLang("fr");
 
 export const Route = createFileRoute("/")({
   head: async ({ match }) => ({
-    meta: applyNowPlayingMeta(await localizedStaticMeta("/", match.search, [
+    meta: (await localizedStaticMeta("/", match.search, [
       { title: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       {
         name: "description",
@@ -60,7 +58,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
       { name: "twitter:description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info." },
       { name: "twitter:image", content: OG_HOME },
-    ]), match.search),
+    ])),
     links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/" }],
     scripts: [
       {
@@ -289,15 +287,6 @@ function LivePage() {
                 )}
                 {currentTrack && (
                   <div className="flex items-center gap-1">
-                    <ShareButton
-                      target={{
-                        url: nowPlayingShareUrl(currentTrack.artist, currentTrack.title, heroArtwork),
-                        title: `${nowPlayingLabel(lang === "en" ? "en" : "fr")} : ${currentTrack.artist} — ${currentTrack.title}`,
-                        text: `${nowPlayingLabel(lang === "en" ? "en" : "fr")} : ${currentTrack.artist} — ${currentTrack.title}`,
-                      }}
-                      label={t("live.shareTrack")}
-                      variant="icon"
-                    />
                     <LikeButton trackId={currentTrack.id} />
                   </div>
                 )}
