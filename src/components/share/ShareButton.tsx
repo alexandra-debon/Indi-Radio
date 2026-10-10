@@ -143,16 +143,30 @@ export function ShareButton({
   }
 
   function shareFacebook() {
-    // Lien officiel de partage Facebook : ouvre directement la fenêtre de
-    // publication avec la miniature de la page (site, iPhone, Android).
-    trackShare("facebook");
     if (!mobile) {
+      // Ordinateur : fenêtre officielle de publication Facebook.
+      trackShare("facebook");
       const w = window.open(links.facebook, "fb-share", "width=626,height=560");
       if (w) w.opener = null;
       else window.location.href = links.facebook;
       return;
     }
-    openExternal(links.facebook);
+    // Téléphone : l'app Facebook intercepte les liens facebook.com et
+    // s'ouvre sur le fil vide. La feuille de partage du téléphone, avec le
+    // lien SEUL, ouvre au contraire la fenêtre de publication Facebook avec
+    // la miniature, le titre et la description de la page.
+    if (canSheet) {
+      shareNative({ url })
+        .then(() => trackShare("facebook_sheet"))
+        .catch(() => {
+          trackShare("facebook_mweb");
+          window.location.href = links.facebookMobile;
+        });
+      return;
+    }
+    // Secours : formulaire de publication Facebook mobile (jamais l'accueil).
+    trackShare("facebook_mweb");
+    window.location.href = links.facebookMobile;
   }
 
   async function shareOtherApps() {
@@ -285,6 +299,7 @@ function buildShareLinks({ url, title, text }: { url: string; title: string; tex
   const body = encodeURIComponent(`${text}\n\n${url}`);
   return {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+    facebookMobile: `https://m.facebook.com/sharer.php?u=${u}`,
     twitter: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
     whatsapp: `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`,
