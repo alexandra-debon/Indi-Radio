@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send, Twitter } from "lucide-react";
+import { Share2, Copy, Mail, Link as LinkIcon, Facebook, Linkedin, MessageCircle, Send, Twitter, Smartphone } from "lucide-react";
 import { toast } from "@/lib/toast";
 import {
   DropdownMenu,
@@ -49,10 +49,9 @@ function resolveUrl(url?: string): string {
 }
 
 /**
- * Bouton de partage universel. Sur mobile natif ou navigateurs supportant
- * navigator.share, ouvre la feuille système. Sinon, affiche un menu avec
- * Facebook, LinkedIn, WhatsApp, Telegram, Reddit, Email et « Copier le lien ».
- * (Pas de X / Twitter, à la demande du produit.)
+ * Bouton de partage universel : même menu partout (site, app iPhone/Android).
+ * Sur téléphone, « Facebook » passe par la feuille de partage du système avec
+ * le lien seul — l'app Facebook ignore sinon le lien de partage web.
  */
 export function ShareButton({
   target,
@@ -69,21 +68,35 @@ export function ShareButton({
   contentType?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [nativeShare, setNativeShare] = useState(false);
+  // Téléphone (app des stores ou navigateur mobile) : Facebook, X, etc.
+  // interceptent leurs liens de partage web, ouvrent leur application et
+  // oublient le lien. On passe alors par la feuille de partage du téléphone.
+  const [mobile, setMobile] = useState(false);
+  const [canSheet, setCanSheet] = useState(false);
   const t = useT();
   const { lang } = useLang();
+  const en = lang === "en";
   // Libellé traduit par défaut, surchargeable par la prop `label`.
-  const shareLabel = label ?? (lang === "en" ? "Share" : "Partager");
+  const shareLabel = label ?? (en ? "Share" : "Partager");
+  const otherAppsLabel = en ? "Other apps…" : "Autres apps…";
+  const pasteHint = en
+    ? "Link copied — paste it into your Facebook post."
+    : "Lien copié — colle-le dans ta publication Facebook.";
   useEffect(() => {
-    // Only use the native sheet inside a real native wrapper (Capacitor).
-    // In browsers (including mobile Safari inside an iframe/preview),
-    // navigator.share often throws NotAllowedError silently — so we
-    // always show our own menu on the web to guarantee a working UI.
-    setNativeShare(isNative());
+    const native = isNative();
+    const hasShare = typeof navigator !== "undefined" && "share" in navigator;
+    const coarse =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(pointer: coarse)").matches;
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const phoneUa = /iPhone|iPad|iPod|Android|Mobile/i.test(ua);
+    setMobile(native || (coarse && phoneUa));
+    setCanSheet(native || hasShare);
   }, []);
   // L'URL partagée porte la langue active (?hl=en) pour que Facebook,
   // LinkedIn ou Substack récupèrent l'aperçu dans la bonne langue.
-  const url = withHl(resolveUrl(target.url), lang === "en" ? "en" : "fr");
+  const url = withHl(resolveUrl(target.url), en ? "en" : "fr");
   const title = target.title ?? (typeof document !== "undefined" ? document.title : "Indi Radio");
   const text = target.text ?? title;
 
@@ -100,14 +113,54 @@ export function ShareButton({
     }
   }
 
-  async function triggerNative() {
+  function openExternal(href: string) {
+    const w = window.open(href, "_blank");
+    if (w) w.opener = null;
+    else window.location.href = href;
+  }
+
+  /** Feuille de partage du téléphone avec le lien SEUL (aperçu Facebook garanti). */
+  async function shareLinkOnly(network: string): Promise<boolean> {
+    if (!canSheet) return false;
+    try {
+      await shareNative({ url });
+      trackShare(`${network}_sheet`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function shareFacebook() {
+    if (!mobile) {
+      // Ordinateur : la fenêtre de partage Facebook lit l'aperçu de la page.
+      trackShare("facebook");
+      const w = window.open(
+        links.facebook,
+        "fb-share",
+        "width=626,height=560,noopener,noreferrer",
+      );
+      if (!w) window.location.href = links.facebook;
+      return;
+    }
+    if (await shareLinkOnly("facebook")) return;
+    // Secours (téléphone sans feuille de partage) : copier puis ouvrir Facebook.
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      /* noop */
+    }
+    trackShare("facebook_paste");
+    toast.success(pasteHint);
+    openExternal("https://www.facebook.com/");
+  }
+
+  async function shareOtherApps() {
     try {
       await shareNative({ title, text, url });
       trackShare("native");
     } catch {
-      // Native share refused (permissions, iframe, etc.) → open the menu.
-      setNativeShare(false);
-      setOpen(true);
+      await copy();
     }
   }
 
@@ -117,21 +170,6 @@ export function ShareButton({
     variant === "chip"
       ? "inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs hover:bg-muted"
       : "inline-flex items-center gap-1 rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground";
-
-  if (nativeShare) {
-    return (
-      <button
-        type="button"
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerNative(); }}
-        aria-label={shareLabel}
-        title={shareLabel}
-        className={`${triggerClass} ${className}`}
-      >
-        <Share2 className="size-3.5" />
-        {variant === "chip" && <span>{shareLabel}</span>}
-      </button>
-    );
-  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -147,16 +185,13 @@ export function ShareButton({
           {variant === "chip" && <span>{shareLabel}</span>}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent align="end" className="w-52" onClick={(e) => e.stopPropagation()}>
         <DropdownMenuItem
           onSelect={(e) => {
-            // Ouverture explicite : un lien dans le menu peut être perdu quand
-            // le menu se ferme avant que le téléphone ne suive le lien.
+            // Appel direct dans le geste de l'utilisateur (exigé par iOS
+            // pour ouvrir la feuille de partage), puis fermeture du menu.
             e.preventDefault();
-            trackShare("facebook");
-            const w = window.open(links.facebook, "_blank");
-            if (w) w.opener = null;
-            if (!w) window.location.href = links.facebook;
+            void shareFacebook();
             setOpen(false);
           }}
         >
@@ -164,43 +199,70 @@ export function ShareButton({
         </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={(e) => {
-            // Même ouverture explicite que Facebook : un lien simple peut être
-            // perdu quand le menu se ferme avant que le téléphone ne suive.
             e.preventDefault();
             trackShare("twitter");
-            const w = window.open(links.twitter, "_blank");
-            if (w) w.opener = null;
-            if (!w) window.location.href = links.twitter;
+            openExternal(links.twitter);
             setOpen(false);
           }}
         >
           <Twitter className="size-4" /> X (Twitter)
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={links.linkedin} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("linkedin")}>
-            <Linkedin className="size-4" /> LinkedIn
-          </a>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            trackShare("linkedin");
+            openExternal(links.linkedin);
+            setOpen(false);
+          }}
+        >
+          <Linkedin className="size-4" /> LinkedIn
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={links.whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("whatsapp")}>
-            <MessageCircle className="size-4" /> WhatsApp
-          </a>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            trackShare("whatsapp");
+            openExternal(links.whatsapp);
+            setOpen(false);
+          }}
+        >
+          <MessageCircle className="size-4" /> WhatsApp
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={links.telegram} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("telegram")}>
-            <Send className="size-4" /> Telegram
-          </a>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            trackShare("telegram");
+            openExternal(links.telegram);
+            setOpen(false);
+          }}
+        >
+          <Send className="size-4" /> Telegram
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={links.reddit} target="_blank" rel="noopener noreferrer" onClick={() => trackShare("reddit")}>
-            <LinkIcon className="size-4" /> Reddit
-          </a>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            trackShare("reddit");
+            openExternal(links.reddit);
+            setOpen(false);
+          }}
+        >
+          <LinkIcon className="size-4" /> Reddit
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href={links.email} onClick={() => trackShare("email")}>
             <Mail className="size-4" /> Email
           </a>
         </DropdownMenuItem>
+        {mobile && canSheet && (
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
+              void shareOtherApps();
+              setOpen(false);
+            }}
+          >
+            <Smartphone className="size-4" /> {otherAppsLabel}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={(e) => { e.preventDefault(); copy(); }}>
           <Copy className="size-4" /> {t("share.copy")}
