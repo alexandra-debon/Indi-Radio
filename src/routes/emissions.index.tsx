@@ -75,17 +75,6 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
         <CarouselContent>
           {data.map((s, i) => (
             <CarouselItem key={s.id} className="basis-1/2 md:basis-1/3">
-              <div className="relative">
-                <div className="absolute right-1.5 top-1.5 z-10">
-                  <ShareButton
-                    target={{
-                      url: `/emissions/${s.id}`,
-                      title: `${s.title} — ${label} · Indi Radio`,
-                      text: s.description ?? s.title,
-                    }}
-                    className="bg-background/80 backdrop-blur"
-                  />
-                </div>
               <button
                 onClick={() => {
                   setIdx(i);
@@ -106,7 +95,6 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-black/70 p-2 text-left text-xs font-semibold">{s.title}</div>
               </button>
-              </div>
             </CarouselItem>
           ))}
         </CarouselContent>

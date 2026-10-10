@@ -68,7 +68,6 @@ export const Route = createFileRoute("/chroniques/$slug")({
       { name: "twitter:card", content: "summary_large_image" },
       ...ogImageTags(loaderData.cover_url || OG_FALLBACK, {
         baseUrl: BASE_URL,
-        forceJpeg: true,
         alt: `${loaderData.title} — ${loaderData.artist}`,
       }),
     ];

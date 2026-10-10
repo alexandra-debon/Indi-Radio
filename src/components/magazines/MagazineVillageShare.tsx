@@ -69,7 +69,7 @@ export function MagazineVillageShare({
           title: entry.title,
           excerpt: body.slice(0, 200) || label(kind),
           content: body || label(kind),
-          cover_url: entry.cover_url || entry.og_image_url || magazineShareImage(entry, "").image || null,
+          cover_url: entry.og_image_url || entry.cover_url || magazineShareImage(entry, "").image || null,
           magazine_url: entry.magazine_url,
           source_kind: kind,
           category: "art",
