@@ -154,7 +154,8 @@ export function ShareButton({
             // le menu se ferme avant que le téléphone ne suive le lien.
             e.preventDefault();
             trackShare("facebook");
-            const w = window.open(links.facebook, "_blank", "noopener,noreferrer");
+            const w = window.open(links.facebook, "_blank");
+            if (w) w.opener = null;
             if (!w) window.location.href = links.facebook;
             setOpen(false);
           }}
