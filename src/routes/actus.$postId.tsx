@@ -41,10 +41,15 @@ export const Route = createFileRoute("/actus/$postId")({
         ],
       };
     }
-    const baseTitle = `${loaderData.title} · Blog InDi ArT CulTuRe — InDi RaDio`;
+    // SEO: keep the article title first (≈60 chars max) then the searched brand "Indi Radio".
+    const shortTitle = loaderData.title.length > 48 ? `${loaderData.title.slice(0, 46).trimEnd()}…` : loaderData.title;
+    const baseTitle = `${shortTitle} | Indi Radio – musique indé`;
+    const excerpt = stripMediaUrls(loaderData.content ?? "").replace(/\s+/g, " ").trim();
+    const kwTail = "Sur Indi Radio, radio 24/7 gratuite de musique et culture indépendante.";
     const baseDesc = clampDescription(
-      stripMediaUrls(loaderData.content ?? "") ||
-        `${loaderData.title} — actualité de la scène indépendante sur InDi RaDio, la radio 24/7 de la musique indépendante.`,
+      excerpt
+        ? `${excerpt.slice(0, 150 - kwTail.length).replace(/\s+\S*$/, "")}… ${kwTail}`
+        : `${loaderData.title} : l'actu musique indé du Blog InDi ArT CulTuRe. ${kwTail}`,
     );
     const localized = await localizedOgText(lang, {
       entityType: "news_post",
