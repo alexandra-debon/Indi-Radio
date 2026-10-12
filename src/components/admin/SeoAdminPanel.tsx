@@ -27,7 +27,71 @@ import {
 } from "@/components/ui/dialog";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { toast } from "@/lib/toast";
-import { Search, Pencil, RotateCcw, Save, ExternalLink, Loader2, Sparkles } from "lucide-react";
+import { Search, Pencil, RotateCcw, Save, ExternalLink, Loader2, Sparkles, ScanSearch } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { SearchConsoleCockpit } from "@/components/admin/SearchConsoleCockpit";
+import { inspectUrl } from "@/lib/search-console.functions";
+
+const VERDICT_FR: Record<string, string> = {
+  PASS: "Indexée sur Google",
+  PARTIAL: "Indexée avec réserves",
+  FAIL: "Pas indexée",
+  NEUTRAL: "Pas indexée",
+  UNKNOWN: "Inconnue de Google",
+};
+
+function IndexingBox({ url }: { url: string }) {
+  const inspect = useServerFn(inspectUrl);
+  const [loading, setLoading] = useState(false);
+  const [res, setRes] = useState<Awaited<ReturnType<typeof inspectUrl>> | null>(null);
+  const run = async () => {
+    setLoading(true);
+    try {
+      setRes(await inspect({ data: { url } }));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Vérification impossible");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const gscLink =
+    res?.inspectLink ??
+    `https://search.google.com/search-console/inspect?resource_id=${encodeURIComponent(
+      res?.siteUrl ?? `${SITE_ORIGIN}/`,
+    )}&id=${encodeURIComponent(url)}`;
+  return (
+    <div className="space-y-2 rounded-md border p-3">
+      <Label>Indexation Google</Label>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" size="sm" variant="outline" onClick={run} disabled={loading}>
+          {loading ? <Loader2 className="mr-1 size-3.5 animate-spin" /> : <ScanSearch className="mr-1 size-3.5" />}
+          Vérifier sur Google
+        </Button>
+        <Button type="button" size="sm" asChild>
+          <a href={gscLink} target="_blank" rel="noreferrer">
+            Demander l'indexation <ExternalLink className="ml-1 size-3" />
+          </a>
+        </Button>
+      </div>
+      {res && (
+        <div className="space-y-0.5 text-xs">
+          <Badge variant={res.verdict === "PASS" ? "default" : "destructive"}>
+            {VERDICT_FR[res.verdict] ?? res.verdict}
+          </Badge>
+          {res.coverageState && <p className="text-muted-foreground">{res.coverageState}</p>}
+          <p className="text-muted-foreground">
+            Dernier passage du robot :{" "}
+            {res.lastCrawlTime ? new Date(res.lastCrawlTime).toLocaleString("fr-FR") : "jamais"}
+          </p>
+        </div>
+      )}
+      <p className="text-[11px] text-muted-foreground">
+        « Demander l'indexation » ouvre ta Search Console sur cette page : clique « Demander une indexation ».
+        Bing et les autres moteurs sont prévenus automatiquement à chaque enregistrement.
+      </p>
+    </div>
+  );
+}
 
 const TAGLINE_FR = "InDi RaDio 24/7 de la musique indépendante";
 const TAGLINE_EN = "InDi RaDio 24/7 independent music radio";
@@ -101,6 +165,8 @@ export function SeoAdminPanel() {
           de l'application sont utilisés.
         </p>
       </div>
+
+      <SearchConsoleCockpit />
 
       <div className="card-brut space-y-2 p-3">
         <h3 className="text-sm font-bold">Ce que voit Google — Sitemap & robots.txt</h3>
@@ -450,6 +516,8 @@ function SeoEditorDialog({
               </div>
             </div>
           </div>
+
+          <IndexingBox url={`${SITE_ORIGIN}${normalizePath(target.path)}`} />
 
           <a
             href={shownUrl}
