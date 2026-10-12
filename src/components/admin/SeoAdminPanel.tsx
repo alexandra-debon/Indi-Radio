@@ -360,7 +360,10 @@ function SeoEditorDialog({
           if (map.get(`${normalizePath(target.path)}|${l}`)) await deleteSeoOverride(target.path, l);
           continue;
         }
-        await saveSeoOverride({ path: target.path, lang: l, ...f });
+        // Canonique automatique : dès qu'un titre/description est personnalisé
+        // sans canonique explicite, on enregistre l'URL canonique de la page.
+        const canonical_url = f.canonical_url || (f.title || f.description ? autoCanonical(l) : "");
+        await saveSeoOverride({ path: target.path, lang: l, ...f, canonical_url });
       }
       await qc.invalidateQueries({ queryKey: ["seo-overrides"] });
       void pingIndexNow(target.path);
