@@ -331,10 +331,15 @@ function SeoEditorDialog({
   const shownUrl =
     form.canonical_url || `${SITE_ORIGIN}${normalizePath(target.path)}${lang === "en" ? "?hl=en" : ""}`;
 
+  /** URL canonique automatique pour une langue donnée. */
+  const autoCanonical = (l: Lang) =>
+    `${SITE_ORIGIN}${normalizePath(target.path)}${l === "en" ? "?hl=en" : ""}`;
+
   const suggest = () => {
     const tagline = lang === "fr" ? TAGLINE_FR : TAGLINE_EN;
     setForm({
       title: form.title || `${target.label} — ${tagline}`.slice(0, 60),
+      canonical_url: form.canonical_url || autoCanonical(lang),
       description:
         form.description ||
         (lang === "fr"
@@ -355,7 +360,10 @@ function SeoEditorDialog({
           if (map.get(`${normalizePath(target.path)}|${l}`)) await deleteSeoOverride(target.path, l);
           continue;
         }
-        await saveSeoOverride({ path: target.path, lang: l, ...f });
+        // Canonique automatique : dès qu'un titre/description est personnalisé
+        // sans canonique explicite, on enregistre l'URL canonique de la page.
+        const canonical_url = f.canonical_url || (f.title || f.description ? autoCanonical(l) : "");
+        await saveSeoOverride({ path: target.path, lang: l, ...f, canonical_url });
       }
       await qc.invalidateQueries({ queryKey: ["seo-overrides"] });
       void pingIndexNow(target.path);
