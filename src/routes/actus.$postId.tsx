@@ -54,11 +54,22 @@ export const Route = createFileRoute("/actus/$postId")({
     const localized = await localizedOgText(lang, {
       entityType: "news_post",
       entityKey: loaderData.id,
-      title: baseTitle,
-      description: baseDesc,
+      // Translate the article itself before adding English search terms, so
+      // truncation cannot drop the brand or leave a French keyword suffix.
+      title: lang === "en" ? loaderData.title : baseTitle,
+      description: lang === "en" ? (excerpt.slice(0, 500) || loaderData.title) : baseDesc,
     });
-    const title = localized.title;
-    const desc = clampDescription(localized.description);
+    const englishSuffix = " | Indi Radio – Indie Music";
+    const englishTitleBudget = 70 - englishSuffix.length;
+    const englishArticleTitle = localized.title.length > englishTitleBudget
+      ? `${localized.title.slice(0, englishTitleBudget - 1).replace(/\s+\S*$/, "").trimEnd()}…`
+      : localized.title;
+    const title = lang === "en" ? `${englishArticleTitle}${englishSuffix}` : localized.title;
+    const englishTail = "On Indi Radio: free 24/7 independent music and culture radio.";
+    const englishExcerpt = clampDescription(localized.description, 155 - englishTail.length - 1);
+    const desc = lang === "en"
+      ? `${englishExcerpt} ${englishTail}`
+      : clampDescription(localized.description);
     const image =
       loaderData.image_url ||
       postVideoThumbnail(`${loaderData.content ?? ""} ${loaderData.embed_url ?? ""}`) ||
@@ -85,14 +96,14 @@ export const Route = createFileRoute("/actus/$postId")({
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "NewsArticle",
-            headline: loaderData.title.slice(0, 110),
+            headline: (lang === "en" ? localized.title : loaderData.title).slice(0, 110),
             description: desc,
             image: [image],
             url,
             mainEntityOfPage: { "@type": "WebPage", "@id": url },
             datePublished: loaderData.created_at,
             dateModified: (loaderData as { updated_at?: string }).updated_at ?? loaderData.created_at,
-            inLanguage: "fr-FR",
+            inLanguage: lang === "en" ? "en" : "fr-FR",
             articleSection: "Blog InDi ArT CulTuRe",
             author: {
               "@type": "Person",

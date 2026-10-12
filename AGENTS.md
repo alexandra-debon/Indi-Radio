@@ -11,6 +11,8 @@
 
 ## Security Notes for Agents
 
+- Blog article heads compose English search terms after translating article text and use the article's `?hl=en` canonical URL, so localized SEO stays language-consistent without changing routes.
+
 - Keep Radio Mode solar animation in `SolarOrb`, driven by the shared player's level subscription with reduced-motion support; this preserves uninterrupted playback and a single audio source.
 
 ### `profiles` update policy — intentional faux positif
