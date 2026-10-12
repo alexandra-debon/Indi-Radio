@@ -110,7 +110,9 @@ export function SeoLocalizer() {
         document.head.appendChild(altEl);
       }
       altEl.setAttribute("content", altLocale);
-    } else {
+    } else if (!/^\/actus\/[^/]+$/.test(pathname)) {
+      // Blog detail heads already compose optimized metadata in the URL's
+      // language. Do not translate them again or restore stale FR originals.
       // Dynamic route (post, album, podcast, …) — the route's head() set FR
       // title/description. Auto-translate them so og:* stays in sync with the
       // rendered content for EN readers, and restore FR originals otherwise.
