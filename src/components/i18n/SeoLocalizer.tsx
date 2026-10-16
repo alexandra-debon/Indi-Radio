@@ -110,8 +110,8 @@ export function SeoLocalizer() {
         document.head.appendChild(altEl);
       }
       altEl.setAttribute("content", altLocale);
-    } else if (!/^\/actus\/[^/]+$/.test(pathname)) {
-      // Blog detail heads already compose optimized metadata in the URL's
+    } else if (!/^\/(actus|u)\/[^/]+$/.test(pathname)) {
+      // Blog and artist profile heads already compose metadata in the URL's
       // language. Do not translate them again or restore stale FR originals.
       // Dynamic route (post, album, podcast, …) — the route's head() set FR
       // title/description. Auto-translate them so og:* stays in sync with the
@@ -240,7 +240,7 @@ export function SeoLocalizer() {
       }
       // Blog detail heads own the shared FR/EN photo, including the French
       // editor thumbnail. Never replace it with a language-specific image.
-      if (ov?.og_image_url && !/^\/actus\/[^/]+$/.test(pathname)) {
+      if (ov?.og_image_url && !/^\/(actus|u)\/[^/]+$/.test(pathname)) {
         put('meta[property="og:image"]', "property", "og:image", ov.og_image_url);
         put('meta[name="twitter:image"]', "name", "twitter:image", ov.og_image_url);
       }
