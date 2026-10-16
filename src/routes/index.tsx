@@ -171,7 +171,7 @@ function LivePage() {
         .limit(30);
       // Filet de sécurité : masque les doublons consécutifs (même titre/artiste)
       // qui pourraient subsister d'anciens relevés concurrents.
-      const rows = data ?? [];
+      const rows = (data ?? []).filter((r) => !isJingleTrack(r));
       const deduped = rows.filter((r, i) => {
         const prev = rows[i - 1];
         return !prev || prev.title !== r.title || prev.artist !== r.artist;
