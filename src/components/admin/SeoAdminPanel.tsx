@@ -525,7 +525,7 @@ function SeoEditorDialog({
             </div>
           </div>
 
-          <IndexingBox url={`${SITE_ORIGIN}${normalizePath(target.path)}`} />
+          <IndexingBox key={lang} url={autoCanonical(lang)} />
 
           <a
             href={shownUrl}
