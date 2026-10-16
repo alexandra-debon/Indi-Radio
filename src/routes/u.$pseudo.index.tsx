@@ -19,6 +19,8 @@ import { localizedOgText } from "@/lib/og-lang-head";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { BlockUserButton } from "@/components/moderation/BlockUserButton";
+import { artistShopPreviewImage, artistShopSeo, artistShopThumbnail } from "@/lib/artist-shop-seo";
+import { ogImageTags } from "@/lib/og-tags";
 
 type SectionKey = "events" | "shop" | "posts";
 
@@ -140,7 +142,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("profiles")
-      .select("pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, artist_genres, artist_location, social_links, website, artist_video_urls, ep_download_url")
+      .select("id, pseudo, avatar_url, bio, points, level, role, is_certified, is_team_indi, banner_url, page_indexable, stage_name, gallery_summary, artist_genres, artist_location, social_links, website, artist_video_urls, ep_download_url, show_shop_section")
       .ilike("pseudo", params.pseudo)
       .maybeSingle();
     if (!data) {
@@ -151,7 +153,17 @@ export const Route = createFileRoute("/u/$pseudo/")({
         throw redirect({ to: "/u/$pseudo", params: { pseudo: String(currentPseudo) }, replace: true });
       }
     }
-    return data;
+    if (!data) return null;
+    const shopEligible = (data.role === "artiste" || data.role === "media") && data.show_shop_section !== false;
+    const { data: shopItems } = shopEligible
+      ? await supabase.from("artist_shop_items")
+          .select("image_url, is_visible")
+          .eq("artist_id", data.id)
+          .eq("is_visible", true)
+          .order("position", { ascending: true })
+          .order("created_at", { ascending: false })
+      : { data: null };
+    return { ...data, hasShop: (shopItems?.length ?? 0) > 0, shopImage: artistShopPreviewImage(shopItems ?? [], data.banner_url, data.avatar_url) };
   },
   head: async ({ params, loaderData, match }) => {
     // Canonical always points at the CURRENT pseudo (the one stored in the
@@ -194,7 +206,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
         : `Profil de @${pseudo} sur InDi RaDio — ${roleLabel}${
             loaderData ? `, niveau ${loaderData.level} · ${loaderData.points} pts` : ""
           }. Réseau social de la musique indépendante.`;
-    const localized = await localizedOgText(lang, {
+    const localized = loaderData?.hasShop ? artistShopSeo(displayName, lang) : await localizedOgText(lang, {
       entityType: "profile",
       entityKey: pseudo,
       title: baseTitle,
@@ -234,8 +246,13 @@ export const Route = createFileRoute("/u/$pseudo/")({
       (loaderData as any)?.website,
       (loaderData as any)?.ep_download_url,
     ].filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u));
-    const ogImage = (loaderData as any)?.banner_url || loaderData?.avatar_url;
-    if (ogImage) {
+    const ogImage = loaderData?.hasShop ? loaderData.shopImage : (loaderData as any)?.banner_url || loaderData?.avatar_url;
+    if (ogImage && loaderData?.hasShop) {
+      meta.push(...ogImageTags(artistShopThumbnail(ogImage), {
+        baseUrl: SITE_ORIGIN,
+        alt: artistShopSeo(displayName, lang).imageAlt,
+      }));
+    } else if (ogImage) {
       meta.push({ property: "og:image", content: ogImage });
       meta.push({ name: "twitter:image", content: ogImage });
     }
