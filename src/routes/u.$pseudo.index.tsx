@@ -163,7 +163,7 @@ export const Route = createFileRoute("/u/$pseudo/")({
           .order("position", { ascending: true })
           .order("created_at", { ascending: false })
       : { data: null };
-    return { ...data, hasShop: (shopItems?.length ?? 0) > 0, shopImage: artistShopPreviewImage(shopItems ?? [], data.banner_url, data.avatar_url) };
+    return { ...data, hasShop: shopEligible, shopImage: artistShopPreviewImage(shopItems ?? [], data.banner_url, data.avatar_url) };
   },
   head: async ({ params, loaderData, match }) => {
     // Canonical always points at the CURRENT pseudo (the one stored in the

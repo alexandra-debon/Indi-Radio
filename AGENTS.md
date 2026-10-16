@@ -11,7 +11,7 @@
 
 ## Security Notes for Agents
 
-- Artist profile loaders derive shop SEO only from visible items in an enabled shop; their leaf heads own bilingual metadata and product-first share photos so client localization cannot restore stale profile text or images.
+- Artist profile loaders derive shop SEO for enabled artist shops and select only visible product photos; their leaf heads own bilingual metadata and product-first share photos so client localization cannot restore stale profile text or images.
 
 - Blog article heads compose English search terms after translating article text and use the article's `?hl=en` canonical URL, so localized SEO stays language-consistent without changing routes.
 
