@@ -16,6 +16,7 @@ import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { renderRich } from "@/lib/rich-text";
 import { postVideoThumbnail } from "@/lib/post-share-image";
 import { vimeoThumbnail } from "@/lib/teevi-share-image";
+import { blogShareImage } from "@/lib/blog-share-image";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogActus}`;
@@ -28,7 +29,13 @@ export const Route = createFileRoute("/actus/$postId")({
       .eq("id", params.postId)
       .maybeSingle();
     if (error || !data) throw notFound();
-    return data;
+    const { data: frenchSeo } = await supabase
+      .from("seo_overrides")
+      .select("og_image_url")
+      .eq("path", `/actus/${params.postId}`)
+      .eq("lang", "fr")
+      .maybeSingle();
+    return { ...data, sharedImage: frenchSeo?.og_image_url ?? null };
   },
   head: async ({ params, loaderData, match }) => {
     const lang = hlFromSearch(match.search);
@@ -70,11 +77,11 @@ export const Route = createFileRoute("/actus/$postId")({
     const desc = lang === "en"
       ? `${englishExcerpt} ${englishTail}`
       : clampDescription(localized.description);
-    const image =
+    const image = blogShareImage(loaderData.sharedImage,
       loaderData.image_url ||
       postVideoThumbnail(`${loaderData.content ?? ""} ${loaderData.embed_url ?? ""}`) ||
       vimeoThumbnail(loaderData.embed_url) ||
-      OG_FALLBACK;
+      OG_FALLBACK);
     return {
       meta: [
         { title },

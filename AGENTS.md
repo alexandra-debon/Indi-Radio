@@ -13,6 +13,8 @@
 
 - Blog article heads compose English search terms after translating article text and use the article's `?hl=en` canonical URL, so localized SEO stays language-consistent without changing routes.
 
+- Blog loaders read the French SEO thumbnail for both languages; leaf heads own its image tags and the client SEO localizer must not replace them.
+
 - SEO editor inspections target the page's language-specific automatic URL, not a custom canonical, and remount on language changes to isolate inspection state.
 
 - Keep Radio Mode solar animation in `SolarOrb`, driven by the shared player's level subscription with reduced-motion support; this preserves uninterrupted playback and a single audio source.
