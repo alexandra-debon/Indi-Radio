@@ -44,7 +44,7 @@ describe("SEO indexing language", () => {
   });
   it("inspects and links to hl=en on the English tab, independent of a custom canonical", async () => {
     openEditor();
-    fireEvent.click(screen.getByRole("tab", { name: "🇬🇧 English" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "🇬🇧 English" }), { button: 0, ctrlKey: false });
     fireEvent.change(screen.getByLabelText("URL canonique (optionnel)"), { target: { value: "https://example.com/other" } });
     expect(requestedUrl()).toBe("https://www.radio.indi-art-culture.com/about?hl=en");
     fireEvent.click(screen.getByRole("button", { name: "Vérifier sur Google" }));
@@ -55,10 +55,10 @@ describe("SEO indexing language", () => {
     openEditor();
     fireEvent.click(screen.getByRole("button", { name: "Vérifier sur Google" }));
     await screen.findByText("French inspection result");
-    fireEvent.click(screen.getByRole("tab", { name: "🇬🇧 English" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "🇬🇧 English" }), { button: 0, ctrlKey: false });
     expect(screen.queryByText("French inspection result")).toBeNull();
     expect(requestedUrl()).toBe("https://www.radio.indi-art-culture.com/about?hl=en");
-    fireEvent.click(screen.getByRole("tab", { name: "🇫🇷 Français" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "🇫🇷 Français" }), { button: 0, ctrlKey: false });
     expect(screen.queryByText("French inspection result")).toBeNull();
     expect(requestedUrl()).toBe("https://www.radio.indi-art-culture.com/about");
   });
