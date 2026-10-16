@@ -41,14 +41,14 @@ export type Step = {
 
 const WELCOME: Record<Lang, { title: string; body: string; go: string; skip: string }> = {
   fr: {
-    title: "Bienvenue chez toi",
+    title: "Bienvenue chez toi 💛",
     body:
       "Tu n'es pas sur une simple radio 100% indépendante — tu es sur un concept unique de radio communautaire. Tu as accès à tout, gratuitement et sans contrepartie : pas besoin de t'inscrire pour écouter la radio, lire le mur, les articles, les magazines ou visiter les boutiques des artistes. L'inscription gratuite sert seulement à interagir : commenter, publier, liker, envoyer des dédicaces et échanger avec les artistes. Bon voyage dans un monde fait pour les amoureux de la musique indé : découvre, partage, propose des artistes encore méconnus à la programmation, discute avec auditeurs, artistes et animateurs. On fait un tour ?",
     go: "C'est parti",
     skip: "Passer",
   },
   en: {
-    title: "Welcome home",
+    title: "Welcome home 💛",
     body:
       "This isn't just a 100% independent music radio — it's a unique community-driven concept. Everything is free, with no strings attached: no signup needed to listen, read the wall, articles and magazines, or browse artists' shops. A free account is only needed to interact: comment, post, like, send shout-outs and talk with artists. Enjoy the ride: discover artists, share, suggest names to the programmers, and chat with listeners, artists and hosts. Shall we take a tour?",
     go: "Let's go",
@@ -144,6 +144,46 @@ const TOUR_STEPS: TourStep[] = [
     body: {
       fr: "Ouvre le menu pour accéder aux émissions, podcasts, clips, magazines, dédicaces, soumissions artistes, contact et plus encore.",
       en: "Open the menu to access shows, podcasts, clips, magazines, dedications, artist submissions, contact and more.",
+    },
+    placement: "right",
+  },
+  {
+    id: "rubriques",
+    target: "[data-tour='menu-button']",
+    title: { fr: "📰 Actus, Village, TeeVi & Magazines", en: "📰 News, Village, TeeVi & Magazines" },
+    body: {
+      fr: "Dans « Nos rubriques » : le blog InDi ArT CulTuRe, RéDaK'Village (les articles écrits par la communauté), InDi TeeVi (nos vidéos) et les magazines à feuilleter. Tout se lit et se regarde librement, sans compte.",
+      en: "In “Our sections”: the InDi ArT CulTuRe blog, RéDaK'Village (articles written by the community), InDi TeeVi (our videos) and flip-through magazines. Everything is free to read and watch, no account needed.",
+    },
+    placement: "right",
+  },
+  {
+    id: "talent-scout",
+    target: "[data-tour='menu-button']",
+    title: { fr: "🔎 Deviens dénicheur·se de talents", en: "🔎 Become a talent scout" },
+    body: {
+      fr: "Une fois inscrit·e, tu n'es pas qu'auditeur·rice : propose des artistes méconnus à la programmation, partage tes coups de cœur et écris tes critiques de musique et d'arts indépendants (cinéma, photo, danse, arts visuels…) dans RéDaK'Village. Les challenges éditoriaux te donnent des idées de sujets !",
+      en: "Once signed up, you're more than a listener: suggest unknown artists to the programmers, share your favourites and write reviews of independent music and arts (film, photo, dance, visual arts…) in RéDaK'Village. Editorial challenges give you topic ideas!",
+    },
+    placement: "right",
+  },
+  {
+    id: "badges",
+    target: "[data-tour='login-button']",
+    title: { fr: "🏆 Points, niveaux & badges", en: "🏆 Points, levels & badges" },
+    body: {
+      fr: "Chaque participation te rapporte des points : publications, commentaires, critiques… Grimpe de « Plume débutante » à « Plume légendaire », décroche des badges attribués par l'équipe et entre dans le Top 25 des auditeurs les plus actifs. On joue ? 🎮",
+      en: "Every contribution earns you points: posts, comments, reviews… Climb from “Rookie pen” to “Legendary pen”, earn badges awarded by the team and join the Top 25 most active listeners. Game on? 🎮",
+    },
+    placement: "bottom",
+  },
+  {
+    id: "artists-shop",
+    target: "[data-tour='menu-button']",
+    title: { fr: "🎨 Artistes & boutique", en: "🎨 Artists & shop" },
+    body: {
+      fr: "Explore la Galerie Artistes et leurs pages (bio, vidéos, albums, concerts), puis la Boutique : disques, merch et billets achetés directement aux artistes — 0 % de commission, 100 % reversé à l'artiste. Les artistes peuvent aussi candidater pour obtenir leur page certifiée.",
+      en: "Explore the Artists Gallery and their pages (bio, videos, albums, shows), then the Shop: records, merch and tickets bought directly from the artists — 0% commission, 100% goes to the artist. Artists can also apply for their certified page.",
     },
     placement: "right",
   },

@@ -41,7 +41,7 @@ const VIEWPORTS = [
 const STEP_SNAPSHOTS = [
   { index: 0, name: "step-01-login" }, // header target (top-right)
   { index: 3, name: "step-04-social-wall" }, // mid-page target
-  { index: 10, name: "step-11-chat-team-indi" }, // MiniPlayer target (bottom)
+  { index: 14, name: "step-15-chat-team-indi" }, // MiniPlayer target (bottom)
 ] as const;
 
 async function prepare(page: Page) {
