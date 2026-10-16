@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLang } from "@/lib/i18n";
 
 /** Visite guidée dédiée aux artistes (et médias) — vue une seule fois. */
-const SEEN_KEY = "indi.artistTour.v1";
+const SEEN_KEY = "indi.artistTour.v2";
 const OPEN_EVENT = "indi:open-artist-tour";
 
 type Step = { fr: { title: string; body: string }; en: { title: string; body: string } };
@@ -21,11 +21,11 @@ const STEPS: Step[] = [
   {
     fr: {
       title: "🎛️ Ton espace artiste",
-      body: "Depuis « Ma page artiste », tu personnalises tout : bannière (photo ou aplat de couleur), couleur d'accent, résumé de présentation et liens vers tes réseaux et plateformes. Tout est modifiable à tout moment, même avant la validation de ta candidature.",
+      body: "Depuis « Ma page artiste », tu personnalises tout : bannière (photo ou aplat de couleur), couleur d'accent, résumé de présentation et liens vers tes réseaux et plateformes. Tout est modifiable à tout moment.",
     },
     en: {
       title: "🎛️ Your artist space",
-      body: "From “My artist page” you customise everything: banner (photo or solid colour), accent colour, presentation summary and links to your socials and streaming platforms. Everything stays editable at any time, even before your application is approved.",
+      body: "From “My artist page” you customise everything: banner (photo or solid colour), accent colour, presentation summary and links to your socials and streaming platforms. Everything stays editable at any time.",
     },
   },
   {
@@ -50,12 +50,12 @@ const STEPS: Step[] = [
   },
   {
     fr: {
-      title: "⏳ La certification",
-      body: "Ta page passe en mode artiste public une fois ta candidature validée par l'équipe (comptez quelques jours). En attendant, ta page reste affichée comme un profil auditeur classique, et tu participes normalement à la communauté : écoute, mur, commentaires, likes, dédicaces.",
+      title: "✅ Tu es certifié·e",
+      body: "Ta page artiste est publique : badge certifié, présence dans la Galerie Artistes, boutique en achat direct (0 % de commission, 100 % reversé à toi) et dates de concert visibles par tous les visiteurs, même sans compte.",
     },
     en: {
-      title: "⏳ Certification",
-      body: "Your page switches to public artist mode once the team approves your application (usually a few days). Until then your page shows as a regular listener profile, and you take part in the community as usual: radio, wall, comments, likes, dedications.",
+      title: "✅ You're certified",
+      body: "Your artist page is public: certified badge, listing in the Artists Gallery, direct-purchase shop (0% commission, 100% goes to you) and shows visible to every visitor, even without an account.",
     },
   },
 ];
@@ -75,8 +75,10 @@ export function ArtistTour() {
   const requested = (profile as Record<string, unknown> | null)?.["role_requested"] as
     | string
     | undefined;
-  const isArtist =
-    role === "artiste" || role === "media" || requested === "artiste" || requested === "media";
+  void requested;
+  const certified = (profile as Record<string, unknown> | null)?.["is_certified"] === true;
+  // Le tour artiste ne s'active que pour les artistes/médias certifiés.
+  const isArtist = certified && (role === "artiste" || role === "media");
 
   useEffect(() => {
     if (loading || !profile || !isArtist) return;
