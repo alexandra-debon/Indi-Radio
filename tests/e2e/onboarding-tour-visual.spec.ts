@@ -50,7 +50,7 @@ async function prepare(page: Page) {
   await page.addInitScript(() => {
     try {
       window.localStorage.setItem("indi.lang", "fr");
-      window.localStorage.removeItem("indi.onboarding.v1");
+      window.localStorage.removeItem("indi.onboarding.v2");
     } catch {
       /* noop */
     }

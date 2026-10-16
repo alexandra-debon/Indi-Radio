@@ -21,7 +21,7 @@ import { toast } from "@/lib/toast";
 import { TourSpotlight, type TourStep } from "./TourSpotlight";
 import { setTourDemoActive, DEMO_PSEUDO } from "@/lib/tour-demo";
 
-const STORAGE_KEY = "indi.onboarding.v1";
+const STORAGE_KEY = "indi.onboarding.v2";
 
 function buildShareUrl(lang: "fr" | "en"): string {
   if (typeof window === "undefined") return `/?tour=summary&lang=${lang}`;
@@ -43,14 +43,14 @@ const WELCOME: Record<Lang, { title: string; body: string; go: string; skip: str
   fr: {
     title: "Bienvenue chez toi",
     body:
-      "Tu n'es pas sur une simple radio 100% indépendante — tu es sur un concept unique de radio communautaire. Tu as accès à tout, gratuitement et sans contrepartie. Bon voyage dans un monde fait pour les amoureux de la musique indé : découvre, partage, propose des artistes encore méconnus à la programmation, discute avec auditeurs, artistes et animateurs. On fait un tour ?",
+      "Tu n'es pas sur une simple radio 100% indépendante — tu es sur un concept unique de radio communautaire. Tu as accès à tout, gratuitement et sans contrepartie : pas besoin de t'inscrire pour écouter la radio, lire le mur, les articles, les magazines ou visiter les boutiques des artistes. L'inscription gratuite sert seulement à interagir : commenter, publier, liker, envoyer des dédicaces et échanger avec les artistes. Bon voyage dans un monde fait pour les amoureux de la musique indé : découvre, partage, propose des artistes encore méconnus à la programmation, discute avec auditeurs, artistes et animateurs. On fait un tour ?",
     go: "C'est parti",
     skip: "Passer",
   },
   en: {
     title: "Welcome home",
     body:
-      "This isn't just a 100% independent music radio — it's a unique community-driven concept. Everything is free, with no strings attached. Enjoy the ride: discover artists, share, suggest names to the programmers, and chat with listeners, artists and hosts. Shall we take a tour?",
+      "This isn't just a 100% independent music radio — it's a unique community-driven concept. Everything is free, with no strings attached: no signup needed to listen, read the wall, articles and magazines, or browse artists' shops. A free account is only needed to interact: comment, post, like, send shout-outs and talk with artists. Enjoy the ride: discover artists, share, suggest names to the programmers, and chat with listeners, artists and hosts. Shall we take a tour?",
     go: "Let's go",
     skip: "Skip",
   },
@@ -62,8 +62,8 @@ const TOUR_STEPS: TourStep[] = [
     target: "[data-tour='login-button']",
     title: { fr: "👋 Compte de démo", en: "👋 Demo account" },
     body: {
-      fr: `Pendant ce tour, on t'accompagne avec un utilisateur imaginaire, @${DEMO_PSEUDO}, pour te montrer à quoi ressemble l'expérience une fois connecté. Rien n'est enregistré — c'est juste pour la visite.`,
-      en: `During this tour, we walk you through with an imaginary user, @${DEMO_PSEUDO}, to show what the experience looks like once signed in. Nothing is saved — it's just for the visit.`,
+      fr: `Pendant ce tour, on t'accompagne avec un utilisateur imaginaire, @${DEMO_PSEUDO}, pour te montrer à quoi ressemble l'expérience une fois connecté. Rappel : tu peux tout consulter sans compte, l'inscription sert uniquement à interagir. Rien n'est enregistré — c'est juste pour la visite.`,
+      en: `During this tour, we walk you through with an imaginary user, @${DEMO_PSEUDO}, to show what the experience looks like once signed in. Reminder: you can browse everything without an account; signing up is only for interacting. Nothing is saved — it's just for the visit.`,
     },
     placement: "bottom",
   },
@@ -152,8 +152,8 @@ const TOUR_STEPS: TourStep[] = [
     target: "[data-tour='login-button']",
     title: { fr: "👤 Connexion", en: "👤 Sign in" },
     body: {
-      fr: "Inscris-toi ou connecte-toi pour poster, commenter, liker et dédicacer. Le choix d'un pseudo est obligatoire à l'inscription (modifiable ensuite depuis ton profil, une fois toutes les 2 semaines). Une fois connecté, ce même bouton ouvre ton menu profil avec un raccourci de déconnexion.",
-      en: "Sign up or sign in to post, comment, like and send shout-outs. Picking a pseudo is required at signup (editable later from your profile, once every 2 weeks). Once signed in, this same button opens your profile menu with a sign-out shortcut.",
+      fr: "Pas obligatoire pour consulter le site ! Inscris-toi ou connecte-toi seulement pour interagir avec les artistes et la communauté : poster, commenter, liker et dédicacer. Le choix d'un pseudo est obligatoire à l'inscription (modifiable ensuite depuis ton profil, une fois toutes les 2 semaines). Une fois connecté, ce même bouton ouvre ton menu profil avec un raccourci de déconnexion.",
+      en: "Not required to browse the site! Sign up or sign in only to interact with artists and the community: post, comment, like and send shout-outs. Picking a pseudo is required at signup (editable later from your profile, once every 2 weeks). Once signed in, this same button opens your profile menu with a sign-out shortcut.",
     },
     placement: "bottom",
   },
