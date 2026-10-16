@@ -1,3 +1,4 @@
+import { isJingleTrack } from "@/lib/jingle";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -87,14 +88,14 @@ function RadioModePage() {
         .from("track_history")
         .select("id,title,artist,played_at")
         .order("played_at", { ascending: false })
-        .limit(12);
-      const rows = (data ?? []) as TrackRow[];
+        .limit(20);
+      // On saute le morceau en cours, puis on retire les jingles.
+      const rows = ((data ?? []) as TrackRow[]).slice(1).filter((r) => !isJingleTrack(r));
       const deduped = rows.filter((r, i) => {
         const prev = rows[i - 1];
         return !prev || prev.title !== r.title || prev.artist !== r.artist;
       });
-      // On saute le morceau en cours : on veut les trois précédents.
-      return deduped.slice(1, 4);
+      return deduped.slice(0, 3);
     },
     refetchInterval: 60_000,
   });
