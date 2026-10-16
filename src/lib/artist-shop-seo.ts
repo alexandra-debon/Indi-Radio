@@ -17,12 +17,12 @@ export function artistShopSeo(name: string, lang: OgLang) {
   return lang === "en"
     ? {
         title: `${name} Shop | Buy directly from artists`,
-        description: clampDescription(`Buy directly from artists: discover ${name}'s shop on InDi RaDio. Shop through the artist's own links, with 0% commission and 100% going to the artist.`),
+        description: clampDescription(`Buy directly from artists: ${name}'s shop on InDi RaDio. Artist-owned purchase links. 0% commission, 100% going to the artist.`),
         imageAlt: `${name} — buy directly from artists`,
       }
     : {
         title: `${name} — Boutique | Acheter directement aux artistes`,
-        description: clampDescription(`Acheter directement aux artistes : découvrez la boutique de ${name} sur InDi RaDio. Liens d'achat de l'artiste, 0 % de commission, 100 % reversé à l'artiste.`),
+        description: clampDescription(`Acheter directement aux artistes : boutique de ${name} sur InDi RaDio. Liens de l'artiste. 0 % de commission, 100 % reversé à l'artiste.`),
         imageAlt: `${name} — acheter directement aux artistes`,
       };
 }
