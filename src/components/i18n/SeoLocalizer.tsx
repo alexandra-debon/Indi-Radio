@@ -238,7 +238,9 @@ export function SeoLocalizer() {
         put('meta[property="og:description"]', "property", "og:description", ov.description);
         put('meta[name="twitter:description"]', "name", "twitter:description", ov.description);
       }
-      if (ov?.og_image_url) {
+      // Blog detail heads own the shared FR/EN photo, including the French
+      // editor thumbnail. Never replace it with a language-specific image.
+      if (ov?.og_image_url && !/^\/actus\/[^/]+$/.test(pathname)) {
         put('meta[property="og:image"]', "property", "og:image", ov.og_image_url);
         put('meta[name="twitter:image"]', "name", "twitter:image", ov.og_image_url);
       }
