@@ -89,6 +89,36 @@ export function AppShell({ children }: { children: ReactNode }) {
   const tourDemo = useTourDemoActive();
   const showDemoUser = tourDemo && !session;
 
+  // Close the drawer on any navigation (incl. iOS swipe-back) and release a
+  // stuck Radix click-lock on <body> when no dialog/menu is actually open.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const hasOpenLayer = () =>
+      !!document.querySelector(
+        '[role="dialog"][data-state="open"],[role="alertdialog"][data-state="open"],[role="menu"][data-state="open"],[role="listbox"][data-state="open"]',
+      );
+    const release = () => {
+      if (document.body.style.pointerEvents === "none" && !hasOpenLayer()) {
+        document.body.style.pointerEvents = "";
+      }
+    };
+    const t1 = window.setTimeout(release, 400);
+    const obs = new MutationObserver(() => window.setTimeout(release, 400));
+    obs.observe(document.body, { attributes: true, attributeFilter: ["style"] });
+    const onTouch = () => release();
+    document.addEventListener("touchstart", onTouch, { passive: true, capture: true });
+    document.addEventListener("pointerdown", onTouch, { capture: true });
+    return () => {
+      window.clearTimeout(t1);
+      obs.disconnect();
+      document.removeEventListener("touchstart", onTouch, { capture: true } as EventListenerOptions);
+      document.removeEventListener("pointerdown", onTouch, { capture: true } as EventListenerOptions);
+    };
+  }, [pathname]);
+
   // Publish the real height of the fixed bottom bar (MiniPlayer + footer +
   // safe-area) as a CSS variable so any floating UI can align above it.
   const bottomBarRef = useRef<HTMLDivElement | null>(null);
@@ -339,7 +369,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div
         className={cn(
           "fixed inset-0 z-50 transition-opacity duration-300 ease-out motion-reduce:transition-none",
-          open ? "opacity-100" : "pointer-events-none opacity-0",
+          open ? "opacity-100" : "pointer-events-none invisible opacity-0",
         )}
       >
         <div className="absolute inset-0 bg-black/60 transition-opacity duration-300 ease-out motion-reduce:transition-none" onClick={() => setOpen(false)} />
