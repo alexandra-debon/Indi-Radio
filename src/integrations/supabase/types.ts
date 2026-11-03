@@ -1868,6 +1868,56 @@ export type Database = {
         }
         Relationships: []
       }
+      radio_news: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          link: string | null
+          published: boolean
+          published_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          link?: string | null
+          published?: boolean
+          published_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          link?: string | null
+          published?: boolean
+          published_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radio_news_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       requests: {
         Row: {
           author_id: string
@@ -2185,6 +2235,35 @@ export type Database = {
         }
         Relationships: []
       }
+      track_app_likes: {
+        Row: {
+          created_at: string
+          device_id: string
+          id: string
+          track_history_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          id?: string
+          track_history_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          id?: string
+          track_history_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "track_app_likes_track_history_id_fkey"
+            columns: ["track_history_id"]
+            isOneToOne: false
+            referencedRelation: "track_history"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       track_history: {
         Row: {
           artist: string
@@ -2235,6 +2314,51 @@ export type Database = {
           },
           {
             foreignKeyName: "track_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      track_votes: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          id: string
+          track_history_id: string
+          updated_at: string
+          user_id: string | null
+          vote: number
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          track_history_id: string
+          updated_at?: string
+          user_id?: string | null
+          vote: number
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          track_history_id?: string
+          updated_at?: string
+          user_id?: string | null
+          vote?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "track_votes_track_history_id_fkey"
+            columns: ["track_history_id"]
+            isOneToOne: false
+            referencedRelation: "track_history"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "track_votes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -2476,6 +2600,24 @@ export type Database = {
       }
     }
     Functions: {
+      app_react: {
+        Args: {
+          p_action: string
+          p_device: string
+          p_play: string
+          p_vote?: number
+        }
+        Returns: Json
+      }
+      app_track_reactions: {
+        Args: {
+          p_artist: string
+          p_device: string
+          p_play: string
+          p_title: string
+        }
+        Returns: Json
+      }
       artist_media_urls_valid: { Args: { _urls: string[] }; Returns: boolean }
       award_points: {
         Args: { p_action: string; p_points: number; p_user_id: string }
