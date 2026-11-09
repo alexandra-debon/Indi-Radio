@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/lib/toast";
-import { parseMediaUrl } from "@/lib/media-embed";
+import { resolveVimeoUrl } from "@/lib/media-embed";
 import { fetchVimeoThumbnail, vimeoThumbnail } from "@/lib/teevi-share-image";
 import { ImageUploader } from "@/components/media/ImageUploader";
 import { useTeeviTxt, type TeeviVideo } from "@/components/teevi/teevi-i18n";
@@ -36,7 +36,7 @@ export function TeeviVideoEditor({
   const save = useMutation({
     mutationFn: async () => {
       if (!title.trim()) throw new Error(txt.titleRequired);
-      const media = parseMediaUrl(videoUrl.trim());
+      const media = await resolveVimeoUrl(videoUrl);
       if (!media || media.kind !== "vimeo") throw new Error(txt.videoRequired);
       const url = media.originalUrl;
       const auto = ogImage.trim()

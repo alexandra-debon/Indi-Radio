@@ -36,3 +36,18 @@ describe("Vimeo links accepted by InDi TeeVi", () => {
     expect(parseMediaUrl(url)).toBeNull();
   });
 });
+describe("Named Vimeo links resolved through Vimeo", () => {
+  it("builds the numeric URL from Vimeo's answer", async () => {
+    const { vimeoUrlFromOembed } = await import("../media-embed");
+    expect(vimeoUrlFromOembed({ video_id: 1245195113, html: '<iframe src="https://player.vimeo.com/video/1245195113?app_id=122963">' }))
+      .toBe("https://vimeo.com/1245195113");
+    expect(vimeoUrlFromOembed({ video_id: 76979871, html: '<iframe src="https://player.vimeo.com/video/76979871?h=abc123&app_id=1">' }))
+      .toBe("https://vimeo.com/76979871/abc123");
+  });
+
+  it("accepts https://vimeo.com/inditeevi/spot-c-etait-mieux-demain-jovanna", async () => {
+    const { resolveVimeoUrl } = await import("../media-embed");
+    const media = await resolveVimeoUrl("https://vimeo.com/inditeevi/spot-c-etait-mieux-demain-jovanna");
+    expect(media).toMatchObject({ kind: "vimeo", id: "1245195113" });
+  });
+});

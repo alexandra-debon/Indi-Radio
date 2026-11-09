@@ -206,3 +206,35 @@ export function stripMediaUrls(text: string): string {
   const cleaned = text.replace(URL_RE, (url) => (parseMediaUrl(url) ? "" : url));
   return cleaned.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
+/** Builds the canonical numeric Vimeo URL from an oEmbed response. */
+export function vimeoUrlFromOembed(data: { video_id?: number | string; html?: string } | null): string | null {
+  if (!data?.video_id) return null;
+  const id = String(data.video_id);
+  if (!/^\d+$/.test(id)) return null;
+  const hash = data.html?.match(/[?&]h=([a-zA-Z0-9]+)/)?.[1];
+  return hash ? `https://vimeo.com/${id}/${hash}` : `https://vimeo.com/${id}`;
+}
+
+/**
+ * Resolves any Vimeo link — including named links such as
+ * vimeo.com/account/video-name — to a playable media embed.
+ */
+export async function resolveVimeoUrl(rawUrl: string): Promise<MediaEmbed | null> {
+  const direct = parseMediaUrl(rawUrl);
+  if (direct) return direct.kind === "vimeo" ? direct : null;
+  const trimmed = rawUrl.trim();
+  const normalized = /^(?:www\.)?vimeo\.com\//i.test(trimmed) ? `https://${trimmed}` : trimmed;
+  let u: URL;
+  try { u = new URL(normalized); } catch { return null; }
+  if (!/^(?:www\.)?vimeo\.com$/i.test(u.hostname)) return null;
+  try {
+    const res = await fetch(
+      `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(`https://vimeo.com${u.pathname}${u.search}`)}`,
+    );
+    if (!res.ok) return null;
+    const url = vimeoUrlFromOembed(await res.json());
+    return url ? parseMediaUrl(url) : null;
+  } catch {
+    return null;
+  }
+}
