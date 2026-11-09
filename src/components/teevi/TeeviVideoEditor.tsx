@@ -38,14 +38,14 @@ export function TeeviVideoEditor({
       if (!title.trim()) throw new Error(txt.titleRequired);
       const media = parseMediaUrl(videoUrl.trim());
       if (!media || media.kind !== "vimeo") throw new Error(txt.videoRequired);
-      const url = videoUrl.trim();
+      const url = media.originalUrl;
       const auto = ogImage.trim()
         ? null
         : (await fetchVimeoThumbnail(url)) || vimeoThumbnail(url);
       const payload = {
         title: title.trim(),
         og_image_url: ogImage.trim() || auto,
-        video_url: videoUrl.trim(),
+        video_url: url,
         summary: summary.trim() || null,
         tags: tags
           .split(",")

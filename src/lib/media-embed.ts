@@ -34,7 +34,12 @@ export function extractUrls(text: string): string[] {
 
 export function parseMediaUrl(rawUrl: string): MediaEmbed | null {
   let u: URL;
-  try { u = new URL(rawUrl); } catch { return null; }
+  const trimmed = rawUrl.trim();
+  const normalized = /^(?:(?:www|player)\.)?vimeo\.com\//i.test(trimmed)
+    ? `https://${trimmed}`
+    : trimmed;
+  try { u = new URL(normalized); } catch { return null; }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return null;
   const host = u.hostname.replace(/^www\./, "").toLowerCase();
 
   // YouTube playlist
@@ -69,15 +74,23 @@ export function parseMediaUrl(rawUrl: string): MediaEmbed | null {
 
   // Vimeo
   if (host === "vimeo.com" || host === "player.vimeo.com") {
-    const m = u.pathname.match(/(?:^|\/)(\d+)(?:\/|$)/);
+    // Collections have their own numeric IDs; only the video's ID is playable.
+    const m = host === "player.vimeo.com"
+      ? u.pathname.match(/^\/video\/(\d+)\/?$/)
+      : u.pathname.match(/^\/(\d+)(?:\/([a-zA-Z0-9]+))?\/?$/)
+        ?? u.pathname.match(/^\/(?:channels\/[^/]+|groups\/[^/]+\/videos|(?:album|showcase)\/\d+\/video|manage\/videos)\/(\d+)\/?$/);
     if (m) {
       const id = m[1];
+      const hash = u.searchParams.get("h") || m[2];
+      const params = new URLSearchParams();
+      if (hash) params.set("h", hash);
+      const query = params.toString();
       return {
         kind: "vimeo",
         type: "video",
         id,
-        embedUrl: `https://player.vimeo.com/video/${id}`,
-        originalUrl: rawUrl,
+        embedUrl: `https://player.vimeo.com/video/${id}${query ? `?${query}` : ""}`,
+        originalUrl: u.href,
       };
     }
   }

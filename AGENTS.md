@@ -21,6 +21,8 @@
 
 - Keep Radio Mode solar animation in `SolarOrb`, driven by the shared player's level subscription with reduced-motion support; this preserves uninterrupted playback and a single audio source.
 
+- Vimeo validation and playback use `parseMediaUrl`; persist its normalized original URL and preserve unlisted access hashes so InDi TeeVi accepts shared links without losing playback access.
+
 ### `profiles` update policy — intentional faux positif
 
 **Finding:** `supabase_lov:profiles_update_own_safe_fields_no_column_restriction`  
