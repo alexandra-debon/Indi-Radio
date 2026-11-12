@@ -168,12 +168,15 @@ async function searchArtwork(artist: string, title: string) {
       const a = keyPart(r.artistName ?? "");
       const t = keyPart(r.trackName ?? "");
       let score = 0;
+      if (!a || !t) return { r, score: 0 };
       if (a === wantArtist) score += 4; else if (a.includes(wantArtist) || wantArtist.includes(a)) score += 2;
       if (t === wantTitle) score += 4; else if (t.includes(wantTitle) || wantTitle.includes(t)) score += 2;
       return { r, score };
     })
+    .filter((x) => x.score >= 6)
     .sort((a, b) => b.score - a.score);
-  return bestArtwork(scored[0]?.r?.artworkUrl100 ?? results[0]?.artworkUrl100);
+  // Jamais de pochette « au hasard » : artiste ET titre doivent correspondre.
+  return bestArtwork(scored[0]?.r?.artworkUrl100);
 }
 
 async function searchDeezerArtwork(artist: string, title: string, exact = true) {
@@ -205,7 +208,7 @@ async function searchDeezerArtwork(artist: string, title: string, exact = true) 
       return { r, score };
     })
     .sort((a, b) => b.score - a.score);
-  const album = (scored[0]?.score ?? 0) >= 2 ? scored[0]?.r.album : results[0]?.album;
+  const album = (scored[0]?.score ?? 0) >= 6 ? scored[0]?.r.album : null;
   return album?.cover_xl ?? album?.cover_big ?? album?.cover_medium ?? null;
 }
 
