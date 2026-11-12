@@ -92,7 +92,15 @@ function keyPart(value: string) {
     .toLowerCase();
 }
 
+const JOVANNA_SHOW_COVER =
+  "/__l5e/assets-v1/867d452e-f7b6-460c-b3a2-a3db6b1a3e73/jovanna-cetait-mieux-demain.jpeg";
+
 function forcedArtwork(artist: string, title: string) {
+  // Émission de Jovanna « C'était mieux demain », quel que soit l'épisode
+  const a = keyPart(artist), t = keyPart(title);
+  if (/\bjovanna\b/.test(a) || /\bjovanna\b/.test(t) || /c ?etait mieux demain/.test(`${a} ${t}`)) {
+    return JOVANNA_SHOW_COVER;
+  }
   return FORCED_ARTWORK[`${keyPart(artist)}|${keyPart(title)}`] ?? null;
 }
 
