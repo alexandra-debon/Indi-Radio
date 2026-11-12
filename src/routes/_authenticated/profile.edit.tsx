@@ -42,7 +42,7 @@ const schema = z.object({
       /^[\p{L}\p{N} _.\-]+$/u,
       "Lettres, chiffres, espaces, _ . - uniquement",
     ),
-  bio: z.string().trim().max(500, "500 caractères max").optional().or(z.literal("")),
+  bio: z.string().trim().max(4000, "4000 caractères max").optional().or(z.literal("")),
   website: z
     .string()
     .trim()
@@ -260,11 +260,11 @@ function EditProfilePage() {
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            maxLength={500}
+            maxLength={4000}
             rows={4}
             placeholder="Quelques mots sur toi…"
           />
-          <p className="text-[11px] text-muted-foreground">{bio.length}/500</p>
+          <p className="text-[11px] text-muted-foreground">{bio.length}/4000</p>
         </div>
 
         <div className="space-y-1.5">

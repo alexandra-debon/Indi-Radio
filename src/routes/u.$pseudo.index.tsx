@@ -21,6 +21,8 @@ import { ReportButton } from "@/components/moderation/ReportButton";
 import { BlockUserButton } from "@/components/moderation/BlockUserButton";
 import { artistShopPreviewImage, artistShopSeo, artistShopThumbnail } from "@/lib/artist-shop-seo";
 import { ogImageTags } from "@/lib/og-tags";
+import { useAuth } from "@/hooks/use-auth";
+import { BioEditor } from "@/components/profile/BioEditor";
 
 type SectionKey = "events" | "shop" | "posts";
 
@@ -457,6 +459,7 @@ function UserProfilePage() {
   const { pseudo } = Route.useParams();
   const t = useT();
   const { lang } = useLang();
+  const { user: authUser } = useAuth();
   const { data, isLoading, error } = useQuery({
     queryKey: ["profile", pseudo],
     queryFn: () => fetchProfile(pseudo),
@@ -608,7 +611,7 @@ function UserProfilePage() {
         )}
       </div>
 
-      {(profile.bio || profile.website || profile.ep_download_url || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
+      {(authUser?.id === profile.id || profile.bio || profile.website || profile.ep_download_url || (profile.social_links && Object.keys(profile.social_links).some((k) => k !== "__order" && k !== "__labels"))) && (
         <div className="card-brut space-y-2 p-4">
           {profile.bio && <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide"><FileText className="size-4 text-primary" /> {t("upub.biography")}</h2>}
           {profile.bio && (
@@ -622,6 +625,7 @@ function UserProfilePage() {
               manual={false}
             />
           )}
+          {authUser?.id === profile.id && <BioEditor userId={profile.id} bio={profile.bio} />}
           {profile.website && (
             <a
               href={profile.website}

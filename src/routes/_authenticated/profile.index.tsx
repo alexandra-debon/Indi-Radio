@@ -132,7 +132,7 @@ function ProfilePage() {
   const saveBio = useMutation({
     mutationFn: async (newBio: string) => {
       const trimmed = newBio.trim();
-      if (trimmed.length > 500) throw new Error(lang === "fr" ? "500 caractères max" : "500 characters max");
+      if (trimmed.length > 4000) throw new Error(lang === "fr" ? "4000 caractères max" : "4000 characters max");
       const { error } = await supabase
         .from("profiles")
         .update({ bio: trimmed || null } as any)
@@ -400,13 +400,13 @@ function ProfilePage() {
             <Textarea
               value={bioDraft}
               onChange={(e) => setBioDraft(e.target.value)}
-              maxLength={500}
+              maxLength={4000}
               rows={4}
               placeholder={t("profile.bioPlaceholder")}
               disabled={saveBio.isPending}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span>{bioDraft.length}/500</span>
+              <span>{bioDraft.length}/4000</span>
             </div>
             <div className="flex gap-2">
               <Button
