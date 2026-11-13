@@ -16,6 +16,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { UrlEmbeds } from "@/components/media/UrlEmbeds";
 import { useT, useLang } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
+import { FeaturedIssue } from "@/components/magazines/FeaturedIssue";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 
@@ -84,6 +85,8 @@ function MagazinesPage() {
         </div>
         <p className="text-sm text-muted-foreground">{t("page.magazines.subtitle")}</p>
       </header>
+
+      <FeaturedIssue />
 
       <section className="space-y-3">
         <div className="flex items-baseline justify-between">
