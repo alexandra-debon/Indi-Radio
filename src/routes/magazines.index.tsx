@@ -23,21 +23,21 @@ const BASE_URL = "https://www.radio.indi-art-culture.com";
 export const Route = createFileRoute("/magazines/")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/magazines", match.search, [
-      { title: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { title: "InDi RaDio - Magazine InDi ArT CulTuRe - Musique et culture indé" },
       {
         name: "description",
         content:
           "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante."
       },
       { name: "keywords", content: "radio musique indé, réseau social musique, magazine interactif Indi Art Culture, magazine indépendant, InDi RaDio" },
-      { property: "og:title", content: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:title", content: "InDi RaDio - Magazine InDi ArT CulTuRe - Musique et culture indé" },
       {
         property: "og:description",
         content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante."
       },
       { property: "og:url", content: `${BASE_URL}/magazines` },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:title", content: "InDi RaDio - Magazine InDi ArT CulTuRe - Musique et culture indé" },
       { name: "twitter:description", content: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique de la scène indépendante." },
     ]),
     links: [{ rel: "canonical", href: `${BASE_URL}/magazines` }],

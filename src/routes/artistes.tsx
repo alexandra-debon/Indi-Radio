@@ -13,11 +13,11 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 export const Route = createFileRoute("/artistes")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/artistes", match.search, [
-      { title: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { title: "InDi RaDio - Galerie des artistes indépendants - Radio 100% musique indé" },
       { name: "description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio. Découvre leurs profils et échange avec eux." },
-      { property: "og:title", content: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:title", content: "InDi RaDio - Galerie des artistes indépendants - Radio 100% musique indé" },
       { property: "og:description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio." },
-      { name: "twitter:title", content: "Galerie Artistes — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:title", content: "InDi RaDio - Galerie des artistes indépendants - Radio 100% musique indé" },
       { name: "twitter:description", content: "Annuaire des artistes indépendants certifiés diffusés sur la radio 24/7 de la musique indépendante InDi RaDio." },
       { property: "og:url", content: "https://www.radio.indi-art-culture.com/artistes" },
       { property: "og:type", content: "website" },

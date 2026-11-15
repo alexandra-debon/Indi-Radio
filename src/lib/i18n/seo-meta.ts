@@ -36,8 +36,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Blog InDi ArT CulTuRe — 24/7 Independent Music Radio InDi RaDio", description: "All the news from the independent scene and the InDi RaDio music social network on 24/7 independent music radio." },
   },
   "/podcasts": {
-    fr: { title: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
-    en: { title: "Podcasts — 24/7 Independent Music Radio InDi RaDio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists on the 24/7 independent music radio." },
+    fr: { title: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub", description: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
+    en: { title: "InDi RaDio - Podcasts & Shows - 100% Ad-Free Indie Music Radio", description: "Listen to InDi RaDio podcasts: interviews, shows and columns from independent artists on the 24/7 independent music radio." },
   },
   "/emissions": {
     fr: { title: "Émissions — Radio 24/7 de la musique indépendante InDi RaDio", description: "Retrouve toutes les émissions d'InDi RaDio et leurs épisodes en replay sur la radio 24/7 de la musique indépendante, sans pub." },
@@ -48,8 +48,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Columns — 24/7 Independent Music Radio InDi RaDio", description: "InDi RaDio audio columns: favorites, reviews and discoveries on 24/7 independent music radio." },
   },
   "/magazines": {
-    fr: { title: "Magazine Indi Art Culture — Radio 24/7 de la musique indépendante InDi RaDio", description: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique." },
-    en: { title: "Indi Art Culture Magazine — 24/7 Independent Music Radio InDi RaDio", description: "Flip through the interactive Indi Art Culture magazine, the 24/7 independent music radio and music social network magazine." },
+    fr: { title: "InDi RaDio - Magazine InDi ArT CulTuRe - Musique et culture indé", description: "Feuillette le magazine interactif Indi Art Culture, le magazine de la radio 24/7 de la musique indépendante et du réseau social musique." },
+    en: { title: "InDi RaDio - InDi ArT CulTuRe Magazine - Indie Music & Culture", description: "Flip through the interactive Indi Art Culture magazine, the 24/7 independent music radio and music social network magazine." },
   },
   "/clips": {
     fr: { title: "Clip Addict — Radio 24/7 de la musique indépendante InDi RaDio", description: "La playlist vidéo des clips indépendants sélectionnés par InDi RaDio sur la radio 24/7 de la musique indépendante, sans pub." },
@@ -112,8 +112,8 @@ export const STATIC_SEO: Record<string, SeoBundle> = {
     en: { title: "Editor's Picks — 24/7 Independent Music Radio InDi RaDio", description: "InDi RaDio editorial favorites: independent tracks and albums to discover on the 24/7 independent music radio, ad-free." },
   },
   "/artistes": {
-    fr: { title: "Galerie des artistes — Radio 24/7 de la musique indépendante InDi RaDio", description: "Découvre les artistes indépendants certifiés présents sur InDi RaDio, la radio 24/7 de la musique indépendante et son réseau social musique." },
-    en: { title: "Artist Gallery — 24/7 Independent Music Radio InDi RaDio", description: "Meet the certified independent artists featured on InDi RaDio, the 24/7 independent music radio and its music social network." },
+    fr: { title: "InDi RaDio - Galerie des artistes indépendants - Radio 100% musique indé", description: "Découvre les artistes indépendants certifiés présents sur InDi RaDio, la radio 24/7 de la musique indépendante et son réseau social musique." },
+    en: { title: "InDi RaDio - Independent Artist Gallery - 100% Indie Music Radio", description: "Meet the certified independent artists featured on InDi RaDio, the 24/7 independent music radio and its music social network." },
   },
 };
 

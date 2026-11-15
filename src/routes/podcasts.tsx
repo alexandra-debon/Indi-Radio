@@ -20,10 +20,10 @@ const SITE = "https://www.radio.indi-art-culture.com";
 export const Route = createFileRoute("/podcasts")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/podcasts", match.search, [
-      { title: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { title: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub" },
       { name: "description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "keywords", content: "radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
-      { property: "og:title", content: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { property: "og:title", content: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub" },
       { property: "og:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { property: "og:url", content: "https://www.radio.indi-art-culture.com/podcasts" },
       { property: "og:type", content: "website" },
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/podcasts")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Podcasts — Radio 24/7 de la musique indépendante InDi RaDio" },
+      { name: "twitter:title", content: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub" },
       { name: "twitter:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { name: "twitter:image", content: OG_PODCASTS },
     ]),
