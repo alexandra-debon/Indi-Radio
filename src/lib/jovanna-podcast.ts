@@ -4,5 +4,12 @@ export const JOVANNA_EPISODE = {
   episode: 1,
   publishedAt: "2026-11-13",
   durationSeconds: 3734,
-  listeningUrl: "https://www.indi-art-culture.com/cetait-mieux-demain/episode-01",
+  listeningUrls: {
+    fr: "https://www.indi-art-culture.com/cetait-mieux-demain/episode-01",
+    en: "https://www.indi-art-culture.com/en/cetait-mieux-demain/episode-01",
+  },
 } as const;
+
+export function jovannaListeningUrl(lang: string) {
+  return lang === "en" ? JOVANNA_EPISODE.listeningUrls.en : JOVANNA_EPISODE.listeningUrls.fr;
+}

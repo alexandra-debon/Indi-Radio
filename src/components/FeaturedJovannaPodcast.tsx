@@ -1,7 +1,7 @@
 import cover from "@/assets/jovanna-episode-01-cover.jpg.asset.json";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
-import { JOVANNA_EPISODE } from "@/lib/jovanna-podcast";
+import { JOVANNA_EPISODE, jovannaListeningUrl } from "@/lib/jovanna-podcast";
 import { Headphones, ExternalLink } from "lucide-react";
 
 const TXT = {
@@ -28,9 +28,10 @@ const TXT = {
 export function FeaturedJovannaPodcast() {
   const { lang } = useLang();
   const t = TXT[lang === "en" ? "en" : "fr"];
+  const listeningUrl = jovannaListeningUrl(lang);
   return (
     <section className="grid gap-5 border-b pb-6 sm:grid-cols-[minmax(0,240px)_1fr] sm:items-center">
-      <a href={JOVANNA_EPISODE.listeningUrl} target="_blank" rel="noopener noreferrer" className="mx-auto block w-full max-w-[280px]">
+      <a href={listeningUrl} target="_blank" rel="noopener noreferrer" className="mx-auto block w-full max-w-[280px]">
         <img src={cover.url} alt={t.alt} width={707} height={707} className="aspect-square w-full rounded object-contain" loading="eager" />
       </a>
       <div className="min-w-0 space-y-3">
@@ -41,7 +42,7 @@ export function FeaturedJovannaPodcast() {
         <p className="text-sm">{t.description}</p>
         <p className="text-sm text-muted-foreground">{t.finale}</p>
         <Button asChild className="h-auto min-h-10 whitespace-normal py-2">
-          <a href={JOVANNA_EPISODE.listeningUrl} target="_blank" rel="noopener noreferrer">
+          <a href={listeningUrl} target="_blank" rel="noopener noreferrer">
             <Headphones /> {t.cta} <ExternalLink />
           </a>
         </Button>
