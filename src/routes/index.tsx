@@ -34,22 +34,22 @@ const OG_HOME = ogImageForLang("fr");
 export const Route = createFileRoute("/")({
   head: async ({ match }) => ({
     meta: await localizedStaticMeta("/", match.search, [
-      { title: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
+      { title: "InDi RaDio - Hub InDi ArT CulTuRe - Radio 100% musique indé sans pub - réseau social" },
       {
         name: "description",
         content:
-          "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info.",
+          "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 100 % musique indé sans pub et réseau social des artistes et auditeurs indépendants.",
       },
       {
         name: "keywords",
         content:
           "radio gratuite, radio musique indé, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, radio indépendante, InDi RaDio",
       },
-      { property: "og:title", content: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
+      { property: "og:title", content: "InDi RaDio - Hub InDi ArT CulTuRe - Radio 100% musique indé sans pub - réseau social" },
       {
         property: "og:description",
         content:
-          "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info.",
+          "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 100 % musique indé sans pub et réseau social des artistes et auditeurs indépendants.",
       },
       { property: "og:url", content: "https://www.radio.indi-art-culture.com/" },
       { property: "og:type", content: "website" },
@@ -57,8 +57,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Hub InDi ArT CulTuRe — Radio 24/7 gratuite 100 % musique et culture indé" },
-      { name: "twitter:description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info." },
+      { name: "twitter:title", content: "InDi RaDio - Hub InDi ArT CulTuRe - Radio 100% musique indé sans pub - réseau social" },
+      { name: "twitter:description", content: "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 100 % musique indé sans pub et réseau social des artistes et auditeurs indépendants." },
       { name: "twitter:image", content: OG_HOME },
     ]),
     links: [{ rel: "canonical", href: "https://www.radio.indi-art-culture.com/" }],
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/")({
           },
           logo: "https://www.radio.indi-art-culture.com/icons/apple-touch-icon.png",
           description:
-            "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 de la musique indépendante, 100 % musique et culture indé, sans pub, sans info.",
+            "InDi RaDio, le Hub InDi ArT CulTuRe : radio gratuite 24/7 100 % musique indé sans pub et réseau social des artistes et auditeurs indépendants.",
           parentOrganization: {
             "@id": "https://www.radio.indi-art-culture.com/#org",
           },
