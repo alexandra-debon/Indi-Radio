@@ -11,6 +11,8 @@
 
 ## Security Notes for Agents
 
+- Featured externally hosted podcast episodes use a dedicated bilingual presentation and shared episode constants; link to the supplied listening page rather than inventing an audio stream or an English URL.
+
 - Artist profile loaders derive shop SEO for enabled artist shops and select only visible product photos; their leaf heads own bilingual metadata and product-first share photos so client localization cannot restore stale profile text or images.
 
 - Blog article heads compose English search terms after translating article text and use the article's `?hl=en` canonical URL, so localized SEO stays language-consistent without changing routes.

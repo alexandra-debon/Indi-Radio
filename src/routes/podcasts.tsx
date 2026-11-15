@@ -12,6 +12,7 @@ import { useT } from "@/lib/i18n";
 import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
+import { FeaturedJovannaPodcast } from "@/components/FeaturedJovannaPodcast";
 
 const OG_PODCASTS = `https://www.radio.indi-art-culture.com${ogPodcasts}`;
 const SITE = "https://www.radio.indi-art-culture.com";
@@ -83,9 +84,7 @@ function PodcastsPage() {
   return (
     <div className="space-y-4">
       <h1 className="section-title">{t("page.podcasts.title")}</h1>
-      {podcasts.length === 0 && (
-        <div className="card-brut p-4 text-center text-sm text-muted-foreground">{t("page.podcasts.empty")}</div>
-      )}
+      <FeaturedJovannaPodcast />
       <div className="grid grid-cols-2 gap-3">
         {podcasts.map((p) => (
           <div key={p.id} className="card-brut relative overflow-hidden">

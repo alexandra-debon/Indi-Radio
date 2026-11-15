@@ -1,5 +1,8 @@
 # Tasks
 
+- [x] Ajouter le premier podcast de Jovanna avec sa pochette, les informations de l’épisode et le lien d’écoute.
+- [x] Vérifier la rubrique Podcasts sur ordinateur et téléphone.
+
 - [x] Optimiser les titres et descriptions FR/EN des boutiques artistes pour l’achat direct.
 - [x] Utiliser une miniature Facebook propre à chaque boutique.
 - [x] Vérifier les métadonnées FR/EN et la photo accessible d’une boutique réelle (aucun produit visible actuellement ; sélection produit couverte par tests).
