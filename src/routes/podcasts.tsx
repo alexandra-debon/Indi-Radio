@@ -13,6 +13,33 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { FeaturedJovannaPodcast } from "@/components/FeaturedJovannaPodcast";
+import jovannaCover from "@/assets/jovanna-episode-01-cover.jpg.asset.json";
+import { JOVANNA_EPISODE, jovannaListeningUrl } from "@/lib/jovanna-podcast";
+
+function jovannaEpisodeLd(lang: string) {
+  const en = lang === "en";
+  const url = jovannaListeningUrl(lang);
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "PodcastEpisode",
+      name: `${JOVANNA_EPISODE.title} – ${en ? "Episode" : "Épisode"} 01 | InDi RaDio`,
+      episodeNumber: JOVANNA_EPISODE.episode,
+      datePublished: JOVANNA_EPISODE.publishedAt,
+      timeRequired: `PT${Math.floor(JOVANNA_EPISODE.durationSeconds / 60)}M${JOVANNA_EPISODE.durationSeconds % 60}S`,
+      inLanguage: "fr",
+      url,
+      image: `${SITE_ORIGIN}${jovannaCover.url}`,
+      description: en
+        ? "C’était mieux demain, hosted by Jovanna on InDi RaDio: independent music, discoveries and raw culture. Episode 01 with SLIFT, Shilpa Ray, Metro Verlaine, Loa Mercury and Rodolphe Burger."
+        : "C’était mieux demain, l’émission de Jovanna sur InDi RaDio : musique indépendante, découvertes et culture brute. Épisode 01 avec SLIFT, Shilpa Ray, Metro Verlaine, Loa Mercury et Rodolphe Burger.",
+      actor: { "@type": "Person", name: JOVANNA_EPISODE.host },
+      potentialAction: { "@type": "ListenAction", target: url },
+      partOfSeries: { "@type": "PodcastSeries", name: JOVANNA_EPISODE.title, url, publisher: { "@type": "Organization", name: "InDi RaDio" } },
+    }),
+  };
+}
 
 const OG_PODCASTS = `https://www.radio.indi-art-culture.com${ogPodcasts}`;
 const SITE = "https://www.radio.indi-art-culture.com";
@@ -22,7 +49,7 @@ export const Route = createFileRoute("/podcasts")({
     meta: await localizedStaticMeta("/podcasts", match.search, [
       { title: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub" },
       { name: "description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
-      { name: "keywords", content: "radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
+      { name: "keywords", content: "C'était mieux demain, Jovanna, podcast Jovanna, radio musique indépendante, podcasts indépendants, interviews artistes indépendants, radio sans pub, InDi RaDio" },
       { property: "og:title", content: "InDi RaDio - Podcasts et émissions - Radio 100% musique indé sans pub" },
       { property: "og:description", content: "Écoute les podcasts d'InDi RaDio : interviews, émissions et chroniques d'artistes indépendants sur la radio 24/7 de la musique indépendante." },
       { property: "og:url", content: "https://www.radio.indi-art-culture.com/podcasts" },
@@ -41,6 +68,7 @@ export const Route = createFileRoute("/podcasts")({
         HOME_CRUMB,
         { name: "Podcasts", url: `${SITE_ORIGIN}/podcasts` },
       ]),
+      jovannaEpisodeLd((match.search as { hl?: string } | undefined)?.hl === "en" ? "en" : "fr"),
     ],
   }),
   component: PodcastsPage,
