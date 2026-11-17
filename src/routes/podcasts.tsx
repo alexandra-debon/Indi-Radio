@@ -13,6 +13,7 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { FeaturedJovannaPodcast } from "@/components/FeaturedJovannaPodcast";
+import { OfflineEpisodesList } from "@/components/podcast/OfflineEpisodesList";
 import jovannaCover from "@/assets/jovanna-episode-01-cover.jpg.asset.json";
 import { JOVANNA_EPISODE, jovannaListeningUrl } from "@/lib/jovanna-podcast";
 
@@ -113,6 +114,7 @@ function PodcastsPage() {
     <div className="space-y-4">
       <h1 className="section-title">{t("page.podcasts.title")}</h1>
       <FeaturedJovannaPodcast />
+      <OfflineEpisodesList />
       <div className="grid grid-cols-2 gap-3">
         {podcasts.map((p) => (
           <div key={p.id} className="card-brut relative overflow-hidden">

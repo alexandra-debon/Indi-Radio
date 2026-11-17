@@ -109,6 +109,7 @@ import { Route as PartagePublicationIndexRouteImport } from './routes/partage.pu
 import { Route as PartagePublicationIdRouteImport } from './routes/partage.publication.$id'
 import { Route as PartageTeeviIndexRouteImport } from './routes/partage.teevi.index'
 import { Route as PartageTeeviIdRouteImport } from './routes/partage.teevi.$id'
+import { Route as PodcastsEpisodeSlugRouteImport } from './routes/podcasts_.episode.$slug'
 import { Route as UPseudoIndexRouteImport } from './routes/u.$pseudo.index'
 import { Route as ApiPublicHooksIndexnowRouteImport } from './routes/api/public/hooks/indexnow'
 import { Route as ApiPublicHooksPingSitemapsRouteImport } from './routes/api/public/hooks/ping-sitemaps'
@@ -647,6 +648,11 @@ const PartageTeeviIdRoute = PartageTeeviIdRouteImport.update({
   path: '/partage/teevi/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PodcastsEpisodeSlugRoute = PodcastsEpisodeSlugRouteImport.update({
+  id: '/podcasts_/episode/$slug',
+  path: '/podcasts/episode/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UPseudoIndexRoute = UPseudoIndexRouteImport.update({
   id: '/u/$pseudo/',
   path: '/u/$pseudo/',
@@ -791,6 +797,7 @@ export interface FileRoutesByFullPath {
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/partage/teevi/$id': typeof PartageTeeviIdRoute
+  '/podcasts/episode/$slug': typeof PodcastsEpisodeSlugRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
@@ -901,6 +908,7 @@ export interface FileRoutesByTo {
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/partage/teevi/$id': typeof PartageTeeviIdRoute
+  '/podcasts/episode/$slug': typeof PodcastsEpisodeSlugRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine': typeof PartageMagazineIndexRoute
   '/partage/publication': typeof PartagePublicationIndexRoute
@@ -1013,6 +1021,7 @@ export interface FileRoutesById {
   '/partage/magazine/$id': typeof PartageMagazineIdRoute
   '/partage/publication/$id': typeof PartagePublicationIdRoute
   '/partage/teevi/$id': typeof PartageTeeviIdRoute
+  '/podcasts_/episode/$slug': typeof PodcastsEpisodeSlugRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/partage/magazine/': typeof PartageMagazineIndexRoute
   '/partage/publication/': typeof PartagePublicationIndexRoute
@@ -1125,6 +1134,7 @@ export interface FileRouteTypes {
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
     | '/partage/teevi/$id'
+    | '/podcasts/episode/$slug'
     | '/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
@@ -1235,6 +1245,7 @@ export interface FileRouteTypes {
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
     | '/partage/teevi/$id'
+    | '/podcasts/episode/$slug'
     | '/profile'
     | '/partage/magazine'
     | '/partage/publication'
@@ -1346,6 +1357,7 @@ export interface FileRouteTypes {
     | '/partage/magazine/$id'
     | '/partage/publication/$id'
     | '/partage/teevi/$id'
+    | '/podcasts_/episode/$slug'
     | '/_authenticated/profile/'
     | '/partage/magazine/'
     | '/partage/publication/'
@@ -1433,6 +1445,7 @@ export interface RootRouteChildren {
   PartageMagazineIdRoute: typeof PartageMagazineIdRoute
   PartagePublicationIdRoute: typeof PartagePublicationIdRoute
   PartageTeeviIdRoute: typeof PartageTeeviIdRoute
+  PodcastsEpisodeSlugRoute: typeof PodcastsEpisodeSlugRoute
   PartageMagazineIndexRoute: typeof PartageMagazineIndexRoute
   PartagePublicationIndexRoute: typeof PartagePublicationIndexRoute
   PartageTeeviIndexRoute: typeof PartageTeeviIndexRoute
@@ -2149,6 +2162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartageTeeviIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/podcasts_/episode/$slug': {
+      id: '/podcasts_/episode/$slug'
+      path: '/podcasts/episode/$slug'
+      fullPath: '/podcasts/episode/$slug'
+      preLoaderRoute: typeof PodcastsEpisodeSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$pseudo/': {
       id: '/u/$pseudo/'
       path: '/u/$pseudo'
@@ -2360,6 +2380,7 @@ const rootRouteChildren: RootRouteChildren = {
   PartageMagazineIdRoute: PartageMagazineIdRoute,
   PartagePublicationIdRoute: PartagePublicationIdRoute,
   PartageTeeviIdRoute: PartageTeeviIdRoute,
+  PodcastsEpisodeSlugRoute: PodcastsEpisodeSlugRoute,
   PartageMagazineIndexRoute: PartageMagazineIndexRoute,
   PartagePublicationIndexRoute: PartagePublicationIndexRoute,
   PartageTeeviIndexRoute: PartageTeeviIndexRoute,

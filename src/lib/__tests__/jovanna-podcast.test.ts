@@ -14,3 +14,17 @@ describe("Jovanna's first podcast", () => {
     expect(JOVANNA_EPISODE.durationSeconds).toBe(62 * 60 + 14);
   });
 });
+import { IN_APP_EPISODES, findInAppEpisode } from "../jovanna-podcast";
+import { isExpired, OFFLINE_TTL_MS } from "../offline-audio";
+
+describe("in-app listening", () => {
+  it("plays episode 1 from the supplied m4a source", () => {
+    expect(JOVANNA_EPISODE.audioUrl).toBe("https://indi-radio.indi-art-culture.com:2170/media/podcasts/Server_1/c%C3%A9tait-mieux-demain-jovanna/mix%20jovanna.m4a");
+    expect(findInAppEpisode(JOVANNA_EPISODE.slug)).toBe(IN_APP_EPISODES[0]);
+  });
+  it("expires offline episodes after 30 days", () => {
+    expect(OFFLINE_TTL_MS).toBe(30 * 86400000);
+    expect(isExpired({ expiresAt: 1000 }, 999)).toBe(false);
+    expect(isExpired({ expiresAt: 1000 }, 1000)).toBe(true);
+  });
+});
