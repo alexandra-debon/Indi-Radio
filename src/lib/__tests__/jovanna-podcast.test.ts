@@ -14,7 +14,7 @@ describe("Jovanna's first podcast", () => {
     expect(JOVANNA_EPISODE.durationSeconds).toBe(62 * 60 + 14);
   });
 });
-import { IN_APP_EPISODES, findInAppEpisode } from "../jovanna-podcast";
+import { IN_APP_EPISODES, findInAppEpisode, chapterIndexAt } from "../jovanna-podcast";
 import { isExpired, OFFLINE_TTL_MS } from "../offline-audio";
 
 describe("in-app listening", () => {
@@ -26,5 +26,15 @@ describe("in-app listening", () => {
     expect(OFFLINE_TTL_MS).toBe(30 * 86400000);
     expect(isExpired({ expiresAt: 1000 }, 999)).toBe(false);
     expect(isExpired({ expiresAt: 1000 }, 1000)).toBe(true);
+  });
+});
+
+describe("chapters", () => {
+  it("starts SLIFT at 1:44 and finds the current chapter", () => {
+    const ch = JOVANNA_EPISODE.chapters;
+    expect(ch[1]).toMatchObject({ start: 104, artist: "SLIFT" });
+    expect(chapterIndexAt(ch, 103)).toBe(0);
+    expect(chapterIndexAt(ch, 104)).toBe(1);
+    expect(chapterIndexAt(ch, 3700)).toBe(ch.length - 1);
   });
 });

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { useLang } from "@/lib/i18n";
-import type { PodcastEpisode } from "@/lib/jovanna-podcast";
+import { chapterIndexAt, type PodcastEpisode } from "@/lib/jovanna-podcast";
 import { getOffline, openOfflineUrl, removeOffline, renewOffline, saveOffline, type OfflineMeta } from "@/lib/offline-audio";
 import { Pause, Play, RotateCcw, RotateCw, WifiOff, Trash2, RefreshCw, Loader2 } from "lucide-react";
 
@@ -13,7 +13,7 @@ const TXT = {
     offline: "Écouter hors ligne", saving: "Préparation hors ligne…", cancel: "Annuler", ready: "Disponible hors ligne",
     until: "jusqu’au", renew: "Prolonger 30 jours", remove: "Retirer", playingOffline: "Lecture hors ligne protégée",
     error: "La préparation hors ligne a échoué. Vérifiez votre connexion et l’espace disponible.",
-    needOnline: "Connexion requise pour prolonger.", progress: "Progression",
+    needOnline: "Connexion requise pour prolonger.", progress: "Progression", chapters: "Chapitres", opening: "Ouverture", goTo: "Aller au chapitre",
     notice: "Écoute hors ligne disponible dans l'application InDi(E) HuB. Les épisodes restent protégés dans l'application : aucun fichier audio n'est enregistré sur votre appareil. Toute copie ou rediffusion des titres musicaux est interdite. Soutenez les artistes : achetez leurs disques chez les disquaires indépendants.",
   },
   en: {
@@ -21,7 +21,7 @@ const TXT = {
     offline: "Listen offline", saving: "Preparing offline…", cancel: "Cancel", ready: "Available offline",
     until: "until", renew: "Extend 30 days", remove: "Remove", playingOffline: "Protected offline playback",
     error: "Offline preparation failed. Check your connection and available storage.",
-    needOnline: "Connection required to extend.", progress: "Progress",
+    needOnline: "Connection required to extend.", progress: "Progress", chapters: "Chapters", opening: "Opening", goTo: "Go to chapter",
     notice: "Offline listening available in the InDi(E) HuB app. Episodes stay protected inside the app: no audio file is saved to your device. Copying or redistributing the music is prohibited. Support the artists: buy their records from independent record shops.",
   },
 } as const;
@@ -35,7 +35,7 @@ export function fmtTime(s: number) {
   return `${h ? `${h}:` : ""}${mm}:${String(sec).padStart(2, "0")}`;
 }
 
-export function InAppPodcastPlayer({ episode }: { episode: PodcastEpisode }) {
+export function InAppPodcastPlayer({ episode, showChapters = false }: { episode: PodcastEpisode; showChapters?: boolean }) {
   const { lang } = useLang();
   const t = TXT[lang === "en" ? "en" : "fr"];
   const audio = useRef<HTMLAudioElement>(null);
@@ -80,6 +80,19 @@ export function InAppPodcastPlayer({ episode }: { episode: PodcastEpisode }) {
     const a = audio.current;
     if (a && blobUrl.current) { a.removeAttribute("src"); a.load(); revoke(); }
   };
+
+  const chapters = showChapters ? episode.chapters ?? [] : [];
+  const current = chapterIndexAt(chapters, time);
+  const jump = async (start: number) => {
+    const a = audio.current;
+    if (!a) return;
+    if (!a.src) await toggle();
+    setTime(start);
+    if (a.readyState >= 1) a.currentTime = start;
+    else a.addEventListener("loadedmetadata", () => { a.currentTime = start; }, { once: true });
+    if (a.paused) await a.play().catch(() => {});
+  };
+  const chapterTitle = (c: { title: string }) => (c.title === "Ouverture" ? t.opening : c.title);
 
   const seek = (d: number) => { const a = audio.current; if (a && a.src) a.currentTime = Math.max(0, Math.min(duration, a.currentTime + d)); };
   const changeSpeed = () => {
@@ -135,8 +148,45 @@ export function InAppPodcastPlayer({ episode }: { episode: PodcastEpisode }) {
         <Button variant="outline" size="sm" onClick={changeSpeed} aria-label={t.speed}>{speed}×</Button>
         <span className="ml-auto text-xs tabular-nums text-muted-foreground">{fmtTime(time)} / {fmtTime(duration)}</span>
       </div>
-      <Slider aria-label={t.progress} value={[time]} max={duration || 1} step={1}
-        onValueChange={([v]) => { const a = audio.current; if (a && a.src) a.currentTime = v; setTime(v); }} />
+      <div className="relative">
+        <Slider aria-label={t.progress} value={[time]} max={duration || 1} step={1}
+          onValueChange={([v]) => { const a = audio.current; if (a && a.src) a.currentTime = v; setTime(v); }} />
+        {chapters.slice(1).map((c) => (
+          <span key={c.start} aria-hidden className="pointer-events-none absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-foreground/60"
+            style={{ left: `${(c.start / (duration || 1)) * 100}%` }} />
+        ))}
+      </div>
+      {current >= 0 && (
+        <p className="truncate text-xs font-semibold">
+          <span className="text-primary">{current + 1}/{chapters.length}</span> · {chapterTitle(chapters[current])}
+          {chapters[current].artist && <span className="font-normal text-muted-foreground"> — {chapters[current].artist}</span>}
+        </p>
+      )}
+      {chapters.length > 0 && (
+        <div className="border-t pt-3">
+          <p className="mb-2 text-xs font-bold uppercase">{t.chapters}</p>
+          <ol className="space-y-0.5">
+            {chapters.map((c, i) => {
+              const end = chapters[i + 1]?.start ?? duration;
+              const pct = i === current ? Math.min(100, ((time - c.start) / Math.max(1, end - c.start)) * 100) : i < current ? 100 : 0;
+              return (
+                <li key={c.start}>
+                  <button type="button" onClick={() => jump(c.start)} aria-label={`${t.goTo} ${i + 1} : ${chapterTitle(c)}`}
+                    aria-current={i === current ? "true" : undefined}
+                    className={`relative w-full overflow-hidden rounded px-2 py-1.5 text-left text-sm hover:bg-muted ${i === current ? "bg-muted font-semibold" : ""}`}>
+                    <span className="flex items-baseline gap-2">
+                      <span className="w-12 shrink-0 text-xs tabular-nums text-muted-foreground">{fmtTime(c.start)}</span>
+                      <span className="min-w-0 flex-1 truncate">{chapterTitle(c)}{c.artist && <span className="font-normal text-muted-foreground"> — {c.artist}</span>}</span>
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{fmtTime(end - c.start)}</span>
+                    </span>
+                    <span aria-hidden className="absolute bottom-0 left-0 h-0.5 bg-primary" style={{ width: `${pct}%` }} />
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
       {usingOffline && <p className="flex items-center gap-1 text-xs text-primary"><WifiOff className="h-3 w-3" /> {t.playingOffline}</p>}
 
       <div className="flex flex-wrap items-center gap-2 border-t pt-3">

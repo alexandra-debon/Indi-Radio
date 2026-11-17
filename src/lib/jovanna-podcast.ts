@@ -9,7 +9,20 @@ export type PodcastEpisode = {
   audioUrl: string;
   audioType: string;
   listeningUrls: { fr: string; en: string };
+  /** Chapitres (début en secondes), d’après la programmation officielle. */
+  chapters?: readonly PodcastChapter[];
 };
+
+export type PodcastChapter = { start: number; title: string; artist?: string };
+
+const ts = (m: number, s: number) => m * 60 + s;
+
+/** Index du chapitre en cours à l’instant `time` (-1 avant le premier). */
+export function chapterIndexAt(chapters: readonly PodcastChapter[], time: number) {
+  let i = -1;
+  for (let k = 0; k < chapters.length; k++) if (chapters[k].start <= time) i = k;
+  return i;
+}
 
 export const JOVANNA_EPISODE = {
   slug: "cetait-mieux-demain-01",
@@ -25,6 +38,21 @@ export const JOVANNA_EPISODE = {
     fr: "https://www.indi-art-culture.com/cetait-mieux-demain/episode-01",
     en: "https://www.indi-art-culture.com/en/cetait-mieux-demain/episode-01",
   },
+  chapters: [
+    { start: 0, title: "Ouverture" },
+    { start: ts(1, 44), title: "Ummon", artist: "SLIFT" },
+    { start: ts(9, 1), title: "Heaven in Stereo", artist: "Shilpa Ray" },
+    { start: ts(13, 3), title: "Polaroid", artist: "Metro Verlaine" },
+    { start: ts(16, 33), title: "Un homme et une femme", artist: "Loa Mercury" },
+    { start: ts(21, 45), title: "Fragile", artist: "Bandit Bandit × Last Train" },
+    { start: ts(28, 48), title: "Maux", artist: "Last Train × Bandit Bandit" },
+    { start: ts(33, 50), title: "Poison", artist: "Lamu" },
+    { start: ts(39, 30), title: "Fx of Love", artist: "Rodolphe Burger" },
+    { start: ts(44, 54), title: "Cowboy Kirk", artist: "All Them Witches" },
+    { start: ts(51, 44), title: "Rabbit Hole", artist: "False Heads" },
+    { start: ts(55, 43), title: "Monsters", artist: "Nova Twins" },
+    { start: ts(59, 14), title: "Trainer en costard", artist: "Pastis Agressif" },
+  ],
 } as const satisfies PodcastEpisode;
 
 /** Registre des épisodes intégrés : ajouter les prochains épisodes ici. */

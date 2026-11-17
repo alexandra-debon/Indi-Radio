@@ -45,7 +45,7 @@ export function FeaturedJovannaPodcast({ showSheetLink = true }: { showSheetLink
         <p className="text-xs text-muted-foreground">{t.date}</p>
         <p className="text-sm">{t.description}</p>
         <p className="text-sm text-muted-foreground">{t.finale}</p>
-        <InAppPodcastPlayer episode={JOVANNA_EPISODE} />
+        <InAppPodcastPlayer episode={JOVANNA_EPISODE} showChapters={!showSheetLink} />
         <div className="flex flex-wrap gap-3 text-xs">
           {showSheetLink && (
             <Link to="/podcasts/episode/$slug" params={{ slug: JOVANNA_EPISODE.slug }} className="font-semibold text-primary underline">{t.sheet}</Link>
