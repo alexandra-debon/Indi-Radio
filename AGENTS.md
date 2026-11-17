@@ -53,7 +53,10 @@ BEGIN
       OR NEW.is_team_indi IS DISTINCT FROM OLD.is_team_indi
       OR NEW.badges IS DISTINCT FROM OLD.badges
       OR NEW.points IS DISTINCT FROM OLD.points
-      OR NEW.level IS DISTINCT FROM OLD.level)
+      OR NEW.level IS DISTINCT FROM OLD.level
+      OR NEW.stage_name IS DISTINCT FROM OLD.stage_name
+      OR NEW.gallery_cover_url IS DISTINCT FROM OLD.gallery_cover_url
+      OR NEW.gallery_summary IS DISTINCT FROM OLD.gallery_summary)
      AND NOT public.has_role(auth.uid(), 'admin') THEN
     IF current_setting('request.jwt.claims', true) IS NOT NULL THEN
       RAISE EXCEPTION 'Not allowed to modify privileged profile fields';
@@ -66,7 +69,7 @@ $$;
 
 Key points:
 
-1. **Privileged columns are enumerated** (`role`, `is_certified`, `is_team_indi`, `badges`, `points`, `level`). Any attempt to change them by a non-admin is rejected with an exception.
+1. **Privileged columns are enumerated** (`role`, `is_certified`, `is_team_indi`, `badges`, `points`, `level`, `stage_name`, `gallery_cover_url`, `gallery_summary`). Any attempt to change them by a non-admin is rejected with an exception.
 2. **`pg_trigger_depth() > 1`** lets internal triggers (e.g. the points/level award system) update `points` and `level` without being blocked.
 3. **`current_setting('request.jwt.claims', true) IS NOT NULL`** ensures the restriction applies only to direct client requests, not to server-side maintenance operations that run without a JWT context.
 4. **Admin override** is allowed because `has_role(auth.uid(), 'admin')` is checked inside the trigger function.
