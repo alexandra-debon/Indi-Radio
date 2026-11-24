@@ -14,18 +14,13 @@ describe("Jovanna's first podcast", () => {
     expect(JOVANNA_EPISODE.durationSeconds).toBe(62 * 60 + 14);
   });
 });
-import { IN_APP_EPISODES, findInAppEpisode, chapterIndexAt, podcastStatsUrl } from "../jovanna-podcast";
+import { IN_APP_EPISODES, findInAppEpisode, chapterIndexAt } from "../jovanna-podcast";
 import { isExpired, OFFLINE_TTL_MS } from "../offline-audio";
 
 describe("in-app listening", () => {
   it("plays episode 1 from the supplied m4a source", () => {
     expect(JOVANNA_EPISODE.audioUrl).toBe("https://indi-radio.indi-art-culture.com:2170/media/podcasts/Server_1/c%C3%A9tait-mieux-demain-jovanna/mix%20jovanna.m4a");
     expect(findInAppEpisode(JOVANNA_EPISODE.slug)).toBe(IN_APP_EPISODES[0]);
-  });
-  it("counts online plays through the Netlify counter URL", () => {
-    expect(podcastStatsUrl(JOVANNA_EPISODE)).toBe(
-      "https://podcast-indi-art-culture.netlify.app/e/1/aHR0cHM6Ly9pbmRpLXJhZGlvLmluZGktYXJ0LWN1bHR1cmUuY29tOjIxNzAvbWVkaWEvcG9kY2FzdHMvU2VydmVyXzEvYyVDMyVBOXRhaXQtbWlldXgtZGVtYWluLWpvdmFubmEvbWl4JTIwam92YW5uYS5tNGE.m4a?app=hub",
-    );
   });
   it("expires offline episodes after 30 days", () => {
     expect(OFFLINE_TTL_MS).toBe(30 * 86400000);

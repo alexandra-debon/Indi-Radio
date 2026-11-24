@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { useLang } from "@/lib/i18n";
-import { chapterIndexAt, podcastStatsUrl, type PodcastEpisode } from "@/lib/jovanna-podcast";
+import { chapterIndexAt, type PodcastEpisode } from "@/lib/jovanna-podcast";
 import { getOffline, openOfflineUrl, removeOffline, renewOffline, saveOffline, type OfflineMeta } from "@/lib/offline-audio";
 import { Pause, Play, RotateCcw, RotateCw, WifiOff, Trash2, RefreshCw, Loader2 } from "lucide-react";
 
@@ -49,7 +49,6 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
   const [saving, setSaving] = useState<number | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [usingOffline, setUsingOffline] = useState(false);
-  const statsUrl = podcastStatsUrl(episode);
 
   const revoke = useCallback(() => {
     if (blobUrl.current) { URL.revokeObjectURL(blobUrl.current); blobUrl.current = null; }
@@ -70,20 +69,11 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
     if (!a.src) {
       if (offline) {
         try { blobUrl.current = await openOfflineUrl(episode.slug); a.src = blobUrl.current; setUsingOffline(true); }
-        catch { a.src = statsUrl; }
-      } else a.src = statsUrl;
+        catch { a.src = episode.audioUrl; }
+      } else a.src = episode.audioUrl;
       a.playbackRate = speed;
     }
     await a.play().catch(() => {});
-  };
-
-  // Si le compteur ne répond pas, repli sur la source directe.
-  const onAudioError = () => {
-    const a = audio.current;
-    if (!a || usingOffline || !a.src || a.src === episode.audioUrl) return;
-    a.src = episode.audioUrl;
-    a.playbackRate = speed;
-    a.play().catch(() => {});
   };
 
   const stop = () => {
@@ -147,7 +137,6 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => { setPlaying(false); stop(); }}
-        onError={onAudioError}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => Number.isFinite(e.currentTarget.duration) && setDuration(e.currentTarget.duration)}
         className="hidden"
