@@ -8,6 +8,8 @@ export type PodcastEpisode = {
   /** Source audio lue dans l'application (jamais proposée en téléchargement). */
   audioUrl: string;
   audioType: string;
+  /** Identifiant d'émission du compteur d'écoutes (défaut « 1 »). */
+  statsShowId?: string;
   listeningUrls: { fr: string; en: string };
   /** Chapitres (début en secondes), d’après la programmation officielle. */
   chapters?: readonly PodcastChapter[];
@@ -60,6 +62,23 @@ export const IN_APP_EPISODES: readonly PodcastEpisode[] = [JOVANNA_EPISODE];
 
 export function findInAppEpisode(slug: string) {
   return IN_APP_EPISODES.find((e) => e.slug === slug);
+}
+
+const STATS_BASE = "https://podcast-indi-art-culture.netlify.app/e";
+
+/** Adresse du compteur Netlify pour la lecture en ligne (redirige vers le fichier d'origine). */
+export function podcastStatsUrl(episode: PodcastEpisode) {
+  const bytes = new TextEncoder().encode(episode.audioUrl);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  const b64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const ext = episode.audioUrl.split("?")[0]?.match(/\.[a-z0-9]+$/i)?.[0] ?? ".m4a";
+  return `${STATS_BASE}/${episode.statsShowId ?? "1"}/${b64}${ext}?app=hub`;
+}
+
+/** Adresse du relevé du nombre d'écoutes d'un épisode (JSON { "ecoutes": number }). */
+export function podcastListenCountUrl(episode: PodcastEpisode) {
+  return `https://podcast-indi-art-culture.netlify.app/compteur.json?audio=${encodeURIComponent(episode.audioUrl)}`;
 }
 
 export function jovannaListeningUrl(lang: string) {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { useLang } from "@/lib/i18n";
-import { chapterIndexAt, type PodcastEpisode } from "@/lib/jovanna-podcast";
+import { chapterIndexAt, podcastListenCountUrl, podcastStatsUrl, type PodcastEpisode } from "@/lib/jovanna-podcast";
 import { getOffline, openOfflineUrl, removeOffline, renewOffline, saveOffline, type OfflineMeta } from "@/lib/offline-audio";
 import { Pause, Play, RotateCcw, RotateCw, WifiOff, Trash2, RefreshCw, Loader2 } from "lucide-react";
 
@@ -49,6 +49,8 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
   const [saving, setSaving] = useState<number | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [usingOffline, setUsingOffline] = useState(false);
+  const [listens, setListens] = useState<number | null>(null);
+  const statsUrl = podcastStatsUrl(episode);
 
   const revoke = useCallback(() => {
     if (blobUrl.current) { URL.revokeObjectURL(blobUrl.current); blobUrl.current = null; }
@@ -62,6 +64,20 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
     return () => { window.removeEventListener("indi-offline-changed", onChange); abort.current?.abort(); revoke(); };
   }, [episode.slug, revoke]);
 
+  // Relevé du nombre d'écoutes : une seule requête au montage, silencieuse en cas d'échec.
+  useEffect(() => {
+    if (!navigator.onLine) return;
+    let alive = true;
+    fetch(podcastListenCountUrl(episode))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const n = (d as { ecoutes?: unknown } | null)?.ecoutes;
+        if (alive && typeof n === "number" && Number.isFinite(n)) setListens(n);
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [episode]);
+
   const toggle = async () => {
     const a = audio.current;
     if (!a) return;
@@ -69,11 +85,20 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
     if (!a.src) {
       if (offline) {
         try { blobUrl.current = await openOfflineUrl(episode.slug); a.src = blobUrl.current; setUsingOffline(true); }
-        catch { a.src = episode.audioUrl; }
-      } else a.src = episode.audioUrl;
+        catch { a.src = statsUrl; }
+      } else a.src = statsUrl;
       a.playbackRate = speed;
     }
     await a.play().catch(() => {});
+  };
+
+  // Si le compteur ne répond pas, repli sur la source directe.
+  const onAudioError = () => {
+    const a = audio.current;
+    if (!a || usingOffline || !a.src || a.src === episode.audioUrl) return;
+    a.src = episode.audioUrl;
+    a.playbackRate = speed;
+    a.play().catch(() => {});
   };
 
   const stop = () => {
@@ -126,6 +151,10 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
   const remove = async () => { stop(); await removeOffline(episode.slug); setOffline(undefined); notify(); };
 
   const locale = lang === "en" ? "en-GB" : "fr-FR";
+  const listensLabel = listens === null ? null
+    : lang === "en"
+      ? `${listens.toLocaleString("en-GB")} ${listens > 1 ? "listens" : "listen"}`
+      : `${listens.toLocaleString("fr-FR")} ${listens > 1 ? "écoutes" : "écoute"}`;
 
   return (
     <div className="card-brut select-none space-y-3 p-4" onContextMenu={(e) => e.preventDefault()}>
@@ -137,6 +166,7 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => { setPlaying(false); stop(); }}
+        onError={onAudioError}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => Number.isFinite(e.currentTarget.duration) && setDuration(e.currentTarget.duration)}
         className="hidden"
@@ -156,6 +186,7 @@ export function InAppPodcastPlayer({ episode, showChapters = false }: { episode:
             style={{ left: `${(c.start / (duration || 1)) * 100}%` }} />
         ))}
       </div>
+      {listensLabel && <p className="text-xs text-muted-foreground">{listensLabel}</p>}
       {current >= 0 && (
         <p className="truncate text-xs font-semibold">
           <span className="text-primary">{current + 1}/{chapters.length}</span> · {chapterTitle(chapters[current])}
