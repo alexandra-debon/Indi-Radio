@@ -360,6 +360,19 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Rss className="size-3" />
                 RSS
               </a>
+              <a
+                href="https://www.radioguide.fm/internet-radio-france/indi-radio"
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center"
+              >
+                <img
+                  src="https://www.radioguide.fm/badges/img/6a651ab6f397c428f60ed8b6/badge-dark-m-fr.svg"
+                  alt={t("page.about.radioguide.alt")}
+                  title={t("page.about.radioguide.alt")}
+                  className="h-4 w-auto opacity-80 hover:opacity-100"
+                />
+              </a>
             </div>
           </div>
         </footer>
