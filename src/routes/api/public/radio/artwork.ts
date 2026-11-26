@@ -95,9 +95,14 @@ function keyPart(value: string) {
 const JOVANNA_SHOW_COVER =
   "/__l5e/assets-v1/867d452e-f7b6-460c-b3a2-a3db6b1a3e73/jovanna-cetait-mieux-demain.jpeg";
 
+const UNCUT_SHOW_COVER =
+  "/__l5e/assets-v1/65264a1e-3232-42bd-9192-5837f8aa62b0/uncut-by-indi.jpeg";
+
 function forcedArtwork(artist: string, title: string) {
   // Émission de Jovanna « C'était mieux demain », quel que soit l'épisode
   const a = keyPart(artist), t = keyPart(title);
+  // Émission « UnCuT by InDi », à chaque passage dans le flux
+  if (/\buncut by indi\b/.test(`${a} ${t}`)) return UNCUT_SHOW_COVER;
   if (/\bjovanna\b/.test(a) || /\bjovanna\b/.test(t) || /c ?etait mieux demain/.test(`${a} ${t}`)) {
     return JOVANNA_SHOW_COVER;
   }
