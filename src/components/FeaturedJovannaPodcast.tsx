@@ -2,6 +2,7 @@ import cover from "@/assets/jovanna-episode-01-cover.jpg.asset.json";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
 import { JOVANNA_EPISODE, jovannaListeningUrl } from "@/lib/jovanna-podcast";
+import { LinkedShowLink } from "@/components/podcast/ShowPodcastEpisodes";
 import { ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { InAppPodcastPlayer } from "@/components/podcast/InAppPodcastPlayer";
@@ -46,6 +47,7 @@ export function FeaturedJovannaPodcast({ showSheetLink = true, titleAs = "h2" }:
         <p className="text-xs text-muted-foreground">{t.date}</p>
         <p className="text-sm">{t.description}</p>
         <p className="text-sm text-muted-foreground">{t.finale}</p>
+        <LinkedShowLink episodeTitle={JOVANNA_EPISODE.title} />
         <InAppPodcastPlayer episode={JOVANNA_EPISODE} showChapters={!showSheetLink} />
         <div className="flex flex-wrap gap-3 text-xs">
           {showSheetLink && (
