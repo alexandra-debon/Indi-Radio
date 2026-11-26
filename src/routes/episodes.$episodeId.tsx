@@ -163,6 +163,7 @@ function EpisodeDetailPage() {
       {parentTitle && (
         <div className="text-[10px] uppercase tracking-widest text-primary">{parentTitle}</div>
       )}
+      <h1 className="text-xl font-bold leading-tight">{ep.title}</h1>
       <EpisodeRow ep={ep} />
       <div>
         <ShareButton

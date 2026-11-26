@@ -29,10 +29,11 @@ const TXT = {
   },
 } as const;
 
-export function FeaturedJovannaPodcast({ showSheetLink = true }: { showSheetLink?: boolean }) {
+export function FeaturedJovannaPodcast({ showSheetLink = true, titleAs = "h2" }: { showSheetLink?: boolean; titleAs?: "h1" | "h2" }) {
   const { lang } = useLang();
   const t = TXT[lang === "en" ? "en" : "fr"];
   const listeningUrl = jovannaListeningUrl(lang);
+  const TitleTag = titleAs;
   return (
     <section className="grid gap-5 border-b pb-6 sm:grid-cols-[minmax(0,240px)_1fr] sm:items-center">
       <div className="mx-auto block w-full max-w-[280px]">
@@ -40,7 +41,7 @@ export function FeaturedJovannaPodcast({ showSheetLink = true }: { showSheetLink
       </div>
       <div className="min-w-0 space-y-3">
         <p className="text-xs font-bold uppercase text-primary">{t.badge}</p>
-        <h2 className="text-2xl font-bold leading-tight">{JOVANNA_EPISODE.title}</h2>
+        <TitleTag className="text-2xl font-bold leading-tight">{JOVANNA_EPISODE.title}</TitleTag>
         <p className="text-sm font-semibold">{t.host}</p>
         <p className="text-xs text-muted-foreground">{t.date}</p>
         <p className="text-sm">{t.description}</p>

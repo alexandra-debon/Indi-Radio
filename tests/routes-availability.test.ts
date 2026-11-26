@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 
 const TARGETS = [
-  { name: "preview", url: "https://id-preview--d580aa7f-5dc8-42f8-b519-9acbc3ba6330.lovable.app" },
-  { name: "production", url: "https://radio.indi-art-culture.com" },
+  { name: "local", url: process.env.CHECK_BASE_URL ?? "http://localhost:8080" },
+  { name: "production", url: "https://www.radio.indi-art-culture.com" },
 ];
 
 const PATHS = ["/", "/index"];

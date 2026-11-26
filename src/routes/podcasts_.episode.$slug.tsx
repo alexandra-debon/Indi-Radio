@@ -43,7 +43,7 @@ function EpisodePage() {
       <Link to="/podcasts" className="text-xs font-semibold text-primary underline">
         {lang === "en" ? "← All podcasts" : "← Tous les podcasts"}
       </Link>
-      <FeaturedJovannaPodcast showSheetLink={false} />
+      <FeaturedJovannaPodcast showSheetLink={false} titleAs="h1" />
       <OfflineEpisodesList />
     </div>
   );

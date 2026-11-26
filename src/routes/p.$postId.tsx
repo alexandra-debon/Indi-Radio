@@ -117,6 +117,7 @@ function PostDetailPage() {
           </div>
         )}
         <div className="space-y-3 p-4">
+          <h1 className="text-lg font-bold leading-snug">{title}</h1>
           <div className="flex items-center justify-between gap-2">
             <UserBadge profile={post.author} className="text-xs" />
             <span className="text-[10px] text-muted-foreground">Publié par {author}</span>

@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 
 const LOCAL = "http://localhost:8080";
-const PROD = "https://radio.indi-art-culture.com";
+const PROD = "https://www.radio.indi-art-culture.com";
 
 /** Domaine canonique attendu dans tous les liens/GUID. */
 const CANONICAL_ORIGIN = PROD;
