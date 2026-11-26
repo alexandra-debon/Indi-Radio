@@ -45,6 +45,7 @@ export const Route = createFileRoute("/")({
         content:
           "radio gratuite, radio musique indé, radio musique indépendante, radio gratuite musique indépendante, radio sans pub, réseau social musique, radio indépendante, InDi RaDio",
       },
+      { name: "radioguide-verification", content: "rg-6da16f8b34c962af" },
       { property: "og:title", content: "InDi RaDio - Hub InDi ArT CulTuRe - Radio 100% musique indé sans pub - réseau social" },
       {
         property: "og:description",
