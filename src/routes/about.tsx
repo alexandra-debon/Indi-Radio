@@ -36,6 +36,21 @@ function AboutPage() {
   const t = useT();
   return (
     <div className="space-y-6">
+      <a
+        href="https://www.radioguide.fm/internet-radio-france/indi-radio"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex"
+      >
+        <img
+          src="https://www.radioguide.fm/badges/img/6a651ab6f397c428f60ed8b6/badge-dark-m-fr.svg"
+          height="54"
+          alt={t("page.about.radioguide.alt")}
+          title={t("page.about.radioguide.alt")}
+          loading="lazy"
+          className="h-[54px] w-auto"
+        />
+      </a>
       <IndiLinksBar />
       <section className="space-y-3">
         <h1 className="section-title">{t("page.about.title")}</h1>
