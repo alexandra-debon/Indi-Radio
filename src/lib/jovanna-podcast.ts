@@ -17,6 +17,11 @@ export type PodcastEpisode = {
 
 export type PodcastChapter = { start: number; title: string; artist?: string };
 
+export type PodcastEpisodePreview = Pick<PodcastEpisode, "slug" | "title" | "host" | "episode"> & {
+  /** Date et heure de diffusion annoncées, avec le fuseau de Paris. */
+  scheduledAt: string;
+};
+
 const ts = (m: number, s: number) => m * 60 + s;
 
 /** Index du chapitre en cours à l’instant `time` (-1 avant le premier). */
@@ -57,6 +62,16 @@ export const JOVANNA_EPISODE = {
   ],
 } as const satisfies PodcastEpisode;
 
+export const JOVANNA_EPISODE_2_PREVIEW = {
+  slug: "cetait-mieux-demain-02",
+  title: "C’était mieux demain",
+  host: "Jovanna",
+  episode: 2,
+  scheduledAt: "2026-11-27T21:00:00+01:00",
+} as const satisfies PodcastEpisodePreview;
+
+export const PODCAST_EPISODE_PREVIEWS: readonly PodcastEpisodePreview[] = [JOVANNA_EPISODE_2_PREVIEW];
+
 /** Registre des épisodes intégrés : ajouter les prochains épisodes ici. */
 export const IN_APP_EPISODES: readonly PodcastEpisode[] = [JOVANNA_EPISODE];
 
@@ -94,4 +109,10 @@ export function showKey(title: string) {
 export function inAppEpisodesForShow(showTitle: string) {
   const k = showKey(showTitle);
   return IN_APP_EPISODES.filter((e) => showKey(e.title) === k).sort((a, b) => b.episode - a.episode);
+}
+
+/** Annonces d'épisodes à venir associées à une émission radio. */
+export function episodePreviewsForShow(showTitle: string) {
+  const k = showKey(showTitle);
+  return PODCAST_EPISODE_PREVIEWS.filter((e) => showKey(e.title) === k).sort((a, b) => b.episode - a.episode);
 }

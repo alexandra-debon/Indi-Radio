@@ -16,6 +16,7 @@ import { SmartImg } from "@/components/media/SmartImg";
 import { trackEvent } from "@/lib/plausible";
 import { inAppEpisodesForShow } from "@/lib/jovanna-podcast";
 import { ShowPodcastEpisodes } from "@/components/podcast/ShowPodcastEpisodes";
+import { UpcomingJovannaPodcast } from "@/components/podcast/UpcomingJovannaPodcast";
 
 function ArchiveHeading() {
   const t = useT();
@@ -123,6 +124,7 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
           {(selected as any).duration_seconds ? (
             <div className="text-sm text-muted-foreground">{t("page.shows.duration")} : {Math.round((selected as any).duration_seconds / 60)} min</div>
           ) : null}
+          <UpcomingJovannaPodcast compact showTitle={selected.title} />
           {selected.description && (
             <TranslatedText as="p" className="mt-2 text-sm" entityType="show" entityKey={selected.id} field="description" text={selected.description} />
           )}

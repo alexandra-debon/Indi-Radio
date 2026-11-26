@@ -15,6 +15,7 @@ import { localizedOgText } from "@/lib/og-lang-head";
 import { trackEvent } from "@/lib/plausible";
 import { ShowPodcastEpisodes } from "@/components/podcast/ShowPodcastEpisodes";
 import { inAppEpisodesForShow } from "@/lib/jovanna-podcast";
+import { UpcomingJovannaPodcast } from "@/components/podcast/UpcomingJovannaPodcast";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogEmissions}`;
@@ -147,6 +148,7 @@ function ShowDetailPage() {
           </div>
           <h1 className="text-2xl font-bold">{show.title}</h1>
           {show.schedule && <div className="text-sm text-muted-foreground">{show.schedule}</div>}
+          <UpcomingJovannaPodcast compact showTitle={show.title} />
           {show.description && <p className="text-sm">{show.description}</p>}
         </div>
       </div>

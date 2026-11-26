@@ -14,6 +14,7 @@ import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { FeaturedJovannaPodcast } from "@/components/FeaturedJovannaPodcast";
 import { OfflineEpisodesList } from "@/components/podcast/OfflineEpisodesList";
+import { UpcomingJovannaPodcast } from "@/components/podcast/UpcomingJovannaPodcast";
 import jovannaCover from "@/assets/jovanna-episode-01-cover.jpg.asset.json";
 import { JOVANNA_EPISODE, jovannaListeningUrl } from "@/lib/jovanna-podcast";
 
@@ -113,6 +114,7 @@ function PodcastsPage() {
   return (
     <div className="space-y-4">
       <h1 className="section-title">{t("page.podcasts.title")}</h1>
+      <UpcomingJovannaPodcast />
       <FeaturedJovannaPodcast />
       <OfflineEpisodesList />
       <div className="grid grid-cols-2 gap-3">

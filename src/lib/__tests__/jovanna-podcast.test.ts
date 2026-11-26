@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { JOVANNA_EPISODE, jovannaListeningUrl } from "../jovanna-podcast";
+import { episodePreviewsForShow, JOVANNA_EPISODE, JOVANNA_EPISODE_2_PREVIEW, jovannaListeningUrl } from "../jovanna-podcast";
 
 describe("Jovanna's first podcast", () => {
   it("links French visitors to the French listening page", () => {
@@ -14,6 +14,17 @@ describe("Jovanna's first podcast", () => {
     expect(JOVANNA_EPISODE.durationSeconds).toBe(62 * 60 + 14);
   });
 });
+describe("Jovanna's second episode preview", () => {
+  it("announces the broadcast on 27 November 2026 at 9 pm in Paris", () => {
+    expect(JOVANNA_EPISODE_2_PREVIEW.episode).toBe(2);
+    expect(JOVANNA_EPISODE_2_PREVIEW.scheduledAt).toBe("2026-11-27T21:00:00+01:00");
+  });
+  it("links the preview to the matching radio show only", () => {
+    expect(episodePreviewsForShow("C'était mieux demain")).toContain(JOVANNA_EPISODE_2_PREVIEW);
+    expect(episodePreviewsForShow("Une autre émission")).toEqual([]);
+  });
+});
+
 import { IN_APP_EPISODES, findInAppEpisode, chapterIndexAt, podcastStatsUrl, podcastListenCountUrl } from "../jovanna-podcast";
 import { isExpired, OFFLINE_TTL_MS } from "../offline-audio";
 
