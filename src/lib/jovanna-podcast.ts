@@ -84,3 +84,14 @@ export function podcastListenCountUrl(episode: PodcastEpisode) {
 export function jovannaListeningUrl(lang: string) {
   return lang === "en" ? JOVANNA_EPISODE.listeningUrls.en : JOVANNA_EPISODE.listeningUrls.fr;
 }
+
+/** Normalise un titre d'émission pour relier émission radio et podcast. */
+export function showKey(title: string) {
+  return title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’'`]/g, "").replace(/[^a-z0-9]+/gi, " ").trim().toLowerCase();
+}
+
+/** Épisodes podcast intégrés issus d'une émission radio (même titre). */
+export function inAppEpisodesForShow(showTitle: string) {
+  const k = showKey(showTitle);
+  return IN_APP_EPISODES.filter((e) => showKey(e.title) === k).sort((a, b) => b.episode - a.episode);
+}

@@ -3,6 +3,7 @@ import { FeaturedJovannaPodcast } from "@/components/FeaturedJovannaPodcast";
 import { OfflineEpisodesList } from "@/components/podcast/OfflineEpisodesList";
 import { findInAppEpisode } from "@/lib/jovanna-podcast";
 import { useLang } from "@/lib/i18n";
+import { LinkedShowLink } from "@/components/podcast/ShowPodcastEpisodes";
 
 const SITE = "https://www.radio.indi-art-culture.com";
 
@@ -44,6 +45,7 @@ function EpisodePage() {
         {lang === "en" ? "← All podcasts" : "← Tous les podcasts"}
       </Link>
       <FeaturedJovannaPodcast showSheetLink={false} titleAs="h1" />
+      <LinkedShowLink episodeTitle={Route.useLoaderData().title} />
       <OfflineEpisodesList />
     </div>
   );

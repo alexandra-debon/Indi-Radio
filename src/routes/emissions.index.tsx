@@ -14,6 +14,8 @@ import { TranslatedText } from "@/components/i18n/TranslatedText";
 import { breadcrumbLd, HOME_CRUMB, SITE_ORIGIN } from "@/lib/seo-breadcrumb";
 import { SmartImg } from "@/components/media/SmartImg";
 import { trackEvent } from "@/lib/plausible";
+import { inAppEpisodesForShow } from "@/lib/jovanna-podcast";
+import { ShowPodcastEpisodes } from "@/components/podcast/ShowPodcastEpisodes";
 
 function ArchiveHeading() {
   const t = useT();
@@ -127,12 +129,12 @@ function ShowsSection({ type, label }: { type: ShowType; label: string }) {
         </div>
       )}
 
-      {selected && <ShowArchive showId={selected.id} />}
+      {selected && <ShowArchive showId={selected.id} showTitle={selected.title} />}
     </div>
   );
 }
 
-function ShowArchive({ showId }: { showId: string }) {
+function ShowArchive({ showId, showTitle }: { showId: string; showTitle: string }) {
   const t = useT();
   const { data: episodes = [] } = useQuery({
     queryKey: ["show-episodes", showId],
@@ -149,7 +151,8 @@ function ShowArchive({ showId }: { showId: string }) {
   return (
     <section className="space-y-2">
       <ArchiveHeading />
-      {episodes.length === 0 && (
+      <ShowPodcastEpisodes showTitle={showTitle} />
+      {episodes.length === 0 && inAppEpisodesForShow(showTitle).length === 0 && (
         <div className="card-brut p-3 text-sm text-muted-foreground">{t("page.shows.noReplay")}</div>
       )}
       {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}

@@ -13,6 +13,8 @@ import { ogCommonTags, ogImageTags } from "@/lib/og-tags";
 import { hlFromSearch, ogLocaleTags, withHl } from "@/lib/og-lang";
 import { localizedOgText } from "@/lib/og-lang-head";
 import { trackEvent } from "@/lib/plausible";
+import { ShowPodcastEpisodes } from "@/components/podcast/ShowPodcastEpisodes";
+import { inAppEpisodesForShow } from "@/lib/jovanna-podcast";
 
 const BASE_URL = "https://www.radio.indi-art-culture.com";
 const OG_FALLBACK = `${BASE_URL}${ogEmissions}`;
@@ -161,7 +163,8 @@ function ShowDetailPage() {
 
       <section className="space-y-2">
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Anciens épisodes</h2>
-        {episodes.length === 0 && (
+        <ShowPodcastEpisodes showTitle={show.title} />
+        {episodes.length === 0 && inAppEpisodesForShow(show.title).length === 0 && (
           <div className="card-brut p-3 text-sm text-muted-foreground">Aucun replay pour l'instant.</div>
         )}
         {episodes.map((ep) => <EpisodeRow key={ep.id} ep={ep} />)}
