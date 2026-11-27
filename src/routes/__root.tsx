@@ -249,6 +249,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
+      // Privacy-friendly analytics by Plausible.
+      {
+        async: true,
+        src: "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js",
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -274,7 +279,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
-      // Analytics Plausible : chargé uniquement après consentement (voir CookieConsent)
+      // Analytics Plausible : initialisé uniquement après consentement (voir CookieConsent).
     ],
   }),
   shellComponent: RootShell,
