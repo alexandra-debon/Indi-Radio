@@ -255,6 +255,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         src: "https://plausible.io/js/pa-TX5XYkmAdUGR_zI1ikO77.js",
       },
       {
+        children: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};plausible.init=plausible.init||function(i){plausible.o=i||{}};
+plausible.init({autoCapturePageviews:false,formSubmissions:false,transformRequest:function(event){try{return localStorage.getItem("indi-analytics-consent")==="accepted"?event:null}catch(e){return null}}});`,
+      },
+      {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -279,7 +283,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
-      // Analytics Plausible : initialisé uniquement après consentement (voir CookieConsent).
+      // Les pages vues sont envoyées par PlausibleRouteTracker après consentement.
     ],
   }),
   shellComponent: RootShell,

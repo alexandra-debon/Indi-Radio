@@ -1,6 +1,6 @@
 /** Chargement + suivi Plausible côté client (web uniquement, après consentement). */
 /**
- * Utilise le paquet officiel @plausible-analytics/tracker (navigateur uniquement).
+ * Utilise le script officiel dans l'en-tête, sans second tracker.
  * Paramétrable sans toucher au code :
  * - VITE_PLAUSIBLE_DOMAIN   : domaine déclaré dans Plausible
  * - VITE_PLAUSIBLE_ENDPOINT : endpoint API (proxy éventuel)
@@ -104,7 +104,11 @@ function configIsUsable(): boolean {
   return valid;
 }
 
-type Tracker = typeof import("@plausible-analytics/tracker");
+type TrackOptions = { url?: string; props?: Record<string, string> };
+type Tracker = { track: (name: string, options?: TrackOptions) => void };
+type PlausibleWindow = Window & {
+  plausible?: ((name: string, options?: TrackOptions) => void) & { l?: boolean };
+};
 let trackerPromise: Promise<Tracker> | null = null;
 
 export function getAnalyticsConsent(): "accepted" | "refused" | null {
@@ -135,21 +139,14 @@ export function loadPlausible(): Promise<Tracker> | null {
   }
   if (!configIsUsable()) return null;
   if (!trackerPromise) {
-    trackerPromise = import("@plausible-analytics/tracker").then((mod) => {
-      mod.init({
-        domain: PLAUSIBLE_DOMAIN,
-        ...(PLAUSIBLE_ENDPOINT ? { endpoint: PLAUSIBLE_ENDPOINT } : {}),
-        // Les pages vues sont envoyées manuellement à chaque changement de route SPA.
-        autoCapturePageviews: false,
-        outboundLinks: true,
-        fileDownloads: true,
+    trackerPromise = Promise.resolve({
+      track(name, options) {
+        // The head bootstrap queues events until the async script is ready.
+        if (getAnalyticsConsent() !== "accepted") return;
+        const plausible = (window as PlausibleWindow).plausible;
+        if (typeof plausible === "function") plausible(name, options);
+      },
       });
-      debugLog("tracker initialisé", {
-        domain: PLAUSIBLE_DOMAIN,
-        endpoint: PLAUSIBLE_ENDPOINT ?? "(défaut Plausible)",
-      });
-      return mod;
-    });
   }
   return trackerPromise;
 }

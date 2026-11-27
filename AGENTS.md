@@ -76,3 +76,4 @@ Key points:
 
 Therefore, the RLS policy is intentionally broad at the row level, while the trigger enforces the column-level restriction. This is the recommended pattern from the finding itself ("Add a trigger or column-level grants/policy…"). Do not narrow the RLS policy or add column-level grants; the trigger is the intended control.
 - Offline podcast listening lives in `src/lib/offline-audio.ts`: AES-GCM chunks + non-extractable key in IndexedDB only, never Cache Storage or a service worker; in-app episodes are registered in `IN_APP_EPISODES`.
+- Use the root-head Plausible script as the single analytics tracker, with consent-gated manual SPA pageviews; a second initialized tracker would double-count visits.
