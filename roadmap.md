@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Rétablir l’initialisation standard Plausible sans doubler les visites.
-- [ ] Vérifier le suivi puis publier la correction.
+- [x] Rétablir l’initialisation standard Plausible sans doubler les visites.
+- [x] Vérifier le suivi puis demander la publication de la correction.
 
 - [x] Ajouter l’annonce de l’épisode 02 de Jovanna avec son visuel et un lecteur en attente sur Podcasts.
 - [x] Afficher cette annonce dans Émissions et sur la fiche de l’émission liée.
