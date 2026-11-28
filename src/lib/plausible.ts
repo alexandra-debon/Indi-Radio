@@ -1,4 +1,4 @@
-/** Chargement + suivi Plausible côté client (web uniquement, après consentement). */
+/** Official head script owns pageviews; custom events require consent. */
 /**
  * Utilise le script officiel dans l'en-tête, sans second tracker.
  * Paramétrable sans toucher au code :
@@ -151,14 +151,8 @@ export function loadPlausible(): Promise<Tracker> | null {
   return trackerPromise;
 }
 
-/** Envoie une page vue pour l'URL courante (ex. /playlists/<slug>). */
-export function trackPageview(url?: string) {
-  if (typeof window === "undefined" || getAnalyticsConsent() !== "accepted") return;
-  loadPlausible()?.then((mod) => {
-    debugLog("pageview", { url: url ?? window.location.href });
-    mod.track("pageview", url ? { url } : {});
-  });
-}
+/** Compatibility for existing consent callers: automatic tracking must not be duplicated. */
+export function trackPageview(_url?: string) {}
 
 /** Noms d'événements suivis (actions clés de l'app). */
 export type PlausibleEvent =

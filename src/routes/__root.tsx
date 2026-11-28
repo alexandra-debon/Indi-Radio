@@ -32,7 +32,6 @@ import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { StatusTour } from "@/components/onboarding/StatusTour";
 import { ArtistTour } from "@/components/onboarding/ArtistTour";
 import { CookieConsent } from "@/components/CookieConsent";
-import { PlausibleRouteTracker } from "@/components/PlausibleRouteTracker";
 import { redirect } from "@tanstack/react-router";
 import { resolveLegacyRedirect } from "@/lib/legacy-redirects";
 
@@ -256,7 +255,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         children: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};plausible.init=plausible.init||function(i){plausible.o=i||{}};
-plausible.init({autoCapturePageviews:false,formSubmissions:false,transformRequest:function(event){try{return localStorage.getItem("indi-analytics-consent")==="accepted"?event:null}catch(e){return null}}});`,
+plausible.init();`,
       },
       {
         type: "application/ld+json",
@@ -283,7 +282,7 @@ plausible.init({autoCapturePageviews:false,formSubmissions:false,transformReques
           ],
         }),
       },
-      // Les pages vues sont envoyées par PlausibleRouteTracker après consentement.
+      // The official script owns initial and SPA pageviews.
     ],
   }),
   shellComponent: RootShell,
@@ -329,7 +328,6 @@ function RootComponent() {
           <StatusTour />
           <ArtistTour />
           <CookieConsent />
-          <PlausibleRouteTracker />
         </RadioPlayerProvider>
         </LanguageProvider>
       </AuthProvider>
